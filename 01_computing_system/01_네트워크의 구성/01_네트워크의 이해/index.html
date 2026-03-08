@@ -1299,6 +1299,226 @@
             </div>
         </section>
 
+        <!-- ===================================================================== -->
+        <!-- SECTION: 인터넷의 역사                                                  -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-internet-history">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">인터넷의 역사</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">History of the Internet</p>
+                </div>
+            </div>
+
+            <!-- Introduction callout -->
+            <div class="bg-gradient-to-r from-accent-50 to-primary-50 border-l-4 border-accent-500 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-accent-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-accent-800 mb-1">인터넷이란?</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong>인터넷(Internet)</strong>은 전 세계의 수많은 컴퓨터와 네트워크를 서로 연결한 <strong>거대한 네트워크</strong>입니다.
+                            처음에는 군사·학술 목적으로 시작되었으나, 현재는 일상생활 전반에 걸쳐 없어서는 안 될 핵심 인프라가 되었습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <i class="fas fa-stream text-accent-500"></i> 인터넷 발전 연표
+            </h3>
+
+            <div class="relative">
+                <!-- Vertical line -->
+                <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-accent-300 via-primary-300 to-primary-500 hidden md:block"></div>
+
+                <div class="space-y-6">
+
+                    <!-- 1969 ARPANET -->
+                    <div class="flex gap-6 items-start">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white font-bold text-sm shadow-lg z-10">
+                            1969
+                        </div>
+                        <div class="flex-1 card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-accent-100 text-accent-700 text-xs font-bold px-2 py-0.5 rounded-full">탄생</span>
+                                <h4 class="text-lg font-bold text-gray-900">ARPANET 구축</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                미국 국방부 고등연구계획국(ARPA)이 핵전쟁에도 살아남는 분산형 통신망을 목표로 <strong>ARPANET</strong>을 개발하였습니다.
+                                최초로 UCLA, 스탠퍼드, UC 산타바바라, 유타 대학교 4개 노드가 연결되었으며, 이것이 인터넷의 출발점이 됩니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 1970s TCP/IP -->
+                    <div class="flex gap-6 items-start">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-accent-400 to-primary-500 flex items-center justify-center text-white font-bold text-sm shadow-lg z-10">
+                            1970
+                            <span class="text-xs">년대</span>
+                        </div>
+                        <div class="flex-1 card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full">프로토콜</span>
+                                <h4 class="text-lg font-bold text-gray-900">TCP/IP 프로토콜 개발</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                빈트 서프(Vint Cerf)와 밥 칸(Bob Kahn)이 서로 다른 네트워크를 하나로 묶는 <strong>TCP/IP 프로토콜</strong>을 설계하였습니다.
+                                이 표준 덕분에 제조사와 종류가 다른 컴퓨터들도 인터넷에서 자유롭게 통신할 수 있게 되었습니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 1983 공식 채택 -->
+                    <div class="flex gap-6 items-start">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold text-sm shadow-lg z-10">
+                            1983
+                        </div>
+                        <div class="flex-1 card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-primary-100 text-primary-700 text-xs font-bold px-2 py-0.5 rounded-full">표준화</span>
+                                <h4 class="text-lg font-bold text-gray-900">TCP/IP 공식 채택 & DNS 도입</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                ARPANET이 TCP/IP를 공식 프로토콜로 채택하고, <strong>도메인 이름 시스템(DNS)</strong>이 도입되어
+                                숫자 IP 주소 대신 기억하기 쉬운 도메인 이름(예: google.com)으로 서버에 접근할 수 있게 되었습니다.
+                                이 해를 인터넷의 공식 탄생일로 보기도 합니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 1991 WWW -->
+                    <div class="flex gap-6 items-start">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-bold text-sm shadow-lg z-10">
+                            1991
+                        </div>
+                        <div class="flex-1 card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">혁신</span>
+                                <h4 class="text-lg font-bold text-gray-900">월드 와이드 웹(WWW) 탄생</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                영국의 컴퓨터 과학자 <strong>팀 버너스-리(Tim Berners-Lee)</strong>가 유럽 입자물리 연구소(CERN)에서
+                                <strong>HTML, HTTP, URL</strong> 기술을 개발하고 월드 와이드 웹(WWW)을 공개하였습니다.
+                                웹 브라우저를 통해 누구나 쉽게 인터넷에서 정보를 검색하고 공유할 수 있는 시대가 열렸습니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 1990s 대중화 -->
+                    <div class="flex gap-6 items-start">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-primary-600 to-accent-800 flex items-center justify-center text-white font-bold text-sm shadow-lg z-10">
+                            1990
+                            <span class="text-xs">년대</span>
+                        </div>
+                        <div class="flex-1 card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-orange-100 text-orange-700 text-xs font-bold px-2 py-0.5 rounded-full">대중화</span>
+                                <h4 class="text-lg font-bold text-gray-900">인터넷 상업화 & 대중화</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                넷스케이프, 인터넷 익스플로러 등 상용 웹 브라우저가 등장하고 야후(1995), 아마존(1995), 구글(1998) 등
+                                인터넷 기업들이 설립되었습니다. 인터넷은 학술·군사 네트워크에서 <strong>일반 대중을 위한 서비스</strong>로 급격히 성장하였습니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 2000s 모바일 -->
+                    <div class="flex gap-6 items-start">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-accent-600 to-accent-800 flex items-center justify-center text-white font-bold text-sm shadow-lg z-10">
+                            2000
+                            <span class="text-xs">년대</span>
+                        </div>
+                        <div class="flex-1 card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-0.5 rounded-full">모바일</span>
+                                <h4 class="text-lg font-bold text-gray-900">모바일 인터넷 & SNS</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                스마트폰의 등장(아이폰 2007)과 함께 <strong>모바일 인터넷</strong>이 폭발적으로 성장하였습니다.
+                                유튜브(2005), 페이스북(2004), 트위터(2006) 등 소셜 미디어(SNS)가 등장하여 누구나 콘텐츠를 생산하고 공유하는 <strong>웹 2.0 시대</strong>가 되었습니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 현재 -->
+                    <div class="flex gap-6 items-start">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-accent-600 flex items-center justify-center text-white font-bold text-sm shadow-lg z-10">
+                            현재
+                        </div>
+                        <div class="flex-1 card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-teal-100 text-teal-700 text-xs font-bold px-2 py-0.5 rounded-full">미래</span>
+                                <h4 class="text-lg font-bold text-gray-900">초연결 사회 & 미래 인터넷</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                <strong>5G, 클라우드 컴퓨팅, 사물 인터넷(IoT)</strong> 기술이 결합하면서 사람뿐 아니라 모든 사물이 인터넷에 연결되는
+                                <strong>초연결 사회</strong>로 진화하고 있습니다. 인공지능(AI)과 인터넷의 융합으로 더욱 스마트한 서비스가 등장하고 있습니다.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Summary info box -->
+            <div class="mt-8 p-5 bg-gradient-to-r from-accent-50 to-primary-50 rounded-2xl border border-accent-100 shadow-sm">
+                <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                    <i class="fas fa-map-signs text-accent-500"></i> 인터넷 역사 핵심 정리
+                </h4>
+                <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                    <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex items-center gap-3">
+                        <span class="text-2xl">🛡️</span>
+                        <div>
+                            <p class="font-semibold text-gray-800">1969</p>
+                            <p class="text-gray-500">ARPANET 탄생</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex items-center gap-3">
+                        <span class="text-2xl">🔗</span>
+                        <div>
+                            <p class="font-semibold text-gray-800">1983</p>
+                            <p class="text-gray-500">TCP/IP 표준 채택</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex items-center gap-3">
+                        <span class="text-2xl">🌐</span>
+                        <div>
+                            <p class="font-semibold text-gray-800">1991</p>
+                            <p class="text-gray-500">WWW 탄생 (팀 버너스-리)</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex items-center gap-3">
+                        <span class="text-2xl">🏪</span>
+                        <div>
+                            <p class="font-semibold text-gray-800">1990년대</p>
+                            <p class="text-gray-500">상업화 & 대중화</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex items-center gap-3">
+                        <span class="text-2xl">📱</span>
+                        <div>
+                            <p class="font-semibold text-gray-800">2000년대</p>
+                            <p class="text-gray-500">모바일 & SNS 시대</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex items-center gap-3">
+                        <span class="text-2xl">🤖</span>
+                        <div>
+                            <p class="font-semibold text-gray-800">현재</p>
+                            <p class="text-gray-500">AI·IoT 초연결 사회</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
 
