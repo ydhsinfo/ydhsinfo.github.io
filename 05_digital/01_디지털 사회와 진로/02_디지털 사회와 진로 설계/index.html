@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디지털 사회와 진로 설계 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#e7f5ff',
+                            100: '#d0ebff',
+                            200: '#a5d8ff',
+                            300: '#74c0fc',
+                            400: '#339af0',
+                            500: '#228be6',
+                            600: '#1c7ed6',
+                            700: '#1971c2',
+                            800: '#1864ab',
+                            900: '#145591',
+                        },
+                        accent: {
+                            50: '#e3fafc',
+                            100: '#c5f6fa',
+                            200: '#99e9f2',
+                            300: '#66d9e8',
+                            400: '#3bc9db',
+                            500: '#22b8cf',
+                            600: '#15aabf',
+                            700: '#1098ad',
+                            800: '#0c8599',
+                            900: '#0b7285',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #339af0 0%, #1c7ed6 50%, #1971c2 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #339af0, #1c7ed6, #339af0);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Career card icon pulse */
+        .career-icon-pulse {
+            animation: icon-glow 3s ease-in-out infinite;
+        }
+        @keyframes icon-glow {
+            0%, 100% { box-shadow: 0 4px 15px rgba(51, 154, 240, 0.3); }
+            50% { box-shadow: 0 4px 25px rgba(51, 154, 240, 0.5); }
+        }
+
+        /* Table row hover */
+        .career-row {
+            transition: all 0.2s ease;
+        }
+        .career-row:hover {
+            background-color: #e7f5ff;
+            transform: translateX(2px);
+        }
+
+        /* Quiz styles */
+        .quiz-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .quiz-option:hover {
+            transform: translateX(4px);
+        }
+        .quiz-option.correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+        }
+        .quiz-option.wrong {
+            background-color: #fef2f2 !important;
+            border-color: #ef4444 !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Info box shimmer */
+        .info-box-shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+        .info-box-shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            animation: shimmer 4s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0% { left: -100%; }
+            50%, 100% { left: 100%; }
+        }
+
+        /* Stat counter animation */
+        .stat-number {
+            animation: countUp 1s ease-out forwards;
+        }
+        @keyframes countUp {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { background: #1c7ed6 !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+            a { text-decoration: underline; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #339af0 0%, #1c7ed6 50%, #1971c2 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">V. 디지털 문화</span>
+                <span class="breadcrumb-item text-white font-medium">01 디지털 사회와 진로</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-briefcase"></i>
+                        <span>V. 디지털 문화 &gt; 01 디지털 사회와 진로</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        디지털 사회와 진로 설계
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        디지털 기술이 여러 진로에 활용되면서 변화하는 직업의 모습과 미래 진로를 탐색합니다
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-compass mr-1"></i> 진로 설계
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-laptop-code mr-1"></i> 디지털 직업
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-rocket mr-1"></i> 미래 진로
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon - Briefcase with Digital Connections -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Briefcase body -->
+                        <rect x="50" y="75" width="90" height="65" rx="8" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <!-- Briefcase handle -->
+                        <path d="M80 75 V65 C80 58 87 52 95 52 C103 52 110 58 110 65 V75" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"/>
+                        <!-- Briefcase clasp -->
+                        <rect x="88" y="100" width="14" height="10" rx="3" fill="rgba(255,255,255,0.25)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <!-- Briefcase divider line -->
+                        <line x1="50" y1="100" x2="140" y2="100" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+
+                        <!-- Digital connection nodes -->
+                        <circle cx="170" cy="55" r="12" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                        <text x="170" y="59" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="10">AI</text>
+
+                        <circle cx="185" cy="110" r="10" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                        <i class="fas fa-code"></i>
+                        <text x="185" y="114" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="8">&lt;/&gt;</text>
+
+                        <circle cx="160" cy="165" r="11" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                        <text x="160" y="169" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="8">IoT</text>
+
+                        <circle cx="30" cy="60" r="10" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                        <text x="30" y="64" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="8">VR</text>
+
+                        <circle cx="20" cy="130" r="11" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                        <text x="20" y="134" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="7">Data</text>
+
+                        <circle cx="45" cy="175" r="9" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                        <text x="45" y="178" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="7">SW</text>
+
+                        <!-- Connection lines from briefcase to nodes -->
+                        <line x1="140" y1="85" x2="158" y2="60" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4 3"/>
+                        <line x1="140" y1="107" x2="175" y2="110" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4 3"/>
+                        <line x1="130" y1="140" x2="150" y2="160" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4 3"/>
+                        <line x1="50" y1="82" x2="38" y2="66" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4 3"/>
+                        <line x1="50" y1="115" x2="30" y2="122" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4 3"/>
+                        <line x1="55" y1="140" x2="50" y2="168" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4 3"/>
+
+                        <!-- Animated pulse dots on connections -->
+                        <circle cx="150" cy="72" r="2.5" fill="rgba(255,255,255,0.5)">
+                            <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="158" cy="108" r="2.5" fill="rgba(255,255,255,0.5)">
+                            <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2.5s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="140" cy="152" r="2.5" fill="rgba(255,255,255,0.5)">
+                            <animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="44" cy="74" r="2.5" fill="rgba(255,255,255,0.5)">
+                            <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2.2s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="38" cy="120" r="2.5" fill="rgba(255,255,255,0.5)">
+                            <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2.8s" repeatCount="indefinite"/>
+                        </circle>
+
+                        <!-- Small gear icon on briefcase -->
+                        <circle cx="95" cy="125" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <circle cx="95" cy="125" r="2" fill="rgba(255,255,255,0.3)"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>디지털 기술이 활용된 진로의 변화를 이해할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>디지털 기술 분야의 진로를 탐색할 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 진로 설계</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 디지털 직업</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 미래 진로</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 1: 디지털 기술이 활용된 진로                                       -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-career-change">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">디지털 기술이 활용된 진로</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Careers Utilizing Digital Technology</p>
+                </div>
+            </div>
+
+            <!-- Intro callout -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">디지털 기술과 진로의 변화</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            디지털 기술이 여러 진로에 활용되면서 사람들은 <strong class="text-primary-700">의사 결정이나 기획, 요구 사항을 도출하는 등의 가치 있는 업무</strong>에 집중할 수 있게 되었다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2x2 Career Cards Grid -->
+            <div class="grid md:grid-cols-2 gap-6">
+
+                <!-- Card 1: 스포츠 분야 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg career-icon-pulse">
+                                <i class="fas fa-baseball-ball text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <span class="inline-flex items-center bg-primary-100 text-primary-700 font-bold text-xs rounded-full px-3 py-1 mb-1">스포츠</span>
+                                <h3 class="font-bold text-gray-900 text-lg">스포츠 분야</h3>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            달리기 속도, 타구 방향, 공의 속도와 회전수 등 <strong class="text-primary-700">데이터를 분석</strong>하여 컨디션 측정과 경기 전략 수립에 활용한다.
+                        </p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">데이터 분석</span>
+                            <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">전략 수립</span>
+                            <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">컨디션 관리</span>
+                        </div>
+                    </div>
+                    <div class="h-1 bg-gradient-to-r from-primary-400 to-primary-600"></div>
+                </div>
+
+                <!-- Card 2: 의료 분야 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow-lg career-icon-pulse">
+                                <i class="fas fa-stethoscope text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <span class="inline-flex items-center bg-accent-100 text-accent-700 font-bold text-xs rounded-full px-3 py-1 mb-1">의료</span>
+                                <h3 class="font-bold text-gray-900 text-lg">의료 분야</h3>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            <strong class="text-accent-700">VR이나 모바일 기술</strong>을 치료에 사용하고, 캡슐 내시경으로 소화관을 진단하는 등 디지털 기술이 의료에 활용된다.
+                        </p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">VR 치료</span>
+                            <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">모바일 의료</span>
+                            <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">캡슐 내시경</span>
+                        </div>
+                    </div>
+                    <div class="h-1 bg-gradient-to-r from-accent-400 to-accent-600"></div>
+                </div>
+
+                <!-- Card 3: 요식업 분야 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg career-icon-pulse">
+                                <i class="fas fa-utensils text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <span class="inline-flex items-center bg-primary-100 text-primary-700 font-bold text-xs rounded-full px-3 py-1 mb-1">요식업</span>
+                                <h3 class="font-bold text-gray-900 text-lg">요식업 분야</h3>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            <strong class="text-primary-700">로봇이 여러 마리 닭을 동시에 튀기고</strong>, 정확한 매뉴얼을 따라 균질한 맛을 내며, 위험한 작업을 대체한다.
+                        </p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">조리 로봇</span>
+                            <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">품질 균일화</span>
+                            <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">안전 강화</span>
+                        </div>
+                    </div>
+                    <div class="h-1 bg-gradient-to-r from-primary-500 to-primary-700"></div>
+                </div>
+
+                <!-- Card 4: 제조 분야 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center shadow-lg career-icon-pulse">
+                                <i class="fas fa-cogs text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <span class="inline-flex items-center bg-accent-100 text-accent-700 font-bold text-xs rounded-full px-3 py-1 mb-1">제조</span>
+                                <h3 class="font-bold text-gray-900 text-lg">제조 분야</h3>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            <strong class="text-accent-700">AR/VR로 공정 부품과 도면 정보를 확인</strong>하고, 가상 환경에서 디자인을 검토하여 제조 효율을 높인다.
+                        </p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">AR/VR</span>
+                            <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">가상 디자인</span>
+                            <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">스마트 공장</span>
+                        </div>
+                    </div>
+                    <div class="h-1 bg-gradient-to-r from-accent-500 to-accent-700"></div>
+                </div>
+
+            </div>
+
+            <!-- Summary insight -->
+            <div class="mt-8 bg-white rounded-2xl shadow-sm border border-primary-100 p-5">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-info-circle text-primary-600 text-sm"></i>
+                    </div>
+                    <p class="text-gray-700 text-sm leading-relaxed">
+                        이처럼 디지털 기술은 스포츠, 의료, 요식업, 제조 등 <strong class="text-primary-700">다양한 분야</strong>에서 활용되고 있으며, 사람이 반복적이고 위험한 업무에서 벗어나 보다 <strong class="text-primary-700">창의적이고 가치 있는 업무</strong>에 집중할 수 있도록 돕고 있다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Section Divider -->
+        <div class="section-divider max-w-xs mx-auto opacity-40"></div>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 2: 디지털 기술 분야의 진로                                        -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-digital-careers">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">디지털 기술 분야의 진로</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Careers in Digital Technology Fields</p>
+                </div>
+            </div>
+
+            <!-- Intro callout -->
+            <div class="bg-gradient-to-r from-accent-50 to-primary-50 border-l-4 border-accent-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-accent-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-microchip text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-accent-800 mb-1">디지털 기술의 범위</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            디지털 기술은 <strong class="text-accent-700">컴퓨터, 네트워크, 반도체, 소프트웨어, 빅데이터, 사이버 보안</strong> 등을 포함하며, 이 분야에서 다양한 직업이 등장하고 있다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Career Table - Desktop -->
+            <div class="hidden md:block bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden mb-8">
+                <div class="bg-gradient-to-r from-primary-500 to-primary-700 px-6 py-4">
+                    <h3 class="text-white font-bold text-lg flex items-center gap-2">
+                        <i class="fas fa-table"></i> 디지털 기술 분야 직업과 하는 일
+                    </h3>
+                </div>
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-primary-50 border-b-2 border-primary-200">
+                            <th class="text-left px-6 py-4 text-primary-800 font-bold text-sm w-1/4">
+                                <i class="fas fa-user-tag mr-2"></i>직업명
+                            </th>
+                            <th class="text-left px-6 py-4 text-primary-800 font-bold text-sm">
+                                <i class="fas fa-tasks mr-2"></i>하는 일
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="career-row border-b border-gray-100">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-code text-white text-sm"></i>
+                                    </div>
+                                    <span class="font-semibold text-gray-900 text-sm">소프트웨어 개발자</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-gray-600 text-sm leading-relaxed">
+                                다양한 프로그래밍 언어를 익혀 사용자가 필요로 하는 애플리케이션을 개발한다.
+                            </td>
+                        </tr>
+                        <tr class="career-row border-b border-gray-100">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-vr-cardboard text-white text-sm"></i>
+                                    </div>
+                                    <span class="font-semibold text-gray-900 text-sm">가상(증강) 현실 설계자</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-gray-600 text-sm leading-relaxed">
+                                실제 세계와 디지털 세계를 혼합하여 가상 경험을 할 수 있는 시스템을 개발한다.
+                            </td>
+                        </tr>
+                        <tr class="career-row border-b border-gray-100">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-chart-bar text-white text-sm"></i>
+                                    </div>
+                                    <span class="font-semibold text-gray-900 text-sm">데이터 과학자</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-gray-600 text-sm leading-relaxed">
+                                대량의 데이터를 수집 &middot; 분석하여 기업이나 조직의 의사 결정에 도움을 준다.
+                            </td>
+                        </tr>
+                        <tr class="career-row border-b border-gray-100">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-robot text-white text-sm"></i>
+                                    </div>
+                                    <span class="font-semibold text-gray-900 text-sm">로봇 공학자</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-gray-600 text-sm leading-relaxed">
+                                로봇을 연구 개발하고 설치, 운영, 유지 관리한다.
+                            </td>
+                        </tr>
+                        <tr class="career-row border-b border-gray-100">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-brain text-white text-sm"></i>
+                                    </div>
+                                    <span class="font-semibold text-gray-900 text-sm">인공지능 연구원</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-gray-600 text-sm leading-relaxed">
+                                인공지능 기술을 활용하여 다양한 분야의 문제를 해결하는 시스템을 개발한다.
+                            </td>
+                        </tr>
+                        <tr class="career-row border-b border-gray-100">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-shield-alt text-white text-sm"></i>
+                                    </div>
+                                    <span class="font-semibold text-gray-900 text-sm">사이버 보안 전문가</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-gray-600 text-sm leading-relaxed">
+                                컴퓨터 및 네트워크 시스템의 보안을 강화하고 해킹 등의 사이버 범죄를 예방한다.
+                            </td>
+                        </tr>
+                        <tr class="career-row border-b border-gray-100">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-cloud text-white text-sm"></i>
+                                    </div>
+                                    <span class="font-semibold text-gray-900 text-sm">클라우드 서비스 기술자</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-gray-600 text-sm leading-relaxed">
+                                클라우드 컴퓨팅 환경에서 작동하는 서비스의 설계, 구축, 유지, 보수를 한다.
+                            </td>
+                        </tr>
+                        <tr class="career-row">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-network-wired text-white text-sm"></i>
+                                    </div>
+                                    <span class="font-semibold text-gray-900 text-sm">사물 인터넷 개발자</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-gray-600 text-sm leading-relaxed">
+                                IoT 기술을 활용하여 다양한 기기들의 연결과 통신을 관리하는 앱이나 시스템을 개발한다.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Career Cards - Mobile -->
+            <div class="md:hidden space-y-4 mb-8">
+                <!-- Mobile Card 1 -->
+                <div class="card-hover bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-code text-white text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">소프트웨어 개발자</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">다양한 프로그래밍 언어를 익혀 사용자가 필요로 하는 애플리케이션을 개발한다.</p>
+                </div>
+
+                <!-- Mobile Card 2 -->
+                <div class="card-hover bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-vr-cardboard text-white text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">가상(증강) 현실 설계자</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">실제 세계와 디지털 세계를 혼합하여 가상 경험을 할 수 있는 시스템을 개발한다.</p>
+                </div>
+
+                <!-- Mobile Card 3 -->
+                <div class="card-hover bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-chart-bar text-white text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">데이터 과학자</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">대량의 데이터를 수집 &middot; 분석하여 기업이나 조직의 의사 결정에 도움을 준다.</p>
+                </div>
+
+                <!-- Mobile Card 4 -->
+                <div class="card-hover bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">로봇 공학자</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">로봇을 연구 개발하고 설치, 운영, 유지 관리한다.</p>
+                </div>
+
+                <!-- Mobile Card 5 -->
+                <div class="card-hover bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-brain text-white text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">인공지능 연구원</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">인공지능 기술을 활용하여 다양한 분야의 문제를 해결하는 시스템을 개발한다.</p>
+                </div>
+
+                <!-- Mobile Card 6 -->
+                <div class="card-hover bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-shield-alt text-white text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">사이버 보안 전문가</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">컴퓨터 및 네트워크 시스템의 보안을 강화하고 해킹 등의 사이버 범죄를 예방한다.</p>
+                </div>
+
+                <!-- Mobile Card 7 -->
+                <div class="card-hover bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-cloud text-white text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">클라우드 서비스 기술자</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">클라우드 컴퓨팅 환경에서 작동하는 서비스의 설계, 구축, 유지, 보수를 한다.</p>
+                </div>
+
+                <!-- Mobile Card 8 -->
+                <div class="card-hover bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-network-wired text-white text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">사물 인터넷 개발자</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">IoT 기술을 활용하여 다양한 기기들의 연결과 통신을 관리하는 앱이나 시스템을 개발한다.</p>
+                </div>
+            </div>
+
+
+            <!-- Info Box: WEF Report -->
+            <div class="fade-in info-box-shimmer bg-gradient-to-r from-primary-600 to-primary-800 rounded-2xl p-6 text-white shadow-lg relative">
+                <div class="flex items-start gap-4 relative z-10">
+                    <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-globe text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-2 flex items-center gap-2">
+                            <span>세계경제포럼(WEF) 보고서</span>
+                            <span class="text-xs bg-white/20 rounded-full px-2 py-0.5">참고 자료</span>
+                        </h3>
+                        <p class="text-white/90 text-sm leading-relaxed mb-4">
+                            세계경제포럼 보고서에 따르면, 향후 일자리 시장에 큰 변화가 예상된다.
+                        </p>
+                        <div class="grid sm:grid-cols-3 gap-4">
+                            <div class="bg-white/10 rounded-xl p-4 text-center backdrop-blur-sm">
+                                <div class="text-2xl font-extrabold stat-number">6,900만</div>
+                                <div class="text-xs text-white/70 mt-1">2023~2027년 신규 일자리</div>
+                            </div>
+                            <div class="bg-white/10 rounded-xl p-4 text-center backdrop-blur-sm">
+                                <div class="text-2xl font-extrabold stat-number">42%</div>
+                                <div class="text-xs text-white/70 mt-1">2027년까지 자동화 비율</div>
+                            </div>
+                            <div class="bg-white/10 rounded-xl p-4 text-center backdrop-blur-sm">
+                                <div class="text-2xl font-extrabold stat-number">75%+</div>
+                                <div class="text-xs text-white/70 mt-1">AI/데이터 직종 증가 전망</div>
+                            </div>
+                        </div>
+                        <p class="text-white/75 text-xs mt-4 flex items-center gap-1">
+                            <i class="fas fa-chart-line"></i>
+                            AI와 데이터 관련 직종이 가장 높은 성장률을 보일 것으로 예측됩니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Section Divider -->
+        <div class="section-divider max-w-xs mx-auto opacity-40"></div>
+
+
+        <!-- ===================================================================== -->
+        <!-- QUIZ SECTION                                                           -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-quiz">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">확인 문제</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Check Your Understanding</p>
+                </div>
+            </div>
+
+            <!-- Quiz 1 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden" id="quiz1-container">
+                <div class="bg-gradient-to-r from-primary-500 to-accent-500 px-6 py-4">
+                    <h3 class="text-white font-bold flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-sm">Q</span>
+                        다음에서 설명하는 직업으로 옳은 것은?
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <!-- Question description box -->
+                    <div class="bg-primary-50 border border-primary-200 rounded-xl p-5 mb-6">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-quote-left text-primary-300 text-lg mt-1"></i>
+                            <p class="text-gray-700 leading-relaxed text-sm">
+                                데이터를 수집, 저장, 분석하고 시각화하여 의미 있는 분석 결과를 도출한다. 데이터에서 사람들의 행동 패턴이나 시장의 경제 상황 등을 예측하며 새로운 가치를 창출한다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="space-y-3">
+                        <div class="quiz-option flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50/50"
+                             onclick="checkQuiz('quiz1', this, true)">
+                            <span class="w-8 h-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-sm flex-shrink-0">1</span>
+                            <span class="text-gray-700 font-medium">데이터 과학자</span>
+                        </div>
+                        <div class="quiz-option flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50/50"
+                             onclick="checkQuiz('quiz1', this, false)">
+                            <span class="w-8 h-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-sm flex-shrink-0">2</span>
+                            <span class="text-gray-700 font-medium">가상 경험 설계자</span>
+                        </div>
+                        <div class="quiz-option flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50/50"
+                             onclick="checkQuiz('quiz1', this, false)">
+                            <span class="w-8 h-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-sm flex-shrink-0">3</span>
+                            <span class="text-gray-700 font-medium">사물 인터넷 개발자</span>
+                        </div>
+                        <div class="quiz-option flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50/50"
+                             onclick="checkQuiz('quiz1', this, false)">
+                            <span class="w-8 h-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-sm flex-shrink-0">4</span>
+                            <span class="text-gray-700 font-medium">사이버 보안 전문가</span>
+                        </div>
+                    </div>
+
+                    <!-- Result area -->
+                    <div id="quiz1-result" class="hidden mt-4"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-gray-900 text-gray-400 mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+            <!-- Navigation buttons -->
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
+                <!-- 이전 페이지 -->
+                <div class="flex-1 flex justify-start">
+                    <a href="../01_디지털 기술과 사회 변화/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </a>
+                </div>
+
+                <!-- 목록 -->
+                <div class="flex-shrink-0">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 border border-gray-600">
+                        <i class="fas fa-list"></i>
+                        목록
+                    </a>
+                </div>
+
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex justify-end">
+                    <a href="../03_선택활동/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    V. 디지털 문화 &gt; 01 디지털 사회와 진로 &gt; 디지털 사회와 진로 설계
+                </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // ============================
+        // Quiz System
+        // ============================
+        const quizAnswered = {};
+
+        function checkQuiz(quizId, element, isCorrect) {
+            if (quizAnswered[quizId]) return;
+            quizAnswered[quizId] = true;
+
+            const container = document.getElementById(quizId + '-container');
+            const resultDiv = document.getElementById(quizId + '-result');
+            const options = container.querySelectorAll('.quiz-option');
+
+            // Disable all options
+            options.forEach(opt => {
+                opt.style.cursor = 'default';
+                opt.style.opacity = '0.7';
+            });
+
+            // Highlight selected
+            element.style.opacity = '1';
+
+            if (isCorrect) {
+                element.classList.add('correct');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-green-50 border border-green-200';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500 text-lg"></i><span class="font-bold text-green-700">정답입니다!</span></div>';
+
+                if (quizId === 'quiz1') {
+                    resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2"><strong>데이터 과학자</strong>는 대량의 데이터를 수집 &middot; 분석하여 기업이나 조직의 의사 결정에 도움을 주는 직업입니다. 데이터에서 행동 패턴이나 경제 상황을 예측하고 새로운 가치를 창출합니다.</p>';
+                }
+            } else {
+                element.classList.add('wrong');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-red-50 border border-red-200';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-times-circle text-red-500 text-lg"></i><span class="font-bold text-red-700">오답입니다.</span></div>';
+
+                if (quizId === 'quiz1') {
+                    resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">정답은 <strong>데이터 과학자</strong>입니다. 데이터를 수집, 저장, 분석하고 시각화하여 의미 있는 분석 결과를 도출하는 것은 데이터 과학자가 하는 일입니다.</p>';
+                }
+
+                // Highlight correct answer
+                options.forEach(opt => {
+                    if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) {
+                        opt.classList.add('correct');
+                        opt.style.opacity = '1';
+                    }
+                });
+            }
+
+            resultDiv.classList.remove('hidden');
+        }
+
+        // ============================
+        // Fade-in animation on scroll
+        // ============================
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+
+        // ============================
+        // Stat counter animation
+        // ============================
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelectorAll('.stat-number').forEach((stat, index) => {
+                        stat.style.animationDelay = `${index * 0.2}s`;
+                        stat.style.animationFillMode = 'both';
+                    });
+                }
+            });
+        }, {
+            threshold: 0.3
+        });
+
+        document.querySelectorAll('.info-box-shimmer').forEach(el => {
+            statObserver.observe(el);
+        });
+
+        // ============================
+        // Smooth scroll for anchor links
+        // ============================
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // ============================
+        // Career card stagger animation
+        // ============================
+        const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const cards = entry.target.querySelectorAll('.card-hover');
+                    cards.forEach((card, index) => {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    });
+                    cardObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('#section-career-change .grid').forEach(grid => {
+            cardObserver.observe(grid);
+        });
+
+        // ============================
+        // Table row stagger animation
+        // ============================
+        const tableObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const rows = entry.target.querySelectorAll('.career-row');
+                    rows.forEach((row, index) => {
+                        row.style.opacity = '0';
+                        row.style.transform = 'translateX(-10px)';
+                        setTimeout(() => {
+                            row.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                            row.style.opacity = '1';
+                            row.style.transform = 'translateX(0)';
+                        }, index * 80);
+                    });
+                    tableObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('table').forEach(table => {
+            tableObserver.observe(table);
+        });
+    </script>
+
+</body>
+</html>

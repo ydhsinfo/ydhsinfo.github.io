@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>찾아보기 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'sans': ['Noto Sans KR', 'sans-serif'] },
+                    colors: {
+                        primary: {
+                            50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7',
+                            400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857',
+                            800: '#065f46', 900: '#064e3b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        .hero-gradient {
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .filter-tab {
+            transition: all 0.2s ease;
+        }
+        .filter-tab.active {
+            background-color: #059669;
+            color: white;
+            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.35);
+        }
+        .term-chip {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .term-chip:hover {
+            background-color: #d1fae5;
+            border-color: #34d399;
+        }
+        .term-chip.active {
+            background-color: #10b981;
+            color: white;
+            border-color: #059669;
+        }
+        .term-detail {
+            animation: slideDown 0.25s ease;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .filter-scroll::-webkit-scrollbar { height: 4px; }
+        .filter-scroll::-webkit-scrollbar-thumb { background: #a7f3d0; border-radius: 4px; }
+        .filter-scroll::-webkit-scrollbar-track { background: transparent; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-32 h-32 border border-white/30 rounded-full"></div>
+            <div class="absolute bottom-10 right-20 w-48 h-48 border border-white/20 rounded-full"></div>
+            <div class="absolute top-1/2 left-1/3 w-20 h-20 border border-white/20 rounded-full"></div>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 relative z-10">
+            <nav class="mb-6 fade-in">
+                <ol class="flex items-center space-x-2 text-sm text-white/80">
+                    <li><a href="../index.html" class="hover:text-white transition-colors">정보</a></li>
+                    <li><i class="fas fa-chevron-right text-xs mx-1"></i></li>
+                    <li class="text-white font-medium">찾아보기</li>
+                </ol>
+            </nav>
+            <div class="fade-in">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4 tracking-tight">
+                    <i class="fas fa-search mr-3 opacity-90"></i>찾아보기
+                </h1>
+                <p class="text-base sm:text-lg text-white/90 mb-6 max-w-2xl leading-relaxed">
+                    교과서 주요 용어를 검색하고 관련 단원으로 바로 이동하세요
+                </p>
+                <div class="inline-flex items-center bg-white/15 backdrop-blur-sm rounded-full px-5 py-2.5 text-sm font-medium">
+                    <i class="fas fa-book-open mr-2"></i>
+                    <span>170+개 용어</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 -mt-6 relative z-20 pb-16">
+
+        <!-- Search Bar -->
+        <div class="fade-in mb-6">
+            <div class="bg-white rounded-2xl shadow-lg p-2 flex items-center">
+                <div class="pl-4 text-gray-400">
+                    <i class="fas fa-search text-lg"></i>
+                </div>
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="용어를 검색하세요..."
+                    class="flex-1 px-4 py-3 text-base sm:text-lg outline-none bg-transparent text-gray-800 placeholder-gray-400"
+                >
+                <button
+                    id="clearBtn"
+                    class="hidden items-center justify-center w-10 h-10 mr-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all"
+                    onclick="clearSearch()"
+                >
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Consonant Filter Tabs -->
+        <div class="fade-in mb-8">
+            <div class="bg-white rounded-2xl shadow-sm p-3 sm:p-4">
+                <div class="filter-scroll flex gap-2 overflow-x-auto pb-1" id="filterTabs">
+                    <!-- Tabs generated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Count -->
+        <div class="fade-in mb-4 px-1">
+            <p class="text-sm text-gray-500" id="resultsCount"></p>
+        </div>
+
+        <!-- Terms Display -->
+        <div id="termsContainer" class="space-y-6 fade-in">
+            <!-- Rendered by JS -->
+        </div>
+
+        <!-- No Results -->
+        <div id="noResults" class="hidden fade-in">
+            <div class="bg-white rounded-2xl shadow-sm p-12 text-center">
+                <div class="w-20 h-20 mx-auto mb-6 bg-primary-50 rounded-full flex items-center justify-center">
+                    <i class="fas fa-search text-3xl text-primary-300"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-700 mb-2">검색 결과가 없습니다</h3>
+                <p class="text-gray-400">다른 검색어를 입력해 보세요</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex items-center justify-center mb-8">
+                <a href="../index.html"
+                   class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                    <i class="fas fa-th-list"></i>
+                    목록으로 돌아가기
+                </a>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30" style="height:1px; background:rgba(255,255,255,0.1);"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">찾아보기</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Unit info
+        const unitInfo = {
+            1: { name: '컴퓨팅 시스템', roman: 'I', color: '#5378e9' },
+            2: { name: '데이터', roman: 'II', color: '#20c997' },
+            3: { name: '알고리즘과 프로그래밍', roman: 'III', color: '#ff922b' },
+            4: { name: '인공지능', roman: 'IV', color: '#cc5de8' },
+            5: { name: '디지털 문화', roman: 'V', color: '#339af0' }
+        };
+
+        // URL map
+        const urlMap = {
+            '1-01': '../01_computing_system/01_네트워크의 구성/01_네트워크의 이해/index.html',
+            '1-02': '../01_computing_system/02_사물 인터넷/01_사물 인터넷의 개념/index.html',
+            '2-01': '../02_data/01_디지털 데이터 압축/01_디지털 데이터 압축의 이해/index.html',
+            '2-02': '../02_data/02_디지털 데이터 암호화/01_디지털 데이터 암호화의 이해/index.html',
+            '2-03': '../02_data/03_빅데이터 개념과 분석/01_빅데이터 개념 이해/index.html',
+            '3-01': '../03_programming/01_문제 분해와 모델링/01_문제 분석/index.html',
+            '3-02': '../03_programming/02_알고리즘/01_알고리즘의 이해/index.html',
+            '3-03': '../03_programming/03_프로그래밍의 이해/01_변수와 자료형/index.html',
+            '3-04': '../03_programming/04_제어 구조의 응용/01_조건문/index.html',
+            '3-05': '../03_programming/05_함수와 라이브러리/01_함수/index.html',
+            '3-06': '../03_programming/06_객체지향 프로그래밍/01_객체지향 프로그래밍의 이해/index.html',
+            '3-07': '../03_programming/07_창의 융합 프로그래밍/01_다양한 학문 분야의 문제 해결/index.html',
+            '4-01': '../04_AI/01_인공지능과 지능 에이전트/01_사람과 인공지능/index.html',
+            '4-02': '../04_AI/02_기계학습의 개념/01_기계학습의 이해/index.html',
+            '4-03': '../04_AI/03_기계학습의 모델과 구현/01_기계학습의 다양한 모델/index.html',
+            '5-01': '../05_digital/01_디지털 사회와 진로/01_디지털 기술과 사회 변화/index.html',
+            '5-02': '../05_digital/02_정보 보호와 보안/01_정보 보호/index.html'
+        };
+
+        function ref(unit, section) {
+            const secNum = section.split(' ')[0];
+            return { unit: unit, unitName: unitInfo[unit].name, section: section, url: urlMap[unit + '-' + secNum] };
+        }
+
+        // Complete glossary data
+        const glossary = [
+            // ㄱ group
+            { term: '가상 현실 설계자', group: 'ㄱ', refs: [ref(5, '01 디지털 사회와 진로')] },
+            { term: '가용성', group: 'ㄱ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '강화 학습', group: 'ㄱ', refs: [ref(4, '02 기계학습의 개념')] },
+            { term: '개인 정보', group: 'ㄱ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '객체', group: 'ㄱ', refs: [ref(3, '06 객체지향 프로그래밍')] },
+            { term: '객체지향 프로그래밍', group: 'ㄱ', refs: [ref(3, '06 객체지향 프로그래밍')] },
+            { term: '결정트리', group: 'ㄱ', refs: [ref(4, '03 기계학습의 모델과 구현')] },
+            { term: '결측치', group: 'ㄱ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            { term: '광 케이블', group: 'ㄱ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '군집화', group: 'ㄱ', refs: [ref(4, '03 기계학습의 모델과 구현')] },
+            { term: '그래프', group: 'ㄱ', refs: [ref(3, '01 문제 분해와 모델링')] },
+            { term: '근거리 무선 통신', group: 'ㄱ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '기계학습', group: 'ㄱ', refs: [ref(4, '02 기계학습의 개념')] },
+            { term: '기밀성', group: 'ㄱ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '기울기 센서', group: 'ㄱ', refs: [ref(1, '02 사물 인터넷')] },
+            // ㄴ group
+            { term: '네트워크', group: 'ㄴ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '논리 연산자', group: 'ㄴ', refs: [ref(3, '03 프로그래밍의 이해')] },
+            { term: '논리곱', group: 'ㄴ', refs: [ref(3, '03 프로그래밍의 이해')] },
+            { term: '논리합', group: 'ㄴ', refs: [ref(3, '03 프로그래밍의 이해')] },
+            // ㄷ group
+            { term: '다중 조건문', group: 'ㄷ', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: '다중 지능 에이전트', group: 'ㄷ', refs: [ref(4, '01 인공지능과 지능 에이전트')] },
+            { term: '다차원 데이터 구조', group: 'ㄷ', refs: [ref(3, '03 프로그래밍의 이해')] },
+            { term: '단순 조건문', group: 'ㄷ', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: '데이터 과학자', group: 'ㄷ', refs: [ref(5, '01 디지털 사회와 진로')] },
+            { term: '데이터베이스', group: 'ㄷ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '데이터 보안 기술', group: 'ㄷ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '데이터 분석', group: 'ㄷ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            { term: '데이터 분석가', group: 'ㄷ', refs: [ref(5, '01 디지털 사회와 진로')] },
+            { term: '데이터 전처리', group: 'ㄷ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            { term: '데이터 편향성', group: 'ㄷ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            { term: '디스플레이 공유 기술', group: 'ㄷ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '디지털 기술', group: 'ㄷ', refs: [ref(5, '01 디지털 사회와 진로')] },
+            { term: '디지털 데이터 암호화', group: 'ㄷ', refs: [ref(2, '02 디지털 데이터 암호화')] },
+            { term: '디지털 데이터 압축', group: 'ㄷ', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: '디지털 서명', group: 'ㄷ', refs: [ref(2, '02 디지털 데이터 암호화')] },
+            { term: '디지털 윤리', group: 'ㄷ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '디코딩', group: 'ㄷ', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: '딥러닝', group: 'ㄷ', refs: [ref(4, '02 기계학습의 개념')] },
+            // ㄹ group
+            { term: '라우터', group: 'ㄹ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '라이브러리', group: 'ㄹ', refs: [ref(3, '05 함수와 라이브러리')] },
+            { term: '랜(LAN)', group: 'ㄹ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '런-렝스 인코딩', group: 'ㄹ', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: '레이저 센서', group: 'ㄹ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '렘펠-지브 인코딩', group: 'ㄹ', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: '로봇 공학자', group: 'ㄹ', refs: [ref(5, '01 디지털 사회와 진로')] },
+            { term: '로지스틱 회귀', group: 'ㄹ', refs: [ref(4, '03 기계학습의 모델과 구현')] },
+            { term: '리스트', group: 'ㄹ', refs: [ref(3, '03 프로그래밍의 이해')] },
+            // ㅁ group
+            { term: '마이크로비트', group: 'ㅁ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '메소드', group: 'ㅁ', refs: [ref(3, '06 객체지향 프로그래밍')] },
+            { term: '모델', group: 'ㅁ', refs: [ref(3, '01 문제 분해와 모델링')] },
+            { term: '모델링', group: 'ㅁ', refs: [ref(3, '01 문제 분해와 모델링')] },
+            { term: '모듈', group: 'ㅁ', refs: [ref(3, '05 함수와 라이브러리')] },
+            { term: '모바일 인터넷', group: 'ㅁ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '무결성', group: 'ㅁ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '무선 AP', group: 'ㅁ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '무선 네트워크', group: 'ㅁ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '무한 반복', group: 'ㅁ', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: '문자열 압축', group: 'ㅁ', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: '문제 분해', group: 'ㅁ', refs: [ref(3, '01 문제 분해와 모델링')] },
+            { term: '미디어 문해력', group: 'ㅁ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '미러링', group: 'ㅁ', refs: [ref(1, '01 네트워크의 구성')] },
+            // ㅂ group
+            { term: '바이러스 백신 프로그램', group: 'ㅂ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '반복문', group: 'ㅂ', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: '방화벽', group: 'ㅂ', refs: [ref(1, '01 네트워크의 구성'), ref(5, '02 정보 보호와 보안')] },
+            { term: '버블 정렬', group: 'ㅂ', refs: [ref(3, '02 알고리즘')] },
+            { term: '변수', group: 'ㅂ', refs: [ref(3, '03 프로그래밍의 이해')] },
+            { term: '변조', group: 'ㅂ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '복호화 키', group: 'ㅂ', refs: [ref(2, '02 디지털 데이터 암호화')] },
+            { term: '분류 모델', group: 'ㅂ', refs: [ref(4, '03 기계학습의 모델과 구현')] },
+            { term: '분석 기술', group: 'ㅂ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '블록체인', group: 'ㅂ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '블록체인 보안', group: 'ㅂ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '블루투스', group: 'ㅂ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '비교 연산자', group: 'ㅂ', refs: [ref(3, '03 프로그래밍의 이해')] },
+            { term: '비손실 압축', group: 'ㅂ', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: '비식별 데이터', group: 'ㅂ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '비정형 데이터', group: 'ㅂ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            { term: '비지도학습', group: 'ㅂ', refs: [ref(4, '02 기계학습의 개념')] },
+            { term: '비트 전송률', group: 'ㅂ', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: '빅데이터', group: 'ㅂ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            { term: '빅데이터 기술', group: 'ㅂ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            { term: '빅데이터 분석', group: 'ㅂ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            // ㅅ group
+            { term: '사물', group: 'ㅅ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '사물 인터넷', group: 'ㅅ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '사용자 인증', group: 'ㅅ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '사용자 정의 함수', group: 'ㅅ', refs: [ref(3, '05 함수와 라이브러리')] },
+            { term: '사이버 보안', group: 'ㅅ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '사이버 보안 전문가', group: 'ㅅ', refs: [ref(5, '01 디지털 사회와 진로')] },
+            { term: '사이버불링', group: 'ㅅ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '산술 연산자', group: 'ㅅ', refs: [ref(3, '03 프로그래밍의 이해')] },
+            { term: '선택 정렬', group: 'ㅅ', refs: [ref(3, '02 알고리즘')] },
+            { term: '선형 회귀', group: 'ㅅ', refs: [ref(4, '03 기계학습의 모델과 구현')] },
+            { term: '센서', group: 'ㅅ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '센서 기술', group: 'ㅅ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '소리 압축', group: 'ㅅ', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: '소프트웨어 개발자', group: 'ㅅ', refs: [ref(5, '01 디지털 사회와 진로')] },
+            { term: '속성', group: 'ㅅ', refs: [ref(3, '06 객체지향 프로그래밍')] },
+            { term: '손실 압축', group: 'ㅅ', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: '순차 탐색', group: 'ㅅ', refs: [ref(3, '02 알고리즘')] },
+            { term: '스마트 공장', group: 'ㅅ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '스마트 교육', group: 'ㅅ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '스마트 교통', group: 'ㅅ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '스마트 그리드', group: 'ㅅ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '스마트 빌딩', group: 'ㅅ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '스마트팜', group: 'ㅅ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '스마트 헬스케어', group: 'ㅅ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '스마트 홈', group: 'ㅅ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '스미싱', group: 'ㅅ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '스위치', group: 'ㅅ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '스키테일 암호', group: 'ㅅ', refs: [ref(2, '02 디지털 데이터 암호화')] },
+            { term: '시각화', group: 'ㅅ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            // ㅇ group
+            { term: '알고리즘', group: 'ㅇ', refs: [ref(3, '02 알고리즘')] },
+            { term: '알고리즘 설계', group: 'ㅇ', refs: [ref(3, '02 알고리즘')] },
+            { term: '알고리즘의 효율적 분석', group: 'ㅇ', refs: [ref(3, '02 알고리즘')] },
+            { term: '알고리즘 표현', group: 'ㅇ', refs: [ref(3, '02 알고리즘')] },
+            { term: '암호화', group: 'ㅇ', refs: [ref(2, '02 디지털 데이터 암호화')] },
+            { term: '암호화 키', group: 'ㅇ', refs: [ref(2, '02 디지털 데이터 암호화')] },
+            { term: '암호 화폐', group: 'ㅇ', refs: [ref(2, '02 디지털 데이터 암호화')] },
+            { term: '액세스 포인트', group: 'ㅇ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '에니그마', group: 'ㅇ', refs: [ref(2, '02 디지털 데이터 암호화')] },
+            { term: '에이전트', group: 'ㅇ', refs: [ref(4, '01 인공지능과 지능 에이전트')] },
+            { term: '연관 규칙', group: 'ㅇ', refs: [ref(4, '03 기계학습의 모델과 구현')] },
+            { term: '오렌지3', group: 'ㅇ', refs: [ref(4, '03 기계학습의 모델과 구현')] },
+            { term: '온습도 센서', group: 'ㅇ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '와이파이', group: 'ㅇ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '위조', group: 'ㅇ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '유선 네트워크', group: 'ㅇ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '이더넷 케이블', group: 'ㅇ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '이미지 압축', group: 'ㅇ', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: '이상치', group: 'ㅇ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            { term: '이진 탐색', group: 'ㅇ', refs: [ref(3, '02 알고리즘')] },
+            { term: '인공 신경망', group: 'ㅇ', refs: [ref(4, '03 기계학습의 모델과 구현')] },
+            { term: '인공지능', group: 'ㅇ', refs: [ref(4, '01 인공지능과 지능 에이전트')] },
+            { term: '인공지능 연구원', group: 'ㅇ', refs: [ref(5, '01 디지털 사회와 진로')] },
+            { term: '인스턴스', group: 'ㅇ', refs: [ref(3, '06 객체지향 프로그래밍')] },
+            { term: '인스턴스 생성', group: 'ㅇ', refs: [ref(3, '06 객체지향 프로그래밍')] },
+            { term: '인코딩', group: 'ㅇ', refs: [ref(2, '01 디지털 데이터 압축')] },
+            // ㅈ group
+            { term: '자료형', group: 'ㅈ', refs: [ref(3, '03 프로그래밍의 이해')] },
+            { term: '저작물', group: 'ㅈ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '저장 기술', group: 'ㅈ', refs: [ref(1, '02 사물 인터넷')] },
+            { term: '전역 변수', group: 'ㅈ', refs: [ref(3, '05 함수와 라이브러리')] },
+            { term: '전자 태그(RFID)', group: 'ㅈ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '정렬 알고리즘', group: 'ㅈ', refs: [ref(3, '02 알고리즘')] },
+            { term: '정보 보안', group: 'ㅈ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '정보 보안 기술', group: 'ㅈ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '정보 보호', group: 'ㅈ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '정형 데이터', group: 'ㅈ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            { term: '제어 구조', group: 'ㅈ', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: '조건문', group: 'ㅈ', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: '중복값', group: 'ㅈ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            { term: '중첩 for문', group: 'ㅈ', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: '중첩 조건문', group: 'ㅈ', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: '지능 에이전트', group: 'ㅈ', refs: [ref(4, '01 인공지능과 지능 에이전트')] },
+            { term: '지도학습', group: 'ㅈ', refs: [ref(4, '02 기계학습의 개념')] },
+            { term: '지역 변수', group: 'ㅈ', refs: [ref(3, '05 함수와 라이브러리')] },
+            { term: '진로', group: 'ㅈ', refs: [ref(5, '01 디지털 사회와 진로')] },
+            // ㅊ group
+            { term: '추상화', group: 'ㅊ', refs: [ref(3, '01 문제 분해와 모델링')] },
+            { term: '침입 방지 시스템', group: 'ㅊ', refs: [ref(5, '02 정보 보호와 보안')] },
+            // ㅋ group
+            { term: '카이사르 암호', group: 'ㅋ', refs: [ref(2, '02 디지털 데이터 암호화')] },
+            { term: '코답', group: 'ㅋ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            { term: '코랩', group: 'ㅋ', refs: [ref(3, '03 프로그래밍의 이해')] },
+            { term: '클라우드 서비스 기술자', group: 'ㅋ', refs: [ref(5, '01 디지털 사회와 진로')] },
+            { term: '클라우드 접근 제어', group: 'ㅋ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '클라우드 컴퓨팅', group: 'ㅋ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '클래스', group: 'ㅋ', refs: [ref(3, '06 객체지향 프로그래밍')] },
+            { term: '클래스 정의', group: 'ㅋ', refs: [ref(3, '06 객체지향 프로그래밍')] },
+            // ㅌ group
+            { term: '탐색 알고리즘', group: 'ㅌ', refs: [ref(3, '02 알고리즘')] },
+            { term: '탐색적 데이터 분석', group: 'ㅌ', refs: [ref(2, '03 빅데이터 개념과 분석')] },
+            { term: '테스트 데이터', group: 'ㅌ', refs: [ref(4, '03 기계학습의 모델과 구현')] },
+            { term: '트리', group: 'ㅌ', refs: [ref(3, '01 문제 분해와 모델링')] },
+            // ㅍ group
+            { term: '파일입출력', group: 'ㅍ', refs: [ref(3, '03 프로그래밍의 이해')] },
+            { term: '패스워드 암호', group: 'ㅍ', refs: [ref(2, '02 디지털 데이터 암호화')] },
+            { term: '페어링', group: 'ㅍ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '표', group: 'ㅍ', refs: [ref(3, '01 문제 분해와 모델링')] },
+            { term: '표준입출력', group: 'ㅍ', refs: [ref(3, '03 프로그래밍의 이해')] },
+            { term: '피싱', group: 'ㅍ', refs: [ref(5, '02 정보 보호와 보안')] },
+            { term: '피지컬 컴퓨팅', group: 'ㅍ', refs: [ref(1, '02 사물 인터넷')] },
+            // ㅎ group
+            { term: '함수', group: 'ㅎ', refs: [ref(3, '05 함수와 라이브러리')] },
+            { term: '핵심 요소 추출', group: 'ㅎ', refs: [ref(3, '01 문제 분해와 모델링')] },
+            { term: '허브', group: 'ㅎ', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: '회귀 모델', group: 'ㅎ', refs: [ref(4, '03 기계학습의 모델과 구현')] },
+            { term: '훈련 데이터', group: 'ㅎ', refs: [ref(4, '03 기계학습의 모델과 구현')] },
+            // 숫자 group
+            { term: '1차원 리스트', group: '숫자', refs: [ref(3, '03 프로그래밍의 이해')] },
+            { term: '2차원 리스트', group: '숫자', refs: [ref(3, '03 프로그래밍의 이해')] },
+            // 영문 group
+            { term: 'BMP 파일', group: '영문', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: 'break문', group: '영문', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: 'for문', group: '영문', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: 'GIF', group: '영문', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: 'HTTPS 암호화', group: '영문', refs: [ref(2, '02 디지털 데이터 암호화')] },
+            { term: 'if문', group: '영문', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: 'if~else문', group: '영문', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: 'input( )', group: '영문', refs: [ref(3, '03 프로그래밍의 이해')] },
+            { term: 'IoT', group: '영문', refs: [ref(1, '02 사물 인터넷')] },
+            { term: 'IoT 개발자', group: '영문', refs: [ref(5, '01 디지털 사회와 진로')] },
+            { term: 'IP', group: '영문', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: 'IP 주소', group: '영문', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: 'JPEG', group: '영문', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: 'k-최근접 이웃', group: '영문', refs: [ref(4, '03 기계학습의 모델과 구현')] },
+            { term: 'LAN', group: '영문', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: 'NFC', group: '영문', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: 'NFT 기술', group: '영문', refs: [ref(2, '02 디지털 데이터 암호화')] },
+            { term: 'PNG', group: '영문', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: 'print( )', group: '영문', refs: [ref(3, '03 프로그래밍의 이해')] },
+            { term: 'random', group: '영문', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: 'range( ) 함수', group: '영문', refs: [ref(3, '04 제어 구조의 응용')] },
+            { term: 'return', group: '영문', refs: [ref(3, '05 함수와 라이브러리')] },
+            { term: 'RFID', group: '영문', refs: [ref(1, '01 네트워크의 구성')] },
+            { term: 'SDGs', group: '영문', refs: [ref(3, '07 창의 융합 프로그래밍')] },
+            { term: 'WAV 파일', group: '영문', refs: [ref(2, '01 디지털 데이터 압축')] },
+            { term: 'while문', group: '영문', refs: [ref(3, '04 제어 구조의 응용')] }
+        ];
+
+        // Group order
+        const groupOrder = ['전체', 'ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ', '숫자', '영문'];
+
+        let activeFilter = '전체';
+        let activeTerm = -1;
+        let searchText = '';
+
+        // Build filter tabs
+        function buildFilterTabs() {
+            const container = document.getElementById('filterTabs');
+            groupOrder.forEach(g => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-tab flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium border border-gray-200 text-gray-600 hover:border-primary-300 hover:text-primary-700 bg-white' + (g === activeFilter ? ' active' : '');
+                btn.textContent = g;
+                btn.onclick = () => setFilter(g);
+                container.appendChild(btn);
+            });
+        }
+
+        // Set filter
+        function setFilter(group) {
+            activeFilter = group;
+            activeTerm = -1;
+            document.querySelectorAll('.filter-tab').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === group);
+            });
+            renderTerms();
+        }
+
+        // Clear search
+        function clearSearch() {
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            searchText = '';
+            document.getElementById('clearBtn').classList.add('hidden');
+            document.getElementById('clearBtn').classList.remove('flex');
+            renderTerms();
+        }
+
+        // Toggle term detail
+        function toggleTerm(idx) {
+            activeTerm = activeTerm === idx ? -1 : idx;
+            renderTerms();
+        }
+
+        // Get filtered terms
+        function getFilteredTerms() {
+            return glossary.filter((item, idx) => {
+                const matchGroup = activeFilter === '전체' || item.group === activeFilter;
+                const matchSearch = !searchText || item.term.toLowerCase().includes(searchText.toLowerCase());
+                return matchGroup && matchSearch;
+            });
+        }
+
+        // Render terms
+        function renderTerms() {
+            const container = document.getElementById('termsContainer');
+            const noResults = document.getElementById('noResults');
+            const resultsCount = document.getElementById('resultsCount');
+
+            const filtered = getFilteredTerms();
+
+            resultsCount.textContent = `검색 결과: ${filtered.length}개 용어`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+            noResults.classList.add('hidden');
+
+            // Group filtered terms
+            const groups = {};
+            filtered.forEach(item => {
+                if (!groups[item.group]) groups[item.group] = [];
+                groups[item.group].push(item);
+            });
+
+            // Render order (skip 전체)
+            const renderOrder = groupOrder.filter(g => g !== '전체');
+            let html = '';
+
+            renderOrder.forEach(g => {
+                if (!groups[g]) return;
+                const items = groups[g];
+
+                html += `<div class="bg-white rounded-2xl shadow-sm overflow-hidden">`;
+                html += `<div class="px-5 sm:px-6 pt-5 pb-3 border-b border-gray-100">`;
+                html += `<div class="flex items-center gap-3">`;
+                html += `<span class="w-10 h-10 rounded-xl bg-primary-500 text-white flex items-center justify-center font-bold text-lg">${g}</span>`;
+                html += `<span class="text-sm text-gray-400 font-medium">${items.length}개 용어</span>`;
+                html += `</div></div>`;
+                html += `<div class="px-5 sm:px-6 py-4">`;
+                html += `<div class="flex flex-wrap gap-2">`;
+
+                items.forEach(item => {
+                    const globalIdx = glossary.indexOf(item);
+                    const isActive = activeTerm === globalIdx;
+
+                    html += `<button onclick="toggleTerm(${globalIdx})" class="term-chip px-3.5 py-1.5 rounded-full text-sm font-medium border ${isActive ? 'active' : 'border-gray-200 text-gray-700 bg-gray-50'}">`;
+                    html += escapeHtml(item.term);
+                    html += `</button>`;
+                });
+
+                html += `</div>`;
+
+                // Show detail card if active term is in this group
+                items.forEach(item => {
+                    const globalIdx = glossary.indexOf(item);
+                    if (activeTerm === globalIdx) {
+                        html += `<div class="term-detail mt-4 p-4 bg-gray-50 rounded-xl border border-gray-100">`;
+                        html += `<h4 class="font-bold text-gray-800 mb-3 text-base">${escapeHtml(item.term)}</h4>`;
+                        html += `<div class="space-y-2.5">`;
+
+                        item.refs.forEach(r => {
+                            const info = unitInfo[r.unit];
+                            html += `<div class="flex items-start sm:items-center justify-between gap-3 flex-col sm:flex-row bg-white rounded-lg p-3 border border-gray-100">`;
+                            html += `<div class="flex items-center gap-2.5 min-w-0">`;
+                            html += `<span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: ${info.color}"></span>`;
+                            html += `<span class="text-sm text-gray-700"><span class="font-semibold" style="color: ${info.color}">${info.roman}. ${info.name}</span>`;
+                            html += ` <span class="text-gray-400 mx-1">&rsaquo;</span> ${escapeHtml(r.section)}</span>`;
+                            html += `</div>`;
+                            html += `<a href="${r.url}" class="inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 flex-shrink-0 transition-colors">`;
+                            html += `바로가기 <i class="fas fa-arrow-right text-xs"></i></a>`;
+                            html += `</div>`;
+                        });
+
+                        html += `</div></div>`;
+                    }
+                });
+
+                html += `</div></div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Search input listener
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            searchText = e.target.value.trim();
+            const clearBtn = document.getElementById('clearBtn');
+            if (searchText) {
+                clearBtn.classList.remove('hidden');
+                clearBtn.classList.add('flex');
+            } else {
+                clearBtn.classList.add('hidden');
+                clearBtn.classList.remove('flex');
+            }
+            activeTerm = -1;
+            renderTerms();
+        });
+
+        // IntersectionObserver for fade-in
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Init
+        buildFilterTabs();
+        renderTerms();
+    </script>
+</body>
+</html>

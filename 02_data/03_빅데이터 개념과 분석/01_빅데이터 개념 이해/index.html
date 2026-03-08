@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>빅데이터 개념 이해 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0',
+                            300: '#6ee7b7', 400: '#34d399', 500: '#10b981',
+                            600: '#059669', 700: '#047857', 800: '#065f46',
+                            900: '#064e3b'
+                        },
+                        accent: {
+                            50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4',
+                            300: '#5eead4', 400: '#2dd4bf', 500: '#14b8a6',
+                            600: '#0d9488', 700: '#0f766e', 800: '#115e59',
+                            900: '#134e4a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        /* Fade-in animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero gradient */
+        .hero-gradient {
+            background: linear-gradient(135deg, #059669 0%, #0d9488 50%, #0891b2 100%);
+        }
+
+        /* 5V Wheel */
+        .v-wheel-container {
+            position: relative;
+            width: 340px;
+            height: 340px;
+            margin: 0 auto;
+        }
+        .v-wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #059669, #0891b2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.15rem;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(5, 150, 105, 0.35);
+        }
+        .v-node {
+            position: absolute;
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.78rem;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+            text-align: center;
+            line-height: 1.2;
+        }
+        .v-node:hover, .v-node.active {
+            transform: scale(1.18);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+        }
+        .v-node .v-icon {
+            font-size: 1.3rem;
+            margin-bottom: 3px;
+        }
+        .v-connector {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(5,150,105,0.4), rgba(8,145,178,0.4));
+            transform-origin: 0 0;
+            z-index: 1;
+        }
+
+        /* 5V Detail Panel */
+        .v-detail-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.45s ease, opacity 0.4s ease;
+            opacity: 0;
+        }
+        .v-detail-panel.open {
+            max-height: 200px;
+            opacity: 1;
+        }
+
+        /* Counter animation */
+        .counter-value {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Data type comparison cards */
+        .data-type-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .data-type-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        }
+
+        /* Internet 60s stat bars */
+        .stat-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #059669, #0891b2);
+            transition: width 1.5s ease-out;
+            width: 0;
+        }
+        .stat-bar.animated {
+            /* width set by JS */
+        }
+
+        /* Print-friendly */
+        @media print {
+            .hero-gradient {
+                background: #059669 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .fade-in {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            body {
+                font-size: 11pt;
+            }
+            .v-wheel-container {
+                display: none;
+            }
+            .print-only {
+                display: block !important;
+            }
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        /* Tooltip */
+        .tooltip-container {
+            position: relative;
+        }
+        .tooltip-container .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #064e3b;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            transition: opacity 0.25s;
+            z-index: 20;
+        }
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Scroll indicator */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #059669, #0891b2);
+            z-index: 9999;
+            transition: width 0.1s linear;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+    <!-- Scroll progress bar -->
+    <div class="scroll-progress no-print" id="scrollProgress" style="width: 0%;"></div>
+
+    <!-- Hero Section -->
+    <header class="hero-gradient text-white relative overflow-hidden">
+        <!-- Background decoration -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-64 h-64 border border-white/30 rounded-full"></div>
+            <div class="absolute top-32 right-20 w-48 h-48 border border-white/20 rounded-full"></div>
+            <div class="absolute -bottom-10 left-1/3 w-80 h-80 border border-white/20 rounded-full"></div>
+            <div class="absolute top-5 right-1/4 text-6xl opacity-20"><i class="fas fa-database"></i></div>
+            <div class="absolute bottom-10 left-20 text-5xl opacity-15"><i class="fas fa-chart-bar"></i></div>
+            <div class="absolute top-20 right-10 text-4xl opacity-15"><i class="fas fa-cloud"></i></div>
+        </div>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <!-- Navigation -->
+            <nav class="pt-6 pb-2 no-print">
+                <a href="../../../index.html" class="inline-flex items-center text-white/80 hover:text-white transition-colors text-sm gap-1.5">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>목록으로 돌아가기</span>
+                </a>
+            </nav>
+
+            <!-- Breadcrumb -->
+            <div class="mt-3 mb-6">
+                <ol class="flex flex-wrap items-center gap-1.5 text-sm text-white/70">
+                    <li><a href="../../../index.html" class="hover:text-white transition-colors">정보</a></li>
+                    <li><i class="fas fa-chevron-right text-[0.6rem] mx-1 opacity-50"></i></li>
+                    <li>II. 데이터</li>
+                    <li><i class="fas fa-chevron-right text-[0.6rem] mx-1 opacity-50"></i></li>
+                    <li class="text-white font-medium">03 빅데이터 개념과 분석</li>
+                </ol>
+            </div>
+
+            <!-- Title Section -->
+            <div class="pb-10 sm:pb-14">
+                <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-5">
+                    <i class="fas fa-database"></i>
+                    <span>빅데이터 개념과 분석</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4">
+                    빅데이터 개념 이해
+                </h1>
+                <p class="text-lg sm:text-xl text-white/85 max-w-2xl leading-relaxed">
+                    디지털 환경에서 생성되는 대규모 데이터의 유형과 특징을 이해하고, 빅데이터가 가져오는 새로운 가치를 탐구합니다.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+
+        <!-- Learning Objectives -->
+        <section class="fade-in mb-12">
+            <div class="bg-primary-50 border border-primary-200 rounded-2xl p-6 sm:p-8">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-bullseye text-white text-sm"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-primary-900">학습 목표</h2>
+                </div>
+                <ul class="space-y-2.5 text-primary-800">
+                    <li class="flex items-start gap-2.5">
+                        <i class="fas fa-check-circle text-primary-500 mt-1 flex-shrink-0"></i>
+                        <span>빅데이터의 개념을 설명하고, 정형 데이터와 비정형 데이터를 구분할 수 있다.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <i class="fas fa-check-circle text-primary-500 mt-1 flex-shrink-0"></i>
+                        <span>빅데이터의 5V 특징(규모, 속도, 다양성, 정확성, 가치)을 이해하고 설명할 수 있다.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <i class="fas fa-check-circle text-primary-500 mt-1 flex-shrink-0"></i>
+                        <span>디지털 환경에서 데이터가 생산되는 규모와 속도를 인식한다.</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 1: 빅데이터의 데이터 유형 -->
+        <section class="fade-in mb-14">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary-600 to-accent-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">1</div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900">빅데이터의 데이터 유형</h2>
+            </div>
+
+            <!-- Definition Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 mb-8">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-14 h-14 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-database text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">빅데이터란?</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong class="text-primary-700">빅데이터(Big Data)</strong>란 디지털 환경에서 생성된 <strong>수십 테라바이트(TB) 이상</strong>의 대규모 데이터를 말합니다. 다양한 유형의 대규모 데이터를 효과적으로 저장하고, <strong>통계, 컴퓨터 과학, 기계학습</strong> 등의 데이터 과학 기술로 가치를 추출하는 것이 핵심입니다.
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-accent-50 border border-accent-200 rounded-xl p-5">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-lightbulb text-accent-600 mt-0.5"></i>
+                        <p class="text-accent-800 text-sm leading-relaxed">
+                            <strong>IoT(사물인터넷)</strong>와 <strong>스마트 기기</strong>의 확산으로 데이터를 생산하는 사물의 범위가 기하급수적으로 증가하고 있습니다. 스마트폰, 웨어러블 기기, 자율주행 자동차, 스마트 가전 등 거의 모든 디지털 기기가 데이터를 생산합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Type Comparison Cards -->
+            <h3 class="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
+                <i class="fas fa-layer-group text-primary-600"></i>
+                데이터 유형 비교
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- 정형 데이터 -->
+                <div class="data-type-card bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-primary-400"></div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-table text-primary-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-900">정형 데이터</h4>
+                            <span class="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">Structured Data</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 text-sm mb-4 leading-relaxed">
+                        <strong>고정된 형식과 구조</strong>에 맞게 저장된 데이터로, 행과 열로 구성된 표 형태를 가집니다. 데이터베이스에 쉽게 저장하고 검색할 수 있습니다.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <i class="fas fa-check text-primary-500 w-4"></i>
+                            <span>스프레드시트, 표(Table)</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <i class="fas fa-check text-primary-500 w-4"></i>
+                            <span>CSV, Excel 파일</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <i class="fas fa-check text-primary-500 w-4"></i>
+                            <span>관계형 데이터베이스(RDB)</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <i class="fas fa-check text-primary-500 w-4"></i>
+                            <span>설문 조사 결과, 성적 데이터</span>
+                        </div>
+                    </div>
+                    <!-- Mini table illustration -->
+                    <div class="mt-5 bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
+                        <table class="w-full text-xs">
+                            <thead>
+                                <tr class="bg-primary-600 text-white">
+                                    <th class="px-3 py-1.5 text-left">이름</th>
+                                    <th class="px-3 py-1.5 text-left">나이</th>
+                                    <th class="px-3 py-1.5 text-left">도시</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-200">
+                                    <td class="px-3 py-1.5">김민수</td>
+                                    <td class="px-3 py-1.5">17</td>
+                                    <td class="px-3 py-1.5">서울</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-1.5">이지영</td>
+                                    <td class="px-3 py-1.5">16</td>
+                                    <td class="px-3 py-1.5">부산</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 비정형 데이터 -->
+                <div class="data-type-card bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-500 to-cyan-500"></div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-accent-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-photo-film text-accent-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-900">비정형 데이터</h4>
+                            <span class="text-xs font-medium text-accent-600 bg-accent-50 px-2 py-0.5 rounded-full">Unstructured Data</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 text-sm mb-4 leading-relaxed">
+                        <strong>고정된 구조나 형태가 없는</strong> 데이터로, 일정한 규격이나 형태를 가지지 않아 전통적인 데이터베이스에 저장하기 어렵습니다.
+                    </p>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <i class="fas fa-check text-accent-500 w-4"></i>
+                            <span>이미지, 사진, 동영상</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <i class="fas fa-check text-accent-500 w-4"></i>
+                            <span>소리, 음악, 음성 파일</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <i class="fas fa-check text-accent-500 w-4"></i>
+                            <span>문서, 이메일, SNS 게시글</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <i class="fas fa-check text-accent-500 w-4"></i>
+                            <span>센서 데이터, 로그 파일</span>
+                        </div>
+                    </div>
+                    <!-- Icon grid illustration -->
+                    <div class="mt-5 bg-gray-50 rounded-lg p-3 border border-gray-200 grid grid-cols-4 gap-2">
+                        <div class="flex flex-col items-center gap-1 text-gray-500">
+                            <i class="fas fa-image text-lg text-accent-400"></i>
+                            <span class="text-[0.6rem]">이미지</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 text-gray-500">
+                            <i class="fas fa-video text-lg text-accent-400"></i>
+                            <span class="text-[0.6rem]">동영상</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 text-gray-500">
+                            <i class="fas fa-music text-lg text-accent-400"></i>
+                            <span class="text-[0.6rem]">음악</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 text-gray-500">
+                            <i class="fas fa-file-alt text-lg text-accent-400"></i>
+                            <span class="text-[0.6rem]">문서</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data ratio info -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl p-5 border border-primary-100">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-chart-pie text-primary-600 text-lg mt-0.5"></i>
+                    <div>
+                        <p class="text-sm font-semibold text-primary-900 mb-1">알고 계셨나요?</p>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            전 세계에서 생성되는 데이터의 약 <strong>80~90%</strong>가 비정형 데이터입니다. 빅데이터 기술의 발전으로 이러한 비정형 데이터에서도 의미 있는 가치를 추출할 수 있게 되었습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: 빅데이터 특징 (5V) -->
+        <section class="fade-in mb-14">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary-600 to-accent-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">2</div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900">빅데이터의 특징 (5V)</h2>
+            </div>
+
+            <p class="text-gray-700 mb-8 leading-relaxed">
+                빅데이터의 특징은 흔히 <strong class="text-primary-700">5V</strong>로 설명합니다. 각각의 V는 빅데이터를 정의하는 핵심 속성을 나타냅니다. 아래 원형 다이어그램의 각 항목을 클릭하여 자세한 내용을 확인하세요.
+            </p>
+
+            <!-- Interactive 5V Wheel -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 mb-6">
+                <div class="flex flex-col lg:flex-row items-center gap-8">
+                    <!-- Wheel Visualization -->
+                    <div class="v-wheel-container flex-shrink-0 no-print" id="vWheel">
+                        <!-- Connectors (drawn by JS) -->
+                        <!-- Center -->
+                        <div class="v-wheel-center">
+                            <span>5V</span>
+                        </div>
+                        <!-- Nodes placed by JS -->
+                    </div>
+
+                    <!-- Print fallback for wheel -->
+                    <div class="print-only">
+                        <ul class="space-y-2 text-sm">
+                            <li><strong>Volume (규모)</strong>: 데이터의 규모가 크다</li>
+                            <li><strong>Velocity (속도)</strong>: 데이터 생성, 수집, 처리 속도가 빠르다</li>
+                            <li><strong>Variety (다양성)</strong>: 다양한 유형의 데이터를 처리</li>
+                            <li><strong>Veracity (정확성)</strong>: 유용하고 신뢰할 수 있는 데이터</li>
+                            <li><strong>Value (가치)</strong>: 숨겨진 가치를 찾을 수 있다</li>
+                        </ul>
+                    </div>
+
+                    <!-- Detail Panel -->
+                    <div class="flex-1 w-full">
+                        <div id="vDetail" class="bg-gray-50 rounded-xl p-6 min-h-[180px] flex items-center justify-center transition-all duration-300">
+                            <p class="text-gray-400 text-center text-sm">
+                                <i class="fas fa-hand-pointer mr-1"></i>
+                                왼쪽 다이어그램의 항목을 클릭하세요
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5V Cards (always visible, mobile-first) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="vCards">
+                <!-- Volume -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow cursor-pointer v-card" data-v="0">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background:#059669;">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-900">규모</div>
+                            <div class="text-xs text-gray-500">Volume</div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 leading-relaxed">데이터의 규모가 크다. 수십 테라바이트(TB)에서 페타바이트(PB) 이상의 방대한 데이터를 다룹니다.</p>
+                </div>
+
+                <!-- Velocity -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow cursor-pointer v-card" data-v="1">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background:#0d9488;">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-900">속도</div>
+                            <div class="text-xs text-gray-500">Velocity</div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 leading-relaxed">데이터의 생성, 수집, 처리 속도가 빠르다. 실시간으로 쏟아지는 데이터를 신속하게 처리해야 합니다.</p>
+                </div>
+
+                <!-- Variety -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow cursor-pointer v-card" data-v="2">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background:#0891b2;">
+                            <i class="fas fa-shapes"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-900">다양성</div>
+                            <div class="text-xs text-gray-500">Variety</div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 leading-relaxed">다양한 유형(정형, 비정형)의 데이터를 처리합니다. 텍스트, 이미지, 동영상, 센서 데이터 등 형식이 다양합니다.</p>
+                </div>
+
+                <!-- Veracity -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow cursor-pointer v-card" data-v="3">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background:#047857;">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-900">정확성</div>
+                            <div class="text-xs text-gray-500">Veracity</div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 leading-relaxed">유용하고 신뢰할 수 있는 데이터를 다룹니다. 데이터의 품질과 정확성을 확보하는 것이 중요합니다.</p>
+                </div>
+
+                <!-- Value -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow cursor-pointer v-card" data-v="4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background:#115e59;">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-900">가치</div>
+                            <div class="text-xs text-gray-500">Value</div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 leading-relaxed">숨겨진 가치를 찾을 수 있다. 대량의 데이터 분석을 통해 새로운 통찰과 비즈니스 가치를 창출합니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: 60초 동안 인터넷에서 이루어지는 일 -->
+        <section class="fade-in mb-14">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary-600 to-accent-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                    <i class="fas fa-clock text-sm"></i>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900">60초 동안 인터넷에서 이루어지는 일</h2>
+            </div>
+
+            <p class="text-gray-600 mb-2 text-sm">
+                <i class="fas fa-calendar-alt text-primary-500 mr-1"></i> 2023년 기준
+            </p>
+            <p class="text-gray-700 mb-8 leading-relaxed">
+                인터넷에서는 매 순간 상상할 수 없을 만큼 많은 양의 데이터가 생산되고 있습니다. 단 <strong class="text-primary-700">60초(1분)</strong> 동안 이루어지는 활동의 규모를 살펴보겠습니다.
+            </p>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+                <div class="space-y-6" id="internetStats">
+                    <!-- Email -->
+                    <div class="stat-row" data-count="200000000" data-label="2억여 건">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-envelope text-red-500"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-900">이메일 전송</div>
+                                    <div class="text-xs text-gray-500">Emails Sent</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="counter-value text-2xl font-extrabold text-primary-700" data-target="2">0</span>
+                                <span class="text-sm font-bold text-primary-600">억여 건</span>
+                            </div>
+                        </div>
+                        <div class="bg-gray-100 rounded-full overflow-hidden">
+                            <div class="stat-bar" data-width="100%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Text -->
+                    <div class="stat-row" data-count="20000000" data-label="2천만여 건">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-comment-dots text-blue-500"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-900">문자 메시지</div>
+                                    <div class="text-xs text-gray-500">Text Messages</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="counter-value text-2xl font-extrabold text-primary-700" data-target="2000">0</span>
+                                <span class="text-sm font-bold text-primary-600">만여 건</span>
+                            </div>
+                        </div>
+                        <div class="bg-gray-100 rounded-full overflow-hidden">
+                            <div class="stat-bar" data-width="82%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="stat-row" data-count="2000000" data-label="2백만 건">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-search text-yellow-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-900">검색</div>
+                                    <div class="text-xs text-gray-500">Google Searches</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="counter-value text-2xl font-extrabold text-primary-700" data-target="200">0</span>
+                                <span class="text-sm font-bold text-primary-600">만 건</span>
+                            </div>
+                        </div>
+                        <div class="bg-gray-100 rounded-full overflow-hidden">
+                            <div class="stat-bar" data-width="65%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Video -->
+                    <div class="stat-row" data-count="690000" data-label="69만 건">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                    <i class="fab fa-youtube text-red-500"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-900">동영상 시청</div>
+                                    <div class="text-xs text-gray-500">YouTube Views</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="counter-value text-2xl font-extrabold text-primary-700" data-target="69">0</span>
+                                <span class="text-sm font-bold text-primary-600">만 건</span>
+                            </div>
+                        </div>
+                        <div class="bg-gray-100 rounded-full overflow-hidden">
+                            <div class="stat-bar" data-width="48%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Tweets -->
+                    <div class="stat-row" data-count="350000" data-label="35만 건">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center">
+                                    <i class="fab fa-twitter text-sky-500"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-900">트윗</div>
+                                    <div class="text-xs text-gray-500">Tweets</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="counter-value text-2xl font-extrabold text-primary-700" data-target="35">0</span>
+                                <span class="text-sm font-bold text-primary-600">만 건</span>
+                            </div>
+                        </div>
+                        <div class="bg-gray-100 rounded-full overflow-hidden">
+                            <div class="stat-bar" data-width="38%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Downloads -->
+                    <div class="stat-row" data-count="270000" data-label="27만 건">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-download text-green-500"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-900">앱 다운로드</div>
+                                    <div class="text-xs text-gray-500">App Downloads</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="counter-value text-2xl font-extrabold text-primary-700" data-target="27">0</span>
+                                <span class="text-sm font-bold text-primary-600">만 건</span>
+                            </div>
+                        </div>
+                        <div class="bg-gray-100 rounded-full overflow-hidden">
+                            <div class="stat-bar" data-width="32%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timer animation -->
+                <div class="mt-8 pt-6 border-t border-gray-100 text-center no-print">
+                    <button id="replayBtn" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-600 to-accent-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:shadow-lg transition-all active:scale-95">
+                        <i class="fas fa-rotate-right"></i>
+                        애니메이션 다시 보기
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="fade-in mb-14">
+            <div class="bg-gradient-to-br from-primary-600 to-accent-600 rounded-2xl p-6 sm:p-8 text-white">
+                <div class="flex items-center gap-3 mb-5">
+                    <i class="fas fa-bookmark text-lg"></i>
+                    <h2 class="text-xl font-bold">핵심 정리</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-4">
+                        <h4 class="font-bold mb-2 flex items-center gap-2">
+                            <i class="fas fa-database text-sm"></i> 빅데이터
+                        </h4>
+                        <p class="text-sm text-white/90 leading-relaxed">
+                            디지털 환경에서 생성된 수십 TB 이상의 대규모 데이터. 데이터 과학 기술로 가치를 추출하는 것이 목적입니다.
+                        </p>
+                    </div>
+                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-4">
+                        <h4 class="font-bold mb-2 flex items-center gap-2">
+                            <i class="fas fa-layer-group text-sm"></i> 데이터 유형
+                        </h4>
+                        <p class="text-sm text-white/90 leading-relaxed">
+                            정형 데이터(표, CSV)와 비정형 데이터(이미지, 소리, 문서)로 구분됩니다.
+                        </p>
+                    </div>
+                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-4">
+                        <h4 class="font-bold mb-2 flex items-center gap-2">
+                            <i class="fas fa-star text-sm"></i> 5V 특징
+                        </h4>
+                        <p class="text-sm text-white/90 leading-relaxed">
+                            Volume(규모), Velocity(속도), Variety(다양성), Veracity(정확성), Value(가치)
+                        </p>
+                    </div>
+                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-4">
+                        <h4 class="font-bold mb-2 flex items-center gap-2">
+                            <i class="fas fa-globe text-sm"></i> 데이터 폭증
+                        </h4>
+                        <p class="text-sm text-white/90 leading-relaxed">
+                            IoT와 스마트 기기 확산으로 데이터 생산량이 기하급수적으로 증가하고 있습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Check Understanding -->
+        <section class="fade-in mb-14">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-question text-amber-600 text-lg"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900">확인 문제</h2>
+                </div>
+
+                <div class="space-y-6" id="quizSection">
+                    <!-- Quiz 1 -->
+                    <div class="quiz-item border border-gray-200 rounded-xl p-5" data-answer="2">
+                        <p class="font-semibold text-gray-900 mb-3">
+                            <span class="text-primary-600 mr-1">Q1.</span>
+                            다음 중 비정형 데이터에 해당하는 것은?
+                        </p>
+                        <div class="space-y-2 quiz-options">
+                            <button class="quiz-option w-full text-left px-4 py-2.5 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors text-sm" data-option="1">
+                                <span class="font-medium text-primary-600 mr-2">A.</span> Excel 스프레드시트
+                            </button>
+                            <button class="quiz-option w-full text-left px-4 py-2.5 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors text-sm" data-option="2">
+                                <span class="font-medium text-primary-600 mr-2">B.</span> SNS에 올린 사진
+                            </button>
+                            <button class="quiz-option w-full text-left px-4 py-2.5 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors text-sm" data-option="3">
+                                <span class="font-medium text-primary-600 mr-2">C.</span> 학생 성적표(CSV 파일)
+                            </button>
+                            <button class="quiz-option w-full text-left px-4 py-2.5 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors text-sm" data-option="4">
+                                <span class="font-medium text-primary-600 mr-2">D.</span> 관계형 데이터베이스 테이블
+                            </button>
+                        </div>
+                        <div class="quiz-feedback hidden mt-3 p-3 rounded-lg text-sm"></div>
+                    </div>
+
+                    <!-- Quiz 2 -->
+                    <div class="quiz-item border border-gray-200 rounded-xl p-5" data-answer="3">
+                        <p class="font-semibold text-gray-900 mb-3">
+                            <span class="text-primary-600 mr-1">Q2.</span>
+                            빅데이터의 5V 특징에 해당하지 않는 것은?
+                        </p>
+                        <div class="space-y-2 quiz-options">
+                            <button class="quiz-option w-full text-left px-4 py-2.5 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors text-sm" data-option="1">
+                                <span class="font-medium text-primary-600 mr-2">A.</span> Volume (규모)
+                            </button>
+                            <button class="quiz-option w-full text-left px-4 py-2.5 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors text-sm" data-option="2">
+                                <span class="font-medium text-primary-600 mr-2">B.</span> Velocity (속도)
+                            </button>
+                            <button class="quiz-option w-full text-left px-4 py-2.5 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors text-sm" data-option="3">
+                                <span class="font-medium text-primary-600 mr-2">C.</span> Vision (시각화)
+                            </button>
+                            <button class="quiz-option w-full text-left px-4 py-2.5 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors text-sm" data-option="4">
+                                <span class="font-medium text-primary-600 mr-2">D.</span> Value (가치)
+                            </button>
+                        </div>
+                        <div class="quiz-feedback hidden mt-3 p-3 rounded-lg text-sm"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../../02_디지털 데이터 암호화/03_선택활동/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../02_빅데이터 활용 분야/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">II. 데이터 &gt; 03 빅데이터 개념과 분석 &gt; 빅데이터 개념 이해</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // ===========================
+        // Fade-in on scroll
+        // ===========================
+        const fadeEls = document.querySelectorAll('.fade-in');
+        const fadeObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.08 });
+        fadeEls.forEach(function(el) { fadeObserver.observe(el); });
+
+        // ===========================
+        // Scroll progress bar
+        // ===========================
+        const progressBar = document.getElementById('scrollProgress');
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            progressBar.style.width = progress + '%';
+        });
+
+        // ===========================
+        // 5V Wheel
+        // ===========================
+        const vData = [
+            {
+                name: '규모', eng: 'Volume', icon: 'fas fa-cubes', color: '#059669',
+                desc: '데이터의 규모가 크다. 수십 테라바이트(TB)에서 페타바이트(PB) 이상의 방대한 데이터가 매일 생성됩니다.',
+                example: '예: 하루 동안 SNS에서 생성되는 게시글, 사진, 동영상의 총량'
+            },
+            {
+                name: '속도', eng: 'Velocity', icon: 'fas fa-bolt', color: '#0d9488',
+                desc: '데이터의 생성, 수집, 처리 속도가 빠르다. 실시간 스트리밍 데이터를 신속하게 분석해야 합니다.',
+                example: '예: 주식 거래 데이터, 실시간 교통 정보, 센서 데이터'
+            },
+            {
+                name: '다양성', eng: 'Variety', icon: 'fas fa-shapes', color: '#0891b2',
+                desc: '다양한 유형(정형, 비정형)의 데이터를 처리합니다. 텍스트, 이미지, 영상, 음성 등 여러 형태의 데이터가 존재합니다.',
+                example: '예: 텍스트 리뷰 + 상품 사진 + 결제 기록의 결합 분석'
+            },
+            {
+                name: '정확성', eng: 'Veracity', icon: 'fas fa-shield-halved', color: '#047857',
+                desc: '유용하고 신뢰할 수 있는 데이터를 다룹니다. 데이터의 품질과 정확성을 확보하는 것이 중요합니다.',
+                example: '예: 가짜 뉴스 필터링, 잘못된 센서 데이터 제거'
+            },
+            {
+                name: '가치', eng: 'Value', icon: 'fas fa-gem', color: '#115e59',
+                desc: '숨겨진 가치를 찾을 수 있다. 대량의 데이터 분석을 통해 새로운 통찰과 비즈니스 가치를 창출합니다.',
+                example: '예: 소비자 행동 패턴 분석으로 맞춤형 서비스 제공'
+            }
+        ];
+
+        const wheel = document.getElementById('vWheel');
+        const detailPanel = document.getElementById('vDetail');
+        if (wheel) {
+            const centerX = 170, centerY = 170, radius = 120;
+            const nodeSize = 48; // half of 96px node
+
+            vData.forEach(function(v, i) {
+                // Calculate position (start from top, go clockwise)
+                var angle = (i * (360 / 5) - 90) * (Math.PI / 180);
+                var x = centerX + radius * Math.cos(angle);
+                var y = centerY + radius * Math.sin(angle);
+
+                // Create connector line
+                var conn = document.createElement('div');
+                conn.className = 'v-connector';
+                var dx = x - centerX;
+                var dy = y - centerY;
+                var dist = Math.sqrt(dx * dx + dy * dy) - 48;
+                var lineAngle = Math.atan2(dy, dx) * (180 / Math.PI);
+                conn.style.width = dist + 'px';
+                conn.style.transform = 'rotate(' + lineAngle + 'deg)';
+                wheel.appendChild(conn);
+
+                // Create node
+                var node = document.createElement('div');
+                node.className = 'v-node';
+                node.style.background = v.color;
+                node.style.left = (x - nodeSize) + 'px';
+                node.style.top = (y - nodeSize) + 'px';
+                node.innerHTML = '<i class="' + v.icon + ' v-icon"></i><span>' + v.name + '</span><span style="font-size:0.6rem;opacity:0.85">' + v.eng + '</span>';
+                node.setAttribute('data-index', i);
+                node.addEventListener('click', function() {
+                    showVDetail(i);
+                    // Toggle active class
+                    document.querySelectorAll('.v-node').forEach(function(n) { n.classList.remove('active'); });
+                    node.classList.add('active');
+                });
+                wheel.appendChild(node);
+            });
+        }
+
+        function showVDetail(index) {
+            var v = vData[index];
+            detailPanel.innerHTML =
+                '<div class="text-left w-full">' +
+                    '<div class="flex items-center gap-3 mb-3">' +
+                        '<div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background:' + v.color + '">' +
+                            '<i class="' + v.icon + '"></i>' +
+                        '</div>' +
+                        '<div>' +
+                            '<div class="font-bold text-gray-900">' + v.name + ' <span class="text-sm font-normal text-gray-500">(' + v.eng + ')</span></div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<p class="text-gray-700 text-sm mb-3 leading-relaxed">' + v.desc + '</p>' +
+                    '<div class="bg-primary-50 rounded-lg p-3 text-xs text-primary-800">' +
+                        '<i class="fas fa-lightbulb text-primary-500 mr-1"></i> ' + v.example +
+                    '</div>' +
+                '</div>';
+            detailPanel.className = 'bg-gray-50 rounded-xl p-6 min-h-[180px] flex items-center transition-all duration-300';
+        }
+
+        // Card click also triggers detail
+        document.querySelectorAll('.v-card').forEach(function(card) {
+            card.addEventListener('click', function() {
+                var idx = parseInt(card.getAttribute('data-v'));
+                showVDetail(idx);
+                // Also activate wheel node
+                document.querySelectorAll('.v-node').forEach(function(n, ni) {
+                    n.classList.toggle('active', ni === idx);
+                });
+                // Scroll to wheel on larger screens
+                if (window.innerWidth >= 1024 && wheel) {
+                    wheel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        });
+
+        // ===========================
+        // Counter Animation
+        // ===========================
+        function animateCounters() {
+            var counters = document.querySelectorAll('.counter-value');
+            counters.forEach(function(counter) {
+                var target = parseInt(counter.getAttribute('data-target'));
+                var duration = 1500;
+                var start = 0;
+                var startTime = null;
+
+                function step(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    var elapsed = timestamp - startTime;
+                    var progress = Math.min(elapsed / duration, 1);
+                    // Ease out cubic
+                    var eased = 1 - Math.pow(1 - progress, 3);
+                    var current = Math.floor(eased * target);
+                    counter.textContent = current.toLocaleString();
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        counter.textContent = target.toLocaleString();
+                    }
+                }
+                requestAnimationFrame(step);
+            });
+        }
+
+        function animateBars() {
+            var bars = document.querySelectorAll('.stat-bar');
+            bars.forEach(function(bar) {
+                bar.style.width = '0';
+                setTimeout(function() {
+                    bar.style.width = bar.getAttribute('data-width');
+                    bar.classList.add('animated');
+                }, 200);
+            });
+        }
+
+        // Observe the internet stats section
+        var statsSection = document.getElementById('internetStats');
+        var statsAnimated = false;
+        if (statsSection) {
+            var statsObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting && !statsAnimated) {
+                        statsAnimated = true;
+                        animateCounters();
+                        animateBars();
+                    }
+                });
+            }, { threshold: 0.2 });
+            statsObserver.observe(statsSection);
+        }
+
+        // Replay button
+        var replayBtn = document.getElementById('replayBtn');
+        if (replayBtn) {
+            replayBtn.addEventListener('click', function() {
+                // Reset counters
+                document.querySelectorAll('.counter-value').forEach(function(c) {
+                    c.textContent = '0';
+                });
+                // Reset bars
+                document.querySelectorAll('.stat-bar').forEach(function(b) {
+                    b.style.width = '0';
+                    b.classList.remove('animated');
+                });
+                setTimeout(function() {
+                    animateCounters();
+                    animateBars();
+                }, 100);
+            });
+        }
+
+        // ===========================
+        // Quiz
+        // ===========================
+        var quizItems = document.querySelectorAll('.quiz-item');
+        quizItems.forEach(function(item) {
+            var correctAnswer = parseInt(item.getAttribute('data-answer'));
+            var options = item.querySelectorAll('.quiz-option');
+            var feedback = item.querySelector('.quiz-feedback');
+            var answered = false;
+
+            options.forEach(function(option) {
+                option.addEventListener('click', function() {
+                    if (answered) return;
+                    answered = true;
+                    var selected = parseInt(option.getAttribute('data-option'));
+                    var isCorrect = selected === correctAnswer;
+
+                    // Highlight correct/incorrect
+                    options.forEach(function(opt) {
+                        var optVal = parseInt(opt.getAttribute('data-option'));
+                        opt.disabled = true;
+                        opt.classList.remove('hover:border-primary-300', 'hover:bg-primary-50');
+                        if (optVal === correctAnswer) {
+                            opt.classList.add('border-green-500', 'bg-green-50', 'text-green-800');
+                            opt.innerHTML = '<i class="fas fa-check-circle text-green-500 mr-2"></i>' + opt.textContent;
+                        } else if (optVal === selected && !isCorrect) {
+                            opt.classList.add('border-red-400', 'bg-red-50', 'text-red-700');
+                            opt.innerHTML = '<i class="fas fa-times-circle text-red-400 mr-2"></i>' + opt.textContent;
+                        } else {
+                            opt.classList.add('opacity-50');
+                        }
+                    });
+
+                    // Show feedback
+                    feedback.classList.remove('hidden');
+                    if (isCorrect) {
+                        feedback.className = 'quiz-feedback mt-3 p-3 rounded-lg text-sm bg-green-50 border border-green-200 text-green-800';
+                        feedback.innerHTML = '<i class="fas fa-check-circle mr-1"></i> 정답입니다! 잘했습니다.';
+                    } else {
+                        feedback.className = 'quiz-feedback mt-3 p-3 rounded-lg text-sm bg-red-50 border border-red-200 text-red-700';
+                        if (correctAnswer === 2 && item === quizItems[0]) {
+                            feedback.innerHTML = '<i class="fas fa-times-circle mr-1"></i> 오답입니다. SNS에 올린 사진은 고정된 구조가 없는 비정형 데이터입니다. 나머지는 모두 정형 데이터에 해당합니다.';
+                        } else {
+                            feedback.innerHTML = '<i class="fas fa-times-circle mr-1"></i> 오답입니다. 빅데이터의 5V는 Volume, Velocity, Variety, Veracity, Value이며, Vision은 포함되지 않습니다.';
+                        }
+                    }
+                });
+            });
+        });
+
+    }); // end DOMContentLoaded
+    </script>
+</body>
+</html>

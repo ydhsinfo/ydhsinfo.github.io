@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>선택활동 - 정보 보호와 보안</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#e7f5ff',
+                            100: '#d0ebff',
+                            200: '#a5d8ff',
+                            300: '#74c0fc',
+                            400: '#339af0',
+                            500: '#228be6',
+                            600: '#1c7ed6',
+                            700: '#1971c2',
+                            800: '#1864ab',
+                            900: '#145591',
+                        },
+                        accent: {
+                            50: '#e3fafc',
+                            100: '#c5f6fa',
+                            200: '#99e9f2',
+                            300: '#66d9e8',
+                            400: '#3bc9db',
+                            500: '#22b8cf',
+                            600: '#15aabf',
+                            700: '#1098ad',
+                            800: '#0c8599',
+                            900: '#0b7285',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #339af0 0%, #1c7ed6 50%, #1971c2 100%) !important;
+            color: #ffffff !important;
+        }
+        .hero-gradient * { color: inherit; }
+        .hero-gradient h1 { color: #ffffff !important; }
+        .hero-gradient p { color: rgba(255,255,255,0.92) !important; }
+        .hero-gradient .breadcrumb-item { color: rgba(255,255,255,0.7) !important; }
+        .hero-gradient .breadcrumb-item:last-child { color: #ffffff !important; }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #339af0, #1c7ed6, #339af0);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .step-connector {
+            position: relative;
+        }
+        .step-connector::after {
+            content: '';
+            position: absolute;
+            left: 1.25rem;
+            top: 3.5rem;
+            bottom: -0.5rem;
+            width: 2px;
+            background: linear-gradient(to bottom, #a5d8ff, #d0ebff);
+        }
+        .step-connector:last-child::after {
+            display: none;
+        }
+
+        .checklist-item {
+            transition: all 0.2s ease;
+        }
+        .checklist-item:hover {
+            background-color: #e7f5ff;
+        }
+
+        .discussion-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid #339af0;
+        }
+        .discussion-card:hover {
+            transform: translateX(4px);
+            border-left-color: #1c7ed6;
+        }
+
+        @media print {
+            .hero-pattern { background: #1c7ed6 !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #339af0 0%, #1c7ed6 50%, #1971c2 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">V. 디지털 문화</span>
+                <span class="breadcrumb-item text-white font-medium">02 정보 보호와 보안</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-hand-sparkles"></i>
+                        <span>선택활동</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">선택활동</h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">정보 보호 실천과 디지털 윤리 규칙 수립 활동을 합니다</p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-tag mr-1"></i> 선택활동</span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-tag mr-1"></i> 정보 보호</span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-tag mr-1"></i> 디지털 윤리</span>
+                    </div>
+                </div>
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Shield -->
+                        <path d="M110 30 L160 55 L160 120 C160 160 110 190 110 190 C110 190 60 160 60 120 L60 55 Z" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <!-- Lock -->
+                        <rect x="92" y="100" width="36" height="28" rx="4" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                        <path d="M100 100 L100 88 C100 80 120 80 120 88 L120 100" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+                        <circle cx="110" cy="112" r="3" fill="rgba(255,255,255,0.6)"/>
+                        <!-- Check mark -->
+                        <path d="M100 70 L107 77 L122 62" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <!-- Decorative elements -->
+                        <circle cx="40" cy="60" r="8" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                        <circle cx="180" cy="160" r="12" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+                        <rect x="170" y="40" width="16" height="16" rx="3" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.3)" stroke-width="1" transform="rotate(15 178 48)"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-bullseye"></i> 학습 목표</h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>CCL 라이선스와 저작권 프리 이미지를 이해하고 활용할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>디지털 환경에서 지켜야 할 윤리 규칙을 수립할 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 선택활동</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 정보 보호</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 디지털 윤리</span>
+                </div>
+            </div>
+        </div>
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===== ACTIVITY 1: 정보 보호 실천하기 ===== -->
+        <section class="fade-in" id="activity-1">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동 1. 정보 보호 실천하기</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">조사 / 실습</p>
+                </div>
+            </div>
+
+            <!-- Activity Type Badge -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <span class="inline-flex items-center gap-1.5 bg-blue-100 text-blue-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-search"></i> 조사
+                </span>
+                <span class="inline-flex items-center gap-1.5 bg-teal-100 text-teal-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-laptop-code"></i> 실습
+                </span>
+            </div>
+
+            <!-- CCL Explanation Card -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow">
+                        <i class="fab fa-creative-commons text-white text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-900">CCL(Creative Commons License)이란?</h3>
+                </div>
+
+                <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-100 mb-6">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-info-circle text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-blue-800 mb-2">CCL의 정의</h4>
+                            <p class="text-gray-700 text-sm leading-relaxed">
+                                <strong class="text-blue-700">저작자가 일정한 조건에서 자신의 저작물을 다른 사람들이 자유롭게 이용하도록 허락하는 것</strong>입니다.
+                                크리에이티브 커먼즈(Creative Commons) 라이선스를 통해 저작자는 자신의 저작물에 대한 이용 조건을 명확하게 표시하고,
+                                이용자는 해당 조건을 지키면서 저작물을 합법적으로 활용할 수 있습니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CCL Types Grid -->
+                <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-layer-group text-primary-500"></i> CCL 라이선스의 주요 조건
+                </h4>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="card-hover bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200 text-center">
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-500 flex items-center justify-center shadow">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <h5 class="font-bold text-blue-800 text-sm mb-1">저작자 표시</h5>
+                        <p class="text-gray-600 text-xs leading-relaxed">BY - 원저작자의 이름을 반드시 표시</p>
+                    </div>
+                    <div class="card-hover bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200 text-center">
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-green-500 flex items-center justify-center shadow">
+                            <i class="fas fa-ban text-white"></i>
+                        </div>
+                        <h5 class="font-bold text-green-800 text-sm mb-1">비영리</h5>
+                        <p class="text-gray-600 text-xs leading-relaxed">NC - 상업적 이용 불가</p>
+                    </div>
+                    <div class="card-hover bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 border border-amber-200 text-center">
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-amber-500 flex items-center justify-center shadow">
+                            <i class="fas fa-equals text-white"></i>
+                        </div>
+                        <h5 class="font-bold text-amber-800 text-sm mb-1">동일 조건 변경 허락</h5>
+                        <p class="text-gray-600 text-xs leading-relaxed">SA - 동일한 라이선스로 배포</p>
+                    </div>
+                    <div class="card-hover bg-gradient-to-br from-rose-50 to-rose-100 rounded-xl p-4 border border-rose-200 text-center">
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-rose-500 flex items-center justify-center shadow">
+                            <i class="fas fa-lock text-white"></i>
+                        </div>
+                        <h5 class="font-bold text-rose-800 text-sm mb-1">변경 금지</h5>
+                        <p class="text-gray-600 text-xs leading-relaxed">ND - 원본 그대로만 이용 가능</p>
+                    </div>
+                </div>
+
+                <!-- Search Steps -->
+                <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-search text-primary-500"></i> 저작권 프리 이미지 검색 방법
+                </h4>
+                <div class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-5 border border-gray-200">
+                    <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+                        <div class="bg-white rounded-lg px-4 py-3 border border-blue-200 shadow-sm text-center min-w-[120px]">
+                            <div class="text-primary-600 text-xs font-bold mb-1">STEP 1</div>
+                            <div class="text-sm font-medium text-gray-800 flex items-center gap-1.5">
+                                <i class="fab fa-google text-blue-500"></i> Google 검색
+                            </div>
+                        </div>
+                        <i class="fas fa-arrow-right text-gray-300"></i>
+                        <div class="bg-white rounded-lg px-4 py-3 border border-blue-200 shadow-sm text-center min-w-[120px]">
+                            <div class="text-primary-600 text-xs font-bold mb-1">STEP 2</div>
+                            <div class="text-sm font-medium text-gray-800 flex items-center gap-1.5">
+                                <i class="fas fa-image text-green-500"></i> 이미지 탭
+                            </div>
+                        </div>
+                        <i class="fas fa-arrow-right text-gray-300"></i>
+                        <div class="bg-white rounded-lg px-4 py-3 border border-blue-200 shadow-sm text-center min-w-[120px]">
+                            <div class="text-primary-600 text-xs font-bold mb-1">STEP 3</div>
+                            <div class="text-sm font-medium text-gray-800 flex items-center gap-1.5">
+                                <i class="fas fa-sliders-h text-amber-500"></i> 도구 클릭
+                            </div>
+                        </div>
+                        <i class="fas fa-arrow-right text-gray-300"></i>
+                        <div class="bg-white rounded-lg px-4 py-3 border border-blue-200 shadow-sm text-center min-w-[120px]">
+                            <div class="text-primary-600 text-xs font-bold mb-1">STEP 4</div>
+                            <div class="text-sm font-medium text-gray-800 flex items-center gap-1.5">
+                                <i class="fas fa-key text-purple-500"></i> 사용권
+                            </div>
+                        </div>
+                        <i class="fas fa-arrow-right text-gray-300"></i>
+                        <div class="bg-white rounded-lg px-4 py-3 border border-primary-300 shadow-sm text-center min-w-[120px] bg-primary-50">
+                            <div class="text-primary-700 text-xs font-bold mb-1">STEP 5</div>
+                            <div class="text-sm font-bold text-primary-800 flex items-center gap-1.5">
+                                <i class="fab fa-creative-commons text-primary-600"></i> 크리에이티브 커먼즈 라이선스
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy Breach Case Card -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow">
+                        <i class="fas fa-exclamation-triangle text-white text-sm"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-900">개인 정보 침해 사례</h3>
+                </div>
+
+                <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-5 border border-red-100">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-lg">
+                            <i class="fas fa-user-shield text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-red-800 mb-2 text-base">SNS 플랫폼의 개인 정보 유출 사건</h4>
+                            <div class="space-y-3 text-sm text-gray-700 leading-relaxed">
+                                <p>
+                                    <strong class="text-red-700">F사</strong>가 2016년 미국 대선 당시 회원 <strong class="text-red-700">5,000만 명</strong>의 개인 정보 유출을 방조한 의혹이 제기되었습니다.
+                                </p>
+                                <p>
+                                    데이터 분석 기업 <strong class="text-red-700">C사</strong>가 성격 검사 앱을 배포하여
+                                    <strong class="text-red-700">27만 명</strong>의 친구 목록, 위치 정보 등을 수집하고
+                                    이를 <strong class="text-red-700">유권자 성향 분석</strong>에 활용하였습니다.
+                                </p>
+                            </div>
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                <span class="text-xs bg-red-100 text-red-700 rounded-full px-2.5 py-0.5 font-medium">개인 정보 유출</span>
+                                <span class="text-xs bg-orange-100 text-orange-700 rounded-full px-2.5 py-0.5 font-medium">데이터 무단 수집</span>
+                                <span class="text-xs bg-amber-100 text-amber-700 rounded-full px-2.5 py-0.5 font-medium">프라이버시 침해</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discussion Questions -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow">
+                        <i class="fas fa-comments text-white text-sm"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-900">토론 질문</h3>
+                </div>
+                <div class="space-y-4">
+                    <div class="discussion-card bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-5">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-white text-sm font-bold">1</span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-800 text-sm leading-relaxed">
+                                    개인 정보 침해 사례에서 가장 큰 문제점은 무엇이라고 생각하나요? 이러한 사건이 발생하지 않도록 하려면 개인과 기업이 각각 어떤 노력을 해야 할까요?
+                                </p>
+                                <div class="mt-3 bg-white/60 rounded-lg p-3 border border-blue-100">
+                                    <p class="text-xs text-gray-500"><i class="fas fa-pencil-alt mr-1"></i> 나의 생각을 정리해 봅시다</p>
+                                    <textarea class="w-full mt-2 p-2 border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white" rows="3" placeholder="여기에 의견을 작성하세요..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="discussion-card bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl p-5">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-accent-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-white text-sm font-bold">2</span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-800 text-sm leading-relaxed">
+                                    CCL 라이선스가 없었다면 디지털 콘텐츠의 공유와 활용은 어떤 모습이었을까요? CCL이 우리 사회에 미치는 긍정적인 영향에 대해 토론해 봅시다.
+                                </p>
+                                <div class="mt-3 bg-white/60 rounded-lg p-3 border border-teal-100">
+                                    <p class="text-xs text-gray-500"><i class="fas fa-pencil-alt mr-1"></i> 나의 생각을 정리해 봅시다</p>
+                                    <textarea class="w-full mt-2 p-2 border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-accent-300 bg-white" rows="3" placeholder="여기에 의견을 작성하세요..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== ACTIVITY 2: 디지털 윤리 규칙 수립해 보기 ===== -->
+        <section class="fade-in" id="activity-2">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-scale-balanced"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동 2. 디지털 윤리 규칙 수립해 보기</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">조사 / 협력 / 실습</p>
+                </div>
+            </div>
+
+            <!-- Activity Type Badges -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <span class="inline-flex items-center gap-1.5 bg-blue-100 text-blue-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-search"></i> 조사
+                </span>
+                <span class="inline-flex items-center gap-1.5 bg-purple-100 text-purple-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-users"></i> 협력
+                </span>
+                <span class="inline-flex items-center gap-1.5 bg-teal-100 text-teal-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-laptop-code"></i> 실습
+                </span>
+            </div>
+
+            <!-- Digital Ethics Checklist -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center shadow">
+                        <i class="fas fa-clipboard-check text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-gray-900">크리에이터 디지털 윤리 체크리스트</h3>
+                        <p class="text-sm text-gray-500 mt-0.5">디지털 콘텐츠를 만들기 전에 반드시 확인해 봅시다</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-primary-50 to-accent-50">
+                                <th class="border border-blue-200 px-3 py-3 text-primary-800 text-center w-12">번호</th>
+                                <th class="border border-blue-200 px-4 py-3 text-primary-800 text-left">점검 항목</th>
+                                <th class="border border-blue-200 px-3 py-3 text-primary-800 text-center w-20">예</th>
+                                <th class="border border-blue-200 px-3 py-3 text-primary-800 text-center w-20">아니요</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
+                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">1</td>
+                                <td class="border border-gray-200 px-4 py-3 text-gray-700">이미지, 글꼴, 음원 등 원저작자의 동의를 구했으며 출처를 표시하였는가?</td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check1" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
+                                    </label>
+                                </td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check1" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
+                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">2</td>
+                                <td class="border border-gray-200 px-4 py-3 text-gray-700">특정인을 비방하거나 명예를 훼손하는 내용을 포함하고 있지 않은가?</td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check2" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
+                                    </label>
+                                </td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check2" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
+                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">3</td>
+                                <td class="border border-gray-200 px-4 py-3 text-gray-700">주민등록번호, 전화번호 등 프라이버시를 침해하는 내용을 포함하고 있지 않은가?</td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check3" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
+                                    </label>
+                                </td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check3" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
+                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">4</td>
+                                <td class="border border-gray-200 px-4 py-3 text-gray-700">특정인의 얼굴이 담긴 사진이나 영상을 포함하고 있지 않은가?</td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check4" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
+                                    </label>
+                                </td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check4" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
+                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">5</td>
+                                <td class="border border-gray-200 px-4 py-3 text-gray-700">가짜 뉴스를 발표하거나 인용하고 있지 않은가?</td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check5" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
+                                    </label>
+                                </td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check5" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
+                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">6</td>
+                                <td class="border border-gray-200 px-4 py-3 text-gray-700">위험하거나 폭력적이거나 선정적인 내용을 포함하고 있지 않은가?</td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check6" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
+                                    </label>
+                                </td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check6" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
+                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">7</td>
+                                <td class="border border-gray-200 px-4 py-3 text-gray-700">콘텐츠를 조작하거나 허위로 가공하고 있지 않은가?</td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check7" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
+                                    </label>
+                                </td>
+                                <td class="border border-gray-200 px-3 py-3 text-center">
+                                    <label class="cursor-pointer flex items-center justify-center">
+                                        <input type="radio" name="check7" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
+                                    </label>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 bg-amber-50 rounded-xl p-4 border border-amber-200">
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-lightbulb text-amber-500 mt-0.5"></i>
+                        <p class="text-sm text-amber-800">
+                            <strong>TIP:</strong> 모든 항목에 '예'로 답할 수 있어야 윤리적인 디지털 콘텐츠를 만들 수 있습니다. '아니요'인 항목이 있다면 해당 내용을 수정한 후 다시 점검해 봅시다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Digital Environment Rules -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow">
+                        <i class="fas fa-scroll text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-gray-900">디지털 환경 규칙 만들기</h3>
+                        <p class="text-sm text-gray-500 mt-0.5">우리 모둠만의 디지털 윤리 규칙을 수립해 봅시다</p>
+                    </div>
+                </div>
+
+                <div class="space-y-0">
+                    <!-- Step 1 -->
+                    <div class="step-connector relative pl-14 pb-8">
+                        <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg z-10">
+                            <span class="text-white font-bold text-sm">1</span>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-100">
+                            <h4 class="font-bold text-primary-800 mb-2">디지털 환경 문제 조사하기</h4>
+                            <p class="text-sm text-gray-700 leading-relaxed">인터넷, SNS, 온라인 게임 등 디지털 환경에서 발생하는 윤리적 문제를 모둠별로 조사합니다.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="step-connector relative pl-14 pb-8">
+                        <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg z-10">
+                            <span class="text-white font-bold text-sm">2</span>
+                        </div>
+                        <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl p-5 border border-teal-100">
+                            <h4 class="font-bold text-teal-800 mb-2">문제 사례 공유 및 분류하기</h4>
+                            <p class="text-sm text-gray-700 leading-relaxed">조사한 문제 사례를 모둠원끼리 공유하고, 유형별(저작권, 프라이버시, 사이버 폭력 등)로 분류합니다.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="step-connector relative pl-14 pb-8">
+                        <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow-lg z-10">
+                            <span class="text-white font-bold text-sm">3</span>
+                        </div>
+                        <div class="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl p-5 border border-cyan-100">
+                            <h4 class="font-bold text-accent-800 mb-2">규칙 초안 작성하기</h4>
+                            <p class="text-sm text-gray-700 leading-relaxed">분류된 문제 유형별로 지켜야 할 규칙을 작성합니다. 구체적이고 실천 가능한 규칙을 만들어 봅시다.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="step-connector relative pl-14 pb-8">
+                        <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow-lg z-10">
+                            <span class="text-white font-bold text-sm">4</span>
+                        </div>
+                        <div class="bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl p-5 border border-violet-100">
+                            <h4 class="font-bold text-violet-800 mb-2">모둠 토론 및 규칙 확정하기</h4>
+                            <p class="text-sm text-gray-700 leading-relaxed">작성한 규칙 초안을 모둠원과 토론하여 최종 규칙을 확정합니다. 모든 모둠원이 동의하는 내용으로 정리합니다.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="relative pl-14 pb-2">
+                        <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-lg z-10">
+                            <span class="text-white font-bold text-sm">5</span>
+                        </div>
+                        <div class="bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl p-5 border border-primary-200">
+                            <h4 class="font-bold text-primary-800 mb-2">규칙 발표 및 실천 서약하기</h4>
+                            <p class="text-sm text-gray-700 leading-relaxed">확정된 규칙을 학급 전체에 발표하고, 모둠원 전체가 디지털 윤리 규칙을 실천할 것을 서약합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rule Writing Area -->
+                <div class="mt-6 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-5 border border-gray-200">
+                    <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-edit text-primary-500"></i> 우리 모둠의 디지털 윤리 규칙
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3">
+                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary-500 text-white text-xs font-bold flex-shrink-0 mt-0.5">1</span>
+                            <input type="text" class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white" placeholder="규칙 1을 작성하세요...">
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary-500 text-white text-xs font-bold flex-shrink-0 mt-0.5">2</span>
+                            <input type="text" class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white" placeholder="규칙 2를 작성하세요...">
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary-500 text-white text-xs font-bold flex-shrink-0 mt-0.5">3</span>
+                            <input type="text" class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white" placeholder="규칙 3을 작성하세요...">
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-accent-500 text-white text-xs font-bold flex-shrink-0 mt-0.5">4</span>
+                            <input type="text" class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-300 bg-white" placeholder="규칙 4를 작성하세요...">
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-accent-500 text-white text-xs font-bold flex-shrink-0 mt-0.5">5</span>
+                            <input type="text" class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-300 bg-white" placeholder="규칙 5를 작성하세요...">
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-xs text-gray-500">
+                        <i class="fas fa-info-circle"></i>
+                        <span>모둠원과 충분히 토론한 후 규칙을 작성합니다.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../03_디지털 윤리/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-arrow-left"></i> 이전 페이지
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i> 목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../05_프로젝트활동/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        다음 페이지 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">V. 디지털 문화 > 02 정보 보호와 보안 > 선택활동</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // Fade-in animation on scroll
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.fade-in').forEach(el => fadeInObserver.observe(el));
+
+        // Checklist radio visual feedback
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const row = this.closest('tr');
+                if (row) {
+                    row.style.transition = 'background-color 0.3s ease';
+                    if (this.value === 'yes') {
+                        row.style.backgroundColor = '#f0fdf4';
+                    } else {
+                        row.style.backgroundColor = '#fef2f2';
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

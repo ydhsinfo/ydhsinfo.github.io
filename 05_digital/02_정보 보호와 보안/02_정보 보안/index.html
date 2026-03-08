@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정보 보안 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#e7f5ff',
+                            100: '#d0ebff',
+                            200: '#a5d8ff',
+                            300: '#74c0fc',
+                            400: '#339af0',
+                            500: '#228be6',
+                            600: '#1c7ed6',
+                            700: '#1971c2',
+                            800: '#1864ab',
+                            900: '#145591',
+                        },
+                        accent: {
+                            50: '#e3fafc',
+                            100: '#c5f6fa',
+                            200: '#99e9f2',
+                            300: '#66d9e8',
+                            400: '#3bc9db',
+                            500: '#22b8cf',
+                            600: '#15aabf',
+                            700: '#1098ad',
+                            800: '#0c8599',
+                            900: '#0b7285',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #339af0 0%, #1c7ed6 50%, #1971c2 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #339af0, #1c7ed6, #339af0);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Accordion styles */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+        }
+        .accordion-content.open {
+            max-height: 1200px;
+        }
+
+        /* Tab styles */
+        .tab-btn {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-btn.active {
+            border-bottom-color: #1c7ed6;
+            color: #1c7ed6;
+            font-weight: 700;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Quiz styles */
+        .quiz-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .quiz-option:hover {
+            transform: translateX(4px);
+        }
+        .quiz-option.correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+        }
+        .quiz-option.wrong {
+            background-color: #fef2f2 !important;
+            border-color: #ef4444 !important;
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { background: #1c7ed6 !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+            a { text-decoration: underline; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #339af0 0%, #1c7ed6 50%, #1971c2 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">V. 디지털 문화</span>
+                <span class="breadcrumb-item text-white font-medium">02 정보 보호와 보안</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>V. 디지털 문화 &gt; 02 정보 보호와 보안</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        정보 보안
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        정보 보안의 필요성과 보안 기술, 실천 방법을 학습합니다
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-lock mr-1"></i> 정보 보안
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-shield-alt mr-1"></i> 방화벽
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-key mr-1"></i> 암호화
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-microchip mr-1"></i> 보안 기술
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon - Shield/Security -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Shield outline -->
+                        <path d="M110 25 L175 55 L175 115 C175 155 145 185 110 200 C75 185 45 155 45 115 L45 55 Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <!-- Inner shield -->
+                        <path d="M110 45 L160 68 L160 112 C160 145 136 170 110 182 C84 170 60 145 60 112 L60 68 Z" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+                        <!-- Lock icon in center -->
+                        <rect x="95" y="100" width="30" height="24" rx="4" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                        <path d="M101 100 L101 90 C101 83 105 78 110 78 C115 78 119 83 119 90 L119 100" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none"/>
+                        <circle cx="110" cy="112" r="3" fill="rgba(255,255,255,0.6)"/>
+                        <line x1="110" y1="115" x2="110" y2="119" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                        <!-- Checkmark -->
+                        <path d="M100 140 L108 148 L125 131" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <!-- Binary data floating -->
+                        <text x="30" y="45" fill="rgba(255,255,255,0.2)" font-size="9" font-family="monospace">01101</text>
+                        <text x="165" y="35" fill="rgba(255,255,255,0.2)" font-size="9" font-family="monospace">10010</text>
+                        <text x="20" y="170" fill="rgba(255,255,255,0.15)" font-size="8" font-family="monospace">11001</text>
+                        <text x="170" y="185" fill="rgba(255,255,255,0.15)" font-size="8" font-family="monospace">01110</text>
+                        <!-- Network nodes -->
+                        <circle cx="35" cy="90" r="4" fill="rgba(255,255,255,0.3)"/>
+                        <circle cx="185" cy="90" r="4" fill="rgba(255,255,255,0.3)"/>
+                        <circle cx="35" cy="140" r="3" fill="rgba(255,255,255,0.2)"/>
+                        <circle cx="185" cy="140" r="3" fill="rgba(255,255,255,0.2)"/>
+                        <line x1="39" y1="90" x2="45" y2="90" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="2 2"/>
+                        <line x1="175" y1="90" x2="181" y2="90" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="2 2"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>정보 보안의 필요성과 위협 유형을 이해할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>정보 보안 기술과 실천 방법을 설명할 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 정보 보안</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 방화벽</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 암호화</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 보안 기술</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 1: 정보 보안의 필요성                                            -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-necessity">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">정보 보안의 필요성</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Necessity of Information Security</p>
+                </div>
+            </div>
+
+            <!-- Main definition callout -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lock text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">정보 보안이란?</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            정보를 만들고 사용하는 과정에서 <strong class="text-primary-700">무단 유출, 파괴, 변조</strong> 등의 범죄가 일어나지 않도록 방지하는 <strong class="text-primary-700">모든 행위</strong>를 말합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 정보 보안의 3요소 -->
+            <div class="bg-white rounded-2xl shadow-md border border-primary-100 p-6 mb-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <i class="fas fa-triangle-exclamation text-primary-500"></i>
+                    정보 보안의 3요소
+                </h3>
+                <p class="text-gray-500 text-sm mb-6">정보 보안을 유지하기 위한 핵심 3가지 요소</p>
+
+                <div class="grid md:grid-cols-3 gap-5">
+                    <!-- 기밀성 -->
+                    <div class="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-5 border border-primary-200 text-center">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-user-lock text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold text-primary-800 text-lg mb-2">기밀성</h4>
+                        <p class="text-sm text-gray-700">
+                            <strong class="text-primary-700">허가된 사용자만</strong> 정보에 접근할 수 있도록 보장
+                        </p>
+                    </div>
+
+                    <!-- 무결성 -->
+                    <div class="bg-gradient-to-br from-accent-50 to-accent-100 rounded-xl p-5 border border-accent-200 text-center">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-check-double text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold text-accent-800 text-lg mb-2">무결성</h4>
+                        <p class="text-sm text-gray-700">
+                            <strong class="text-accent-700">허가된 사용자만</strong> 정보를 변경할 수 있도록 보장
+                        </p>
+                    </div>
+
+                    <!-- 가용성 -->
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-200 text-center">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-clock text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold text-blue-800 text-lg mb-2">가용성</h4>
+                        <p class="text-sm text-gray-700">
+                            <strong class="text-blue-700">허가된 사용자</strong>가 필요할 때 정보를 사용할 수 있도록 보장
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 위협 유형 4가지 -->
+            <h3 class="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
+                <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+                정보 보안 위협 유형
+            </h3>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+                <!-- 위조 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-file-circle-exclamation text-white text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">위조</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        실제로 존재하지 않는 거짓 정보를 만들어 내는 행위
+                    </p>
+                </div>
+
+                <!-- 변조 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-pen-to-square text-white text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">변조</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        기존의 정보를 허가 없이 수정하거나 바꾸는 행위
+                    </p>
+                </div>
+
+                <!-- 접근과 유출 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-door-open text-white text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">접근과 유출</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        허가 없이 정보에 접근하거나 외부로 유출하는 행위
+                    </p>
+                </div>
+
+                <!-- 훼손과 파괴 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-trash-can text-white text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">훼손과 파괴</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        정보를 의도적으로 손상시키거나 파괴하는 행위
+                    </p>
+                </div>
+            </div>
+
+            <!-- 보안 침해 사례 -->
+            <h3 class="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
+                <i class="fas fa-bug text-red-500"></i>
+                보안 침해 사례
+            </h3>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- 사물 인터넷에서의 해킹 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-primary-500 to-primary-600 p-4 text-white">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                                <i class="fas fa-wifi text-lg"></i>
+                            </div>
+                            <h4 class="font-bold text-lg">사물 인터넷에서의 해킹</h4>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-gray-700 text-sm leading-relaxed">
+                            월패드, IP 카메라 등 사물 인터넷 기기가 해킹되어 <strong class="text-primary-700">집 내부 영상이 외부로 유출</strong>되는 사례가 발생하고 있습니다. 네트워크에 연결된 스마트 가전 기기가 보안에 취약한 경우 해커의 공격 대상이 됩니다.
+                        </p>
+                        <div class="mt-3 flex items-center gap-2 text-xs text-primary-600 bg-primary-50 rounded-lg px-3 py-2">
+                            <i class="fas fa-info-circle"></i>
+                            <span>IoT 기기의 초기 비밀번호를 반드시 변경하세요</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 피싱 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-accent-500 to-accent-600 p-4 text-white">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                                <i class="fas fa-fish text-lg"></i>
+                            </div>
+                            <h4 class="font-bold text-lg">피싱</h4>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-gray-700 text-sm leading-relaxed">
+                            이메일, 메신저 등을 통해 <strong class="text-accent-700">신뢰할 수 있는 기관으로 위장</strong>하여 개인정보나 금융 정보를 탈취하는 수법입니다. 가짜 웹사이트로 유도하여 로그인 정보를 빼내기도 합니다.
+                        </p>
+                        <div class="mt-3 flex items-center gap-2 text-xs text-accent-600 bg-accent-50 rounded-lg px-3 py-2">
+                            <i class="fas fa-info-circle"></i>
+                            <span>출처가 불분명한 링크는 절대 클릭하지 마세요</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 스미싱 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4 text-white">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                                <i class="fas fa-sms text-lg"></i>
+                            </div>
+                            <h4 class="font-bold text-lg">스미싱</h4>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-gray-700 text-sm leading-relaxed">
+                            <strong class="text-blue-700">문자 메시지(SMS)</strong>를 이용하여 택배, 청첩장, 공공기관 등을 가장한 메시지를 보내 개인정보를 탈취하거나 소액결제를 유도하는 사기 수법입니다.
+                        </p>
+                        <div class="mt-3 flex items-center gap-2 text-xs text-blue-600 bg-blue-50 rounded-lg px-3 py-2">
+                            <i class="fas fa-info-circle"></i>
+                            <span>의심스러운 문자 메시지의 링크를 열지 마세요</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider max-w-md mx-auto opacity-40"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 2: 정보 보안 기술                                                -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-tech">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">정보 보안 기술</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Information Security Technologies</p>
+                </div>
+            </div>
+
+            <p class="text-gray-600 mb-8 leading-relaxed">
+                정보 보안을 위해 다양한 기술이 활용됩니다. 각 기술의 역할과 특징을 알아봅시다.
+            </p>
+
+            <!-- 5 security tech cards with accordions -->
+            <div class="space-y-4">
+
+                <!-- 1. 방화벽 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion('acc-firewall')" class="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-md">
+                                <i class="fas fa-shield-alt text-white text-xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <h4 class="font-bold text-gray-900 text-lg">방화벽</h4>
+                                <p class="text-gray-500 text-sm">Firewall</p>
+                            </div>
+                        </div>
+                        <i id="acc-firewall-icon" class="fas fa-chevron-down text-primary-400 transition-transform duration-300"></i>
+                    </button>
+                    <div id="acc-firewall" class="accordion-content">
+                        <div class="px-5 pb-5 border-t border-gray-100 pt-4">
+                            <div class="bg-primary-50 rounded-xl p-4 mb-4">
+                                <p class="text-gray-700 leading-relaxed">
+                                    <strong class="text-primary-700">허가받지 않은 사람의 불법적인 침입을 막고</strong>, 정상적인 접근만을 허용하는 네트워크 보안 기술입니다. 외부 네트워크와 내부 네트워크 사이에 위치하여 정보의 출입을 통제합니다.
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm">
+                                <span class="bg-primary-100 text-primary-700 rounded-full px-3 py-1 font-medium">
+                                    <i class="fas fa-check mr-1"></i> 불법 침입 차단
+                                </span>
+                                <span class="bg-primary-100 text-primary-700 rounded-full px-3 py-1 font-medium">
+                                    <i class="fas fa-check mr-1"></i> 정상 접근 허용
+                                </span>
+                                <span class="bg-primary-100 text-primary-700 rounded-full px-3 py-1 font-medium">
+                                    <i class="fas fa-check mr-1"></i> 네트워크 보호
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 사용자 인증 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion('acc-auth')" class="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow-md">
+                                <i class="fas fa-fingerprint text-white text-xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <h4 class="font-bold text-gray-900 text-lg">사용자 인증</h4>
+                                <p class="text-gray-500 text-sm">User Authentication</p>
+                            </div>
+                        </div>
+                        <i id="acc-auth-icon" class="fas fa-chevron-down text-accent-400 transition-transform duration-300"></i>
+                    </button>
+                    <div id="acc-auth" class="accordion-content">
+                        <div class="px-5 pb-5 border-t border-gray-100 pt-4">
+                            <p class="text-gray-700 leading-relaxed mb-4">
+                                사용자의 신원을 확인하여 허가된 사용자만 시스템에 접근할 수 있도록 하는 기술입니다.
+                            </p>
+                            <div class="grid sm:grid-cols-3 gap-4">
+                                <div class="bg-accent-50 rounded-xl p-4 border border-accent-100">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i class="fas fa-brain text-accent-500"></i>
+                                        <h5 class="font-bold text-accent-700 text-sm">지식 기반</h5>
+                                    </div>
+                                    <p class="text-xs text-gray-600">패스워드, PIN 번호 등 사용자가 알고 있는 정보</p>
+                                </div>
+                                <div class="bg-primary-50 rounded-xl p-4 border border-primary-100">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i class="fas fa-id-card text-primary-500"></i>
+                                        <h5 class="font-bold text-primary-700 text-sm">소유 기반</h5>
+                                    </div>
+                                    <p class="text-xs text-gray-600">인증서, OTP, 보안 토큰 등 사용자가 소유한 것</p>
+                                </div>
+                                <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i class="fas fa-fingerprint text-blue-500"></i>
+                                        <h5 class="font-bold text-blue-700 text-sm">생체 기반</h5>
+                                    </div>
+                                    <p class="text-xs text-gray-600">지문, 홍채, 얼굴 인식 등 사용자의 고유 생체 정보</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 침입 탐지/방지 시스템 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion('acc-ids')" class="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md">
+                                <i class="fas fa-eye text-white text-xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <h4 class="font-bold text-gray-900 text-lg">침입 탐지/방지 시스템</h4>
+                                <p class="text-gray-500 text-sm">IDS / IPS</p>
+                            </div>
+                        </div>
+                        <i id="acc-ids-icon" class="fas fa-chevron-down text-blue-400 transition-transform duration-300"></i>
+                    </button>
+                    <div id="acc-ids" class="accordion-content">
+                        <div class="px-5 pb-5 border-t border-gray-100 pt-4">
+                            <p class="text-gray-700 leading-relaxed mb-4">
+                                네트워크 트래픽을 감시하여 비정상적인 활동을 탐지하고 대응하는 시스템입니다.
+                            </p>
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                                    <h5 class="font-bold text-blue-700 mb-2 flex items-center gap-2">
+                                        <i class="fas fa-search"></i> IDS (침입 탐지 시스템)
+                                    </h5>
+                                    <p class="text-sm text-gray-600">
+                                        네트워크 침입을 <strong>탐지</strong>하여 관리자에게 알림을 보내는 시스템
+                                    </p>
+                                </div>
+                                <div class="bg-primary-50 rounded-xl p-4 border border-primary-200">
+                                    <h5 class="font-bold text-primary-700 mb-2 flex items-center gap-2">
+                                        <i class="fas fa-shield-alt"></i> IPS (침입 방지 시스템)
+                                    </h5>
+                                    <p class="text-sm text-gray-600">
+                                        침입을 <strong>탐지</strong>하고 즉각적으로 <strong>방어</strong>까지 수행하는 시스템
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. 바이러스 백신 프로그램 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion('acc-antivirus')" class="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-md">
+                                <i class="fas fa-virus-slash text-white text-xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <h4 class="font-bold text-gray-900 text-lg">바이러스 백신 프로그램</h4>
+                                <p class="text-gray-500 text-sm">Antivirus Software</p>
+                            </div>
+                        </div>
+                        <i id="acc-antivirus-icon" class="fas fa-chevron-down text-green-400 transition-transform duration-300"></i>
+                    </button>
+                    <div id="acc-antivirus" class="accordion-content">
+                        <div class="px-5 pb-5 border-t border-gray-100 pt-4">
+                            <p class="text-gray-700 leading-relaxed mb-4">
+                                컴퓨터 바이러스를 탐지하고 제거하는 프로그램입니다.
+                            </p>
+                            <div class="bg-green-50 rounded-xl p-4 border border-green-100">
+                                <div class="flex flex-col sm:flex-row items-center gap-4">
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <div class="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center">
+                                            <span class="text-green-700 font-bold text-xs">1</span>
+                                        </div>
+                                        <span class="text-gray-700">바이러스 파일의<br class="sm:hidden"> <strong>특징 추출</strong></span>
+                                    </div>
+                                    <i class="fas fa-arrow-right text-green-300 hidden sm:block"></i>
+                                    <i class="fas fa-arrow-down text-green-300 sm:hidden"></i>
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <div class="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center">
+                                            <span class="text-green-700 font-bold text-xs">2</span>
+                                        </div>
+                                        <span class="text-gray-700">기존 바이러스와<br class="sm:hidden"> <strong>패턴 비교</strong></span>
+                                    </div>
+                                    <i class="fas fa-arrow-right text-green-300 hidden sm:block"></i>
+                                    <i class="fas fa-arrow-down text-green-300 sm:hidden"></i>
+                                    <div class="flex items-center gap-2 text-sm">
+                                        <div class="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center">
+                                            <span class="text-green-700 font-bold text-xs">3</span>
+                                        </div>
+                                        <span class="text-gray-700">바이러스<br class="sm:hidden"> <strong>탐지 및 삭제</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. 블록체인 보안 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion('acc-blockchain')" class="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-md">
+                                <i class="fas fa-link text-white text-xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <h4 class="font-bold text-gray-900 text-lg">블록체인 보안</h4>
+                                <p class="text-gray-500 text-sm">Blockchain Security</p>
+                            </div>
+                        </div>
+                        <i id="acc-blockchain-icon" class="fas fa-chevron-down text-indigo-400 transition-transform duration-300"></i>
+                    </button>
+                    <div id="acc-blockchain" class="accordion-content">
+                        <div class="px-5 pb-5 border-t border-gray-100 pt-4">
+                            <p class="text-gray-700 leading-relaxed mb-4">
+                                데이터를 분산 저장하고 디지털 서명으로 무결성을 보장하는 보안 기술입니다.
+                            </p>
+                            <div class="grid sm:grid-cols-3 gap-3">
+                                <div class="bg-indigo-50 rounded-xl p-3 text-center border border-indigo-100">
+                                    <i class="fas fa-database text-indigo-500 text-xl mb-2"></i>
+                                    <p class="text-xs text-gray-700 font-medium">분산 데이터 저장</p>
+                                </div>
+                                <div class="bg-indigo-50 rounded-xl p-3 text-center border border-indigo-100">
+                                    <i class="fas fa-signature text-indigo-500 text-xl mb-2"></i>
+                                    <p class="text-xs text-gray-700 font-medium">디지털 서명</p>
+                                </div>
+                                <div class="bg-indigo-50 rounded-xl p-3 text-center border border-indigo-100">
+                                    <i class="fas fa-network-wired text-indigo-500 text-xl mb-2"></i>
+                                    <p class="text-xs text-gray-700 font-medium">P2P 네트워크</p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+                                여러 참여자가 동일한 데이터를 분산 보관하므로 <strong class="text-indigo-700">중앙 서버 없이도 데이터 위변조를 방지</strong>할 수 있습니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider max-w-md mx-auto opacity-40"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 3: 정보 보안 실천 방법                                           -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-practice">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">정보 보안 실천 방법</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Practical Information Security Methods</p>
+                </div>
+            </div>
+
+            <p class="text-gray-600 mb-8 leading-relaxed">
+                일상생활에서 정보 보안을 실천하기 위한 구체적인 방법을 알아봅시다.
+            </p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- 1. 바이러스 백신 설치 및 실행 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-400 to-primary-500 flex items-center justify-center text-white shadow-md">
+                            <i class="fas fa-virus-slash text-lg"></i>
+                        </div>
+                        <div class="bg-primary-100 text-primary-700 font-bold text-xs rounded-full px-2.5 py-0.5">01</div>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">바이러스 백신 설치 및 실행</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                        신뢰할 수 있는 바이러스 백신 프로그램을 설치하고 항상 실행 상태를 유지합니다.
+                    </p>
+                    <div class="space-y-1.5">
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-check-circle text-primary-400"></i>
+                            <span>최신 보안 패치 적용</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-check-circle text-primary-400"></i>
+                            <span>정기적인 업데이트 수행</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 컴퓨팅 시스템 개인 암호 설정 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-400 to-accent-500 flex items-center justify-center text-white shadow-md">
+                            <i class="fas fa-key text-lg"></i>
+                        </div>
+                        <div class="bg-accent-100 text-accent-700 font-bold text-xs rounded-full px-2.5 py-0.5">02</div>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">컴퓨팅 시스템 개인 암호 설정</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                        컴퓨터, 스마트폰 등 기기에 강력한 개인 암호를 설정합니다.
+                    </p>
+                    <div class="space-y-1.5">
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-check-circle text-accent-400"></i>
+                            <span>비밀번호 설정</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-check-circle text-accent-400"></i>
+                            <span>얼굴 인식, 지문 인식</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-check-circle text-accent-400"></i>
+                            <span>PIN 번호 활용</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 클라우드 접근 제어 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center text-white shadow-md">
+                            <i class="fas fa-cloud-arrow-up text-lg"></i>
+                        </div>
+                        <div class="bg-blue-100 text-blue-700 font-bold text-xs rounded-full px-2.5 py-0.5">03</div>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">클라우드 접근 제어</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                        클라우드 서비스 사용 시 접근 제어를 철저히 설정합니다.
+                    </p>
+                    <div class="space-y-1.5">
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-check-circle text-blue-400"></i>
+                            <span>2단계 인증 활성화</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-check-circle text-blue-400"></i>
+                            <span>접근 권한 설정</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. 애플리케이션 관리 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-500 flex items-center justify-center text-white shadow-md">
+                            <i class="fas fa-mobile-screen-button text-lg"></i>
+                        </div>
+                        <div class="bg-indigo-100 text-indigo-700 font-bold text-xs rounded-full px-2.5 py-0.5">04</div>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">애플리케이션 관리</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                        안전한 애플리케이션 사용 습관을 유지합니다.
+                    </p>
+                    <div class="space-y-1.5">
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-check-circle text-indigo-400"></i>
+                            <span>출처 불명 앱 사용 금지</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-check-circle text-indigo-400"></i>
+                            <span>앱 권한 확인 후 허용</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. 웹 브라우저 관리 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-teal-500 flex items-center justify-center text-white shadow-md">
+                            <i class="fas fa-globe text-lg"></i>
+                        </div>
+                        <div class="bg-teal-100 text-teal-700 font-bold text-xs rounded-full px-2.5 py-0.5">05</div>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">웹 브라우저 관리</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                        웹 브라우저를 안전하게 사용하여 정보를 보호합니다.
+                    </p>
+                    <div class="space-y-1.5">
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-check-circle text-teal-400"></i>
+                            <span>최신 버전 유지</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <i class="fas fa-check-circle text-teal-400"></i>
+                            <span>https:// 확인 후 접속</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider max-w-md mx-auto opacity-40"></div>
+
+        <!-- ===================================================================== -->
+        <!-- QUIZ SECTION                                                           -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-quiz">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-circle-question"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">확인 문제</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Check Your Understanding</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-8" id="quiz1-container">
+                <div class="flex items-start gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span class="text-primary-700 font-bold text-sm">Q</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">다음에서 설명하는 보안 기술은?</h3>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <p class="text-gray-700 leading-relaxed italic">
+                                "허가받지 않은 사람의 불법적인 침입을 막고, 정상적인 접근만을 허용하는 네트워크 보안 기술이다."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3 ml-11">
+                    <div class="quiz-option flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50/50"
+                         onclick="checkQuiz('quiz1', this, true)">
+                        <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600">1</span>
+                        <span class="font-medium text-gray-700">방화벽</span>
+                    </div>
+                    <div class="quiz-option flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50/50"
+                         onclick="checkQuiz('quiz1', this, false)">
+                        <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600">2</span>
+                        <span class="font-medium text-gray-700">블록체인</span>
+                    </div>
+                    <div class="quiz-option flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50/50"
+                         onclick="checkQuiz('quiz1', this, false)">
+                        <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600">3</span>
+                        <span class="font-medium text-gray-700">바이러스 백신</span>
+                    </div>
+                    <div class="quiz-option flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50/50"
+                         onclick="checkQuiz('quiz1', this, false)">
+                        <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600">4</span>
+                        <span class="font-medium text-gray-700">침입 탐지 시스템</span>
+                    </div>
+                </div>
+
+                <div id="quiz1-result" class="hidden ml-11 mt-4"></div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Navigation Buttons -->
+            <div class="flex items-center justify-between mb-10 gap-4 flex-wrap">
+                <!-- 이전 페이지 -->
+                <div class="flex-1">
+                    <a href="../01_정보 보호/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </a>
+                </div>
+
+                <!-- 목차 -->
+                <div class="flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-list"></i>
+                        목차
+                    </a>
+                </div>
+
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex justify-end">
+                    <a href="../03_디지털 윤리/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    V. 디지털 문화 &gt; 02 정보 보호와 보안 &gt; 정보 보안
+                </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // ============================
+        // Accordion Toggle
+        // ============================
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(id + '-icon');
+
+            // Close all other accordions in the same section
+            const parent = content.closest('section');
+            if (parent) {
+                parent.querySelectorAll('.accordion-content').forEach(ac => {
+                    if (ac.id !== id && ac.classList.contains('open')) {
+                        ac.classList.remove('open');
+                        const otherIcon = document.getElementById(ac.id + '-icon');
+                        if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
+                    }
+                });
+            }
+
+            content.classList.toggle('open');
+            if (icon) {
+                icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        }
+
+        // ============================
+        // Quiz System
+        // ============================
+        const quizAnswered = {};
+
+        function checkQuiz(quizId, element, isCorrect) {
+            if (quizAnswered[quizId]) return;
+            quizAnswered[quizId] = true;
+
+            const container = document.getElementById(quizId + '-container');
+            const resultDiv = document.getElementById(quizId + '-result');
+            const options = container.querySelectorAll('.quiz-option');
+
+            // Disable all options
+            options.forEach(opt => {
+                opt.style.cursor = 'default';
+                opt.style.opacity = '0.7';
+            });
+
+            // Highlight selected
+            element.style.opacity = '1';
+
+            if (isCorrect) {
+                element.classList.add('correct');
+                resultDiv.className = 'ml-11 mt-4 p-4 rounded-xl bg-green-50 border border-green-200';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500 text-lg"></i><span class="font-bold text-green-700">정답입니다!</span></div>';
+                resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2"><strong>방화벽(Firewall)</strong>은 허가받지 않은 사람의 불법적인 침입을 막고, 정상적인 접근만을 허용하는 네트워크 보안 기술입니다. 외부 네트워크와 내부 네트워크 사이에서 정보의 출입을 통제합니다.</p>';
+            } else {
+                element.classList.add('wrong');
+                resultDiv.className = 'ml-11 mt-4 p-4 rounded-xl bg-red-50 border border-red-200';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-times-circle text-red-500 text-lg"></i><span class="font-bold text-red-700">오답입니다.</span></div>';
+                resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">정답은 <strong>방화벽(Firewall)</strong>입니다. 방화벽은 허가받지 않은 사람의 불법적인 침입을 막고, 정상적인 접근만을 허용하는 네트워크 보안 기술입니다.</p>';
+
+                // Highlight correct answer
+                options.forEach(opt => {
+                    if (opt.getAttribute('onclick').includes('true')) {
+                        opt.classList.add('correct');
+                        opt.style.opacity = '1';
+                    }
+                });
+            }
+
+            resultDiv.classList.remove('hidden');
+        }
+
+        // ============================
+        // Fade-in animation on scroll
+        // ============================
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+    </script>
+
+</body>
+</html>

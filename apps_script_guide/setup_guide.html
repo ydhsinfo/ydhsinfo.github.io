@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>교사용 셋업 가이드 - 구글 시트 연동</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            position: relative;
+            white-space: pre;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: #94a3b8;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { background: rgba(255,255,255,0.25); color: #fff; }
+        .copy-btn.copied { background: #22c55e; color: #fff; }
+        .step-number {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: white; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1.1rem; flex-shrink: 0;
+        }
+        .step-number.green {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+        }
+        .tab-btn { transition: all 0.2s; }
+        .tab-btn.active {
+            background: white;
+            color: #7c3aed;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="bg-gradient-to-r from-violet-700 to-purple-800 text-white py-12 px-6">
+        <div class="max-w-3xl mx-auto">
+            <div class="flex items-center gap-2 text-violet-200 text-sm mb-4">
+                <a href="../index.html" class="hover:text-white transition-colors"><i class="fas fa-home"></i> 홈</a>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span>교사용 가이드</span>
+            </div>
+            <h1 class="text-3xl font-extrabold mb-3"><i class="fas fa-cog mr-2"></i>구글 시트 연동 가이드</h1>
+            <p class="text-violet-200">학생 활동 데이터를 구글 시트에 자동으로 수집하는 방법을 안내합니다.</p>
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-6 py-10 space-y-8">
+
+        <!-- How it works -->
+        <div class="bg-violet-50 border border-violet-200 rounded-xl p-6">
+            <h3 class="font-bold text-violet-800 mb-3"><i class="fas fa-info-circle mr-1"></i> 작동 원리</h3>
+            <div class="flex flex-col md:flex-row items-center gap-3 text-sm text-violet-700">
+                <div class="bg-white rounded-lg px-4 py-3 border border-violet-200 text-center min-w-[120px]">
+                    <i class="fas fa-user-graduate text-xl mb-1"></i><br>
+                    <span class="font-medium">학생</span><br>
+                    <span class="text-xs text-violet-500">시트 URL 입력 + 제출</span>
+                </div>
+                <i class="fas fa-arrow-right text-violet-400 hidden md:block text-lg"></i>
+                <i class="fas fa-arrow-down text-violet-400 md:hidden text-lg"></i>
+                <div class="bg-white rounded-lg px-4 py-3 border border-violet-200 text-center min-w-[120px]">
+                    <i class="fab fa-google text-xl mb-1"></i><br>
+                    <span class="font-medium">프록시 스크립트</span><br>
+                    <span class="text-xs text-violet-500">데이터 중계 (1회 설정)</span>
+                </div>
+                <i class="fas fa-arrow-right text-violet-400 hidden md:block text-lg"></i>
+                <i class="fas fa-arrow-down text-violet-400 md:hidden text-lg"></i>
+                <div class="bg-white rounded-lg px-4 py-3 border border-violet-200 text-center min-w-[120px]">
+                    <i class="fas fa-table text-xl mb-1"></i><br>
+                    <span class="font-medium">교사 구글 시트</span><br>
+                    <span class="text-xs text-violet-500">각 교사별 개별 시트</span>
+                </div>
+            </div>
+            <div class="mt-4 bg-green-50 border border-green-200 rounded-lg p-3">
+                <p class="text-sm text-green-700"><i class="fas fa-check-circle mr-1"></i> <strong>핵심:</strong> 사이트 관리자가 프록시 스크립트를 1회 배포하면, 다른 교사들은 <strong>구글 시트만 만들어서 학생에게 링크를 공유</strong>하면 됩니다.</p>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="bg-violet-100 rounded-xl p-1.5 flex gap-2">
+            <button class="tab-btn active flex-1 py-3 rounded-lg text-sm font-semibold text-center" onclick="switchTab('teacher')">
+                <i class="fas fa-chalkboard-teacher mr-1"></i> 일반 교사용
+            </button>
+            <button class="tab-btn flex-1 py-3 rounded-lg text-sm font-semibold text-center text-violet-600" onclick="switchTab('admin')">
+                <i class="fas fa-shield-halved mr-1"></i> 사이트 관리자용
+            </button>
+        </div>
+
+        <!-- ===================== -->
+        <!-- TEACHER TAB -->
+        <!-- ===================== -->
+        <div id="tab-teacher" class="space-y-8">
+            <!-- Teacher intro -->
+            <div class="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+                <div class="text-4xl mb-3">🎉</div>
+                <h3 class="text-xl font-bold text-green-800 mb-2">코딩 없이 3분 만에 설정!</h3>
+                <p class="text-sm text-green-700">구글 시트를 만들고 → 공유 설정하고 → 학생에게 링크를 알려주면 끝!</p>
+            </div>
+
+            <!-- Teacher Step 1 -->
+            <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="step-number green">1</div>
+                    <div>
+                        <h2 class="text-xl font-bold">구글 시트 만들기</h2>
+                        <p class="text-gray-500 text-sm mt-1">학생 데이터를 받을 스프레드시트를 생성합니다</p>
+                    </div>
+                </div>
+                <ol class="space-y-3 text-sm text-gray-700 ml-14">
+                    <li><strong>1.</strong> <a href="https://sheets.google.com" target="_blank" class="text-violet-600 underline font-medium">Google Sheets <i class="fas fa-external-link-alt text-xs"></i></a>에 접속합니다.</li>
+                    <li><strong>2.</strong> <strong>+ 새 스프레드시트</strong>를 클릭합니다.</li>
+                    <li><strong>3.</strong> 시트 이름을 <code class="bg-gray-100 px-2 py-0.5 rounded text-violet-700">"1학년 정보 응답"</code> 등으로 변경합니다.</li>
+                </ol>
+                <div class="mt-4 ml-14 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p class="font-semibold text-blue-800 text-sm mb-2"><i class="fas fa-magic mr-1"></i> 헤더 자동 생성!</p>
+                    <p class="text-blue-700 text-xs leading-relaxed">헤더(제출시간, 학년, 반 등)를 직접 입력할 필요가 없습니다.<br>학생이 처음 제출하면 <strong>페이지별로 시트 탭이 자동 생성</strong>되고 헤더도 자동으로 입력됩니다.</p>
+                    <div class="mt-3 space-y-1.5">
+                        <div class="flex items-center gap-2 text-xs text-blue-600">
+                            <span class="bg-blue-200 text-blue-800 px-2 py-0.5 rounded font-semibold">탭 1</span>
+                            <span>네트워크 선택활동 → 미러링, 무선전송, 클라우드 데이터</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-blue-600">
+                            <span class="bg-blue-200 text-blue-800 px-2 py-0.5 rounded font-semibold">탭 2</span>
+                            <span>IoT 선택활동 → 코딩 실습 코드, 자기평가</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-blue-600">
+                            <span class="bg-blue-200 text-blue-800 px-2 py-0.5 rounded font-semibold">탭 3</span>
+                            <span>대단원 마무리 → 문제 1~6 답안, 자기평가</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Teacher Step 2 -->
+            <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="step-number green">2</div>
+                    <div>
+                        <h2 class="text-xl font-bold">공유 설정하기</h2>
+                        <p class="text-gray-500 text-sm mt-1">학생들의 데이터가 시트에 기록될 수 있도록 편집 권한을 설정합니다</p>
+                    </div>
+                </div>
+                <ol class="space-y-3 text-sm text-gray-700 ml-14">
+                    <li><strong>1.</strong> 시트 오른쪽 상단의 <strong class="text-green-600"><i class="fas fa-share-nodes"></i> 공유</strong> 버튼을 클릭합니다.</li>
+                    <li><strong>2.</strong> "일반 액세스" 항목에서 <strong>"링크가 있는 모든 사용자"</strong>로 변경합니다.</li>
+                    <li><strong>3.</strong> 역할을 <strong>"편집자"</strong>로 설정합니다.</li>
+                    <li><strong>4.</strong> <strong>"링크 복사"</strong>를 클릭합니다.</li>
+                </ol>
+                <div class="mt-4 ml-14 bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-700">
+                    <i class="fas fa-exclamation-triangle mr-1"></i> <strong>중요:</strong> 반드시 "편집자" 권한이어야 합니다. "뷰어"로 설정하면 학생 데이터가 기록되지 않습니다.
+                </div>
+            </section>
+
+            <!-- Teacher Step 3 -->
+            <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="step-number green">3</div>
+                    <div>
+                        <h2 class="text-xl font-bold">학생에게 링크 공유</h2>
+                        <p class="text-gray-500 text-sm mt-1">복사한 구글 시트 링크를 학생들에게 안내합니다</p>
+                    </div>
+                </div>
+                <div class="ml-14 space-y-3 text-sm text-gray-700">
+                    <p>복사한 구글 시트 URL을 학생들에게 전달합니다. 전달 방법은 자유입니다:</p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+                        <div class="bg-gray-50 rounded-lg p-3 text-center border">
+                            <i class="fas fa-chalkboard text-gray-400 text-lg mb-1"></i>
+                            <p class="text-xs font-medium">칠판에 게시</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3 text-center border">
+                            <i class="fas fa-comment-dots text-gray-400 text-lg mb-1"></i>
+                            <p class="text-xs font-medium">학급 채팅방</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3 text-center border">
+                            <i class="fas fa-qrcode text-gray-400 text-lg mb-1"></i>
+                            <p class="text-xs font-medium">QR 코드</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3 text-center border">
+                            <i class="fas fa-desktop text-gray-400 text-lg mb-1"></i>
+                            <p class="text-xs font-medium">e학습터</p>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                        <p class="font-semibold text-blue-800 text-sm mb-2"><i class="fas fa-user-graduate mr-1"></i> 학생이 할 일:</p>
+                        <ol class="space-y-1 text-blue-700 text-xs">
+                            <li>1. 선택활동 웹페이지를 열고</li>
+                            <li>2. "구글 시트 URL" 칸에 선생님이 공유한 링크를 붙여넣고</li>
+                            <li>3. 학년, 반, 번호, 이름을 입력하고</li>
+                            <li>4. 활동을 작성한 후 <strong>"제출하기"</strong> 버튼 클릭!</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Teacher Done -->
+            <div class="bg-green-50 border-2 border-green-300 rounded-xl p-6 text-center">
+                <i class="fas fa-circle-check text-4xl text-green-500 mb-3"></i>
+                <h3 class="text-lg font-bold text-green-800 mb-2">끝! 이게 전부입니다 🎉</h3>
+                <p class="text-sm text-green-700">학생이 제출하면 선생님의 구글 시트에 자동으로 데이터가 쌓입니다.<br>시트를 열어서 실시간으로 확인하세요!</p>
+            </div>
+        </div>
+
+        <!-- ===================== -->
+        <!-- ADMIN TAB -->
+        <!-- ===================== -->
+        <div id="tab-admin" class="space-y-8 hidden">
+            <!-- Admin intro -->
+            <div class="bg-violet-50 border border-violet-200 rounded-xl p-6">
+                <p class="text-sm text-violet-700"><i class="fas fa-shield-halved mr-1"></i> <strong>사이트 관리자(개발자)</strong>가 프록시 Apps Script를 <strong>1회 배포</strong>하면, 이 사이트를 사용하는 모든 교사가 코딩 없이 구글 시트 연동을 사용할 수 있습니다.</p>
+                <div class="mt-3 flex items-center gap-3 bg-white rounded-lg px-4 py-3 text-sm border border-violet-200">
+                    <i class="fas fa-clock text-violet-400"></i>
+                    <span>예상 소요 시간: 약 10분 (1회)</span>
+                </div>
+            </div>
+
+            <!-- Admin Step 1 -->
+            <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="step-number">1</div>
+                    <div>
+                        <h2 class="text-xl font-bold">Apps Script 프로젝트 생성</h2>
+                        <p class="text-gray-500 text-sm mt-1">프록시 역할을 할 스크립트를 만듭니다</p>
+                    </div>
+                </div>
+                <ol class="space-y-3 text-sm text-gray-700 ml-14">
+                    <li><strong>1.</strong> <a href="https://script.google.com" target="_blank" class="text-violet-600 underline font-medium">Google Apps Script <i class="fas fa-external-link-alt text-xs"></i></a>에 접속합니다.</li>
+                    <li><strong>2.</strong> <strong>+ 새 프로젝트</strong>를 클릭합니다.</li>
+                    <li><strong>3.</strong> 기존 코드를 모두 지우고, 아래 코드를 복사하여 붙여넣습니다:</li>
+                </ol>
+                <div class="mt-4 ml-14">
+                    <div class="code-block" id="appsScriptCode">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy mr-1"></i>복사</button>
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var sheetUrl = data.sheetUrl;
+
+    // 구글 시트 URL에서 ID 추출
+    var match = sheetUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+    if (!match) {
+      return error("올바른 구글 시트 URL이 아닙니다.");
+    }
+
+    var ss = SpreadsheetApp.openById(match[1]);
+    var pageName = data.page || "제출";
+
+    // 페이지 이름으로 시트 탭 찾기 (없으면 자동 생성)
+    var sheet = ss.getSheetByName(pageName);
+    if (!sheet) {
+      sheet = ss.insertSheet(pageName);
+      var headers = getHeaders(pageName);
+      sheet.getRange(1, 1, 1, headers.length)
+        .setValues([headers]);
+      sheet.getRange(1, 1, 1, headers.length)
+        .setFontWeight("bold");
+      sheet.setFrozenRows(1);
+    }
+
+    // 페이지별 데이터 행 생성 후 추가
+    var row = buildRow(pageName, data);
+    sheet.appendRow(row);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ result: "success" }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        result: "error", message: err.message
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// ====== 페이지별 헤더 정의 ======
+function getHeaders(page) {
+  var common = ["제출시간","학년","반","번호","이름"];
+
+  if (page === "네트워크 선택활동") {
+    return common.concat([
+      "활동1-1기기","활동1-1방법","활동1-1모드",
+      "활동1-2기기","활동1-2방법","활동1-2모드",
+      "활동2-1방법","활동2-1장점","활동2-1단점",
+      "활동2-2방법","활동2-2장점","활동2-2단점",
+      "활동2-3방법","활동2-3장점","활동2-3단점",
+      "활동3-1서비스","활동3-1방법","활동3-1파일",
+      "활동3-2서비스","활동3-2방법","활동3-2파일",
+      "자기평가"
+    ]);
+  }
+
+  if (page === "IoT 선택활동") {
+    return common.concat([
+      "가-인라인코드","가-전체코드",
+      "나-인라인코드","나-전체코드",
+      "자기평가1","자기평가2"
+    ]);
+  }
+
+  if (page === "대단원 마무리") {
+    return common.concat([
+      "문제1","문제2","문제3(주관식)",
+      "문제4","문제5","문제6(서술형)",
+      "자기평가1","자기평가2"
+    ]);
+  }
+
+  // 기본: 모든 데이터를 JSON으로 저장
+  return common.concat(["데이터"]);
+}
+
+// ====== 페이지별 행 데이터 생성 ======
+function buildRow(page, data) {
+  var base = [
+    new Date(),
+    data.grade, data["class"], data.number, data.name
+  ];
+
+  if (page === "네트워크 선택활동") {
+    return base.concat([
+      data.act1_row1_device, data.act1_row1_method,
+      data.act1_row1_mode,
+      data.act1_row2_device, data.act1_row2_method,
+      data.act1_row2_mode,
+      data.act2_row1_method, data.act2_row1_pros,
+      data.act2_row1_cons,
+      data.act2_row2_method, data.act2_row2_pros,
+      data.act2_row2_cons,
+      data.act2_row3_method, data.act2_row3_pros,
+      data.act2_row3_cons,
+      data.act3_row1_service, data.act3_row1_method,
+      data.act3_row1_file,
+      data.act3_row2_service, data.act3_row2_method,
+      data.act3_row2_file,
+      data.selfEval
+    ]);
+  }
+
+  if (page === "IoT 선택활동") {
+    return base.concat([
+      data.code_ga_inline, data.code_ga,
+      data.code_na_inline, data.code_na,
+      data.eval1, data.eval2
+    ]);
+  }
+
+  if (page === "대단원 마무리") {
+    return base.concat([
+      data.q1_answer, data.q2_answer, data.q3_answer,
+      data.q4_answer, data.q5_answer, data.q6_answer,
+      data.eval1, data.eval2
+    ]);
+  }
+
+  // 기본: JSON으로 저장
+  return base.concat([JSON.stringify(data)]);
+}</div>
+                </div>
+                <ol start="4" class="space-y-3 text-sm text-gray-700 ml-14 mt-4">
+                    <li><strong>4.</strong> <kbd class="bg-gray-100 border border-gray-300 rounded px-2 py-0.5 text-xs">Ctrl + S</kbd> 로 저장합니다. 프로젝트 이름은 <code class="bg-gray-100 px-2 py-0.5 rounded text-violet-700">"학생 응답 프록시"</code> 등으로 입력합니다.</li>
+                </ol>
+            </section>
+
+            <!-- Admin Step 2 -->
+            <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="step-number">2</div>
+                    <div>
+                        <h2 class="text-xl font-bold">웹 앱으로 배포</h2>
+                        <p class="text-gray-500 text-sm mt-1">스크립트를 웹에서 접근 가능하도록 배포합니다</p>
+                    </div>
+                </div>
+                <ol class="space-y-3 text-sm text-gray-700 ml-14">
+                    <li><strong>1.</strong> Apps Script 화면 오른쪽 상단의 <strong>[배포] → [새 배포]</strong>를 클릭합니다.</li>
+                    <li><strong>2.</strong> 유형 선택에서 <strong>[웹 앱]</strong>을 선택합니다.</li>
+                    <li><strong>3.</strong> 다음과 같이 설정합니다:
+                        <div class="bg-gray-50 rounded-lg p-4 mt-2 space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-violet-100 text-violet-700 px-2 py-0.5 rounded text-xs font-semibold">실행 주체</span>
+                                <span>나 (본인 계정)</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-violet-100 text-violet-700 px-2 py-0.5 rounded text-xs font-semibold">액세스 권한</span>
+                                <span><strong>모든 사용자</strong></span>
+                            </div>
+                        </div>
+                    </li>
+                    <li><strong>4.</strong> <strong>[배포]</strong> 버튼을 클릭합니다.</li>
+                    <li><strong>5.</strong> 권한 승인 요청이 나타나면 <strong>[액세스 허용]</strong>을 클릭합니다.
+                        <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-2 text-amber-700 text-xs">
+                            <i class="fas fa-exclamation-triangle mr-1"></i> "이 앱은 확인되지 않았습니다" 경고가 나타나면 <strong>[고급] → [프로젝트로 이동]</strong>을 클릭하면 됩니다.
+                        </div>
+                    </li>
+                    <li><strong>6.</strong> 배포 완료 후 나타나는 <strong>웹 앱 URL</strong>을 복사합니다.</li>
+                </ol>
+            </section>
+
+            <!-- Admin Step 3 -->
+            <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="step-number">3</div>
+                    <div>
+                        <h2 class="text-xl font-bold">프록시 URL을 코드에 적용</h2>
+                        <p class="text-gray-500 text-sm mt-1">배포한 URL을 선택활동 페이지에 입력합니다</p>
+                    </div>
+                </div>
+                <ol class="space-y-3 text-sm text-gray-700 ml-14">
+                    <li><strong>1.</strong> 제출 기능이 있는 HTML 파일들에서 <code>&lt;script&gt;</code> 태그 안의 아래 줄을 찾습니다:
+                        <div class="code-block mt-2 text-sm">const PROXY_SCRIPT_URL = '';</div>
+                    </li>
+                    <li><strong>2.</strong> 빈 따옴표 안에 복사한 URL을 붙여넣습니다:
+                        <div class="code-block mt-2 text-sm">const PROXY_SCRIPT_URL = 'https://script.google.com/macros/s/여기에URL/exec';</div>
+                    </li>
+                    <li><strong>3.</strong> 적용 대상 파일:
+                        <div class="mt-2 space-y-1.5 text-xs text-gray-500">
+                            <div><code class="bg-gray-100 px-1.5 rounded">01_네트워크의 구성/03_선택활동/index.html</code></div>
+                            <div><code class="bg-gray-100 px-1.5 rounded">02_사물 인터넷/03_선택활동/index.html</code></div>
+                            <div><code class="bg-gray-100 px-1.5 rounded">03_대단원 마무리/index.html</code></div>
+                        </div>
+                    </li>
+                    <li><strong>4.</strong> 파일을 저장하고 GitHub에 푸시합니다.</li>
+                </ol>
+            </section>
+
+            <!-- Admin Done -->
+            <div class="bg-green-50 border-2 border-green-300 rounded-xl p-6 text-center">
+                <i class="fas fa-circle-check text-4xl text-green-500 mb-3"></i>
+                <h3 class="text-lg font-bold text-green-800 mb-2">관리자 설정 완료!</h3>
+                <p class="text-sm text-green-700">이제 이 사이트를 사용하는 <strong>모든 교사</strong>가<br>구글 시트만 만들면 제출 기능을 바로 사용할 수 있습니다.</p>
+            </div>
+
+            <!-- Important Notes -->
+            <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 class="font-bold text-lg mb-4"><i class="fas fa-triangle-exclamation mr-2 text-amber-500"></i>주의사항</h3>
+                <div class="space-y-3 text-sm text-gray-700">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-circle text-violet-400 text-[6px] mt-2"></i>
+                        <p>프록시 스크립트는 <strong>관리자의 Google 계정 권한</strong>으로 실행됩니다. 교사가 공유한 구글 시트가 "편집자" 권한으로 열려있어야 데이터를 기록할 수 있습니다.</p>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-circle text-violet-400 text-[6px] mt-2"></i>
+                        <p>Apps Script에는 <a href="https://developers.google.com/apps-script/guides/services/quotas" target="_blank" class="text-violet-600 underline">일일 사용 제한</a>이 있습니다. 일반적인 학교 규모에서는 충분합니다.</p>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-circle text-violet-400 text-[6px] mt-2"></i>
+                        <p>스크립트 코드를 수정했다면 <strong>[배포] → [배포 관리] → [수정]</strong>에서 버전을 <strong>"새 버전"</strong>으로 선택하고 다시 배포해야 합니다.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Troubleshooting (공통) -->
+        <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="font-bold text-lg mb-4"><i class="fas fa-wrench mr-2 text-gray-400"></i>문제 해결</h3>
+            <div class="space-y-4 text-sm text-gray-700">
+                <div>
+                    <p class="font-semibold text-gray-800">Q. 학생이 제출했는데 시트에 데이터가 안 들어와요</p>
+                    <p class="mt-1 text-gray-600">구글 시트의 공유 설정이 <strong>"링크가 있는 모든 사용자 - 편집자"</strong>로 되어 있는지 확인하세요.</p>
+                </div>
+                <div>
+                    <p class="font-semibold text-gray-800">Q. "올바른 구글 시트 URL이 아닙니다" 오류가 발생해요</p>
+                    <p class="mt-1 text-gray-600">학생이 입력한 URL이 <code class="bg-gray-100 px-1 rounded text-xs">https://docs.google.com/spreadsheets/d/...</code> 형식인지 확인하세요. 구글 시트를 열고 주소창의 URL을 전체 복사하면 됩니다.</p>
+                </div>
+                <div>
+                    <p class="font-semibold text-gray-800">Q. "제출 실패" 오류가 계속 발생해요</p>
+                    <p class="mt-1 text-gray-600">사이트 관리자에게 프록시 스크립트가 정상 배포되어 있는지 확인을 요청하세요.</p>
+                </div>
+                <div>
+                    <p class="font-semibold text-gray-800">Q. 반별로 다른 시트에 데이터를 받을 수 있나요?</p>
+                    <p class="mt-1 text-gray-600">네! 반별로 서로 다른 구글 시트를 만들고, 각 반 학생에게 해당 시트 URL을 공유하면 됩니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="text-center pb-4">
+            <a href="../index.html" class="inline-flex items-center gap-2 text-violet-600 hover:text-violet-800 font-semibold transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                전체 단원으로 돌아가기
+            </a>
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 text-gray-400 py-6 text-center text-sm">
+        <p>영동고등학교 정보 수업 자료 · 교사용 가이드</p>
+    </footer>
+
+    <script>
+        function switchTab(tab) {
+            var tabs = ['teacher', 'admin'];
+            var btns = document.querySelectorAll('.tab-btn');
+
+            tabs.forEach(function(t, i) {
+                var el = document.getElementById('tab-' + t);
+                if (t === tab) {
+                    el.classList.remove('hidden');
+                    btns[i].classList.add('active');
+                    btns[i].classList.remove('text-violet-600');
+                } else {
+                    el.classList.add('hidden');
+                    btns[i].classList.remove('active');
+                    btns[i].classList.add('text-violet-600');
+                }
+            });
+        }
+
+        function copyCode(btn) {
+            var codeBlock = document.getElementById('appsScriptCode');
+            // Get text content excluding the button text
+            var clone = codeBlock.cloneNode(true);
+            var btnEl = clone.querySelector('.copy-btn');
+            if (btnEl) btnEl.remove();
+            var text = clone.textContent.trim();
+            navigator.clipboard.writeText(text).then(function() {
+                btn.innerHTML = '<i class="fas fa-check mr-1"></i>복사됨!';
+                btn.classList.add('copied');
+                setTimeout(function() {
+                    btn.innerHTML = '<i class="fas fa-copy mr-1"></i>복사';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        function copyHeaders(btn) {
+            // 헤더는 자동 생성되므로 이 함수는 레거시 호환용
+            navigator.clipboard.writeText('').then(function() {
+                btn.innerHTML = '<i class="fas fa-check mr-1"></i>자동 생성됩니다!';
+                btn.classList.add('copied');
+                setTimeout(function() {
+                    btn.innerHTML = '<i class="fas fa-copy mr-1"></i>복사';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

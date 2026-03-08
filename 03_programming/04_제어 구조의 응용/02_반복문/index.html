@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>반복문 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'sans': ['Noto Sans KR', 'sans-serif'] },
+                    colors: {
+                        primary: { 50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        .hero-gradient { background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%); }
+        .code-block { background: #1e293b; color: #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; font-family: 'Consolas', 'Monaco', monospace; overflow-x: auto; font-size: 0.9rem; line-height: 1.7; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #67e8f9; }
+        .code-block .string { color: #86efac; }
+        .code-block .number { color: #fdba74; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .builtin { color: #f9a8d4; }
+        .code-inline { background: #f1f5f9; color: #c2410c; padding: 0.125rem 0.5rem; border-radius: 0.375rem; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.875rem; font-weight: 500; }
+        .section-card { background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #fed7aa; transition: all 0.3s; }
+        .section-card:hover { box-shadow: 0 4px 12px rgba(194,65,12,0.15); }
+        .example-box { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-left: 4px solid #f97316; border-radius: 0 0.75rem 0.75rem 0; padding: 1.25rem; }
+        .interactive-panel { background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border: 2px solid #fb923c; border-radius: 1rem; padding: 1.5rem; }
+        .nav-pill { transition: all 0.3s; }
+        .nav-pill:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(194,65,12,0.2); }
+        .page-btn { min-width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; cursor: pointer; }
+        .page-btn.active { background: #c2410c; color: white; }
+        .page-btn:not(.active) { background: #fff7ed; color: #c2410c; }
+        .page-btn:not(.active):hover { background: #ffedd5; }
+        .carousel-horse { transition: transform 0.5s ease; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .spinning { animation: spin 2s linear infinite; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in-up { animation: fadeInUp 0.5s ease forwards; }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 5px rgba(249,115,22,0.3); } 50% { box-shadow: 0 0 20px rgba(249,115,22,0.6); } }
+        .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        .flow-node { transition: all 0.3s; }
+        .flow-node.active { transform: scale(1.1); box-shadow: 0 0 15px rgba(249,115,22,0.5); }
+        .combo-card { transition: all 0.3s; }
+        .combo-card:hover { transform: translateY(-4px) scale(1.02); }
+        .grid-cell { transition: all 0.3s ease; }
+        .grid-cell.highlight { background: #f97316 !important; color: white !important; transform: scale(1.1); z-index: 10; }
+        .tooltip-custom { position: relative; }
+        .tooltip-custom::after { content: attr(data-tip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        .tooltip-custom:hover::after { opacity: 1; }
+        pre { margin: 0; }
+        .timer-display { font-family: 'Consolas', monospace; font-size: 4rem; font-weight: 700; }
+    </style>
+</head>
+<body class="bg-amber-50/30 min-h-screen">
+
+    <!-- Header -->
+    <header class="hero-gradient text-white shadow-xl">
+        <div class="max-w-6xl mx-auto px-6 py-10">
+            <div class="flex items-center gap-2 text-orange-200 text-sm mb-4 flex-wrap">
+                <a href="../../../index.html" class="hover:text-white transition flex items-center gap-1">
+                    <i class="fas fa-home"></i> 정보
+                </a>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span>III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span>04 제어 구조의 응용</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span class="text-white font-semibold">반복문</span>
+            </div>
+            <a href="../../../index.html" class="inline-flex items-center gap-2 text-orange-200 hover:text-white transition text-sm mb-6">
+                <i class="fas fa-arrow-left"></i> 목차로 돌아가기
+            </a>
+            <div class="flex items-center gap-4 mt-2">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                    <i class="fas fa-rotate text-3xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight">반복문</h1>
+                    <p class="text-orange-200 mt-1 text-lg">Loop Statements</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Navigation -->
+    <div class="max-w-6xl mx-auto px-6 mt-8">
+        <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-sm font-semibold text-gray-500 mr-2">페이지:</span>
+            <div id="pageNav" class="flex gap-2 flex-wrap"></div>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <!-- ===== PAGE 1: 반복문 소개 ===== -->
+        <div id="page1" class="page-content space-y-8">
+            <div class="section-card p-8">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-lightbulb text-orange-600"></i>
+                    </div>
+                    반복문이란?
+                </h2>
+                <p class="text-gray-700 leading-relaxed text-lg mb-4">
+                    같은 작업을 여러 번 반복해야 할 때 <strong class="text-orange-700">반복문(loop)</strong>을 사용하면
+                    코드를 간결하고 효율적으로 작성할 수 있습니다.
+                </p>
+
+                <!-- Carousel Animation -->
+                <div class="interactive-panel mt-6">
+                    <h3 class="font-bold text-orange-800 text-lg mb-4">
+                        <i class="fas fa-horse text-orange-600 mr-2"></i>
+                        회전목마 20바퀴 운행 예시
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Without Loop -->
+                        <div class="bg-white rounded-xl p-5 border border-orange-200">
+                            <div class="text-sm font-semibold text-red-600 mb-3"><i class="fas fa-times-circle mr-1"></i> 반복문 없이</div>
+                            <div class="code-block text-xs" style="max-height: 180px; overflow-y: auto;">
+<span class="function">print</span>(<span class="string">"1바퀴 운행"</span>)
+<span class="function">print</span>(<span class="string">"2바퀴 운행"</span>)
+<span class="function">print</span>(<span class="string">"3바퀴 운행"</span>)
+<span class="comment"># ... 20줄 반복 ...</span>
+<span class="function">print</span>(<span class="string">"20바퀴 운행"</span>)
+</div>
+                            <p class="text-xs text-red-500 mt-2 font-medium">→ 20줄의 코드 필요!</p>
+                        </div>
+                        <!-- With Loop -->
+                        <div class="bg-white rounded-xl p-5 border border-green-200">
+                            <div class="text-sm font-semibold text-green-600 mb-3"><i class="fas fa-check-circle mr-1"></i> 반복문 사용</div>
+                            <div class="code-block text-xs">
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="number">21</span>):
+    <span class="function">print</span>(<span class="string">f"</span>{i}<span class="string">바퀴 운행"</span>)
+</div>
+                            <p class="text-xs text-green-500 mt-2 font-medium">→ 단 2줄로 해결!</p>
+                        </div>
+                    </div>
+
+                    <!-- Carousel Visual -->
+                    <div class="mt-6 bg-white rounded-xl p-6 text-center border border-orange-200">
+                        <div class="relative inline-block">
+                            <div id="carouselWheel" class="w-40 h-40 rounded-full border-4 border-orange-400 mx-auto relative" style="transition: transform 0.5s ease;">
+                                <div class="absolute top-2 left-1/2 -translate-x-1/2 text-orange-500"><i class="fas fa-horse text-xl"></i></div>
+                                <div class="absolute bottom-2 left-1/2 -translate-x-1/2 text-orange-400"><i class="fas fa-horse text-xl" style="transform:rotate(180deg)"></i></div>
+                                <div class="absolute left-2 top-1/2 -translate-y-1/2 text-orange-400"><i class="fas fa-horse text-xl" style="transform:rotate(270deg)"></i></div>
+                                <div class="absolute right-2 top-1/2 -translate-y-1/2 text-orange-400"><i class="fas fa-horse text-xl" style="transform:rotate(90deg)"></i></div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-3xl font-bold text-orange-700" id="carouselCount">0</span>
+                            <span class="text-gray-500">/ 20 바퀴</span>
+                        </div>
+                        <div class="mt-3 flex justify-center gap-3">
+                            <button onclick="startCarousel()" class="bg-orange-600 text-white px-5 py-2 rounded-lg hover:bg-orange-700 transition text-sm font-semibold">
+                                <i class="fas fa-play mr-1"></i> 시작
+                            </button>
+                            <button onclick="resetCarousel()" class="bg-gray-200 text-gray-600 px-5 py-2 rounded-lg hover:bg-gray-300 transition text-sm font-semibold">
+                                <i class="fas fa-redo mr-1"></i> 초기화
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1~100 Sum Comparison -->
+                <div class="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                    <h3 class="font-bold text-blue-800 text-lg mb-4">
+                        <i class="fas fa-calculator text-blue-600 mr-2"></i>
+                        1부터 100까지의 합 구하기
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-lg p-4 border border-red-200">
+                            <div class="text-sm font-semibold text-red-600 mb-2"><i class="fas fa-times-circle mr-1"></i> 반복문 없이 (100줄)</div>
+                            <div class="code-block text-xs" style="max-height: 140px; overflow-y: auto;">
+s = <span class="number">0</span>
+s = s + <span class="number">1</span>
+s = s + <span class="number">2</span>
+s = s + <span class="number">3</span>
+<span class="comment"># ... 100줄 계속 ...</span>
+s = s + <span class="number">100</span>
+<span class="function">print</span>(s)
+</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border border-green-200">
+                            <div class="text-sm font-semibold text-green-600 mb-2"><i class="fas fa-check-circle mr-1"></i> for문 사용 (3줄)</div>
+                            <div class="code-block text-xs">
+s = <span class="number">0</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="number">101</span>):
+    s = s + i
+<span class="function">print</span>(s)  <span class="comment"># 결과: 5050</span>
+</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-orange-50 rounded-xl p-5 border border-orange-200">
+                    <p class="text-gray-700">
+                        <i class="fas fa-info-circle text-orange-500 mr-2"></i>
+                        파이썬에서는 <strong>for문</strong>과 <strong>while문</strong> 두 가지 반복문을 사용합니다.
+                        반복문을 잘 활용하면 수천, 수만 번의 작업도 몇 줄의 코드로 처리할 수 있습니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAGE 2: for문 - 단순 for문 ===== -->
+        <div id="page2" class="page-content space-y-8 hidden">
+            <div class="section-card p-8">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                        <span class="text-orange-600 font-bold text-lg">1</span>
+                    </div>
+                    for문
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-6">
+                    <code class="code-inline">for</code>문은 <strong>반복 횟수가 정해진 경우</strong>에 주로 사용하는 반복문입니다.
+                    리스트, 문자열, range() 함수 등과 함께 사용합니다.
+                </p>
+
+                <h3 class="text-xl font-bold text-gray-800 mb-4">(1) 단순 for문</h3>
+
+                <!-- Three Formats -->
+                <div class="grid md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                        <div class="text-sm font-bold text-orange-700 mb-3">형식 1: 리스트</div>
+                        <div class="code-block text-xs">
+<span class="keyword">for</span> 변수 <span class="keyword">in</span> 리스트:
+    반복 명령문
+</div>
+                        <p class="text-xs text-gray-600 mt-2">리스트의 각 요소를 순서대로 변수에 대입</p>
+                    </div>
+                    <div class="bg-amber-50 rounded-xl p-5 border border-amber-200">
+                        <div class="text-sm font-bold text-amber-700 mb-3">형식 2: 문자열</div>
+                        <div class="code-block text-xs">
+<span class="keyword">for</span> 변수 <span class="keyword">in</span> 문자열:
+    반복 명령문
+</div>
+                        <p class="text-xs text-gray-600 mt-2">문자열의 각 문자를 순서대로 변수에 대입</p>
+                    </div>
+                    <div class="bg-yellow-50 rounded-xl p-5 border border-yellow-200">
+                        <div class="text-sm font-bold text-yellow-700 mb-3">형식 3: range()</div>
+                        <div class="code-block text-xs">
+<span class="keyword">for</span> 변수 <span class="keyword">in</span> <span class="function">range</span>(시작, 종료, 증감):
+    반복 명령문
+</div>
+                        <p class="text-xs text-gray-600 mt-2">range()가 생성한 숫자를 순서대로 변수에 대입</p>
+                    </div>
+                </div>
+
+                <!-- range() function -->
+                <div class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-6 border border-purple-200 mb-8">
+                    <h4 class="font-bold text-purple-800 text-lg mb-3">
+                        <i class="fas fa-cog text-purple-600 mr-2"></i>
+                        range() 함수
+                    </h4>
+                    <div class="code-block text-sm mb-4">
+<span class="function">range</span>([시작값], 종룟값, [증감값])
+</div>
+                    <div class="grid md:grid-cols-3 gap-3 mb-4 text-sm">
+                        <div class="bg-white rounded-lg p-3 border border-purple-100">
+                            <span class="font-semibold text-purple-700">시작값</span>: 기본값 <code class="code-inline">0</code>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-purple-100">
+                            <span class="font-semibold text-purple-700">종룟값</span>: <strong>포함하지 않음</strong>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-purple-100">
+                            <span class="font-semibold text-purple-700">증감값</span>: 기본값 <code class="code-inline">1</code>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border border-purple-100">
+                        <p class="text-sm text-gray-700 mb-2"><strong>예시:</strong></p>
+                        <div class="flex flex-wrap gap-2 text-sm">
+                            <span class="bg-purple-100 px-3 py-1 rounded-full text-purple-700 font-mono">range(0,3,1)</span>
+                            <span class="text-gray-400">=</span>
+                            <span class="bg-purple-100 px-3 py-1 rounded-full text-purple-700 font-mono">range(0,3)</span>
+                            <span class="text-gray-400">=</span>
+                            <span class="bg-purple-100 px-3 py-1 rounded-full text-purple-700 font-mono">range(3)</span>
+                            <span class="text-gray-400">→</span>
+                            <span class="bg-orange-100 px-3 py-1 rounded-full text-orange-700 font-bold">0, 1, 2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- range() Explorer Interactive -->
+                <div class="interactive-panel mb-8">
+                    <h4 class="font-bold text-orange-800 text-lg mb-4">
+                        <i class="fas fa-flask text-orange-600 mr-2"></i>
+                        range() 탐색기
+                    </h4>
+                    <div class="bg-white rounded-xl p-5 border border-orange-200">
+                        <div class="flex flex-wrap items-center gap-3 mb-4">
+                            <span class="font-mono text-lg font-bold text-gray-700">range(</span>
+                            <div>
+                                <label class="text-xs text-gray-500 block">시작값</label>
+                                <input type="number" id="rangeStart" value="0" class="w-20 px-3 py-2 border-2 border-orange-300 rounded-lg text-center font-mono font-bold focus:border-orange-500 focus:outline-none">
+                            </div>
+                            <span class="text-gray-400">,</span>
+                            <div>
+                                <label class="text-xs text-gray-500 block">종룟값</label>
+                                <input type="number" id="rangeStop" value="5" class="w-20 px-3 py-2 border-2 border-orange-300 rounded-lg text-center font-mono font-bold focus:border-orange-500 focus:outline-none">
+                            </div>
+                            <span class="text-gray-400">,</span>
+                            <div>
+                                <label class="text-xs text-gray-500 block">증감값</label>
+                                <input type="number" id="rangeStep" value="1" class="w-20 px-3 py-2 border-2 border-orange-300 rounded-lg text-center font-mono font-bold focus:border-orange-500 focus:outline-none">
+                            </div>
+                            <span class="font-mono text-lg font-bold text-gray-700">)</span>
+                            <button onclick="exploreRange()" class="bg-orange-600 text-white px-5 py-2 rounded-lg hover:bg-orange-700 transition font-semibold ml-2">
+                                <i class="fas fa-play mr-1"></i> 생성
+                            </button>
+                        </div>
+                        <div id="rangeResult" class="bg-gray-50 rounded-lg p-4 min-h-[3rem] flex flex-wrap gap-2 items-center">
+                            <span class="text-gray-400 text-sm">위의 값을 입력하고 '생성' 버튼을 클릭하세요</span>
+                        </div>
+                        <p id="rangeCount" class="text-sm text-gray-500 mt-2"></p>
+                    </div>
+                </div>
+
+                <!-- Examples 23~25 -->
+                <div class="space-y-6">
+                    <!-- 예제 23 -->
+                    <div class="example-box">
+                        <h4 class="font-bold text-orange-800 mb-3">예제 23 <span class="text-gray-500 font-normal">| 리스트와 for문</span></h4>
+                        <div class="code-block text-sm">
+<span class="keyword">for</span> a <span class="keyword">in</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]:
+    <span class="function">print</span>(a)
+</div>
+                        <div class="mt-3 bg-white rounded-lg p-3 border border-orange-200">
+                            <span class="text-sm font-semibold text-gray-600">실행 결과:</span>
+                            <span class="font-mono text-orange-700 ml-2">1 &nbsp; 2 &nbsp; 3</span>
+                        </div>
+                    </div>
+
+                    <!-- 예제 24 -->
+                    <div class="example-box">
+                        <h4 class="font-bold text-orange-800 mb-3">예제 24 <span class="text-gray-500 font-normal">| 문자열과 for문</span></h4>
+                        <div class="code-block text-sm">
+<span class="keyword">for</span> a <span class="keyword">in</span> <span class="string">"hello"</span>:
+    <span class="function">print</span>(a)
+</div>
+                        <div class="mt-3 bg-white rounded-lg p-3 border border-orange-200">
+                            <span class="text-sm font-semibold text-gray-600">실행 결과:</span>
+                            <span class="font-mono text-orange-700 ml-2">h &nbsp; e &nbsp; l &nbsp; l &nbsp; o</span>
+                        </div>
+                    </div>
+
+                    <!-- 예제 25 -->
+                    <div class="example-box">
+                        <h4 class="font-bold text-orange-800 mb-3">예제 25 <span class="text-gray-500 font-normal">| range()와 for문</span></h4>
+                        <div class="code-block text-sm">
+<span class="keyword">for</span> a <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="number">4</span>):
+    <span class="function">print</span>(a)
+</div>
+                        <div class="mt-3 bg-white rounded-lg p-3 border border-orange-200">
+                            <span class="text-sm font-semibold text-gray-600">실행 결과:</span>
+                            <span class="font-mono text-orange-700 ml-2">1 &nbsp; 2 &nbsp; 3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- For Loop Visualizer -->
+                <div class="interactive-panel mt-8">
+                    <h4 class="font-bold text-orange-800 text-lg mb-4">
+                        <i class="fas fa-eye text-orange-600 mr-2"></i>
+                        for문 시각화 도구
+                    </h4>
+                    <div class="bg-white rounded-xl p-5 border border-orange-200">
+                        <div class="mb-4">
+                            <label class="text-sm font-semibold text-gray-600 block mb-2">실행할 코드 선택:</label>
+                            <select id="forVisualizerSelect" class="w-full px-4 py-2 border-2 border-orange-300 rounded-lg focus:border-orange-500 focus:outline-none font-mono text-sm" onchange="resetForVisualizer()">
+                                <option value="list">for a in [1, 2, 3]: print(a)</option>
+                                <option value="string">for a in "hello": print(a)</option>
+                                <option value="range">for a in range(1, 4): print(a)</option>
+                            </select>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <div class="text-sm font-semibold text-gray-600 mb-2">반복 과정:</div>
+                                <div id="forVisualizerSteps" class="space-y-2 min-h-[120px]"></div>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-600 mb-2">출력 결과:</div>
+                                <div id="forVisualizerOutput" class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm min-h-[120px]"></div>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex gap-3">
+                            <button onclick="stepForVisualizer()" id="forStepBtn" class="bg-orange-600 text-white px-5 py-2 rounded-lg hover:bg-orange-700 transition text-sm font-semibold">
+                                <i class="fas fa-step-forward mr-1"></i> 다음 단계
+                            </button>
+                            <button onclick="autoForVisualizer()" class="bg-amber-600 text-white px-5 py-2 rounded-lg hover:bg-amber-700 transition text-sm font-semibold">
+                                <i class="fas fa-play mr-1"></i> 자동 실행
+                            </button>
+                            <button onclick="resetForVisualizer()" class="bg-gray-200 text-gray-600 px-5 py-2 rounded-lg hover:bg-gray-300 transition text-sm font-semibold">
+                                <i class="fas fa-redo mr-1"></i> 초기화
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAGE 3: 예제 26, 27 + Timer + Multiplication ===== -->
+        <div id="page3" class="page-content space-y-8 hidden">
+            <div class="section-card p-8">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-code text-orange-600"></i>
+                    </div>
+                    for문 활용 예제
+                </h2>
+
+                <!-- 예제 26: Timer -->
+                <div class="example-box mb-8">
+                    <h4 class="font-bold text-orange-800 mb-3">예제 26 <span class="text-gray-500 font-normal">| 카운트다운 타이머</span></h4>
+                    <div class="code-block text-sm mb-4">
+<span class="keyword">import</span> time
+
+<span class="keyword">for</span> a <span class="keyword">in</span> <span class="function">range</span>(<span class="number">5</span>, <span class="number">0</span>, <span class="number">-1</span>):
+    <span class="function">print</span>(a)
+    time.<span class="function">sleep</span>(<span class="number">1</span>)
+<span class="function">print</span>(<span class="string">"발사!"</span>)
+</div>
+                    <p class="text-sm text-gray-600 mb-4">
+                        <code class="code-inline">range(5, 0, -1)</code>은 5부터 1까지 1씩 감소하는 숫자를 생성합니다.
+                        <code class="code-inline">time.sleep(1)</code>은 1초 동안 대기합니다.
+                    </p>
+                </div>
+
+                <!-- Timer Demo Interactive -->
+                <div class="interactive-panel mb-8">
+                    <h4 class="font-bold text-orange-800 text-lg mb-4">
+                        <i class="fas fa-stopwatch text-orange-600 mr-2"></i>
+                        타이머 데모
+                    </h4>
+                    <div class="bg-white rounded-xl p-6 border border-orange-200 text-center">
+                        <div id="timerDisplay" class="timer-display text-orange-600 mb-2">5</div>
+                        <div id="timerStatus" class="text-gray-500 text-sm mb-4">시작 버튼을 눌러주세요</div>
+                        <div class="flex items-center justify-center gap-2 mb-4">
+                            <div id="timerDots" class="flex gap-2">
+                                <div class="w-4 h-4 rounded-full bg-orange-300 transition-all" id="dot5"></div>
+                                <div class="w-4 h-4 rounded-full bg-orange-300 transition-all" id="dot4"></div>
+                                <div class="w-4 h-4 rounded-full bg-orange-300 transition-all" id="dot3"></div>
+                                <div class="w-4 h-4 rounded-full bg-orange-300 transition-all" id="dot2"></div>
+                                <div class="w-4 h-4 rounded-full bg-orange-300 transition-all" id="dot1"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center gap-3">
+                            <button onclick="startTimer()" id="timerBtn" class="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition font-semibold">
+                                <i class="fas fa-play mr-1"></i> 시작
+                            </button>
+                            <button onclick="resetTimer()" class="bg-gray-200 text-gray-600 px-6 py-2 rounded-lg hover:bg-gray-300 transition font-semibold">
+                                <i class="fas fa-redo mr-1"></i> 초기화
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 예제 27: Multiplication Table -->
+                <div class="example-box mb-8">
+                    <h4 class="font-bold text-orange-800 mb-3">예제 27 <span class="text-gray-500 font-normal">| 구구단 출력</span></h4>
+                    <div class="code-block text-sm">
+dan = <span class="function">int</span>(<span class="function">input</span>(<span class="string">"몇 단? "</span>))
+<span class="keyword">for</span> a <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="number">10</span>):
+    <span class="function">print</span>(<span class="string">f"</span>{dan}<span class="string"> x </span>{a}<span class="string"> = </span>{dan * a}<span class="string">"</span>)
+</div>
+                </div>
+
+                <!-- Multiplication Table Generator Interactive -->
+                <div class="interactive-panel">
+                    <h4 class="font-bold text-orange-800 text-lg mb-4">
+                        <i class="fas fa-table text-orange-600 mr-2"></i>
+                        구구단 생성기
+                    </h4>
+                    <div class="bg-white rounded-xl p-5 border border-orange-200">
+                        <div class="flex items-center gap-4 mb-4">
+                            <label class="font-semibold text-gray-700">몇 단?</label>
+                            <input type="number" id="mulDan" value="7" min="1" max="99" class="w-24 px-3 py-2 border-2 border-orange-300 rounded-lg text-center font-bold text-xl focus:border-orange-500 focus:outline-none">
+                            <button onclick="generateMultiplication()" class="bg-orange-600 text-white px-5 py-2 rounded-lg hover:bg-orange-700 transition font-semibold">
+                                <i class="fas fa-calculator mr-1"></i> 생성
+                            </button>
+                        </div>
+                        <div id="mulResult" class="grid grid-cols-3 gap-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAGE 4: 중첩 for문 ===== -->
+        <div id="page4" class="page-content space-y-8 hidden">
+            <div class="section-card p-8">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-layer-group text-orange-600"></i>
+                    </div>
+                    (2) 중첩 for문
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-6">
+                    for문 안에 또 다른 for문을 넣으면 <strong class="text-orange-700">중첩 for문</strong>이 됩니다.
+                    바깥쪽 반복(외부 루프)의 각 반복마다 안쪽 반복(내부 루프)이 처음부터 끝까지 완전히 실행됩니다.
+                </p>
+
+                <div class="bg-blue-50 rounded-xl p-5 border border-blue-200 mb-6">
+                    <div class="code-block text-sm">
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">2</span>):       <span class="comment"># 외부 루프: 0, 1</span>
+    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="function">range</span>(<span class="number">3</span>):   <span class="comment"># 내부 루프: 0, 1, 2</span>
+        <span class="function">print</span>(i, j)
+</div>
+                    <p class="text-sm text-blue-700 mt-3">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        외부 루프 2회 &times; 내부 루프 3회 = 총 <strong>6회</strong> 반복
+                    </p>
+                </div>
+
+                <!-- Nested Loop Grid Interactive -->
+                <div class="interactive-panel mb-8">
+                    <h4 class="font-bold text-orange-800 text-lg mb-4">
+                        <i class="fas fa-th text-orange-600 mr-2"></i>
+                        중첩 for문 시각화
+                    </h4>
+                    <div class="bg-white rounded-xl p-5 border border-orange-200">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-center" id="nestedGrid">
+                                <thead>
+                                    <tr>
+                                        <th class="p-2 text-sm text-gray-500"></th>
+                                        <th class="p-2 text-sm font-bold text-blue-600">j=0</th>
+                                        <th class="p-2 text-sm font-bold text-blue-600">j=1</th>
+                                        <th class="p-2 text-sm font-bold text-blue-600">j=2</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="p-2 text-sm font-bold text-orange-600">i=0</td>
+                                        <td class="p-2"><div class="grid-cell bg-orange-50 border border-orange-200 rounded-lg p-3 font-mono text-sm" data-i="0" data-j="0">(0, 0)</div></td>
+                                        <td class="p-2"><div class="grid-cell bg-orange-50 border border-orange-200 rounded-lg p-3 font-mono text-sm" data-i="0" data-j="1">(0, 1)</div></td>
+                                        <td class="p-2"><div class="grid-cell bg-orange-50 border border-orange-200 rounded-lg p-3 font-mono text-sm" data-i="0" data-j="2">(0, 2)</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 text-sm font-bold text-orange-600">i=1</td>
+                                        <td class="p-2"><div class="grid-cell bg-orange-50 border border-orange-200 rounded-lg p-3 font-mono text-sm" data-i="1" data-j="0">(1, 0)</div></td>
+                                        <td class="p-2"><div class="grid-cell bg-orange-50 border border-orange-200 rounded-lg p-3 font-mono text-sm" data-i="1" data-j="1">(1, 1)</div></td>
+                                        <td class="p-2"><div class="grid-cell bg-orange-50 border border-orange-200 rounded-lg p-3 font-mono text-sm" data-i="1" data-j="2">(1, 2)</div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4 flex items-center gap-4">
+                            <div class="text-sm">
+                                <span class="font-semibold text-gray-600">현재: </span>
+                                <span id="nestedCurrent" class="font-mono text-orange-700 font-bold">-</span>
+                            </div>
+                            <div class="text-sm">
+                                <span class="font-semibold text-gray-600">실행 순서: </span>
+                                <span id="nestedOrder" class="font-mono text-blue-700 font-bold">-</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex gap-3">
+                            <button onclick="stepNestedLoop()" id="nestedStepBtn" class="bg-orange-600 text-white px-5 py-2 rounded-lg hover:bg-orange-700 transition text-sm font-semibold">
+                                <i class="fas fa-step-forward mr-1"></i> 다음 단계
+                            </button>
+                            <button onclick="autoNestedLoop()" class="bg-amber-600 text-white px-5 py-2 rounded-lg hover:bg-amber-700 transition text-sm font-semibold">
+                                <i class="fas fa-play mr-1"></i> 자동 실행
+                            </button>
+                            <button onclick="resetNestedLoop()" class="bg-gray-200 text-gray-600 px-5 py-2 rounded-lg hover:bg-gray-300 transition text-sm font-semibold">
+                                <i class="fas fa-redo mr-1"></i> 초기화
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 예제 28 -->
+                <div class="example-box mb-8">
+                    <h4 class="font-bold text-orange-800 mb-3">예제 28 <span class="text-gray-500 font-normal">| 구구단 2~9단 전체 출력</span></h4>
+                    <div class="code-block text-sm">
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">2</span>, <span class="number">10</span>):
+    <span class="function">print</span>(<span class="string">f"*** </span>{i}<span class="string">단 ***"</span>)
+    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="number">10</span>):
+        <span class="function">print</span>(<span class="string">f"</span>{i}<span class="string"> x </span>{j}<span class="string"> = </span>{i * j}<span class="string">"</span>)
+    <span class="function">print</span>()
+</div>
+                </div>
+
+                <!-- 예제 29: Set Menu -->
+                <div class="example-box mb-8">
+                    <h4 class="font-bold text-orange-800 mb-3">예제 29 <span class="text-gray-500 font-normal">| 세트 메뉴 조합</span></h4>
+                    <div class="code-block text-sm mb-4">
+popcorn = [<span class="string">"카라멜"</span>, <span class="string">"치즈"</span>, <span class="string">"버터"</span>]
+drink = [<span class="string">"콜라"</span>, <span class="string">"사이다"</span>]
+
+<span class="keyword">for</span> p <span class="keyword">in</span> popcorn:
+    <span class="keyword">for</span> d <span class="keyword">in</span> drink:
+        <span class="function">print</span>(<span class="string">f"</span>{p}<span class="string"> 팝콘 + </span>{d}<span class="string">"</span>)
+</div>
+                    <p class="text-sm text-gray-600">팝콘 3종 &times; 음료 2종 = <strong>6가지</strong> 조합</p>
+                </div>
+
+                <!-- Set Menu Combinator Interactive -->
+                <div class="interactive-panel">
+                    <h4 class="font-bold text-orange-800 text-lg mb-4">
+                        <i class="fas fa-utensils text-orange-600 mr-2"></i>
+                        세트 메뉴 조합기
+                    </h4>
+                    <div class="bg-white rounded-xl p-5 border border-orange-200">
+                        <div id="menuCombos" class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        </div>
+                        <button onclick="showMenuCombos()" class="mt-4 bg-orange-600 text-white px-5 py-2 rounded-lg hover:bg-orange-700 transition text-sm font-semibold">
+                            <i class="fas fa-magic mr-1"></i> 조합 생성하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAGE 5: while문 ===== -->
+        <div id="page5" class="page-content space-y-8 hidden">
+            <div class="section-card p-8">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                        <span class="text-orange-600 font-bold text-lg">2</span>
+                    </div>
+                    while문
+                </h2>
+                <p class="text-gray-700 leading-relaxed mb-6">
+                    <code class="code-inline">while</code>문은 <strong>조건이 참인 동안</strong> 반복을 계속합니다.
+                    반복 횟수가 정해지지 않은 경우에 주로 사용합니다.
+                </p>
+
+                <div class="bg-blue-50 rounded-xl p-5 border border-blue-200 mb-6">
+                    <div class="code-block text-sm">
+변수 초기화
+<span class="keyword">while</span> 조건식:
+    반복 명령문
+</div>
+                </div>
+
+                <!-- 예제 30 -->
+                <div class="example-box mb-8">
+                    <h4 class="font-bold text-orange-800 mb-3">예제 30 <span class="text-gray-500 font-normal">| 1부터 5까지 출력</span></h4>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <div class="text-sm font-semibold text-blue-600 mb-2">while문</div>
+                            <div class="code-block text-sm">
+a = <span class="number">1</span>
+<span class="keyword">while</span> a &lt;= <span class="number">5</span>:
+    <span class="function">print</span>(a)
+    a += <span class="number">1</span>
+</div>
+                        </div>
+                        <div>
+                            <div class="text-sm font-semibold text-green-600 mb-2">동일한 for문</div>
+                            <div class="code-block text-sm">
+<span class="keyword">for</span> a <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="number">6</span>):
+    <span class="function">print</span>(a)
+</div>
+                        </div>
+                    </div>
+                    <div class="mt-3 bg-white rounded-lg p-3 border border-orange-200">
+                        <span class="text-sm font-semibold text-gray-600">실행 결과:</span>
+                        <span class="font-mono text-orange-700 ml-2">1 &nbsp; 2 &nbsp; 3 &nbsp; 4 &nbsp; 5</span>
+                    </div>
+                </div>
+
+                <!-- While Loop Counter Interactive -->
+                <div class="interactive-panel mb-8">
+                    <h4 class="font-bold text-orange-800 text-lg mb-4">
+                        <i class="fas fa-sync-alt text-orange-600 mr-2"></i>
+                        while문 카운터 시각화
+                    </h4>
+                    <div class="bg-white rounded-xl p-5 border border-orange-200">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <div class="text-sm font-semibold text-gray-600 mb-2">코드:</div>
+                                <div class="code-block text-sm">
+a = <span class="number">1</span>
+<span class="keyword">while</span> a &lt;= <span class="number">5</span>:
+    <span class="function">print</span>(a)
+    a += <span class="number">1</span>
+</div>
+                                <div class="mt-4 p-3 bg-orange-50 rounded-lg border border-orange-200">
+                                    <div class="text-sm font-semibold text-gray-600 mb-2">변수 상태:</div>
+                                    <div class="flex items-center gap-4">
+                                        <span class="font-mono">a = </span>
+                                        <span id="whileVarA" class="text-2xl font-bold text-orange-600">1</span>
+                                    </div>
+                                    <div class="flex items-center gap-4 mt-1">
+                                        <span class="font-mono text-sm">조건 a &lt;= 5: </span>
+                                        <span id="whileCondition" class="font-bold text-green-600">True</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-600 mb-2">실행 과정:</div>
+                                <div id="whileSteps" class="space-y-2 min-h-[150px]"></div>
+                                <div class="mt-3">
+                                    <div class="text-sm font-semibold text-gray-600 mb-1">출력:</div>
+                                    <div id="whileOutput" class="bg-gray-900 text-green-400 rounded-lg p-3 font-mono text-sm min-h-[40px]"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex gap-3">
+                            <button onclick="stepWhileLoop()" id="whileStepBtn" class="bg-orange-600 text-white px-5 py-2 rounded-lg hover:bg-orange-700 transition text-sm font-semibold">
+                                <i class="fas fa-step-forward mr-1"></i> 다음 단계
+                            </button>
+                            <button onclick="autoWhileLoop()" class="bg-amber-600 text-white px-5 py-2 rounded-lg hover:bg-amber-700 transition text-sm font-semibold">
+                                <i class="fas fa-play mr-1"></i> 자동 실행
+                            </button>
+                            <button onclick="resetWhileLoop()" class="bg-gray-200 text-gray-600 px-5 py-2 rounded-lg hover:bg-gray-300 transition text-sm font-semibold">
+                                <i class="fas fa-redo mr-1"></i> 초기화
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 무한 반복 -->
+                <div class="bg-red-50 rounded-xl p-6 border border-red-200">
+                    <h3 class="font-bold text-red-800 text-lg mb-3">
+                        <i class="fas fa-infinity text-red-600 mr-2"></i>
+                        무한 반복
+                    </h3>
+                    <p class="text-gray-700 mb-4">
+                        <code class="code-inline">while True</code> 또는 <code class="code-inline">while 1</code>을 사용하면
+                        무한 반복이 됩니다. <code class="code-inline">break</code>문으로 탈출할 수 있습니다.
+                    </p>
+                    <div class="code-block text-sm">
+<span class="keyword">while</span> <span class="builtin">True</span>:
+    반복 명령문
+    <span class="keyword">if</span> 탈출조건:
+        <span class="keyword">break</span>      <span class="comment"># 반복 종료</span>
+</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAGE 6: break, continue ===== -->
+        <div id="page6" class="page-content space-y-8 hidden">
+            <div class="section-card p-8">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                        <span class="text-orange-600 font-bold text-lg">3</span>
+                    </div>
+                    반복문의 제어
+                </h2>
+
+                <!-- break문 -->
+                <h3 class="text-xl font-bold text-gray-800 mb-4">(1) break문</h3>
+                <p class="text-gray-700 mb-4">
+                    <code class="code-inline">break</code>문은 반복문을 <strong class="text-red-600">즉시 종료</strong>하고 반복문 바깥으로 빠져나갑니다.
+                </p>
+
+                <!-- 예제 31 -->
+                <div class="example-box mb-8">
+                    <h4 class="font-bold text-orange-800 mb-3">예제 31 <span class="text-gray-500 font-normal">| q/Q 입력 시 게임 종료</span></h4>
+                    <div class="code-block text-sm">
+<span class="keyword">while</span> <span class="builtin">True</span>:
+    answer = <span class="function">input</span>(<span class="string">"계속하시겠습니까? (q: 종료): "</span>)
+    <span class="keyword">if</span> answer == <span class="string">"q"</span> <span class="keyword">or</span> answer == <span class="string">"Q"</span>:
+        <span class="function">print</span>(<span class="string">"게임을 종료합니다."</span>)
+        <span class="keyword">break</span>
+    <span class="function">print</span>(<span class="string">"게임을 계속합니다..."</span>)
+</div>
+                </div>
+
+                <!-- continue문 -->
+                <h3 class="text-xl font-bold text-gray-800 mb-4 mt-8">(2) continue문</h3>
+                <p class="text-gray-700 mb-4">
+                    <code class="code-inline">continue</code>문은 현재 반복의 나머지 부분을 <strong class="text-blue-600">건너뛰고</strong>
+                    다음 반복으로 진행합니다.
+                </p>
+
+                <!-- 예제 32 -->
+                <div class="example-box mb-8">
+                    <h4 class="font-bold text-orange-800 mb-3">예제 32 <span class="text-gray-500 font-normal">| 1~100 중 5의 배수 합 구하기</span></h4>
+                    <div class="code-block text-sm">
+s = <span class="number">0</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="number">101</span>):
+    <span class="keyword">if</span> i % <span class="number">5</span> != <span class="number">0</span>:
+        <span class="keyword">continue</span>     <span class="comment"># 5의 배수가 아니면 건너뛰기</span>
+    s = s + i
+<span class="function">print</span>(s)          <span class="comment"># 결과: 1050</span>
+</div>
+                </div>
+
+                <!-- Break/Continue Flow Diagram Interactive -->
+                <div class="interactive-panel">
+                    <h4 class="font-bold text-orange-800 text-lg mb-4">
+                        <i class="fas fa-project-diagram text-orange-600 mr-2"></i>
+                        break / continue 흐름도
+                    </h4>
+                    <div class="bg-white rounded-xl p-5 border border-orange-200">
+                        <div class="flex gap-4 mb-6">
+                            <button onclick="showFlowDiagram('break')" id="flowBreakBtn" class="px-5 py-2 rounded-lg font-semibold transition bg-red-600 text-white">
+                                <i class="fas fa-stop-circle mr-1"></i> break
+                            </button>
+                            <button onclick="showFlowDiagram('continue')" id="flowContinueBtn" class="px-5 py-2 rounded-lg font-semibold transition bg-gray-200 text-gray-600">
+                                <i class="fas fa-forward mr-1"></i> continue
+                            </button>
+                        </div>
+
+                        <!-- Break Flow -->
+                        <div id="flowBreak" class="flow-diagram">
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="flow-node bg-blue-100 border-2 border-blue-400 rounded-xl px-6 py-3 font-semibold text-blue-800" id="fb1">
+                                    반복 시작
+                                </div>
+                                <i class="fas fa-arrow-down text-gray-400"></i>
+                                <div class="flow-node bg-yellow-100 border-2 border-yellow-400 rounded-xl px-6 py-3 font-semibold text-yellow-800" id="fb2">
+                                    <i class="fas fa-question-circle mr-1"></i> 조건 확인
+                                </div>
+                                <div class="flex items-start gap-8">
+                                    <div class="flex flex-col items-center gap-3">
+                                        <span class="text-green-600 font-semibold text-sm">조건 = True</span>
+                                        <i class="fas fa-arrow-down text-gray-400"></i>
+                                        <div class="flow-node bg-green-100 border-2 border-green-400 rounded-xl px-6 py-3 font-semibold text-green-800" id="fb3">
+                                            명령 실행
+                                        </div>
+                                        <i class="fas fa-arrow-down text-gray-400"></i>
+                                        <div class="flow-node bg-red-100 border-2 border-red-400 rounded-xl px-6 py-3 font-semibold text-red-800" id="fb4">
+                                            <i class="fas fa-times-circle mr-1"></i> break 만남
+                                        </div>
+                                        <i class="fas fa-arrow-down text-red-400"></i>
+                                        <div class="flow-node bg-gray-100 border-2 border-gray-400 rounded-xl px-6 py-3 font-semibold text-gray-800" id="fb5">
+                                            <i class="fas fa-sign-out-alt mr-1"></i> 반복문 즉시 탈출!
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-center gap-3">
+                                        <span class="text-red-600 font-semibold text-sm">조건 = False</span>
+                                        <i class="fas fa-arrow-down text-gray-400"></i>
+                                        <div class="flow-node bg-gray-100 border-2 border-gray-400 rounded-xl px-6 py-3 font-semibold text-gray-800">
+                                            반복 종료
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Continue Flow -->
+                        <div id="flowContinue" class="flow-diagram hidden">
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="flow-node bg-blue-100 border-2 border-blue-400 rounded-xl px-6 py-3 font-semibold text-blue-800" id="fc1">
+                                    반복 시작
+                                </div>
+                                <i class="fas fa-arrow-down text-gray-400"></i>
+                                <div class="flow-node bg-yellow-100 border-2 border-yellow-400 rounded-xl px-6 py-3 font-semibold text-yellow-800" id="fc2">
+                                    <i class="fas fa-question-circle mr-1"></i> 조건 확인
+                                </div>
+                                <div class="flex items-start gap-8">
+                                    <div class="flex flex-col items-center gap-3">
+                                        <span class="text-green-600 font-semibold text-sm">조건 = True</span>
+                                        <i class="fas fa-arrow-down text-gray-400"></i>
+                                        <div class="flow-node bg-green-100 border-2 border-green-400 rounded-xl px-6 py-3 font-semibold text-green-800" id="fc3">
+                                            명령 실행 중...
+                                        </div>
+                                        <i class="fas fa-arrow-down text-gray-400"></i>
+                                        <div class="flow-node bg-blue-100 border-2 border-blue-400 rounded-xl px-6 py-3 font-semibold text-blue-800" id="fc4">
+                                            <i class="fas fa-forward mr-1"></i> continue 만남
+                                        </div>
+                                        <i class="fas fa-arrow-up text-blue-400 text-xl"></i>
+                                        <div class="flow-node bg-purple-100 border-2 border-purple-400 rounded-xl px-6 py-3 font-semibold text-purple-800" id="fc5">
+                                            <i class="fas fa-redo mr-1"></i> 나머지 건너뛰고 다음 반복으로!
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-center gap-3">
+                                        <span class="text-red-600 font-semibold text-sm">조건 = False</span>
+                                        <i class="fas fa-arrow-down text-gray-400"></i>
+                                        <div class="flow-node bg-gray-100 border-2 border-gray-400 rounded-xl px-6 py-3 font-semibold text-gray-800">
+                                            반복 종료
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Animated demo -->
+                        <div class="mt-6 border-t border-orange-200 pt-6">
+                            <h5 class="font-semibold text-gray-700 mb-3">실행 시뮬레이션</h5>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <div class="text-sm font-semibold text-gray-600 mb-2" id="flowSimLabel">break 예시: 1~10 출력, 5에서 break</div>
+                                    <div id="flowSimCode" class="code-block text-xs">
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="number">11</span>):
+    <span class="keyword">if</span> i == <span class="number">5</span>:
+        <span class="keyword">break</span>
+    <span class="function">print</span>(i)
+</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-gray-600 mb-2">실행 결과:</div>
+                                    <div id="flowSimOutput" class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm min-h-[100px]"></div>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex gap-3">
+                                <button onclick="stepFlowSim()" id="flowSimStepBtn" class="bg-orange-600 text-white px-5 py-2 rounded-lg hover:bg-orange-700 transition text-sm font-semibold">
+                                    <i class="fas fa-step-forward mr-1"></i> 다음 단계
+                                </button>
+                                <button onclick="autoFlowSim()" class="bg-amber-600 text-white px-5 py-2 rounded-lg hover:bg-amber-700 transition text-sm font-semibold">
+                                    <i class="fas fa-play mr-1"></i> 자동 실행
+                                </button>
+                                <button onclick="resetFlowSim()" class="bg-gray-200 text-gray-600 px-5 py-2 rounded-lg hover:bg-gray-300 transition text-sm font-semibold">
+                                    <i class="fas fa-redo mr-1"></i> 초기화
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Page Navigation Bottom -->
+    <div class="max-w-6xl mx-auto px-6 pb-12">
+        <div class="flex justify-between items-center">
+            <button id="prevBtn" onclick="changePage(-1)" class="flex items-center gap-2 px-6 py-3 bg-white border-2 border-orange-300 text-orange-700 rounded-xl hover:bg-orange-50 transition font-semibold disabled:opacity-40 disabled:cursor-not-allowed">
+                <i class="fas fa-chevron-left"></i> 이전
+            </button>
+            <div id="pageIndicator" class="text-sm text-gray-500"></div>
+            <button id="nextBtn" onclick="changePage(1)" class="flex items-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition font-semibold disabled:opacity-40 disabled:cursor-not-allowed">
+                다음 <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-8">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <p class="text-sm">정보 교과서 &mdash; III. 알고리즘과 프로그래밍 > 04 제어 구조의 응용 > 반복문</p>
+        </div>
+    </footer>
+
+    <script>
+    // ==================== PAGE NAVIGATION ====================
+    const totalPages = 6;
+    let currentPage = 1;
+    const pageNames = ['소개', 'for문 기초', 'for문 활용', '중첩 for문', 'while문', 'break/continue'];
+
+    function initPageNav() {
+        const nav = document.getElementById('pageNav');
+        nav.innerHTML = '';
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+            btn.textContent = i;
+            btn.title = pageNames[i-1];
+            btn.onclick = () => goToPage(i);
+            nav.appendChild(btn);
+        }
+        updatePageControls();
+    }
+
+    function goToPage(n) {
+        document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+        document.getElementById('page' + n).classList.remove('hidden');
+        currentPage = n;
+        document.querySelectorAll('.page-btn').forEach((btn, idx) => {
+            btn.classList.toggle('active', idx + 1 === n);
+        });
+        updatePageControls();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function changePage(dir) {
+        const next = currentPage + dir;
+        if (next >= 1 && next <= totalPages) goToPage(next);
+    }
+
+    function updatePageControls() {
+        document.getElementById('prevBtn').disabled = currentPage === 1;
+        document.getElementById('nextBtn').disabled = currentPage === totalPages;
+        document.getElementById('pageIndicator').textContent = `${currentPage} / ${totalPages} - ${pageNames[currentPage-1]}`;
+    }
+
+    // ==================== CAROUSEL ANIMATION ====================
+    let carouselInterval = null;
+    let carouselLap = 0;
+    let carouselRotation = 0;
+
+    function startCarousel() {
+        if (carouselInterval) return;
+        carouselInterval = setInterval(() => {
+            carouselLap++;
+            carouselRotation += 360;
+            document.getElementById('carouselWheel').style.transform = `rotate(${carouselRotation}deg)`;
+            document.getElementById('carouselCount').textContent = carouselLap;
+            if (carouselLap >= 20) {
+                clearInterval(carouselInterval);
+                carouselInterval = null;
+            }
+        }, 300);
+    }
+
+    function resetCarousel() {
+        clearInterval(carouselInterval);
+        carouselInterval = null;
+        carouselLap = 0;
+        carouselRotation = 0;
+        document.getElementById('carouselWheel').style.transform = 'rotate(0deg)';
+        document.getElementById('carouselCount').textContent = '0';
+    }
+
+    // ==================== RANGE EXPLORER ====================
+    function exploreRange() {
+        const start = parseInt(document.getElementById('rangeStart').value);
+        const stop = parseInt(document.getElementById('rangeStop').value);
+        const step = parseInt(document.getElementById('rangeStep').value);
+        const result = document.getElementById('rangeResult');
+        const count = document.getElementById('rangeCount');
+
+        if (step === 0) {
+            result.innerHTML = '<span class="text-red-500 font-semibold">오류: 증감값은 0이 될 수 없습니다!</span>';
+            count.textContent = '';
+            return;
+        }
+
+        const values = [];
+        if (step > 0) {
+            for (let i = start; i < stop; i += step) values.push(i);
+        } else {
+            for (let i = start; i > stop; i += step) values.push(i);
+        }
+
+        if (values.length === 0) {
+            result.innerHTML = '<span class="text-gray-400">생성된 값이 없습니다 (빈 범위)</span>';
+            count.textContent = '';
+            return;
+        }
+
+        if (values.length > 200) {
+            result.innerHTML = '<span class="text-yellow-600">값이 너무 많습니다 (200개 초과). 범위를 줄여주세요.</span>';
+            count.textContent = '';
+            return;
+        }
+
+        result.innerHTML = '';
+        values.forEach((v, idx) => {
+            setTimeout(() => {
+                const span = document.createElement('span');
+                span.className = 'inline-block bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-mono font-bold text-sm fade-in-up';
+                span.textContent = v;
+                result.appendChild(span);
+            }, idx * 50);
+        });
+        count.textContent = `총 ${values.length}개의 값이 생성되었습니다.`;
+    }
+
+    // ==================== FOR LOOP VISUALIZER ====================
+    let forVisState = { step: 0, data: [], running: false };
+
+    function getForVisData() {
+        const sel = document.getElementById('forVisualizerSelect').value;
+        if (sel === 'list') return { items: [1, 2, 3], label: 'a', source: '[1, 2, 3]' };
+        if (sel === 'string') return { items: ['h', 'e', 'l', 'l', 'o'], label: 'a', source: '"hello"' };
+        return { items: [1, 2, 3], label: 'a', source: 'range(1, 4)' };
+    }
+
+    function resetForVisualizer() {
+        forVisState = { step: 0, data: getForVisData(), running: false };
+        document.getElementById('forVisualizerSteps').innerHTML = '';
+        document.getElementById('forVisualizerOutput').innerHTML = '';
+        document.getElementById('forStepBtn').disabled = false;
+    }
+
+    function stepForVisualizer() {
+        const data = forVisState.data;
+        if (forVisState.step >= data.items.length) {
+            document.getElementById('forStepBtn').disabled = true;
+            const stepsDiv = document.getElementById('forVisualizerSteps');
+            const done = document.createElement('div');
+            done.className = 'bg-gray-100 rounded-lg p-2 text-sm text-gray-500 font-semibold fade-in-up';
+            done.innerHTML = '<i class="fas fa-check-circle text-green-500 mr-1"></i> 반복 완료!';
+            stepsDiv.appendChild(done);
+            return;
+        }
+
+        const val = data.items[forVisState.step];
+        const stepsDiv = document.getElementById('forVisualizerSteps');
+        const outputDiv = document.getElementById('forVisualizerOutput');
+
+        const stepEl = document.createElement('div');
+        stepEl.className = 'bg-orange-100 rounded-lg p-2 text-sm font-mono fade-in-up';
+        stepEl.innerHTML = `<span class="text-orange-700 font-bold">${data.label} = ${typeof val === 'string' ? '"'+val+'"' : val}</span> <span class="text-gray-500">(${forVisState.step + 1}번째 반복)</span>`;
+        stepsDiv.appendChild(stepEl);
+
+        const outLine = document.createElement('div');
+        outLine.className = 'fade-in-up';
+        outLine.textContent = val;
+        outputDiv.appendChild(outLine);
+
+        forVisState.step++;
+        if (forVisState.step >= data.items.length) {
+            setTimeout(() => stepForVisualizer(), 300);
+        }
+    }
+
+    function autoForVisualizer() {
+        if (forVisState.running) return;
+        forVisState.running = true;
+        const iv = setInterval(() => {
+            if (forVisState.step > forVisState.data.items.length) {
+                clearInterval(iv);
+                forVisState.running = false;
+                return;
+            }
+            stepForVisualizer();
+        }, 600);
+    }
+
+    // ==================== TIMER DEMO ====================
+    let timerRunning = false;
+
+    function startTimer() {
+        if (timerRunning) return;
+        timerRunning = true;
+        document.getElementById('timerBtn').disabled = true;
+        let count = 5;
+        const display = document.getElementById('timerDisplay');
+        const status = document.getElementById('timerStatus');
+
+        function tick() {
+            if (count > 0) {
+                display.textContent = count;
+                display.className = 'timer-display text-orange-600 mb-2';
+                status.textContent = `range(5,0,-1): 현재 a = ${count}`;
+                const dot = document.getElementById('dot' + count);
+                if (dot) {
+                    dot.classList.remove('bg-orange-300');
+                    dot.classList.add('bg-orange-600', 'scale-125');
+                }
+                count--;
+                setTimeout(tick, 1000);
+            } else {
+                display.textContent = '🚀';
+                display.className = 'timer-display text-red-600 mb-2';
+                status.textContent = '발사!';
+                status.className = 'text-red-600 text-lg font-bold mb-4';
+                timerRunning = false;
+                document.getElementById('timerBtn').disabled = false;
+            }
+        }
+        tick();
+    }
+
+    function resetTimer() {
+        timerRunning = false;
+        document.getElementById('timerDisplay').textContent = '5';
+        document.getElementById('timerDisplay').className = 'timer-display text-orange-600 mb-2';
+        document.getElementById('timerStatus').textContent = '시작 버튼을 눌러주세요';
+        document.getElementById('timerStatus').className = 'text-gray-500 text-sm mb-4';
+        document.getElementById('timerBtn').disabled = false;
+        for (let i = 1; i <= 5; i++) {
+            const dot = document.getElementById('dot' + i);
+            if (dot) {
+                dot.className = 'w-4 h-4 rounded-full bg-orange-300 transition-all';
+            }
+        }
+    }
+
+    // ==================== MULTIPLICATION TABLE ====================
+    function generateMultiplication() {
+        const dan = parseInt(document.getElementById('mulDan').value);
+        const result = document.getElementById('mulResult');
+        result.innerHTML = '';
+        for (let a = 1; a <= 9; a++) {
+            setTimeout(() => {
+                const div = document.createElement('div');
+                div.className = 'bg-orange-50 border border-orange-200 rounded-lg p-3 text-center fade-in-up';
+                div.innerHTML = `<span class="text-gray-600">${dan} &times; ${a} = </span><span class="font-bold text-orange-700 text-lg">${dan * a}</span>`;
+                result.appendChild(div);
+            }, a * 100);
+        }
+    }
+
+    // ==================== NESTED LOOP GRID ====================
+    let nestedState = { step: 0, pairs: [], running: false };
+
+    function initNestedPairs() {
+        nestedState.pairs = [];
+        for (let i = 0; i < 2; i++) {
+            for (let j = 0; j < 3; j++) {
+                nestedState.pairs.push({ i, j });
+            }
+        }
+    }
+
+    function stepNestedLoop() {
+        if (nestedState.step >= nestedState.pairs.length) {
+            document.getElementById('nestedStepBtn').disabled = true;
+            document.getElementById('nestedCurrent').textContent = '완료!';
+            return;
+        }
+        // Reset previous highlights
+        document.querySelectorAll('.grid-cell').forEach(c => c.classList.remove('highlight'));
+
+        const pair = nestedState.pairs[nestedState.step];
+        const cell = document.querySelector(`.grid-cell[data-i="${pair.i}"][data-j="${pair.j}"]`);
+        if (cell) cell.classList.add('highlight');
+
+        document.getElementById('nestedCurrent').textContent = `i=${pair.i}, j=${pair.j}`;
+        const orderArr = nestedState.pairs.slice(0, nestedState.step + 1).map(p => `(${p.i},${p.j})`);
+        document.getElementById('nestedOrder').textContent = orderArr.join(' → ');
+
+        nestedState.step++;
+    }
+
+    function autoNestedLoop() {
+        if (nestedState.running) return;
+        nestedState.running = true;
+        const iv = setInterval(() => {
+            if (nestedState.step >= nestedState.pairs.length) {
+                clearInterval(iv);
+                nestedState.running = false;
+                document.getElementById('nestedCurrent').textContent = '완료!';
+                return;
+            }
+            stepNestedLoop();
+        }, 700);
+    }
+
+    function resetNestedLoop() {
+        nestedState = { step: 0, pairs: [], running: false };
+        initNestedPairs();
+        document.querySelectorAll('.grid-cell').forEach(c => c.classList.remove('highlight'));
+        document.getElementById('nestedCurrent').textContent = '-';
+        document.getElementById('nestedOrder').textContent = '-';
+        document.getElementById('nestedStepBtn').disabled = false;
+    }
+
+    // ==================== SET MENU COMBINATOR ====================
+    function showMenuCombos() {
+        const popcorn = [
+            { name: '카라멜', icon: 'fas fa-candy-cane', color: 'amber' },
+            { name: '치즈', icon: 'fas fa-cheese', color: 'yellow' },
+            { name: '버터', icon: 'fas fa-cookie', color: 'orange' }
+        ];
+        const drink = [
+            { name: '콜라', icon: 'fas fa-wine-bottle', color: 'red' },
+            { name: '사이다', icon: 'fas fa-glass-water', color: 'green' }
+        ];
+
+        const container = document.getElementById('menuCombos');
+        container.innerHTML = '';
+        let delay = 0;
+
+        popcorn.forEach(p => {
+            drink.forEach(d => {
+                delay++;
+                setTimeout(() => {
+                    const card = document.createElement('div');
+                    card.className = `combo-card bg-gradient-to-br from-${p.color}-50 to-${d.color}-50 border border-${p.color}-200 rounded-xl p-4 text-center fade-in-up`;
+                    card.innerHTML = `
+                        <div class="flex justify-center gap-2 text-2xl mb-2">
+                            <i class="${p.icon} text-${p.color}-500"></i>
+                            <span class="text-gray-400">+</span>
+                            <i class="${d.icon} text-${d.color}-500"></i>
+                        </div>
+                        <div class="text-sm font-semibold text-gray-700">${p.name} 팝콘</div>
+                        <div class="text-xs text-gray-500">+ ${d.name}</div>
+                    `;
+                    container.appendChild(card);
+                }, delay * 200);
+            });
+        });
+    }
+
+    // ==================== WHILE LOOP COUNTER ====================
+    let whileState = { a: 1, step: 0, running: false, done: false };
+
+    function stepWhileLoop() {
+        if (whileState.done) return;
+
+        const stepsDiv = document.getElementById('whileSteps');
+        const outputDiv = document.getElementById('whileOutput');
+        const varA = document.getElementById('whileVarA');
+        const cond = document.getElementById('whileCondition');
+
+        if (whileState.a <= 5) {
+            // Show step
+            const stepEl = document.createElement('div');
+            stepEl.className = 'bg-orange-100 rounded-lg p-2 text-xs font-mono fade-in-up';
+            stepEl.innerHTML = `<span class="text-orange-700 font-bold">a=${whileState.a}</span> → 조건 ${whileState.a}<=5 = <span class="text-green-600 font-bold">True</span> → print(${whileState.a}), a += 1`;
+            stepsDiv.appendChild(stepEl);
+
+            const outLine = document.createElement('span');
+            outLine.className = 'fade-in-up';
+            outLine.textContent = whileState.a + ' ';
+            outputDiv.appendChild(outLine);
+
+            varA.textContent = whileState.a + 1;
+            whileState.a++;
+
+            if (whileState.a > 5) {
+                cond.textContent = 'False';
+                cond.className = 'font-bold text-red-600';
+            }
+        } else {
+            whileState.done = true;
+            const stepEl = document.createElement('div');
+            stepEl.className = 'bg-red-100 rounded-lg p-2 text-xs font-mono fade-in-up';
+            stepEl.innerHTML = `<span class="text-red-700 font-bold">a=${whileState.a}</span> → 조건 ${whileState.a}<=5 = <span class="text-red-600 font-bold">False</span> → 반복 종료!`;
+            stepsDiv.appendChild(stepEl);
+            document.getElementById('whileStepBtn').disabled = true;
+        }
+    }
+
+    function autoWhileLoop() {
+        if (whileState.running) return;
+        whileState.running = true;
+        const iv = setInterval(() => {
+            if (whileState.done) {
+                clearInterval(iv);
+                whileState.running = false;
+                return;
+            }
+            stepWhileLoop();
+        }, 700);
+    }
+
+    function resetWhileLoop() {
+        whileState = { a: 1, step: 0, running: false, done: false };
+        document.getElementById('whileSteps').innerHTML = '';
+        document.getElementById('whileOutput').innerHTML = '';
+        document.getElementById('whileVarA').textContent = '1';
+        document.getElementById('whileCondition').textContent = 'True';
+        document.getElementById('whileCondition').className = 'font-bold text-green-600';
+        document.getElementById('whileStepBtn').disabled = false;
+    }
+
+    // ==================== BREAK/CONTINUE FLOW DIAGRAM ====================
+    let flowMode = 'break';
+    let flowSimState = { step: 0, running: false, done: false };
+
+    function showFlowDiagram(mode) {
+        flowMode = mode;
+        document.getElementById('flowBreak').classList.toggle('hidden', mode !== 'break');
+        document.getElementById('flowContinue').classList.toggle('hidden', mode !== 'continue');
+        document.getElementById('flowBreakBtn').className = mode === 'break'
+            ? 'px-5 py-2 rounded-lg font-semibold transition bg-red-600 text-white'
+            : 'px-5 py-2 rounded-lg font-semibold transition bg-gray-200 text-gray-600';
+        document.getElementById('flowContinueBtn').className = mode === 'continue'
+            ? 'px-5 py-2 rounded-lg font-semibold transition bg-blue-600 text-white'
+            : 'px-5 py-2 rounded-lg font-semibold transition bg-gray-200 text-gray-600';
+
+        if (mode === 'break') {
+            document.getElementById('flowSimLabel').textContent = 'break 예시: 1~10 출력, 5에서 break';
+            document.getElementById('flowSimCode').innerHTML = `<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="number">11</span>):\n    <span class="keyword">if</span> i == <span class="number">5</span>:\n        <span class="keyword">break</span>\n    <span class="function">print</span>(i)`;
+        } else {
+            document.getElementById('flowSimLabel').textContent = 'continue 예시: 1~10 중 홀수만 출력';
+            document.getElementById('flowSimCode').innerHTML = `<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="number">11</span>):\n    <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>:\n        <span class="keyword">continue</span>\n    <span class="function">print</span>(i)`;
+        }
+        resetFlowSim();
+    }
+
+    function resetFlowSim() {
+        flowSimState = { step: 0, running: false, done: false, i: 1 };
+        document.getElementById('flowSimOutput').innerHTML = '';
+        document.getElementById('flowSimStepBtn').disabled = false;
+    }
+
+    function stepFlowSim() {
+        if (flowSimState.done) return;
+        const out = document.getElementById('flowSimOutput');
+        const i = flowSimState.i;
+
+        if (i > 10) {
+            flowSimState.done = true;
+            const line = document.createElement('div');
+            line.className = 'text-yellow-400 fade-in-up';
+            line.textContent = '--- 반복 종료 ---';
+            out.appendChild(line);
+            document.getElementById('flowSimStepBtn').disabled = true;
+            return;
+        }
+
+        if (flowMode === 'break') {
+            if (i === 5) {
+                const line = document.createElement('div');
+                line.className = 'text-red-400 fade-in-up';
+                line.textContent = `i=${i} → break! 반복 종료`;
+                out.appendChild(line);
+                flowSimState.done = true;
+                document.getElementById('flowSimStepBtn').disabled = true;
+                return;
+            }
+            const line = document.createElement('div');
+            line.className = 'fade-in-up';
+            line.textContent = `i=${i} → 조건(i==5): False → print(${i})`;
+            out.appendChild(line);
+        } else {
+            if (i % 2 === 0) {
+                const line = document.createElement('div');
+                line.className = 'text-blue-400 fade-in-up';
+                line.textContent = `i=${i} → 짝수 → continue (건너뜀)`;
+                out.appendChild(line);
+            } else {
+                const line = document.createElement('div');
+                line.className = 'fade-in-up';
+                line.textContent = `i=${i} → 홀수 → print(${i})`;
+                out.appendChild(line);
+            }
+        }
+        flowSimState.i++;
+    }
+
+    function autoFlowSim() {
+        if (flowSimState.running) return;
+        flowSimState.running = true;
+        const iv = setInterval(() => {
+            if (flowSimState.done) {
+                clearInterval(iv);
+                flowSimState.running = false;
+                return;
+            }
+            stepFlowSim();
+        }, 500);
+    }
+
+    // ==================== INITIALIZATION ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        initPageNav();
+        resetForVisualizer();
+        initNestedPairs();
+        generateMultiplication();
+        showMenuCombos();
+    });
+    </script>
+</body>
+</html>

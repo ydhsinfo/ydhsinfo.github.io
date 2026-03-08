@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대단원 마무리 - III. 알고리즘과 프로그래밍 | 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'sans': ['Noto Sans KR', 'sans-serif'] },
+                    colors: {
+                        primary: { 50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12' },
+                        amber: { 50:'#fffbeb',100:'#fef3c7',200:'#fde68a',300:'#fcd34d',400:'#fbbf24',500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e',900:'#78350f' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        .hero-gradient { background: linear-gradient(135deg, #f97316 0%, #ea580c 25%, #d97706 50%, #f59e0b 75%, #fb923c 100%); }
+        @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        .fade-in { animation: fadeInUp 0.5s ease; }
+        .card-hover { transition: all 0.3s; }
+        .card-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(249,115,22,0.15); }
+        .quiz-opt { cursor: pointer; transition: all 0.2s; }
+        .quiz-opt:hover { transform: translateX(4px); }
+        .quiz-opt.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-opt.wrong { background: #fee2e2; border-color: #ef4444; }
+        .quiz-opt.disabled { pointer-events: none; }
+        .code-block { background: #1e1e2e; color: #cdd6f4; border-radius: 12px; overflow: hidden; }
+        .code-block .keyword { color: #cba6f7; }
+        .code-block .string { color: #a6e3a1; }
+        .code-block .function { color: #89b4fa; }
+        .code-block .comment { color: #6c7086; }
+        .code-block .number { color: #fab387; }
+        pre code { font-family: 'Consolas', 'Monaco', 'Courier New', monospace; }
+        .unit-card { transition: all 0.3s; }
+        .unit-card:hover { transform: translateY(-2px); }
+        .score-ring { transition: stroke-dashoffset 1s ease; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+        .faq-answer.open { max-height: 300px; }
+        .keyword-chip { transition: all 0.2s; cursor: pointer; }
+        .keyword-chip:hover { transform: scale(1.05); }
+        .keyword-chip.active { background: #f97316; color: white; border-color: #f97316; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <header class="hero-gradient text-white shadow-lg relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <svg class="w-full h-full" viewBox="0 0 800 200" preserveAspectRatio="none">
+                <circle cx="100" cy="50" r="80" fill="white" opacity="0.1"/>
+                <circle cx="700" cy="150" r="120" fill="white" opacity="0.08"/>
+                <circle cx="400" cy="30" r="60" fill="white" opacity="0.06"/>
+                <rect x="200" y="80" width="40" height="40" rx="8" fill="white" opacity="0.05" transform="rotate(15 220 100)"/>
+                <rect x="550" y="40" width="30" height="30" rx="6" fill="white" opacity="0.07" transform="rotate(-20 565 55)"/>
+            </svg>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 relative z-10">
+            <nav class="flex items-center space-x-2 text-sm text-orange-100 mb-4 flex-wrap">
+                <a href="../../index.html" class="hover:text-white transition-colors flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </a>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span>III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span class="text-white font-medium">대단원 마무리</span>
+            </nav>
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/30">
+                            <i class="fas fa-flag-checkered mr-1"></i> 마무리
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/30">
+                            <i class="fas fa-graduation-cap mr-1"></i> 단원 정리
+                        </span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
+                        <i class="fas fa-flag-checkered mr-2 opacity-90"></i>대단원 마무리
+                    </h1>
+                    <p class="mt-2 text-orange-100 text-sm sm:text-base max-w-2xl">
+                        III단원 <strong>알고리즘과 프로그래밍</strong> 전체 내용을 정리하고, 핵심 개념과 문제를 통해 학습을 완성합니다.
+                    </p>
+                </div>
+                <a href="../../index.html" class="hidden sm:flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-xl transition-all text-sm border border-white/30">
+                    <i class="fas fa-arrow-left"></i> 목록으로
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+
+        <!-- 단원 전체 개요 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-orange-100 p-6 fade-in">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-6">
+                <i class="fas fa-map text-orange-500"></i> III단원 학습 내용 한눈에 보기
+            </h2>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                <a href="../01_문제 분해와 모델링/01_문제 분석/index.html" class="unit-card block bg-orange-50 border border-orange-200 rounded-xl p-4 text-center">
+                    <div class="text-2xl mb-1">🎯</div>
+                    <p class="font-bold text-orange-700 text-xs">01</p>
+                    <p class="text-xs text-gray-600 mt-1">문제 분해와 모델링</p>
+                </a>
+                <a href="../02_알고리즘/01_알고리즘의 이해/index.html" class="unit-card block bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+                    <div class="text-2xl mb-1">📊</div>
+                    <p class="font-bold text-amber-700 text-xs">02</p>
+                    <p class="text-xs text-gray-600 mt-1">알고리즘</p>
+                </a>
+                <a href="../03_프로그래밍의 이해/01_변수와 자료형/index.html" class="unit-card block bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center">
+                    <div class="text-2xl mb-1">💻</div>
+                    <p class="font-bold text-yellow-700 text-xs">03</p>
+                    <p class="text-xs text-gray-600 mt-1">프로그래밍의 이해</p>
+                </a>
+                <a href="../04_제어 구조의 응용/01_조건문/index.html" class="unit-card block bg-orange-50 border border-orange-200 rounded-xl p-4 text-center">
+                    <div class="text-2xl mb-1">🔀</div>
+                    <p class="font-bold text-orange-700 text-xs">04</p>
+                    <p class="text-xs text-gray-600 mt-1">제어 구조의 응용</p>
+                </a>
+                <a href="../05_함수와 라이브러리/01_함수/index.html" class="unit-card block bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+                    <div class="text-2xl mb-1">🔧</div>
+                    <p class="font-bold text-amber-700 text-xs">05</p>
+                    <p class="text-xs text-gray-600 mt-1">함수와 라이브러리</p>
+                </a>
+                <a href="../06_객체지향 프로그래밍/01_객체지향 프로그래밍의 이해/index.html" class="unit-card block bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center">
+                    <div class="text-2xl mb-1">📦</div>
+                    <p class="font-bold text-yellow-700 text-xs">06</p>
+                    <p class="text-xs text-gray-600 mt-1">객체지향 프로그래밍</p>
+                </a>
+                <a href="../07_창의 융합 프로그래밍/01_다양한 학문 분야의 문제 해결/index.html" class="unit-card block bg-orange-50 border border-orange-200 rounded-xl p-4 text-center">
+                    <div class="text-2xl mb-1">🌐</div>
+                    <p class="font-bold text-orange-700 text-xs">07</p>
+                    <p class="text-xs text-gray-600 mt-1">창의 융합 프로그래밍</p>
+                </a>
+                <div class="unit-card bg-gradient-to-br from-orange-500 to-amber-500 text-white rounded-xl p-4 text-center">
+                    <div class="text-2xl mb-1">🏁</div>
+                    <p class="font-bold text-xs">08</p>
+                    <p class="text-xs mt-1 opacity-90">대단원 마무리 ←현재</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 핵심 개념 정리 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-orange-100 p-6">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4">
+                <i class="fas fa-star text-orange-500"></i> 핵심 개념 정리
+            </h2>
+            <p class="text-sm text-gray-600 mb-4">키워드를 클릭하면 해당 개념의 설명이 나타납니다.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <button onclick="showKeyword('decomp')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">문제 분해</button>
+                <button onclick="showKeyword('abstract')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">추상화</button>
+                <button onclick="showKeyword('algo')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">알고리즘</button>
+                <button onclick="showKeyword('sort')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">정렬 알고리즘</button>
+                <button onclick="showKeyword('search')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">탐색 알고리즘</button>
+                <button onclick="showKeyword('var')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">변수와 자료형</button>
+                <button onclick="showKeyword('list')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">리스트/딕셔너리</button>
+                <button onclick="showKeyword('cond')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">조건문</button>
+                <button onclick="showKeyword('loop')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">반복문</button>
+                <button onclick="showKeyword('func')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">함수</button>
+                <button onclick="showKeyword('module')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">모듈/라이브러리</button>
+                <button onclick="showKeyword('oop')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">객체지향(OOP)</button>
+                <button onclick="showKeyword('encap')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">캡슐화</button>
+                <button onclick="showKeyword('inherit')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">상속</button>
+                <button onclick="showKeyword('poly')" class="keyword-chip border border-orange-300 rounded-full px-3 py-1.5 text-sm text-orange-700 bg-orange-50">다형성</button>
+            </div>
+            <div id="keywordBox" class="bg-orange-50 rounded-xl border border-orange-200 p-5 min-h-[80px]">
+                <p class="text-gray-400 text-sm text-center py-2">위의 키워드를 클릭하세요.</p>
+            </div>
+        </section>
+
+        <!-- 단원 정리 표 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-orange-100 p-6">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4">
+                <i class="fas fa-table text-orange-500"></i> 소단원별 핵심 내용 요약
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-orange-50">
+                            <th class="px-4 py-3 text-left font-bold text-orange-700 rounded-tl-lg w-12">소단원</th>
+                            <th class="px-4 py-3 text-left font-bold text-orange-700">주요 개념</th>
+                            <th class="px-4 py-3 text-left font-bold text-orange-700 rounded-tr-lg">핵심 문법/내용</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-orange-50">
+                        <tr class="hover:bg-orange-50 transition-colors">
+                            <td class="px-4 py-3 font-bold text-orange-600 text-center">01</td>
+                            <td class="px-4 py-3 font-semibold text-gray-700">문제 분해, 추상화, 모델링</td>
+                            <td class="px-4 py-3 text-gray-600">문제를 작은 단위로 분해하여 핵심만 추상화, 모델로 표현</td>
+                        </tr>
+                        <tr class="hover:bg-orange-50 transition-colors">
+                            <td class="px-4 py-3 font-bold text-orange-600 text-center">02</td>
+                            <td class="px-4 py-3 font-semibold text-gray-700">정렬 알고리즘, 탐색 알고리즘</td>
+                            <td class="px-4 py-3 text-gray-600">버블/선택/삽입 정렬, 순차/이진 탐색, 시간 복잡도</td>
+                        </tr>
+                        <tr class="hover:bg-orange-50 transition-colors">
+                            <td class="px-4 py-3 font-bold text-orange-600 text-center">03</td>
+                            <td class="px-4 py-3 font-semibold text-gray-700">변수, 자료형, 입출력, 데이터 구조</td>
+                            <td class="px-4 py-3 text-gray-600">int, float, str, bool, 리스트, 딕셔너리, input/print</td>
+                        </tr>
+                        <tr class="hover:bg-orange-50 transition-colors">
+                            <td class="px-4 py-3 font-bold text-orange-600 text-center">04</td>
+                            <td class="px-4 py-3 font-semibold text-gray-700">조건문, 반복문, 제어 구조</td>
+                            <td class="px-4 py-3 text-gray-600">if/elif/else, for/while, break/continue, 중첩 구조</td>
+                        </tr>
+                        <tr class="hover:bg-orange-50 transition-colors">
+                            <td class="px-4 py-3 font-bold text-orange-600 text-center">05</td>
+                            <td class="px-4 py-3 font-semibold text-gray-700">함수, 모듈, 라이브러리</td>
+                            <td class="px-4 py-3 text-gray-600">def, return, 매개변수, import, math/random/os 모듈</td>
+                        </tr>
+                        <tr class="hover:bg-orange-50 transition-colors">
+                            <td class="px-4 py-3 font-bold text-orange-600 text-center">06</td>
+                            <td class="px-4 py-3 font-semibold text-gray-700">클래스, 객체, 상속, 캡슐화, 다형성</td>
+                            <td class="px-4 py-3 text-gray-600">class, __init__, self, super(), 메서드 오버라이딩</td>
+                        </tr>
+                        <tr class="hover:bg-orange-50 transition-colors">
+                            <td class="px-4 py-3 font-bold text-orange-600 text-center">07</td>
+                            <td class="px-4 py-3 font-semibold text-gray-700">창의 융합, SDGs</td>
+                            <td class="px-4 py-3 text-gray-600">수학·과학·사회 융합 프로그래밍, 지속가능발전목표</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 핵심 코드 패턴 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-orange-100 p-6">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4">
+                <i class="fas fa-code text-orange-500"></i> 단원 핵심 코드 패턴
+            </h2>
+            <div class="code-block">
+                <div class="bg-gray-800 px-4 py-2 flex justify-between">
+                    <span class="text-gray-400 text-xs font-mono">Python</span>
+                    <span class="text-xs text-gray-500">III단원 핵심 문법 모음</span>
+                </div>
+                <pre class="p-4 text-sm overflow-x-auto"><code><span class="comment">##################################################</span>
+<span class="comment"># 1. 변수와 자료형</span>
+<span class="comment">##################################################</span>
+name = <span class="string">"홍길동"</span>      <span class="comment"># 문자열</span>
+score = <span class="number">95</span>           <span class="comment"># 정수</span>
+avg = <span class="number">87.5</span>           <span class="comment"># 실수</span>
+is_pass = <span class="keyword">True</span>       <span class="comment"># 불리언</span>
+data = [<span class="number">85</span>, <span class="number">90</span>, <span class="number">78</span>]  <span class="comment"># 리스트</span>
+student = {<span class="string">"name"</span>: <span class="string">"홍길동"</span>, <span class="string">"score"</span>: <span class="number">95</span>}  <span class="comment"># 딕셔너리</span>
+
+<span class="comment">##################################################</span>
+<span class="comment"># 2. 제어 구조</span>
+<span class="comment">##################################################</span>
+<span class="keyword">if</span> score >= <span class="number">90</span>:
+    <span class="function">print</span>(<span class="string">"A 등급"</span>)
+<span class="keyword">elif</span> score >= <span class="number">80</span>:
+    <span class="function">print</span>(<span class="string">"B 등급"</span>)
+<span class="keyword">else</span>:
+    <span class="function">print</span>(<span class="string">"C 등급"</span>)
+
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">5</span>):      <span class="comment"># 반복문</span>
+    <span class="function">print</span>(i, end=<span class="string">" "</span>)
+
+<span class="comment">##################################################</span>
+<span class="comment"># 3. 함수</span>
+<span class="comment">##################################################</span>
+<span class="keyword">def</span> <span class="function">calc_avg</span>(scores):
+    <span class="keyword">return</span> <span class="function">sum</span>(scores) / <span class="function">len</span>(scores)
+
+avg = <span class="function">calc_avg</span>([<span class="number">85</span>, <span class="number">90</span>, <span class="number">78</span>])  <span class="comment"># 84.33</span>
+
+<span class="comment">##################################################</span>
+<span class="comment"># 4. 클래스 (OOP)</span>
+<span class="comment">##################################################</span>
+<span class="keyword">class</span> <span class="class-name">Student</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, score):
+        self.__name = name    <span class="comment"># 캡슐화</span>
+        self.__score = score
+
+    <span class="keyword">def</span> <span class="function">get_grade</span>(self):
+        <span class="keyword">return</span> <span class="string">"A"</span> <span class="keyword">if</span> self.__score >= <span class="number">90</span> <span class="keyword">else</span> <span class="string">"B"</span>
+
+<span class="keyword">class</span> <span class="class-name">GradStudent</span>(<span class="class-name">Student</span>):   <span class="comment"># 상속</span>
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, score, research):
+        <span class="function">super()</span>.__init__(name, score)
+        self.research = research
+
+s = <span class="class-name">Student</span>(<span class="string">"홍길동"</span>, <span class="number">95</span>)
+<span class="function">print</span>(s.<span class="function">get_grade</span>())  <span class="comment"># A</span></code></pre>
+            </div>
+        </section>
+
+        <!-- 단원 종합 문제 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-orange-100 p-6">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4">
+                <i class="fas fa-pencil-alt text-orange-500"></i> 단원 종합 문제
+            </h2>
+            <div id="quizScore" class="hidden mb-4 bg-orange-50 rounded-xl p-4 border border-orange-200 text-center">
+                <p class="text-lg font-bold text-orange-700">최종 점수: <span id="scoreDisplay">0</span> / 5점</p>
+            </div>
+            <div class="space-y-6" id="quizContainer">
+
+                <!-- Q1 -->
+                <div class="border border-gray-200 rounded-xl p-5" data-q="1">
+                    <p class="font-semibold text-gray-800 mb-3">Q1. 버블 정렬의 시간 복잡도로 올바른 것은?</p>
+                    <div class="space-y-2">
+                        <div onclick="answerQ(1, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">① O(n)</div>
+                        <div onclick="answerQ(1, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">② O(n log n)</div>
+                        <div onclick="answerQ(1, this, true)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">③ O(n²)</div>
+                        <div onclick="answerQ(1, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">④ O(log n)</div>
+                    </div>
+                    <div class="mt-2 hidden text-xs font-semibold p-2 rounded-lg" id="q1-res"></div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="border border-gray-200 rounded-xl p-5" data-q="2">
+                    <p class="font-semibold text-gray-800 mb-3">Q2. 파이썬에서 <code class="bg-gray-100 px-1 rounded font-mono">self.__name</code>처럼 속성 이름 앞에 밑줄 두 개(__)를 붙이는 이유는?</p>
+                    <div class="space-y-2">
+                        <div onclick="answerQ(2, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">① 상속을 위해</div>
+                        <div onclick="answerQ(2, this, true)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">② 캡슐화 — 외부에서 직접 접근 불가(private)</div>
+                        <div onclick="answerQ(2, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">③ 다형성을 위해</div>
+                        <div onclick="answerQ(2, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">④ 클래스 변수로 지정하기 위해</div>
+                    </div>
+                    <div class="mt-2 hidden text-xs font-semibold p-2 rounded-lg" id="q2-res"></div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="border border-gray-200 rounded-xl p-5" data-q="3">
+                    <p class="font-semibold text-gray-800 mb-3">Q3. 이진 탐색(Binary Search)이 순차 탐색보다 빠른 이유는?</p>
+                    <div class="space-y-2">
+                        <div onclick="answerQ(3, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">① 정렬되지 않은 데이터에서도 사용 가능하기 때문</div>
+                        <div onclick="answerQ(3, this, true)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">② 탐색 범위를 매 단계마다 절반으로 줄이기 때문</div>
+                        <div onclick="answerQ(3, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">③ 여러 스레드를 동시에 사용하기 때문</div>
+                        <div onclick="answerQ(3, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">④ 데이터를 미리 복사해두기 때문</div>
+                    </div>
+                    <div class="mt-2 hidden text-xs font-semibold p-2 rounded-lg" id="q3-res"></div>
+                </div>
+
+                <!-- Q4 -->
+                <div class="border border-gray-200 rounded-xl p-5" data-q="4">
+                    <p class="font-semibold text-gray-800 mb-3">Q4. 부모 클래스의 메서드를 자식 클래스에서 재정의하는 것을 무엇이라 하는가?</p>
+                    <div class="space-y-2">
+                        <div onclick="answerQ(4, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">① 오버로딩 (Overloading)</div>
+                        <div onclick="answerQ(4, this, true)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">② 오버라이딩 (Overriding)</div>
+                        <div onclick="answerQ(4, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">③ 캡슐화 (Encapsulation)</div>
+                        <div onclick="answerQ(4, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">④ 인스턴스화 (Instantiation)</div>
+                    </div>
+                    <div class="mt-2 hidden text-xs font-semibold p-2 rounded-lg" id="q4-res"></div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="border border-gray-200 rounded-xl p-5" data-q="5">
+                    <p class="font-semibold text-gray-800 mb-3">Q5. 창의 융합 프로그래밍의 특징으로 가장 적절한 것은?</p>
+                    <div class="space-y-2">
+                        <div onclick="answerQ(5, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">① 프로그래밍 언어 문법 습득에만 초점을 맞춘다.</div>
+                        <div onclick="answerQ(5, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">② 수학 분야의 문제만 해결할 수 있다.</div>
+                        <div onclick="answerQ(5, this, true)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">③ 다양한 학문 분야의 지식과 프로그래밍을 융합하여 실생활 문제를 해결한다.</div>
+                        <div onclick="answerQ(5, this, false)" class="quiz-opt border border-gray-200 rounded-lg p-2.5 text-sm text-gray-700">④ 기존에 만들어진 프로그램을 분석하는 것이 목적이다.</div>
+                    </div>
+                    <div class="mt-2 hidden text-xs font-semibold p-2 rounded-lg" id="q5-res"></div>
+                </div>
+            </div>
+            <div class="mt-6 text-center">
+                <button onclick="submitQuiz()" id="submitBtn" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl font-bold text-base transition-all shadow-md hover:shadow-lg">
+                    <i class="fas fa-check mr-2"></i> 채점하기
+                </button>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="bg-white rounded-2xl shadow-sm border border-orange-100 p-6">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4">
+                <i class="fas fa-question-circle text-orange-500"></i> 자주 묻는 질문 (FAQ)
+            </h2>
+            <div class="space-y-3">
+                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-orange-50 transition-colors">
+                        <span class="font-semibold text-gray-800 text-sm">Q. 파이썬에서 리스트와 딕셔너리의 차이는 무엇인가요?</span>
+                        <i class="fas fa-chevron-down text-orange-400 transition-transform flex-shrink-0"></i>
+                    </button>
+                    <div class="faq-answer px-5 pb-4 text-sm text-gray-700 leading-relaxed border-t border-gray-100">
+                        <strong>리스트</strong>는 순서가 있는 데이터 모음으로 인덱스(0, 1, 2...)로 접근합니다. <code class="bg-gray-100 px-1 rounded font-mono">[85, 90, 78]</code>처럼 []를 사용합니다.<br>
+                        <strong>딕셔너리</strong>는 키(key)와 값(value)의 쌍으로 구성되며 <code class="bg-gray-100 px-1 rounded font-mono">{"name": "홍길동", "score": 95}</code>처럼 {}를 사용합니다. 순서보다는 이름(키)으로 접근합니다.
+                    </div>
+                </div>
+                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-orange-50 transition-colors">
+                        <span class="font-semibold text-gray-800 text-sm">Q. 함수와 메서드의 차이는 무엇인가요?</span>
+                        <i class="fas fa-chevron-down text-orange-400 transition-transform flex-shrink-0"></i>
+                    </button>
+                    <div class="faq-answer px-5 pb-4 text-sm text-gray-700 leading-relaxed border-t border-gray-100">
+                        <strong>함수</strong>는 독립적으로 정의되는 코드 블록입니다. <code class="bg-gray-100 px-1 rounded font-mono">def func(): ...</code><br>
+                        <strong>메서드</strong>는 클래스 내부에 정의된 함수로, 첫 번째 매개변수가 반드시 <code class="bg-gray-100 px-1 rounded font-mono">self</code>입니다. 메서드는 객체를 통해 호출됩니다.
+                    </div>
+                </div>
+                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-orange-50 transition-colors">
+                        <span class="font-semibold text-gray-800 text-sm">Q. super()는 어떤 경우에 사용하나요?</span>
+                        <i class="fas fa-chevron-down text-orange-400 transition-transform flex-shrink-0"></i>
+                    </button>
+                    <div class="faq-answer px-5 pb-4 text-sm text-gray-700 leading-relaxed border-t border-gray-100">
+                        <code class="bg-gray-100 px-1 rounded font-mono">super()</code>는 자식 클래스에서 부모 클래스의 메서드를 호출할 때 사용합니다. 주로 <strong>__init__</strong> 메서드에서 <code class="bg-gray-100 px-1 rounded font-mono">super().__init__()</code>로 부모의 초기화를 수행하는 데 사용됩니다. 이렇게 하면 부모의 속성을 자식 클래스에서도 그대로 활용할 수 있습니다.
+                    </div>
+                </div>
+                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-orange-50 transition-colors">
+                        <span class="font-semibold text-gray-800 text-sm">Q. SDGs와 프로그래밍을 어떻게 연결할 수 있나요?</span>
+                        <i class="fas fa-chevron-down text-orange-400 transition-transform flex-shrink-0"></i>
+                    </button>
+                    <div class="faq-answer px-5 pb-4 text-sm text-gray-700 leading-relaxed border-t border-gray-100">
+                        SDGs와 관련된 데이터를 <strong>수집·분석</strong>하거나, 문제 상황을 <strong>시뮬레이션</strong>하거나, 해결책을 <strong>자동화</strong>하는 프로그램을 만들 수 있습니다. 예: 탄소 발자국 계산기(SDG 13), 식량 분배 최적화(SDG 2), 에너지 사용량 모니터링(SDG 7) 등.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 학습 완료 메시지 -->
+        <section class="bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-2xl p-8 text-center">
+            <div class="text-5xl mb-4">🎉</div>
+            <h2 class="text-2xl font-extrabold mb-2">III단원 학습 완료!</h2>
+            <p class="text-orange-100 mb-6">알고리즘과 프로그래밍 단원을 모두 마쳤습니다.<br>다음 단원에서도 열심히 학습하세요!</p>
+            <a href="../../index.html" class="inline-flex items-center gap-2 bg-white text-orange-600 font-bold px-6 py-3 rounded-xl hover:bg-orange-50 transition-all">
+                <i class="fas fa-home"></i> 교과서 목록으로 돌아가기
+            </a>
+        </section>
+    </main>
+
+    <script>
+        const keywords = {
+            decomp: { title: '문제 분해 (Problem Decomposition)', desc: '복잡한 문제를 해결 가능한 작은 단위로 나누는 것. 하향식 분해와 상향식 분해 방법이 있으며, 분해된 각 부분을 독립적으로 해결한 뒤 합쳐 전체 문제를 해결한다.' },
+            abstract: { title: '추상화 (Abstraction)', desc: '문제에서 불필요한 세부 사항을 제거하고 핵심 속성과 기능만 추출하는 것. 데이터 추상화와 절차 추상화로 나뉜다.' },
+            algo: { title: '알고리즘 (Algorithm)', desc: '문제를 해결하기 위한 단계적인 절차나 방법. 명확성, 유한성, 효율성, 입력/출력 존재 등의 조건을 만족해야 한다.' },
+            sort: { title: '정렬 알고리즘', desc: '버블 정렬 O(n²): 인접한 두 원소를 비교해 교환. 선택 정렬 O(n²): 최솟값을 찾아 맨 앞으로. 삽입 정렬 O(n²): 적절한 위치에 삽입.' },
+            search: { title: '탐색 알고리즘', desc: '순차 탐색 O(n): 처음부터 하나씩 비교. 이진 탐색 O(log n): 정렬된 데이터에서 중간 값과 비교하며 범위를 절반씩 줄임 — 훨씬 빠름.' },
+            var: { title: '변수와 자료형', desc: '변수: 데이터를 저장하는 공간. 자료형: int(정수), float(실수), str(문자열), bool(참/거짓). 파이썬은 동적 타이핑을 지원하여 자료형을 자동으로 결정한다.' },
+            list: { title: '리스트/딕셔너리', desc: '리스트 []: 순서가 있는 데이터 모음, 인덱스로 접근. 딕셔너리 {}: 키-값 쌍의 데이터 모음, 키로 접근. 둘 다 다양한 자료형 혼합 가능.' },
+            cond: { title: '조건문 (if/elif/else)', desc: 'if 조건: 조건이 참일 때 실행. elif: 추가 조건 검사. else: 모든 조건이 거짓일 때 실행. 중첩 조건문으로 복잡한 조건 처리 가능.' },
+            loop: { title: '반복문 (for/while)', desc: 'for 변수 in 범위: 특정 횟수나 시퀀스를 반복. while 조건: 조건이 참인 동안 반복. break로 종료, continue로 다음 반복으로 건너뜀.' },
+            func: { title: '함수 (Function)', desc: 'def 함수명(매개변수): ... return 반환값. 코드의 재사용성과 가독성을 높인다. 매개변수의 기본값 설정, 가변 인수(*args) 등을 지원.' },
+            module: { title: '모듈/라이브러리', desc: 'import 모듈명으로 불러옴. math: 수학 함수. random: 난수 생성. os: 운영체제 기능. statistics: 통계 함수. 라이브러리는 여러 모듈의 모음.' },
+            oop: { title: '객체지향 프로그래밍 (OOP)', desc: '현실 세계의 사물을 객체로 추상화하여 프로그래밍하는 패러다임. 캡슐화, 상속, 다형성의 3대 특성을 가진다. class 키워드로 클래스를 정의.' },
+            encap: { title: '캡슐화 (Encapsulation)', desc: '객체의 속성과 메서드를 하나로 묶고, 외부에서의 직접 접근을 제한. __name(private), _name(protected), name(public)으로 접근 제어.' },
+            inherit: { title: '상속 (Inheritance)', desc: '부모 클래스의 속성과 메서드를 자식 클래스가 물려받음. class 자식(부모): 로 정의. super().__init__()으로 부모 생성자 호출.' },
+            poly: { title: '다형성 (Polymorphism)', desc: '같은 이름의 메서드가 클래스에 따라 다르게 동작. 메서드 오버라이딩으로 구현. 같은 인터페이스로 다양한 객체를 유연하게 처리 가능.' }
+        };
+
+        function showKeyword(key) {
+            document.querySelectorAll('.keyword-chip').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            const d = keywords[key];
+            document.getElementById('keywordBox').innerHTML = `
+                <h4 class="font-bold text-orange-700 mb-2">${d.title}</h4>
+                <p class="text-sm text-gray-700 leading-relaxed">${d.desc}</p>
+            `;
+        }
+
+        let quizAnswers = {};
+        let submitted = false;
+
+        function answerQ(qNum, el, correct) {
+            if (submitted) return;
+            const container = el.closest('[data-q]');
+            container.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('selected-ans'));
+            el.classList.add('selected-ans');
+            quizAnswers[qNum] = { el, correct };
+        }
+
+        function submitQuiz() {
+            if (submitted) return;
+            let score = 0;
+            for (let q = 1; q <= 5; q++) {
+                const resEl = document.getElementById('q' + q + '-res');
+                resEl.classList.remove('hidden');
+                if (quizAnswers[q]) {
+                    const { el, correct } = quizAnswers[q];
+                    const container = el.closest('[data-q]');
+                    container.querySelectorAll('.quiz-opt').forEach(o => o.classList.add('disabled'));
+                    if (correct) {
+                        el.classList.add('correct');
+                        resEl.textContent = '✅ 정답입니다!';
+                        resEl.className = 'mt-2 text-xs font-semibold p-2 rounded-lg bg-green-100 text-green-800';
+                        score++;
+                    } else {
+                        el.classList.add('wrong');
+                        const correctEl = Array.from(container.querySelectorAll('.quiz-opt')).find((o, i) => {
+                            const handlers = o.getAttribute('onclick');
+                            return handlers && handlers.includes(', this, true)');
+                        });
+                        if (correctEl) correctEl.classList.add('correct');
+                        resEl.textContent = '❌ 틀렸습니다. 정답이 표시됩니다.';
+                        resEl.className = 'mt-2 text-xs font-semibold p-2 rounded-lg bg-red-100 text-red-800';
+                    }
+                } else {
+                    resEl.textContent = '⚠️ 답을 선택하지 않았습니다.';
+                    resEl.className = 'mt-2 text-xs font-semibold p-2 rounded-lg bg-gray-100 text-gray-600';
+                }
+            }
+            submitted = true;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').classList.add('opacity-50');
+            document.getElementById('scoreDisplay').textContent = score;
+            document.getElementById('quizScore').classList.remove('hidden');
+            document.getElementById('quizScore').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function toggleFaq(btn) {
+            const answer = btn.nextElementSibling;
+            const icon = btn.querySelector('i');
+            answer.classList.toggle('open');
+            icon.style.transform = answer.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+    </script>
+</body>
+</html>

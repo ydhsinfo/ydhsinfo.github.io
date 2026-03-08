@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이미지 압축 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#ecfeff',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            800: '#155e75',
+                            900: '#164e63',
+                        },
+                        accent: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #0891b2 0%, #0284c7 50%, #0369a1 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #0891b2, #0284c7, #0891b2);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Pixel Art Grid */
+        .pixel-grid {
+            display: inline-grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
+            background: #e2e8f0;
+            padding: 2px;
+            border-radius: 8px;
+        }
+        .pixel-cell {
+            width: 36px;
+            height: 36px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border-radius: 2px;
+        }
+        .pixel-cell:hover {
+            transform: scale(1.1);
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .pixel-cell.colored {
+            border-color: transparent;
+        }
+
+        @media (max-width: 640px) {
+            .pixel-cell {
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        /* Bar chart animation */
+        .bar-fill {
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0;
+        }
+        .bar-fill.animated {
+            /* width set via inline style */
+        }
+
+        /* Format card active state */
+        .format-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .format-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.12);
+        }
+        .format-card.active {
+            border-color: #0891b2;
+            box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.2);
+        }
+
+        /* Color palette */
+        .color-swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        .color-swatch:hover {
+            transform: scale(1.15);
+        }
+        .color-swatch.selected {
+            border-color: #1e293b;
+            box-shadow: 0 0 0 2px white, 0 0 0 4px #1e293b;
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { break-after: avoid; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            .no-print { display: none !important; }
+            body { font-size: 11pt; }
+            .pixel-grid { gap: 1px; }
+            .pixel-cell { width: 20px; height: 20px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #0891b2 0%, #0284c7 50%, #0369a1 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">II. 데이터</span>
+                <span class="breadcrumb-item text-white font-medium">01 디지털 데이터 압축</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-image"></i>
+                        <span>II. 데이터 &gt; 01 디지털 데이터 압축</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        이미지 압축
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        이미지 파일의 다양한 형식과 압축 방식을 이해하고, 손실 압축과 비손실 압축의 차이를 알아봅시다
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-th mr-1"></i> BMP 파일
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-compress-alt mr-1"></i> 이미지 압축
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-file-image mr-1"></i> PNG / GIF / JPEG
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Image frame -->
+                        <rect x="30" y="30" width="160" height="120" rx="12" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <!-- Pixel grid inside -->
+                        <rect x="45" y="45" width="25" height="25" rx="3" fill="rgba(255,255,255,0.25)"/>
+                        <rect x="75" y="45" width="25" height="25" rx="3" fill="rgba(255,255,255,0.15)"/>
+                        <rect x="105" y="45" width="25" height="25" rx="3" fill="rgba(255,255,255,0.3)"/>
+                        <rect x="135" y="45" width="25" height="25" rx="3" fill="rgba(255,255,255,0.1)"/>
+                        <rect x="45" y="75" width="25" height="25" rx="3" fill="rgba(255,255,255,0.18)"/>
+                        <rect x="75" y="75" width="25" height="25" rx="3" fill="rgba(255,255,255,0.28)"/>
+                        <rect x="105" y="75" width="25" height="25" rx="3" fill="rgba(255,255,255,0.12)"/>
+                        <rect x="135" y="75" width="25" height="25" rx="3" fill="rgba(255,255,255,0.22)"/>
+                        <rect x="45" y="105" width="25" height="25" rx="3" fill="rgba(255,255,255,0.2)"/>
+                        <rect x="75" y="105" width="25" height="25" rx="3" fill="rgba(255,255,255,0.1)"/>
+                        <rect x="105" y="105" width="25" height="25" rx="3" fill="rgba(255,255,255,0.25)"/>
+                        <rect x="135" y="105" width="25" height="25" rx="3" fill="rgba(255,255,255,0.15)"/>
+                        <!-- Compress arrow -->
+                        <path d="M110 165 L90 185 L100 185 L100 205 L120 205 L120 185 L130 185 Z" fill="rgba(255,255,255,0.3)"/>
+                        <!-- Small compressed file -->
+                        <rect x="85" y="195" width="50" height="20" rx="4" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                        <text x="110" y="209" text-anchor="middle" fill="white" font-size="8" font-weight="bold">JPEG</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-3 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>BMP 파일의 구조와 특성을 이해한다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>PNG, GIF, JPEG 파일의 압축 방식을 비교한다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">3</span>
+                        <span>손실 압축과 비손실 압축의 차이를 설명할 수 있다.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 1: BMP 파일                                                    -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-bmp">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-th"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">BMP 파일</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Bitmap Image File</p>
+                </div>
+            </div>
+
+            <!-- Definition callout -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-500 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">BMP 파일이란?</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong>BMP(Bitmap)</strong> 파일은 각 화소에 색 정보를 차례대로 기록하는 <strong>무압축 파일 형식</strong>입니다.
+                            확장자는 <code class="bg-primary-100 text-primary-800 px-1.5 py-0.5 rounded text-sm font-mono">.bmp</code>이며,
+                            이미지 품질이 우수하지만 파일 크기가 큰 것이 특징입니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pixel concept -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-info-circle text-amber-600 text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-800 mb-1">화소(Pixel)란?</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            <strong>화소(픽셀, Pixel)</strong>는 컴퓨터에서 이미지를 구성하는 <strong>최소 단위</strong>입니다.
+                            디지털 이미지는 수많은 픽셀이 격자 형태로 모여 하나의 그림을 이루게 됩니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bit depth cards -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-palette text-primary-500"></i> 비트 수에 따른 색 표현
+            </h3>
+            <div class="grid md:grid-cols-3 gap-6 mb-10">
+                <!-- 1-bit -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-gray-700 to-gray-800 p-4 flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            <span class="text-white font-extrabold text-lg">1</span>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-lg">1비트</h4>
+                            <p class="text-white/80 text-sm">2색 표현</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 rounded-lg bg-black border-2 border-gray-300"></div>
+                            <div class="w-8 h-8 rounded-lg bg-white border-2 border-gray-300"></div>
+                        </div>
+                        <p class="text-gray-600 text-sm">각 화소를 0 또는 1로 표현하여 <strong>흑백 2색</strong>만 나타낼 수 있습니다.</p>
+                        <div class="mt-3 bg-gray-50 rounded-lg p-2 text-center">
+                            <code class="text-xs font-mono text-gray-700">2<sup>1</sup> = <strong>2</strong>색</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8-bit -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 p-4 flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            <span class="text-white font-extrabold text-lg">8</span>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-lg">8비트</h4>
+                            <p class="text-white/80 text-sm">256색 표현</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex flex-wrap gap-1 mb-3">
+                            <div class="w-4 h-4 rounded bg-red-400"></div>
+                            <div class="w-4 h-4 rounded bg-orange-400"></div>
+                            <div class="w-4 h-4 rounded bg-yellow-400"></div>
+                            <div class="w-4 h-4 rounded bg-green-400"></div>
+                            <div class="w-4 h-4 rounded bg-blue-400"></div>
+                            <div class="w-4 h-4 rounded bg-indigo-400"></div>
+                            <div class="w-4 h-4 rounded bg-purple-400"></div>
+                            <div class="w-4 h-4 rounded bg-pink-400"></div>
+                        </div>
+                        <p class="text-gray-600 text-sm">8비트로 <strong>256가지 색상</strong>을 표현할 수 있습니다.</p>
+                        <div class="mt-3 bg-gray-50 rounded-lg p-2 text-center">
+                            <code class="text-xs font-mono text-gray-700">2<sup>8</sup> = <strong>256</strong>색</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 24-bit -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-primary-500 to-accent-500 p-4 flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            <span class="text-white font-extrabold text-lg">24</span>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-lg">24비트</h4>
+                            <p class="text-white/80 text-sm">트루 컬러</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="flex-1 h-4 rounded-full" style="background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);"></div>
+                        </div>
+                        <p class="text-gray-600 text-sm">RGB 각 8비트로 <strong>16,777,216색</strong>을 표현하는 트루 컬러입니다.</p>
+                        <div class="mt-3 bg-gray-50 rounded-lg p-2 text-center">
+                            <code class="text-xs font-mono text-gray-700">2<sup>24</sup> = <strong>16,777,216</strong>색</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BMP pros/cons -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                    <h4 class="font-bold text-emerald-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-check-circle text-emerald-500"></i> 장점
+                    </h4>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-emerald-500 mt-1 text-xs"></i>
+                            <span>압축하지 않아 <strong>이미지 품질이 우수</strong>합니다.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-emerald-500 mt-1 text-xs"></i>
+                            <span>원본 데이터가 그대로 유지됩니다.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-red-50 border border-red-200 rounded-2xl p-5">
+                    <h4 class="font-bold text-red-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-exclamation-circle text-red-500"></i> 단점
+                    </h4>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-times text-red-500 mt-1 text-xs"></i>
+                            <span><strong>파일 크기가 매우 큽니다.</strong></span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-times text-red-500 mt-1 text-xs"></i>
+                            <span>웹에서 사용하기에 적합하지 않습니다.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto opacity-40"></div>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 2: Pixel Art Interactive Demo                                  -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-pixel-demo">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-paint-brush"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">픽셀 아트 체험</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Pixel Art Interactive Demo</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 md:p-8">
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    아래 격자판의 셀을 클릭하여 색을 칠해 보세요. 각 셀이 하나의 <strong>화소(픽셀)</strong>를 나타냅니다.
+                    BMP 파일은 이렇게 각 픽셀의 색 정보를 하나하나 저장합니다.
+                </p>
+
+                <div class="flex flex-col lg:flex-row gap-8 items-start">
+                    <!-- Color palette -->
+                    <div class="flex-shrink-0">
+                        <h4 class="text-sm font-bold text-gray-700 mb-3">
+                            <i class="fas fa-palette text-primary-500 mr-1"></i> 색상 선택
+                        </h4>
+                        <div class="flex flex-wrap gap-2 mb-4" id="colorPalette">
+                            <div class="color-swatch selected" style="background: #1e293b;" data-color="#1e293b" onclick="selectColor(this)"></div>
+                            <div class="color-swatch" style="background: #ef4444;" data-color="#ef4444" onclick="selectColor(this)"></div>
+                            <div class="color-swatch" style="background: #f97316;" data-color="#f97316" onclick="selectColor(this)"></div>
+                            <div class="color-swatch" style="background: #eab308;" data-color="#eab308" onclick="selectColor(this)"></div>
+                            <div class="color-swatch" style="background: #22c55e;" data-color="#22c55e" onclick="selectColor(this)"></div>
+                            <div class="color-swatch" style="background: #06b6d4;" data-color="#06b6d4" onclick="selectColor(this)"></div>
+                            <div class="color-swatch" style="background: #3b82f6;" data-color="#3b82f6" onclick="selectColor(this)"></div>
+                            <div class="color-swatch" style="background: #8b5cf6;" data-color="#8b5cf6" onclick="selectColor(this)"></div>
+                            <div class="color-swatch" style="background: #ec4899;" data-color="#ec4899" onclick="selectColor(this)"></div>
+                            <div class="color-swatch" style="background: #ffffff; border-color: #d1d5db;" data-color="#ffffff" onclick="selectColor(this)"></div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="clearGrid()" class="no-print text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-eraser mr-1"></i> 지우기
+                            </button>
+                            <button onclick="loadSample()" class="no-print text-sm bg-primary-100 hover:bg-primary-200 text-primary-700 px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-magic mr-1"></i> 예시
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Pixel grid -->
+                    <div class="flex-1 flex flex-col items-center">
+                        <div class="pixel-grid" id="pixelGrid">
+                            <!-- 7 rows x 8 columns = 56 cells, generated by JS -->
+                        </div>
+                        <p class="text-gray-400 text-xs mt-3">7 x 8 픽셀 격자 (총 56 화소)</p>
+                    </div>
+
+                    <!-- Info panel -->
+                    <div class="flex-shrink-0 bg-gray-50 rounded-xl p-4 min-w-[200px]">
+                        <h4 class="text-sm font-bold text-gray-700 mb-3">
+                            <i class="fas fa-info-circle text-primary-500 mr-1"></i> 데이터 정보
+                        </h4>
+                        <div class="space-y-2 text-sm text-gray-600">
+                            <div class="flex justify-between">
+                                <span>총 화소 수</span>
+                                <span class="font-bold text-gray-800">56개</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>색칠된 화소</span>
+                                <span class="font-bold text-primary-600" id="coloredCount">0개</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>비트 깊이</span>
+                                <span class="font-bold text-gray-800">24비트</span>
+                            </div>
+                            <hr class="border-gray-200">
+                            <div class="flex justify-between">
+                                <span>예상 BMP 크기</span>
+                                <span class="font-bold text-amber-600" id="bmpSize">168 B</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto opacity-40"></div>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 3: 이미지 압축 파일                                             -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-compression">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-compress-alt"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">이미지 압축 파일</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Image Compression Formats</p>
+                </div>
+            </div>
+
+            <!-- Compression type intro -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-accent-500 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-accent-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-compress text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-accent-800 mb-1">이미지 압축이란?</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            이미지 데이터를 더 적은 용량으로 저장하는 기술입니다.
+                            <strong>비손실 압축</strong>은 원본 데이터를 완전히 복원할 수 있고,
+                            <strong>손실 압축</strong>은 일부 데이터를 제거하여 더 높은 압축률을 얻습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison table -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-table text-accent-500"></i> 이미지 압축 파일 비교
+            </h3>
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden mb-10">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-primary-600 to-accent-600 text-white">
+                                <th class="px-5 py-4 text-left font-bold">파일 형식</th>
+                                <th class="px-5 py-4 text-center font-bold">PNG</th>
+                                <th class="px-5 py-4 text-center font-bold">GIF</th>
+                                <th class="px-5 py-4 text-center font-bold">JPEG</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-5 py-4 font-semibold text-gray-700">압축 방식</td>
+                                <td class="px-5 py-4 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">
+                                        <i class="fas fa-check-circle"></i> 비손실
+                                    </span>
+                                </td>
+                                <td class="px-5 py-4 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-bold">
+                                        <i class="fas fa-exchange-alt"></i> 손실 / 비손실
+                                    </span>
+                                </td>
+                                <td class="px-5 py-4 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold">
+                                        <i class="fas fa-compress-arrows-alt"></i> 손실
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-5 py-4 font-semibold text-gray-700">지원 색상</td>
+                                <td class="px-5 py-4 text-center">
+                                    <span class="text-gray-700">트루 컬러<br><span class="text-xs text-gray-400">(24비트)</span></span>
+                                </td>
+                                <td class="px-5 py-4 text-center">
+                                    <span class="text-gray-700">256색<br><span class="text-xs text-gray-400">(8비트)</span></span>
+                                </td>
+                                <td class="px-5 py-4 text-center">
+                                    <span class="text-gray-700">트루 컬러<br><span class="text-xs text-gray-400">(24비트)</span></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Format detail cards -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-file-image text-accent-500"></i> 파일 형식별 특징
+            </h3>
+            <div class="grid md:grid-cols-3 gap-6 mb-10">
+                <!-- PNG -->
+                <div class="format-card bg-white rounded-2xl shadow-md border-2 border-gray-100 overflow-hidden" onclick="activateCard(this)">
+                    <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 p-4 flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-image text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-lg">PNG</h4>
+                            <p class="text-white/80 text-sm">비손실 압축</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-compress text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">반복되는 색 정보를 더 적은 비트로 줄여 표현합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-star text-xs"></i>
+                                </span>
+                                <span class="text-gray-700"><strong>고품질 이미지</strong> 처리에 적합합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-check text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">투명 배경을 지원합니다.</span>
+                            </li>
+                        </ul>
+                        <div class="mt-4 bg-emerald-50 rounded-lg p-3 text-center">
+                            <span class="text-sm font-bold text-emerald-700">142 KB</span>
+                            <span class="text-xs text-emerald-600 block">예시 파일 크기</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GIF -->
+                <div class="format-card bg-white rounded-2xl shadow-md border-2 border-gray-100 overflow-hidden" onclick="activateCard(this)">
+                    <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-4 flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-film text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-lg">GIF</h4>
+                            <p class="text-white/80 text-sm">손실 / 비손실 압축</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-palette text-xs"></i>
+                                </span>
+                                <span class="text-gray-700"><strong>256색</strong>으로 제한하여 파일 크기가 작습니다.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-exclamation-triangle text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">256색 이상 이미지는 <strong>손실이 발생</strong>합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-play text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">애니메이션을 지원합니다.</span>
+                            </li>
+                        </ul>
+                        <div class="mt-4 bg-amber-50 rounded-lg p-3 text-center">
+                            <span class="text-sm font-bold text-amber-700">59 KB</span>
+                            <span class="text-xs text-amber-600 block">예시 파일 크기</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JPEG -->
+                <div class="format-card bg-white rounded-2xl shadow-md border-2 border-gray-100 overflow-hidden" onclick="activateCard(this)">
+                    <div class="bg-gradient-to-r from-red-500 to-rose-500 p-4 flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-camera text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-lg">JPEG</h4>
+                            <p class="text-white/80 text-sm">손실 압축</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-red-100 text-red-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-eye-slash text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">사람 눈으로 인식하지 못하는 <strong>색 차이와 세밀한 부분을 제거</strong>합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-red-100 text-red-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-compress-arrows-alt text-xs"></i>
+                                </span>
+                                <span class="text-gray-700"><strong>압축률이 매우 높지만</strong> 손실이 발생합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-red-100 text-red-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-photo-video text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">사진 등 자연스러운 이미지에 적합합니다.</span>
+                            </li>
+                        </ul>
+                        <div class="mt-4 bg-red-50 rounded-lg p-3 text-center">
+                            <span class="text-sm font-bold text-red-700">8 KB</span>
+                            <span class="text-xs text-red-600 block">예시 파일 크기</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto opacity-40"></div>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 4: 파일 크기 비교 차트                                          -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-chart">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">파일 크기 비교</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">File Size Comparison</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 md:p-8">
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    같은 이미지를 다른 파일 형식으로 저장했을 때의 크기를 비교해 봅시다. 압축 방식에 따라 파일 크기가 크게 달라집니다.
+                </p>
+
+                <!-- Bar chart -->
+                <div class="space-y-6" id="barChart">
+                    <!-- BMP -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 text-right">
+                            <span class="font-bold text-gray-700">BMP</span>
+                        </div>
+                        <div class="flex-1 bg-gray-100 rounded-full h-10 overflow-hidden relative">
+                            <div class="bar-fill h-full rounded-full bg-gradient-to-r from-gray-500 to-gray-600 flex items-center justify-end pr-3" data-width="100%">
+                                <span class="text-white text-sm font-bold whitespace-nowrap">236 KB</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- PNG -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 text-right">
+                            <span class="font-bold text-emerald-600">PNG</span>
+                        </div>
+                        <div class="flex-1 bg-gray-100 rounded-full h-10 overflow-hidden relative">
+                            <div class="bar-fill h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 flex items-center justify-end pr-3" data-width="60.2%">
+                                <span class="text-white text-sm font-bold whitespace-nowrap">142 KB</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- GIF -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 text-right">
+                            <span class="font-bold text-amber-600">GIF</span>
+                        </div>
+                        <div class="flex-1 bg-gray-100 rounded-full h-10 overflow-hidden relative">
+                            <div class="bar-fill h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500 flex items-center justify-end pr-3" data-width="25%">
+                                <span class="text-white text-sm font-bold whitespace-nowrap">59 KB</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- JPEG -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 text-right">
+                            <span class="font-bold text-red-600">JPEG</span>
+                        </div>
+                        <div class="flex-1 bg-gray-100 rounded-full h-10 overflow-hidden relative">
+                            <div class="bar-fill h-full rounded-full bg-gradient-to-r from-red-400 to-rose-500 flex items-center justify-end pr-3" data-width="3.4%">
+                                <span class="text-white text-sm font-bold whitespace-nowrap">8 KB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="mt-8 bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl p-5 border border-primary-100">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-lightbulb text-primary-500 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-primary-800 mb-1">정리</h4>
+                            <p class="text-gray-700 text-sm leading-relaxed">
+                                BMP(236KB) &gt; PNG(142KB) &gt; GIF(59KB) &gt; JPEG(8KB) 순으로 파일 크기가 작아집니다.
+                                JPEG는 손실 압축을 사용하여 가장 높은 압축률을 보여주지만, 이미지 품질 손실이 발생합니다.
+                                PNG는 비손실 압축으로 품질을 유지하면서도 BMP보다 훨씬 작은 크기를 가집니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto opacity-40"></div>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 5: 핵심 정리                                                   -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-summary">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">핵심 정리</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Key Summary</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- BMP summary -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                            <i class="fas fa-th text-gray-600"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800">BMP 파일</h3>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-caret-right text-primary-500 mt-1"></i>
+                            <span>각 화소에 색 정보를 차례대로 기록</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-caret-right text-primary-500 mt-1"></i>
+                            <span>무압축 파일 형식 (확장자 .bmp)</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-caret-right text-primary-500 mt-1"></i>
+                            <span>이미지 품질 우수, 파일 크기 큼</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Compression summary -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center">
+                            <i class="fas fa-compress-alt text-primary-600"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800">이미지 압축</h3>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-caret-right text-primary-500 mt-1"></i>
+                            <span><strong>PNG</strong>: 비손실 압축, 트루 컬러, 고품질</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-caret-right text-primary-500 mt-1"></i>
+                            <span><strong>GIF</strong>: 256색 제한, 파일 크기 작음, 애니메이션 지원</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-caret-right text-primary-500 mt-1"></i>
+                            <span><strong>JPEG</strong>: 손실 압축, 높은 압축률, 사진에 적합</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../02_문자열 압축/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../04_소리 압축/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">II. 데이터 &gt; 01 디지털 데이터 압축 &gt; 이미지 압축</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // ========================================
+        // Pixel Art Grid
+        // ========================================
+        let currentColor = '#1e293b';
+        let isMouseDown = false;
+        const ROWS = 7;
+        const COLS = 8;
+
+        function initGrid() {
+            const grid = document.getElementById('pixelGrid');
+            grid.style.gridTemplateColumns = `repeat(${COLS}, 1fr)`;
+            grid.innerHTML = '';
+
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'pixel-cell';
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+
+                    cell.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        isMouseDown = true;
+                        paintCell(this);
+                    });
+                    cell.addEventListener('mouseenter', function() {
+                        if (isMouseDown) paintCell(this);
+                    });
+                    cell.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        paintCell(this);
+                    });
+
+                    grid.appendChild(cell);
+                }
+            }
+
+            document.addEventListener('mouseup', () => { isMouseDown = false; });
+            updateStats();
+        }
+
+        function paintCell(cell) {
+            cell.style.backgroundColor = currentColor;
+            if (currentColor === '#ffffff') {
+                cell.classList.remove('colored');
+            } else {
+                cell.classList.add('colored');
+            }
+            updateStats();
+        }
+
+        function selectColor(swatch) {
+            document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+            swatch.classList.add('selected');
+            currentColor = swatch.dataset.color;
+        }
+
+        function clearGrid() {
+            document.querySelectorAll('.pixel-cell').forEach(cell => {
+                cell.style.backgroundColor = '#ffffff';
+                cell.classList.remove('colored');
+            });
+            updateStats();
+        }
+
+        function loadSample() {
+            clearGrid();
+            // Simple heart pattern
+            const pattern = [
+                [0,0,1,1,0,1,1,0],
+                [0,1,1,1,1,1,1,1],
+                [0,1,1,1,1,1,1,1],
+                [0,0,1,1,1,1,1,0],
+                [0,0,0,1,1,1,0,0],
+                [0,0,0,0,1,0,0,0],
+                [0,0,0,0,0,0,0,0],
+            ];
+            const heartColor = '#ef4444';
+            const cells = document.querySelectorAll('.pixel-cell');
+
+            pattern.forEach((row, r) => {
+                row.forEach((val, c) => {
+                    const idx = r * COLS + c;
+                    if (val === 1) {
+                        cells[idx].style.backgroundColor = heartColor;
+                        cells[idx].classList.add('colored');
+                    }
+                });
+            });
+            updateStats();
+        }
+
+        function updateStats() {
+            const colored = document.querySelectorAll('.pixel-cell.colored').length;
+            document.getElementById('coloredCount').textContent = colored + '개';
+            // BMP size estimate: 56 pixels * 3 bytes (24-bit) + 54 bytes header
+            const bmpBytes = ROWS * COLS * 3 + 54;
+            document.getElementById('bmpSize').textContent = bmpBytes + ' B';
+        }
+
+
+        // ========================================
+        // Format Card Activation
+        // ========================================
+        function activateCard(card) {
+            document.querySelectorAll('.format-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+        }
+
+
+        // ========================================
+        // Bar Chart Animation
+        // ========================================
+        function animateBars() {
+            const bars = document.querySelectorAll('.bar-fill');
+            bars.forEach(bar => {
+                const targetWidth = bar.dataset.width;
+                bar.style.width = targetWidth;
+                bar.classList.add('animated');
+            });
+        }
+
+
+        // ========================================
+        // Fade-in Animation on Scroll
+        // ========================================
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+
+                    // Trigger bar chart animation when chart section is visible
+                    if (entry.target.id === 'section-chart') {
+                        setTimeout(animateBars, 300);
+                    }
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+
+
+        // ========================================
+        // Initialize
+        // ========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initGrid();
+        });
+    </script>
+
+</body>
+</html>

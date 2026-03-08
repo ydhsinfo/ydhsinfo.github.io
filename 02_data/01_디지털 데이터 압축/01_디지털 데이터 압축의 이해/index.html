@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디지털 데이터 압축의 이해 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#ecfeff',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            800: '#155e75',
+                            900: '#164e63',
+                        },
+                        accent: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #0891b2 0%, #0284c7 50%, #0369a1 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #0891b2, #0284c7, #0891b2);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Flow diagram animations */
+        .flow-arrow {
+            animation: flowPulse 2s ease-in-out infinite;
+        }
+        .flow-arrow:nth-child(2) { animation-delay: 0.3s; }
+        .flow-arrow:nth-child(3) { animation-delay: 0.6s; }
+        .flow-arrow:nth-child(4) { animation-delay: 0.9s; }
+
+        @keyframes flowPulse {
+            0%, 100% { opacity: 0.4; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(4px); }
+        }
+
+        .data-shrink {
+            animation: shrink 3s ease-in-out infinite;
+        }
+        @keyframes shrink {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(0.7); }
+        }
+
+        /* Glossary flip effect */
+        .glossary-card {
+            perspective: 1000px;
+        }
+        .glossary-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        .glossary-card:hover .glossary-inner {
+            transform: rotateY(180deg);
+        }
+        .glossary-front, .glossary-back {
+            backface-visibility: hidden;
+        }
+        .glossary-back {
+            transform: rotateY(180deg);
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+        }
+
+        /* Quiz styles */
+        .quiz-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .quiz-option:hover {
+            border-color: #0891b2;
+            background-color: #ecfeff;
+        }
+        .quiz-option.correct {
+            border-color: #16a34a;
+            background-color: #f0fdf4;
+            color: #166534;
+        }
+        .quiz-option.incorrect {
+            border-color: #dc2626;
+            background-color: #fef2f2;
+            color: #991b1b;
+        }
+        .quiz-option.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Comparison toggle */
+        .comparison-highlight {
+            transition: all 0.3s ease;
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { background: #0891b2 !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+            a { text-decoration: underline; }
+        }
+
+        @media (max-width: 768px) {
+            .flow-diagram-container { overflow-x: auto; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #0891b2 0%, #0284c7 50%, #0369a1 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">II. 데이터</span>
+                <span class="breadcrumb-item text-white font-medium">01 디지털 데이터 압축</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-compress-arrows-alt"></i>
+                        <span>II. 데이터 &gt; 01 디지털 데이터 압축</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        디지털 데이터 압축의 이해
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        문자열, 이미지, 소리의 압축 방식을 이해하고, 압축의 효율성을 분석해 봅시다
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-font mr-1"></i> 문자열 압축
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-image mr-1"></i> 이미지 압축
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-volume-up mr-1"></i> 소리 압축
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Large data block -->
+                        <rect x="15" y="50" width="60" height="80" rx="8" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+                        <text x="45" y="85" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9" font-weight="bold">원본</text>
+                        <text x="45" y="100" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="8">DATA</text>
+                        <!-- Bits inside large block -->
+                        <text x="25" y="120" fill="rgba(255,255,255,0.4)" font-size="6">10110100</text>
+
+                        <!-- Compression arrows -->
+                        <g class="flow-arrow">
+                            <path d="M82 90 L100 90" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M96 86 L102 90 L96 94" stroke="rgba(255,255,255,0.6)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        </g>
+
+                        <!-- Encoding gear -->
+                        <circle cx="120" cy="90" r="18" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <text x="120" y="87" text-anchor="middle" fill="white" font-size="14">&#x2699;</text>
+                        <text x="120" y="100" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="7">압축</text>
+
+                        <!-- Output arrows -->
+                        <g class="flow-arrow">
+                            <path d="M140 90 L158 90" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M154 86 L160 90 L154 94" stroke="rgba(255,255,255,0.6)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        </g>
+
+                        <!-- Small compressed block -->
+                        <rect x="165" y="65" width="40" height="50" rx="6" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+                        <text x="185" y="87" text-anchor="middle" fill="white" font-size="9" font-weight="bold">압축</text>
+                        <text x="185" y="100" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="7">DATA</text>
+
+                        <!-- Size comparison label -->
+                        <text x="45" y="145" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="8">100%</text>
+                        <text x="185" y="130" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="8" font-weight="bold">40%</text>
+
+                        <!-- Decorative bits floating -->
+                        <text x="90" y="55" fill="rgba(255,255,255,0.2)" font-size="7">0 1 1 0</text>
+                        <text x="130" y="140" fill="rgba(255,255,255,0.2)" font-size="7">1 0 1</text>
+                        <text x="30" y="175" fill="rgba(255,255,255,0.15)" font-size="6">01001101 11010010</text>
+                        <text x="120" y="175" fill="rgba(255,255,255,0.15)" font-size="6">110 01</text>
+
+                        <!-- Savings arrow -->
+                        <path d="M75 155 L155 155" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="4 2"/>
+                        <text x="115" y="168" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="7">60% 절약</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>문자열, 이미지, 소리의 압축 방식을 이해하고, 압축의 효율성을 분석할 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 학습 요소: 문자열 압축</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 이미지 압축</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 소리 압축</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 1: 데이터 압축이란?                                             -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-what-is-compression">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-compress-arrows-alt"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">데이터 압축이란?</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">What is Data Compression?</p>
+                </div>
+            </div>
+
+            <!-- Definition callout -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-500 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">데이터 압축의 정의</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong>데이터 압축</strong>은 한정된 저장 공간에 데이터를 <strong>효율적으로 기록</strong>하기 위한 기술입니다.
+                            원래의 데이터를 더 적은 비트(bit)로 표현하여 저장 공간을 절약하고, 네트워크 전송 시 속도를 향상시킵니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits of compression -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-star text-yellow-500"></i> 데이터 압축의 장점
+            </h3>
+            <div class="grid md:grid-cols-3 gap-6 mb-10">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-hdd text-white text-2xl"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">저장 공간 절약</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        동일한 저장 장치에 더 많은 데이터를 보관할 수 있어 비용을 절감합니다.
+                    </p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-tachometer-alt text-white text-2xl"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">전송 속도 향상</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        네트워크를 통해 데이터를 전송할 때 용량이 줄어들어 더 빠르게 전달됩니다.
+                    </p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-leaf text-white text-2xl"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">디지털 탄소 중립</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        데이터 전송량 감소로 서버 부하와 에너지 소비를 줄여 탄소 중립 실천에 기여합니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 2: 인코딩과 디코딩                                              -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-encoding-decoding">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">인코딩과 디코딩</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Encoding & Decoding</p>
+                </div>
+            </div>
+
+            <!-- Encoding / Decoding definition cards -->
+            <div class="grid md:grid-cols-2 gap-6 mb-10">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-primary-500 to-primary-600 p-4 flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-compress text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-lg">인코딩 (Encoding)</h4>
+                            <p class="text-white/80 text-sm">데이터 압축 과정</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-gray-700 leading-relaxed mb-3">
+                            데이터를 <strong>더 적은 비트</strong>로 변환하는 과정입니다.
+                        </p>
+                        <ul class="space-y-2">
+                            <li class="flex items-start gap-2">
+                                <span class="w-6 h-6 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-arrow-right text-xs"></i>
+                                </span>
+                                <span class="text-gray-700 text-sm">원본 데이터에서 반복되는 패턴을 찾아 효율적으로 표현</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="w-6 h-6 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-arrow-right text-xs"></i>
+                                </span>
+                                <span class="text-gray-700 text-sm">불필요하거나 중복된 정보를 제거하여 크기를 줄임</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-accent-500 to-accent-600 p-4 flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-expand text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-lg">디코딩 (Decoding)</h4>
+                            <p class="text-white/80 text-sm">데이터 복원 과정</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-gray-700 leading-relaxed mb-3">
+                            인코딩된 압축 데이터를 <strong>원래 형태로 복원</strong>하는 과정입니다.
+                        </p>
+                        <ul class="space-y-2">
+                            <li class="flex items-start gap-2">
+                                <span class="w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-arrow-right text-xs"></i>
+                                </span>
+                                <span class="text-gray-700 text-sm">압축된 데이터를 원래의 형태로 되돌리는 역과정</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-arrow-right text-xs"></i>
+                                </span>
+                                <span class="text-gray-700 text-sm">압축 방식에 따라 원본과 동일하거나 유사하게 복원</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flow Diagram: 입력 → 인코딩 → 저장 및 전송 → 디코딩 → 출력 -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-project-diagram text-primary-500"></i> 데이터 압축 처리 흐름
+            </h3>
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 md:p-8">
+                <div class="flow-diagram-container">
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-0">
+                        <!-- 입력 -->
+                        <div class="flex flex-col items-center min-w-[100px]">
+                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center shadow-lg mb-2">
+                                <i class="fas fa-file-alt text-white text-2xl"></i>
+                            </div>
+                            <span class="font-bold text-gray-900 text-sm">입력</span>
+                            <span class="text-xs text-gray-500">원본 데이터</span>
+                        </div>
+
+                        <!-- Arrow 1 -->
+                        <div class="flex items-center mx-1 md:mx-2">
+                            <div class="hidden md:flex items-center">
+                                <div class="w-8 h-0.5 bg-primary-300"></div>
+                                <i class="fas fa-chevron-right text-primary-400 flow-arrow text-sm"></i>
+                                <div class="w-4 h-0.5 bg-primary-300"></div>
+                            </div>
+                            <div class="md:hidden flex flex-col items-center py-1">
+                                <i class="fas fa-chevron-down text-primary-400 flow-arrow text-sm"></i>
+                            </div>
+                        </div>
+
+                        <!-- 인코딩 -->
+                        <div class="flex flex-col items-center min-w-[100px]">
+                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg mb-2 relative">
+                                <i class="fas fa-cogs text-white text-2xl"></i>
+                                <span class="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center text-xs font-bold text-yellow-900 shadow">
+                                    <i class="fas fa-compress-alt text-xs"></i>
+                                </span>
+                            </div>
+                            <span class="font-bold text-primary-700 text-sm">인코딩</span>
+                            <span class="text-xs text-gray-500">압축 변환</span>
+                        </div>
+
+                        <!-- Arrow 2 -->
+                        <div class="flex items-center mx-1 md:mx-2">
+                            <div class="hidden md:flex items-center">
+                                <div class="w-8 h-0.5 bg-primary-300"></div>
+                                <i class="fas fa-chevron-right text-primary-400 flow-arrow text-sm"></i>
+                                <div class="w-4 h-0.5 bg-primary-300"></div>
+                            </div>
+                            <div class="md:hidden flex flex-col items-center py-1">
+                                <i class="fas fa-chevron-down text-primary-400 flow-arrow text-sm"></i>
+                            </div>
+                        </div>
+
+                        <!-- 저장 및 전송 -->
+                        <div class="flex flex-col items-center min-w-[100px]">
+                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg mb-2">
+                                <div class="text-center">
+                                    <i class="fas fa-database text-white text-lg"></i>
+                                    <i class="fas fa-wifi text-white/70 text-xs ml-1"></i>
+                                </div>
+                            </div>
+                            <span class="font-bold text-cyan-700 text-sm">저장 및 전송</span>
+                            <span class="text-xs text-gray-500">압축 상태</span>
+                        </div>
+
+                        <!-- Arrow 3 -->
+                        <div class="flex items-center mx-1 md:mx-2">
+                            <div class="hidden md:flex items-center">
+                                <div class="w-8 h-0.5 bg-accent-300"></div>
+                                <i class="fas fa-chevron-right text-accent-400 flow-arrow text-sm"></i>
+                                <div class="w-4 h-0.5 bg-accent-300"></div>
+                            </div>
+                            <div class="md:hidden flex flex-col items-center py-1">
+                                <i class="fas fa-chevron-down text-accent-400 flow-arrow text-sm"></i>
+                            </div>
+                        </div>
+
+                        <!-- 디코딩 -->
+                        <div class="flex flex-col items-center min-w-[100px]">
+                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center shadow-lg mb-2 relative">
+                                <i class="fas fa-cogs text-white text-2xl"></i>
+                                <span class="absolute -top-2 -right-2 w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-xs font-bold text-green-900 shadow">
+                                    <i class="fas fa-expand-alt text-xs"></i>
+                                </span>
+                            </div>
+                            <span class="font-bold text-accent-700 text-sm">디코딩</span>
+                            <span class="text-xs text-gray-500">복원 변환</span>
+                        </div>
+
+                        <!-- Arrow 4 -->
+                        <div class="flex items-center mx-1 md:mx-2">
+                            <div class="hidden md:flex items-center">
+                                <div class="w-8 h-0.5 bg-accent-300"></div>
+                                <i class="fas fa-chevron-right text-accent-400 flow-arrow text-sm"></i>
+                                <div class="w-4 h-0.5 bg-accent-300"></div>
+                            </div>
+                            <div class="md:hidden flex flex-col items-center py-1">
+                                <i class="fas fa-chevron-down text-accent-400 flow-arrow text-sm"></i>
+                            </div>
+                        </div>
+
+                        <!-- 출력 -->
+                        <div class="flex flex-col items-center min-w-[100px]">
+                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center shadow-lg mb-2">
+                                <i class="fas fa-file-alt text-white text-2xl"></i>
+                            </div>
+                            <span class="font-bold text-gray-900 text-sm">출력</span>
+                            <span class="text-xs text-gray-500">복원 데이터</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="mt-6 bg-gray-50 rounded-xl p-4 text-sm text-gray-600">
+                    <div class="flex items-center gap-2 mb-1">
+                        <i class="fas fa-info-circle text-primary-500"></i>
+                        <span class="font-semibold text-gray-700">처리 흐름 설명</span>
+                    </div>
+                    <p>원본 데이터를 <strong>인코딩</strong>(압축)하여 저장하거나 전송한 뒤, 필요할 때 <strong>디코딩</strong>(복원)하여 사용합니다. 압축 방식에 따라 출력 데이터가 원본과 동일할 수도, 다를 수도 있습니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 3: 손실 압축 vs 비손실 압축                                     -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-compression-types">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">손실 압축 vs 비손실 압축</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Lossy vs Lossless Compression</p>
+                </div>
+            </div>
+
+            <p class="text-gray-700 leading-relaxed mb-6 text-lg">
+                압축 방식은 <strong>데이터 유실 여부</strong>에 따라 <strong>비손실 압축</strong>과 <strong>손실 압축</strong>으로 나뉩니다.
+            </p>
+
+            <!-- Visual comparison cards -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <!-- 비손실 압축 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border-2 border-green-200 overflow-hidden">
+                    <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-shield-alt text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold text-xl">비손실 압축</h4>
+                                <p class="text-white/80 text-sm">Lossless Compression</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
+                            <p class="text-green-800 font-semibold text-center">
+                                <i class="fas fa-equals mr-2"></i>
+                                입력 데이터 = 출력 데이터
+                            </p>
+                        </div>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            복원했을 때 <strong>입력 데이터와 출력 데이터가 같습니다</strong>. 원본 데이터를 완벽하게 되살릴 수 있습니다.
+                        </p>
+                        <ul class="space-y-2 mb-4">
+                            <li class="flex items-start gap-2 text-sm">
+                                <span class="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-check text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">원본 데이터의 완벽한 복원 가능</span>
+                            </li>
+                            <li class="flex items-start gap-2 text-sm">
+                                <span class="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-check text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">정확성이 중요한 데이터에 적합</span>
+                            </li>
+                            <li class="flex items-start gap-2 text-sm">
+                                <span class="w-5 h-5 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-exclamation text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">압축률이 상대적으로 낮음</span>
+                            </li>
+                        </ul>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-green-100 text-green-700 rounded-full px-3 py-1 text-xs font-medium">
+                                <i class="fas fa-file-archive mr-1"></i> ZIP
+                            </span>
+                            <span class="bg-green-100 text-green-700 rounded-full px-3 py-1 text-xs font-medium">
+                                <i class="fas fa-image mr-1"></i> PNG
+                            </span>
+                            <span class="bg-green-100 text-green-700 rounded-full px-3 py-1 text-xs font-medium">
+                                <i class="fas fa-music mr-1"></i> FLAC
+                            </span>
+                            <span class="bg-green-100 text-green-700 rounded-full px-3 py-1 text-xs font-medium">
+                                <i class="fas fa-file-code mr-1"></i> 텍스트 파일
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 손실 압축 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border-2 border-orange-200 overflow-hidden">
+                    <div class="bg-gradient-to-r from-orange-500 to-red-500 p-5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-compress text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold text-xl">손실 압축</h4>
+                                <p class="text-white/80 text-sm">Lossy Compression</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-4">
+                            <p class="text-orange-800 font-semibold text-center">
+                                <i class="fas fa-not-equal mr-2"></i>
+                                입력 데이터 &#8800; 출력 데이터
+                            </p>
+                        </div>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            복원했을 때 <strong>데이터가 달라집니다</strong>. 사람이 인지하기 어려운 일부 정보를 제거하여 높은 압축률을 달성합니다.
+                        </p>
+                        <ul class="space-y-2 mb-4">
+                            <li class="flex items-start gap-2 text-sm">
+                                <span class="w-5 h-5 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-check text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">높은 압축률로 파일 크기 대폭 감소</span>
+                            </li>
+                            <li class="flex items-start gap-2 text-sm">
+                                <span class="w-5 h-5 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-check text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">멀티미디어(이미지, 음악, 동영상)에 적합</span>
+                            </li>
+                            <li class="flex items-start gap-2 text-sm">
+                                <span class="w-5 h-5 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-exclamation text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">원본 데이터의 완벽한 복원 불가능</span>
+                            </li>
+                        </ul>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-orange-100 text-orange-700 rounded-full px-3 py-1 text-xs font-medium">
+                                <i class="fas fa-image mr-1"></i> JPEG
+                            </span>
+                            <span class="bg-orange-100 text-orange-700 rounded-full px-3 py-1 text-xs font-medium">
+                                <i class="fas fa-music mr-1"></i> MP3
+                            </span>
+                            <span class="bg-orange-100 text-orange-700 rounded-full px-3 py-1 text-xs font-medium">
+                                <i class="fas fa-video mr-1"></i> MP4
+                            </span>
+                            <span class="bg-orange-100 text-orange-700 rounded-full px-3 py-1 text-xs font-medium">
+                                <i class="fas fa-film mr-1"></i> H.264
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-table text-primary-500"></i> 손실 vs 비손실 압축 비교
+            </h3>
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-primary-600 to-accent-600 text-white">
+                                <th class="px-5 py-3.5 text-left font-bold whitespace-nowrap">구분</th>
+                                <th class="px-5 py-3.5 text-left font-bold whitespace-nowrap">
+                                    <i class="fas fa-shield-alt mr-1"></i> 비손실 압축
+                                </th>
+                                <th class="px-5 py-3.5 text-left font-bold whitespace-nowrap">
+                                    <i class="fas fa-compress mr-1"></i> 손실 압축
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-5 py-3 font-semibold text-gray-900 whitespace-nowrap bg-gray-50">
+                                    <i class="fas fa-sync-alt text-primary-500 mr-1"></i> 복원 결과
+                                </td>
+                                <td class="px-5 py-3 text-gray-700">
+                                    <span class="text-green-600 font-medium">원본과 동일</span>하게 복원
+                                </td>
+                                <td class="px-5 py-3 text-gray-700">
+                                    원본과 <span class="text-orange-600 font-medium">다르게</span> 복원 (일부 정보 손실)
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-5 py-3 font-semibold text-gray-900 whitespace-nowrap bg-gray-50">
+                                    <i class="fas fa-percentage text-primary-500 mr-1"></i> 압축률
+                                </td>
+                                <td class="px-5 py-3 text-gray-700">
+                                    상대적으로 <strong>낮음</strong>
+                                </td>
+                                <td class="px-5 py-3 text-gray-700">
+                                    상대적으로 <strong>높음</strong>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-5 py-3 font-semibold text-gray-900 whitespace-nowrap bg-gray-50">
+                                    <i class="fas fa-crosshairs text-primary-500 mr-1"></i> 적합한 용도
+                                </td>
+                                <td class="px-5 py-3 text-gray-700">
+                                    텍스트, 소스 코드, 의료 이미지 등 <strong>정확성</strong>이 중요한 데이터
+                                </td>
+                                <td class="px-5 py-3 text-gray-700">
+                                    사진, 음악, 동영상 등 사람의 <strong>감각</strong>으로 인지하는 미디어
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-5 py-3 font-semibold text-gray-900 whitespace-nowrap bg-gray-50">
+                                    <i class="fas fa-file text-primary-500 mr-1"></i> 대표 형식
+                                </td>
+                                <td class="px-5 py-3 text-gray-700">ZIP, PNG, FLAC, GIF</td>
+                                <td class="px-5 py-3 text-gray-700">JPEG, MP3, MP4, AAC</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-5 py-3 font-semibold text-gray-900 whitespace-nowrap bg-gray-50">
+                                    <i class="fas fa-lightbulb text-primary-500 mr-1"></i> 핵심 원리
+                                </td>
+                                <td class="px-5 py-3 text-gray-700">반복 패턴 제거, 통계적 부호화</td>
+                                <td class="px-5 py-3 text-gray-700">인간이 인지하기 어려운 정보 제거</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Visual analogy -->
+            <div class="mt-8 bg-gradient-to-r from-primary-50 to-accent-50 rounded-2xl p-6 border border-primary-100">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-primary-800 mb-2">쉽게 이해하기</h4>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong>비손실 압축</strong>은 책을 요약본으로 만든 뒤, 다시 원래의 책으로 완벽하게 복원하는 것과 같습니다.
+                            반면 <strong>손실 압축</strong>은 그림을 축소해서 보관하는 것과 같아서, 다시 확대하면 원래보다 흐릿해질 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 4: 핵심 용어 사전 (Glossary)                                    -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-glossary">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">핵심 용어 사전</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Key Terms Glossary - 카드를 뒤집어 설명을 확인하세요!</p>
+                </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <!-- 인코딩 -->
+                <div class="glossary-card h-48 cursor-pointer">
+                    <div class="glossary-inner h-full">
+                        <div class="glossary-front bg-white rounded-2xl shadow-md border-2 border-primary-200 p-5 flex flex-col items-center justify-center h-full">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center mb-3 shadow">
+                                <i class="fas fa-compress text-white text-xl"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-900 text-lg">인코딩</h4>
+                            <p class="text-xs text-gray-400 mt-1">Encoding</p>
+                            <p class="text-xs text-primary-500 mt-2"><i class="fas fa-sync-alt mr-1"></i> 뒤집기</p>
+                        </div>
+                        <div class="glossary-back bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl shadow-md p-5 flex flex-col items-center justify-center h-full text-white">
+                            <i class="fas fa-compress text-2xl mb-2 opacity-70"></i>
+                            <p class="text-center text-sm leading-relaxed">
+                                데이터를 <strong>더 적은 비트</strong>로 변환하는 압축 과정
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 디코딩 -->
+                <div class="glossary-card h-48 cursor-pointer">
+                    <div class="glossary-inner h-full">
+                        <div class="glossary-front bg-white rounded-2xl shadow-md border-2 border-accent-200 p-5 flex flex-col items-center justify-center h-full">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center mb-3 shadow">
+                                <i class="fas fa-expand text-white text-xl"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-900 text-lg">디코딩</h4>
+                            <p class="text-xs text-gray-400 mt-1">Decoding</p>
+                            <p class="text-xs text-accent-500 mt-2"><i class="fas fa-sync-alt mr-1"></i> 뒤집기</p>
+                        </div>
+                        <div class="glossary-back bg-gradient-to-br from-accent-500 to-accent-700 rounded-2xl shadow-md p-5 flex flex-col items-center justify-center h-full text-white">
+                            <i class="fas fa-expand text-2xl mb-2 opacity-70"></i>
+                            <p class="text-center text-sm leading-relaxed">
+                                인코딩된 압축 데이터를 <strong>원래 형태로 복원</strong>하는 과정
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 비손실 압축 -->
+                <div class="glossary-card h-48 cursor-pointer">
+                    <div class="glossary-inner h-full">
+                        <div class="glossary-front bg-white rounded-2xl shadow-md border-2 border-green-200 p-5 flex flex-col items-center justify-center h-full">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center mb-3 shadow">
+                                <i class="fas fa-shield-alt text-white text-xl"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-900 text-lg">비손실 압축</h4>
+                            <p class="text-xs text-gray-400 mt-1">Lossless</p>
+                            <p class="text-xs text-green-500 mt-2"><i class="fas fa-sync-alt mr-1"></i> 뒤집기</p>
+                        </div>
+                        <div class="glossary-back bg-gradient-to-br from-green-500 to-emerald-700 rounded-2xl shadow-md p-5 flex flex-col items-center justify-center h-full text-white">
+                            <i class="fas fa-shield-alt text-2xl mb-2 opacity-70"></i>
+                            <p class="text-center text-sm leading-relaxed">
+                                복원 시 <strong>입력과 출력이 동일</strong>한 압축 방식
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 손실 압축 -->
+                <div class="glossary-card h-48 cursor-pointer">
+                    <div class="glossary-inner h-full">
+                        <div class="glossary-front bg-white rounded-2xl shadow-md border-2 border-orange-200 p-5 flex flex-col items-center justify-center h-full">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center mb-3 shadow">
+                                <i class="fas fa-compress text-white text-xl"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-900 text-lg">손실 압축</h4>
+                            <p class="text-xs text-gray-400 mt-1">Lossy</p>
+                            <p class="text-xs text-orange-500 mt-2"><i class="fas fa-sync-alt mr-1"></i> 뒤집기</p>
+                        </div>
+                        <div class="glossary-back bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-md p-5 flex flex-col items-center justify-center h-full text-white">
+                            <i class="fas fa-compress text-2xl mb-2 opacity-70"></i>
+                            <p class="text-center text-sm leading-relaxed">
+                                일부 정보를 제거하여 <strong>높은 압축률</strong>을 달성하는 방식
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 5: 핵심 정리                                                    -->
+        <!-- ===================================================================== -->
+        <section class="fade-in">
+            <div class="bg-gradient-to-br from-primary-50 via-white to-accent-50 rounded-2xl shadow-md border border-gray-100 p-6 md:p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <i class="fas fa-clipboard-check text-primary-500"></i> 핵심 정리
+                </h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-primary-700 mb-2 flex items-center gap-2">
+                            <i class="fas fa-compress-arrows-alt text-sm"></i> 데이터 압축의 개념
+                        </h4>
+                        <ul class="space-y-1.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                한정된 저장 공간에 데이터를 효율적으로 기록하는 기술
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                인코딩(압축)과 디코딩(복원)의 과정으로 구성
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                저장 공간 절약, 전송 속도 향상, 탄소 중립 실천
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-accent-700 mb-2 flex items-center gap-2">
+                            <i class="fas fa-balance-scale text-sm"></i> 압축의 종류
+                        </h4>
+                        <ul class="space-y-1.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-500 mt-0.5 text-xs"></i>
+                                비손실 압축: 원본과 동일하게 복원 (ZIP, PNG, FLAC)
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-500 mt-0.5 text-xs"></i>
+                                손실 압축: 일부 정보 제거, 높은 압축률 (JPEG, MP3)
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-500 mt-0.5 text-xs"></i>
+                                용도에 따라 적절한 압축 방식을 선택하는 것이 중요
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 6: 스스로 점검하기 (Self-Check Quiz)                             -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-quiz">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">스스로 점검하기</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Self-Check Quiz</p>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Quiz 1 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz1">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">1</span>
+                        <p class="text-gray-900 font-semibold text-lg leading-relaxed">
+                            데이터를 더 적은 비트로 변환하는 과정을 무엇이라 하는가?
+                        </p>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-3" id="quiz1-options">
+                        <button onclick="checkAnswer('quiz1', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">A</span>
+                            <span>디코딩 (Decoding)</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz1', this, true)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">B</span>
+                            <span>인코딩 (Encoding)</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz1', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">C</span>
+                            <span>렌더링 (Rendering)</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz1', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">D</span>
+                            <span>포맷팅 (Formatting)</span>
+                        </button>
+                    </div>
+                    <div id="quiz1-feedback" class="mt-3 hidden"></div>
+                </div>
+
+                <!-- Quiz 2 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz2">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">2</span>
+                        <p class="text-gray-900 font-semibold text-lg leading-relaxed">
+                            복원했을 때 입력 데이터와 출력 데이터가 동일한 압축 방식은?
+                        </p>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-3" id="quiz2-options">
+                        <button onclick="checkAnswer('quiz2', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">A</span>
+                            <span>손실 압축</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz2', this, true)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">B</span>
+                            <span>비손실 압축</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz2', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">C</span>
+                            <span>부분 압축</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz2', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">D</span>
+                            <span>선택 압축</span>
+                        </button>
+                    </div>
+                    <div id="quiz2-feedback" class="mt-3 hidden"></div>
+                </div>
+
+                <!-- Quiz 3 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz3">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">3</span>
+                        <p class="text-gray-900 font-semibold text-lg leading-relaxed">
+                            다음 중 <strong>손실 압축</strong> 형식에 해당하는 것은?
+                        </p>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-3" id="quiz3-options">
+                        <button onclick="checkAnswer('quiz3', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">A</span>
+                            <span>ZIP</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz3', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">B</span>
+                            <span>PNG</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz3', this, true)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">C</span>
+                            <span>MP3</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz3', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">D</span>
+                            <span>FLAC</span>
+                        </button>
+                    </div>
+                    <div id="quiz3-feedback" class="mt-3 hidden"></div>
+                </div>
+            </div>
+
+            <!-- Quiz results -->
+            <div id="quiz-results" class="hidden mt-6 bg-gradient-to-r from-primary-500 to-accent-500 rounded-2xl p-6 text-white text-center">
+                <i class="fas fa-trophy text-4xl mb-3 opacity-90"></i>
+                <h4 class="text-xl font-bold mb-1">퀴즈 완료!</h4>
+                <p id="quiz-score" class="text-white/90"></p>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <span class="inline-flex items-center gap-2 bg-gray-700/50 text-gray-500 font-medium px-5 py-3 rounded-xl cursor-not-allowed"><i class="fas fa-arrow-left"></i> 이전 페이지</span>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../02_문자열 압축/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">II. 데이터 &gt; 01 디지털 데이터 압축 &gt; 디지털 데이터 압축의 이해</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // Quiz state
+        let quizAnswered = 0;
+        let quizCorrect = 0;
+        const totalQuestions = 3;
+
+        function checkAnswer(quizId, btn, isCorrect) {
+            const container = document.getElementById(quizId + '-options');
+            const feedback = document.getElementById(quizId + '-feedback');
+
+            // If already answered, ignore
+            if (container.classList.contains('answered')) return;
+            container.classList.add('answered');
+
+            // Disable all options
+            container.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.add('disabled');
+            });
+
+            // Mark selected
+            if (isCorrect) {
+                btn.classList.add('correct');
+                btn.querySelector('span:first-child').classList.remove('bg-gray-100', 'text-gray-600');
+                btn.querySelector('span:first-child').classList.add('bg-green-500', 'text-white');
+                feedback.innerHTML = '<div class="bg-green-50 border border-green-200 rounded-xl p-3 text-green-700 text-sm flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i> <strong>정답입니다!</strong> 잘 이해하고 있네요.</div>';
+                quizCorrect++;
+            } else {
+                btn.classList.add('incorrect');
+                btn.querySelector('span:first-child').classList.remove('bg-gray-100', 'text-gray-600');
+                btn.querySelector('span:first-child').classList.add('bg-red-500', 'text-white');
+
+                // Highlight correct answer
+                container.querySelectorAll('.quiz-option').forEach(opt => {
+                    if (opt.onclick.toString().includes('true')) {
+                        opt.classList.add('correct');
+                        opt.querySelector('span:first-child').classList.remove('bg-gray-100', 'text-gray-600');
+                        opt.querySelector('span:first-child').classList.add('bg-green-500', 'text-white');
+                    }
+                });
+
+                let explanation = '';
+                if (quizId === 'quiz1') explanation = '인코딩(Encoding)은 데이터를 더 적은 비트로 변환(압축)하는 과정입니다.';
+                if (quizId === 'quiz2') explanation = '비손실 압축은 복원 시 입력 데이터와 출력 데이터가 동일합니다.';
+                if (quizId === 'quiz3') explanation = 'MP3는 사람이 잘 들을 수 없는 소리 정보를 제거하는 손실 압축 형식입니다.';
+
+                feedback.innerHTML = `<div class="bg-red-50 border border-red-200 rounded-xl p-3 text-red-700 text-sm flex items-start gap-2"><i class="fas fa-times-circle text-red-500 mt-0.5"></i><div><strong>아쉽네요!</strong> ${explanation}</div></div>`;
+            }
+            feedback.classList.remove('hidden');
+
+            quizAnswered++;
+
+            // Show results after all answered
+            if (quizAnswered === totalQuestions) {
+                setTimeout(() => {
+                    const results = document.getElementById('quiz-results');
+                    results.classList.remove('hidden');
+                    document.getElementById('quiz-score').textContent =
+                        `${totalQuestions}문제 중 ${quizCorrect}문제를 맞혔습니다!`;
+                    results.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 600);
+            }
+        }
+
+        // Fade-in animation on scroll
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>조건문 - 제어 구조의 응용</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{font-family:'Noto Sans KR',sans-serif}
+.hero-gradient{background:linear-gradient(135deg,#c2410c 0%,#b45309 50%,#92400e 100%)}
+.code-block{background:#1e293b;border-radius:12px;overflow-x:auto}
+.code-block code{color:#e2e8f0;font-family:'Fira Code',monospace,Consolas}
+.kw{color:#c084fc}.fn{color:#67e8f9}.str{color:#86efac}.num{color:#fbbf24}.cmt{color:#64748b}.op{color:#f472b6}.bi{color:#67e8f9}
+.fade-in{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+.card{background:#fff;border-radius:1rem;box-shadow:0 10px 15px -3px rgba(0,0,0,.1);border:1px solid #fed7aa}
+.flowchart-box{fill:#fff7ed;stroke:#c2410c;stroke-width:2;rx:8}
+.flowchart-diamond{fill:#fff7ed;stroke:#c2410c;stroke-width:2}
+.flowchart-text{font-size:13px;fill:#1e293b;text-anchor:middle;dominant-baseline:central;font-family:'Noto Sans KR'}
+.flowchart-arrow{stroke:#c2410c;stroke-width:2;fill:none;marker-end:url(#arrowhead)}
+.flowchart-label{font-size:11px;fill:#c2410c;font-weight:600;font-family:'Noto Sans KR'}
+.speedometer{transition:transform .5s ease}
+.ruler-bar{transition:height .5s ease,background-color .5s ease}
+.tab-btn.active{background:#c2410c;color:#fff}
+.tab-btn{background:#fff7ed;color:#9a3412;cursor:pointer;transition:all .2s}
+.exercise-input{border:2px dashed #f97316;background:#fffbeb;border-radius:8px;padding:4px 12px;font-family:monospace;font-size:14px;outline:none;transition:border-color .3s}
+.exercise-input:focus{border-color:#c2410c}
+.exercise-correct{border-color:#16a34a!important;background:#f0fdf4!important}
+.exercise-wrong{border-color:#dc2626!important;background:#fef2f2!important}
+.path-highlight{stroke:#f97316!important;stroke-width:3!important;filter:drop-shadow(0 0 4px rgba(249,115,22,.5))}
+.path-highlight-box{fill:#fed7aa!important}
+.path-highlight-diamond{fill:#fed7aa!important}
+.output-line{animation:typeLine .3s ease}
+@keyframes typeLine{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.pulse-anim{animation:pulse 2s infinite}
+</style>
+</head>
+<body class="bg-orange-50 min-h-screen">
+<!-- Hero -->
+<section class="hero-gradient text-white py-16 px-4 relative overflow-hidden">
+<div class="absolute inset-0 opacity-10">
+<div class="absolute top-10 left-10 text-8xl font-black">if</div>
+<div class="absolute top-20 right-20 text-6xl font-black">else</div>
+<div class="absolute bottom-10 left-1/3 text-7xl font-black">elif</div>
+</div>
+<div class="max-w-5xl mx-auto relative z-10">
+<a href="../../../index.html" class="inline-flex items-center gap-2 text-orange-200 hover:text-white mb-6 transition text-sm">
+<i class="fas fa-arrow-left"></i> 목차로 돌아가기
+</a>
+<nav class="flex items-center gap-2 text-orange-200 text-sm mb-6 flex-wrap">
+<span>정보</span><i class="fas fa-chevron-right text-xs"></i>
+<span>III. 알고리즘과 프로그래밍</span><i class="fas fa-chevron-right text-xs"></i>
+<span>04 제어 구조의 응용</span><i class="fas fa-chevron-right text-xs"></i>
+<span class="text-white font-semibold">조건문</span>
+</nav>
+<div class="flex items-center gap-4 mb-4">
+<div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl backdrop-blur-sm">
+<i class="fas fa-code-branch"></i>
+</div>
+<div>
+<h1 class="text-4xl md:text-5xl font-black tracking-tight">조건문</h1>
+<p class="text-orange-100 mt-1 text-sm">Conditional Statements</p>
+</div>
+</div>
+<p class="text-lg text-orange-100 max-w-2xl leading-relaxed mt-4">
+생활 속에서 조건을 고려하여 결정하듯이, 프로그램에서도 <strong class="text-white">조건에 따라 다른 명령을 수행</strong>할 수 있습니다. 조건문은 프로그램의 흐름을 제어하는 가장 기본적인 구조입니다.
+</p>
+<div class="flex gap-4 mt-8 flex-wrap">
+<div class="bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-sm"><i class="fas fa-layer-group mr-2"></i>단순 조건문</div>
+<div class="bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-sm"><i class="fas fa-sitemap mr-2"></i>중첩 조건문</div>
+<div class="bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 text-sm"><i class="fas fa-list-ol mr-2"></i>다중 조건문</div>
+</div>
+</div>
+</section>
+
+<main class="max-w-5xl mx-auto px-4 py-12 space-y-16">
+
+<!-- ========== Section 1: 단순 조건문 ========== -->
+<section class="fade-in">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 bg-orange-600 text-white rounded-xl flex items-center justify-center font-bold text-lg">1</div>
+<h2 class="text-3xl font-black text-gray-900">단순 조건문</h2>
+</div>
+
+<!-- (1) if문 -->
+<div class="card p-8 mb-8 fade-in">
+<h3 class="text-xl font-bold text-orange-800 mb-4 flex items-center gap-2">
+<span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-bold">(1)</span> if문
+</h3>
+<p class="text-gray-600 mb-6">조건식이 참(True)일 때만 명령문을 실행합니다.</p>
+
+<div class="grid md:grid-cols-2 gap-6 mb-6">
+<!-- Code format -->
+<div>
+<h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-code mr-2 text-orange-500"></i>형식</h4>
+<div class="code-block p-4">
+<pre><code><span class="kw">if</span> 조건식:
+    명령문 <span class="num">1</span>
+명령문 <span class="num">2</span></code></pre>
+</div>
+<div class="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+<i class="fas fa-info-circle mr-1"></i> 조건식이 <strong>참</strong>일 때만 명령문 1 실행, 명령문 2는 <strong>항상</strong> 실행
+</div>
+</div>
+<!-- Flowchart -->
+<div>
+<h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-project-diagram mr-2 text-orange-500"></i>순서도</h4>
+<svg viewBox="0 0 260 220" class="w-full max-w-xs mx-auto" id="fc-if">
+<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#c2410c"/></marker></defs>
+<rect x="90" y="5" width="80" height="32" class="flowchart-box"/>
+<text x="130" y="21" class="flowchart-text">시작</text>
+<line x1="130" y1="37" x2="130" y2="60" class="flowchart-arrow"/>
+<polygon points="130,60 190,95 130,130 70,95" class="flowchart-diamond"/>
+<text x="130" y="95" class="flowchart-text" style="font-size:12px">조건식</text>
+<text x="57" y="80" class="flowchart-label">참</text>
+<text x="197" y="80" class="flowchart-label">거짓</text>
+<line x1="70" y1="95" x2="20" y2="95" class="flowchart-arrow"/>
+<rect x="-20" y="79" width="80" height="32" class="flowchart-box" data-role="cmd1"/>
+<text x="20" y="95" class="flowchart-text" style="font-size:11px">명령문1</text>
+<line x1="20" y1="111" x2="20" y2="170" stroke="#c2410c" stroke-width="2" fill="none"/>
+<line x1="20" y1="170" x2="130" y2="170" stroke="#c2410c" stroke-width="2" fill="none"/>
+<line x1="190" y1="95" x2="240" y2="95" stroke="#c2410c" stroke-width="2" fill="none"/>
+<line x1="240" y1="95" x2="240" y2="170" stroke="#c2410c" stroke-width="2" fill="none"/>
+<line x1="240" y1="170" x2="130" y2="170" stroke="#c2410c" stroke-width="2" fill="none"/>
+<line x1="130" y1="170" x2="130" y2="182" class="flowchart-arrow"/>
+<rect x="90" y="182" width="80" height="32" class="flowchart-box"/>
+<text x="130" y="198" class="flowchart-text" style="font-size:11px">명령문2</text>
+</svg>
+</div>
+</div>
+
+<!-- 예제 19 -->
+<div class="bg-orange-50 rounded-xl p-6 mb-6 fade-in">
+<div class="flex items-center gap-2 mb-3">
+<span class="bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full">예제 19</span>
+<h4 class="font-bold text-gray-800">어린이 보호 구역 속도 체크</h4>
+</div>
+
+<!-- Speed Demo -->
+<div class="bg-white rounded-xl p-6 mb-4 border border-orange-200">
+<h5 class="font-semibold text-gray-700 mb-3"><i class="fas fa-tachometer-alt mr-2 text-orange-500"></i>속도 체크 시뮬레이터</h5>
+<div class="flex flex-col md:flex-row items-center gap-6">
+<div class="flex-shrink-0">
+<svg viewBox="0 0 200 130" width="200" height="130">
+<path d="M 20 120 A 80 80 0 0 1 180 120" fill="none" stroke="#e5e7eb" stroke-width="12" stroke-linecap="round"/>
+<path d="M 20 120 A 80 80 0 0 1 180 120" fill="none" stroke="url(#speedGrad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="251" id="speedArc" stroke-dashoffset="251"/>
+<defs><linearGradient id="speedGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#22c55e"/><stop offset="50%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#ef4444"/></linearGradient></defs>
+<line x1="100" y1="115" x2="100" y2="50" stroke="#c2410c" stroke-width="3" stroke-linecap="round" id="speedNeedle" transform="rotate(-90,100,115)"/>
+<circle cx="100" cy="115" r="6" fill="#c2410c"/>
+<text x="100" y="105" text-anchor="middle" font-size="22" font-weight="bold" fill="#1e293b" id="speedValue">0</text>
+<text x="100" y="85" text-anchor="middle" font-size="10" fill="#64748b">km/h</text>
+<text x="25" y="135" font-size="9" fill="#94a3b8">0</text>
+<text x="92" y="28" font-size="9" fill="#94a3b8">50</text>
+<text x="170" y="135" font-size="9" fill="#94a3b8">100</text>
+<line x1="55" y1="120" x2="55" y2="125" stroke="#ef4444" stroke-width="2"/>
+<text x="55" y="135" font-size="9" fill="#ef4444" text-anchor="middle">30</text>
+</svg>
+</div>
+<div class="flex-1 w-full">
+<label class="text-sm font-medium text-gray-600 block mb-1">속도 입력 (km/h)</label>
+<input type="range" min="0" max="100" value="0" class="w-full accent-orange-600" id="speedSlider" oninput="updateSpeed(this.value)">
+<div class="mt-3 p-3 rounded-lg font-mono text-sm" id="speedOutput" style="background:#1e293b;color:#e2e8f0;min-height:60px">
+<span class="text-gray-500">▶ 속도를 입력하세요...</span>
+</div>
+</div>
+</div>
+</div>
+
+<div class="code-block p-4">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs text-gray-400 font-mono">Python</span>
+</div>
+<pre><code>speed = <span class="bi">int</span>(<span class="bi">input</span>())
+<span class="kw">if</span> speed > <span class="num">30</span>:
+    <span class="bi">print</span>(<span class="str">"과속입니다."</span>)
+<span class="bi">print</span>(<span class="str">"시속 30km를 유지하세요."</span>)</code></pre>
+</div>
+<div class="mt-3 flex flex-wrap gap-3 text-sm">
+<div class="bg-white rounded-lg px-4 py-2 border border-orange-200"><strong>입력:</strong> 34</div>
+<div class="bg-white rounded-lg px-4 py-2 border border-orange-200"><strong>출력:</strong> 과속입니다. / 시속 30km를 유지하세요.</div>
+</div>
+</div>
+
+<!-- 활동 18 -->
+<div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-6 fade-in">
+<div class="flex items-center gap-2 mb-3">
+<span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-pencil-alt mr-1"></i>활동 18</span>
+<h4 class="font-bold text-gray-800">놀이기구 키 제한 (140cm 미만 탑승 불가)</h4>
+</div>
+
+<!-- Height Checker -->
+<div class="bg-white rounded-xl p-6 mb-4 border border-amber-200">
+<h5 class="font-semibold text-gray-700 mb-3"><i class="fas fa-ruler-vertical mr-2 text-amber-500"></i>키 측정 시뮬레이터</h5>
+<div class="flex items-end gap-6 justify-center">
+<div class="relative" style="height:220px;width:50px">
+<div class="absolute inset-0 bg-gradient-to-t from-green-200 via-yellow-200 to-red-200 rounded-lg border-2 border-gray-300" style="width:30px;left:10px"></div>
+<div class="absolute left-12 text-xs text-gray-500" style="bottom:0">100</div>
+<div class="absolute left-12 text-xs text-gray-500" style="bottom:40%">140</div>
+<div class="absolute left-12 text-xs text-red-500 font-bold" style="bottom:40%">─</div>
+<div class="absolute left-12 text-xs text-gray-500" style="bottom:100%;transform:translateY(12px)">200</div>
+<div class="absolute bottom-0 left-2 w-8 bg-orange-500 rounded-t-lg ruler-bar" id="heightBar" style="height:0%;transition:height .5s"></div>
+</div>
+<div class="flex-1 max-w-xs">
+<label class="text-sm font-medium text-gray-600 block mb-1">키 입력 (cm)</label>
+<div class="flex gap-2">
+<input type="number" id="heightInput" value="135" min="80" max="200" class="border-2 border-amber-300 rounded-lg px-3 py-2 w-24 text-center font-bold">
+<button onclick="checkHeight18()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg font-semibold transition"><i class="fas fa-check mr-1"></i>확인</button>
+</div>
+<div class="mt-3 p-3 rounded-lg text-sm font-medium" id="heightResult18">
+</div>
+</div>
+<div class="flex-shrink-0" id="personIcon18" style="font-size:48px;transition:all .3s">
+<i class="fas fa-person text-gray-300"></i>
+</div>
+</div>
+</div>
+
+<div class="code-block p-4">
+<pre><code>height = <span class="bi">float</span>(<span class="bi">input</span>(<span class="str">"키: "</span>))
+<span class="kw">if</span> height < <span class="num">140</span>:
+    <span class="bi">print</span>(<span class="str">"더블스핀 놀이기구 탑승 불가"</span>)</code></pre>
+</div>
+</div>
+</div>
+
+<!-- (2) if~else문 -->
+<div class="card p-8 mb-8 fade-in">
+<h3 class="text-xl font-bold text-orange-800 mb-4 flex items-center gap-2">
+<span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-bold">(2)</span> if~else문
+</h3>
+<p class="text-gray-600 mb-6">조건식이 참이면 명령문 1, 거짓이면 명령문 2를 실행합니다.</p>
+
+<div class="grid md:grid-cols-2 gap-6 mb-6">
+<div>
+<h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-code mr-2 text-orange-500"></i>형식</h4>
+<div class="code-block p-4">
+<pre><code><span class="kw">if</span> 조건식:
+    명령문 <span class="num">1</span>
+<span class="kw">else</span>:
+    명령문 <span class="num">2</span></code></pre>
+</div>
+</div>
+<div>
+<h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-project-diagram mr-2 text-orange-500"></i>순서도</h4>
+<svg viewBox="0 0 280 220" class="w-full max-w-xs mx-auto">
+<defs><marker id="ah2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#c2410c"/></marker></defs>
+<rect x="100" y="5" width="80" height="32" class="flowchart-box"/>
+<text x="140" y="21" class="flowchart-text">시작</text>
+<line x1="140" y1="37" x2="140" y2="55" class="flowchart-arrow"/>
+<polygon points="140,55 210,90 140,125 70,90" class="flowchart-diamond"/>
+<text x="140" y="90" class="flowchart-text" style="font-size:12px">조건식</text>
+<text x="52" y="75" class="flowchart-label">참</text>
+<text x="218" y="75" class="flowchart-label">거짓</text>
+<line x1="70" y1="90" x2="25" y2="90" class="flowchart-arrow"/>
+<rect x="-15" y="74" width="80" height="32" class="flowchart-box"/>
+<text x="25" y="90" class="flowchart-text" style="font-size:11px">명령문1</text>
+<line x1="210" y1="90" x2="255" y2="90" class="flowchart-arrow"/>
+<rect x="215" y="74" width="80" height="32" class="flowchart-box"/>
+<text x="255" y="90" class="flowchart-text" style="font-size:11px">명령문2</text>
+<line x1="25" y1="106" x2="25" y2="170" stroke="#c2410c" stroke-width="2"/>
+<line x1="25" y1="170" x2="140" y2="170" stroke="#c2410c" stroke-width="2"/>
+<line x1="255" y1="106" x2="255" y2="170" stroke="#c2410c" stroke-width="2"/>
+<line x1="255" y1="170" x2="140" y2="170" stroke="#c2410c" stroke-width="2"/>
+<line x1="140" y1="170" x2="140" y2="185" class="flowchart-arrow"/>
+<rect x="100" y="185" width="80" height="28" class="flowchart-box" style="fill:#fed7aa"/>
+<text x="140" y="199" class="flowchart-text" style="font-size:11px">끝</text>
+</svg>
+</div>
+</div>
+
+<!-- 예제 20 -->
+<div class="bg-orange-50 rounded-xl p-6 mb-6 fade-in">
+<div class="flex items-center gap-2 mb-3">
+<span class="bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full">예제 20</span>
+<h4 class="font-bold text-gray-800">도로 종류별 속도 안내</h4>
+</div>
+<div class="code-block p-4 mb-4">
+<pre><code>road = <span class="bi">input</span>(<span class="str">"어린이 보호 구역은 a, 일반 도로는 다른 문자를 입력하세요. "</span>)
+<span class="kw">if</span> road == <span class="str">"a"</span>:
+    <span class="bi">print</span>(<span class="str">"어린이 보호 구역은 시속 30km입니다."</span>)
+<span class="kw">else</span>:
+    <span class="bi">print</span>(<span class="str">"일반 도로는 시속 50km입니다."</span>)</code></pre>
+</div>
+<!-- Interactive runner -->
+<div class="bg-white rounded-lg p-4 border border-orange-200">
+<div class="flex items-center gap-3 mb-3">
+<label class="text-sm font-medium text-gray-600">도로 종류 입력:</label>
+<div class="flex gap-2">
+<button onclick="runEx20('a')" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">a (어린이 보호 구역)</button>
+<button onclick="runEx20('b')" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">다른 문자 (일반 도로)</button>
+</div>
+</div>
+<div class="code-block p-3 text-sm" id="ex20Output"><span style="color:#64748b">▶ 버튼을 클릭하세요...</span></div>
+</div>
+</div>
+
+<!-- 활동 19 - Fill in blank -->
+<div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-6 fade-in">
+<div class="flex items-center gap-2 mb-3">
+<span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-pencil-alt mr-1"></i>활동 19</span>
+<h4 class="font-bold text-gray-800">놀이공원 입장권 가격 (18세 이하: 40,000원 / 성인: 50,000원)</h4>
+</div>
+<p class="text-gray-600 text-sm mb-4">빈칸에 알맞은 조건식을 채워 넣으세요.</p>
+<div class="code-block p-4 mb-4">
+<pre><code>age = <span class="bi">int</span>(<span class="bi">input</span>(<span class="str">"나이를 입력하세요."</span>))
+<span class="kw">if</span> <input type="text" id="ex19blank" class="exercise-input" style="width:160px" placeholder="조건식을 입력하세요">
+    <span class="bi">print</span>(<span class="str">"입장권 가격은 40,000원입니다."</span>)
+<span class="kw">else</span>:
+    <span class="bi">print</span>(<span class="str">"입장권 가격은 50,000원입니다."</span>)</code></pre>
+</div>
+<div class="flex items-center gap-3">
+<button onclick="checkEx19()" class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-lg font-semibold transition"><i class="fas fa-check mr-1"></i>정답 확인</button>
+<span id="ex19Result" class="text-sm font-medium"></span>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ========== Section 2: 중첩 조건문 ========== -->
+<section class="fade-in">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 bg-orange-600 text-white rounded-xl flex items-center justify-center font-bold text-lg">2</div>
+<h2 class="text-3xl font-black text-gray-900">중첩 조건문</h2>
+</div>
+
+<div class="card p-8 mb-8 fade-in">
+<p class="text-gray-600 mb-6">조건문 안에 또 다른 조건문을 포함하여, <strong>더 세밀한 분기 처리</strong>를 할 수 있습니다.</p>
+
+<div class="grid md:grid-cols-2 gap-6 mb-6">
+<div>
+<h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-code mr-2 text-orange-500"></i>형식</h4>
+<div class="code-block p-4">
+<pre><code><span class="kw">if</span> 조건식 <span class="num">1</span>:
+    <span class="kw">if</span> 조건식 <span class="num">2</span>:
+        명령문 <span class="num">1</span>
+    <span class="kw">else</span>:
+        명령문 <span class="num">2</span>
+<span class="kw">else</span>:
+    명령문 <span class="num">3</span></code></pre>
+</div>
+</div>
+<div>
+<h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-project-diagram mr-2 text-orange-500"></i>순서도</h4>
+<svg viewBox="0 0 320 280" class="w-full max-w-sm mx-auto" id="fcNested">
+<defs><marker id="ah3" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#c2410c"/></marker></defs>
+<rect x="120" y="5" width="80" height="28" class="flowchart-box"/>
+<text x="160" y="19" class="flowchart-text" style="font-size:11px">시작</text>
+<line x1="160" y1="33" x2="160" y2="50" class="flowchart-arrow"/>
+<polygon points="160,50 230,80 160,110 90,80" class="flowchart-diamond" id="nd1"/>
+<text x="160" y="80" class="flowchart-text" style="font-size:11px">조건식1</text>
+<text x="78" y="66" class="flowchart-label">참</text>
+<text x="238" y="66" class="flowchart-label">거짓</text>
+<!-- True branch: nested condition -->
+<line x1="90" y1="80" x2="50" y2="80" stroke="#c2410c" stroke-width="2"/>
+<line x1="50" y1="80" x2="50" y2="130" class="flowchart-arrow"/>
+<polygon points="50,130 110,155 50,180 -10,155" class="flowchart-diamond" id="nd2"/>
+<text x="50" y="155" class="flowchart-text" style="font-size:10px">조건식2</text>
+<text x="-20" y="140" class="flowchart-label">참</text>
+<text x="115" y="140" class="flowchart-label">거짓</text>
+<line x1="-10" y1="155" x2="-35" y2="155" class="flowchart-arrow"/>
+<rect x="-70" y="141" width="70" height="28" class="flowchart-box" id="ndC1"/>
+<text x="-35" y="155" class="flowchart-text" style="font-size:10px">명령문1</text>
+<line x1="110" y1="155" x2="135" y2="155" class="flowchart-arrow"/>
+<rect x="100" y="141" width="70" height="28" class="flowchart-box" id="ndC2"/>
+<text x="135" y="155" class="flowchart-text" style="font-size:10px">명령문2</text>
+<!-- False branch -->
+<line x1="230" y1="80" x2="280" y2="80" stroke="#c2410c" stroke-width="2"/>
+<line x1="280" y1="80" x2="280" y2="141" class="flowchart-arrow"/>
+<rect x="245" y="141" width="70" height="28" class="flowchart-box" id="ndC3"/>
+<text x="280" y="155" class="flowchart-text" style="font-size:10px">명령문3</text>
+<!-- Merge -->
+<line x1="-35" y1="169" x2="-35" y2="240" stroke="#c2410c" stroke-width="2"/>
+<line x1="-35" y1="240" x2="160" y2="240" stroke="#c2410c" stroke-width="2"/>
+<line x1="135" y1="169" x2="135" y2="230" stroke="#c2410c" stroke-width="2"/>
+<line x1="135" y1="230" x2="160" y2="230" stroke="#c2410c" stroke-width="2"/>
+<line x1="280" y1="169" x2="280" y2="240" stroke="#c2410c" stroke-width="2"/>
+<line x1="280" y1="240" x2="160" y2="240" stroke="#c2410c" stroke-width="2"/>
+<line x1="160" y1="240" x2="160" y2="255" class="flowchart-arrow"/>
+<rect x="120" y="255" width="80" height="24" class="flowchart-box" style="fill:#fed7aa"/>
+<text x="160" y="267" class="flowchart-text" style="font-size:10px">끝</text>
+</svg>
+</div>
+</div>
+
+<!-- 예제 21 - Interactive Flowchart Builder -->
+<div class="bg-orange-50 rounded-xl p-6 fade-in">
+<div class="flex items-center gap-2 mb-3">
+<span class="bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full">예제 21</span>
+<h4 class="font-bold text-gray-800">도로 종류 + 어린이 보호 구역 제한 속도</h4>
+</div>
+
+<div class="code-block p-4 mb-4">
+<pre><code>a = <span class="bi">input</span>(<span class="str">"고속 도로/일반 도로? "</span>)
+<span class="kw">if</span> a == <span class="str">"고속 도로"</span>:
+    limit = <span class="num">100</span>
+<span class="kw">else</span>:
+    b = <span class="bi">input</span>(<span class="str">"어린이 보호 구역(있음/없음)? "</span>)
+    <span class="kw">if</span> b == <span class="str">"있음"</span>:
+        limit = <span class="num">30</span>
+    <span class="kw">else</span>:
+        limit = <span class="num">50</span>
+<span class="bi">print</span>(<span class="str">"제한 속도는"</span>, limit, <span class="str">"km/h"</span>)</code></pre>
+</div>
+
+<!-- Interactive Flowchart Builder -->
+<div class="bg-white rounded-xl p-6 border border-orange-200">
+<h5 class="font-semibold text-gray-700 mb-4"><i class="fas fa-route mr-2 text-orange-500"></i>경로 탐색기 — 입력에 따라 어떤 경로를 따라가는지 확인하세요</h5>
+<div class="flex flex-wrap gap-3 mb-4">
+<div>
+<label class="text-sm font-medium text-gray-600 block mb-1">도로 종류</label>
+<select id="roadSelect" class="border-2 border-orange-300 rounded-lg px-3 py-2 font-semibold" onchange="updateNestedFlow()">
+<option value="">선택하세요</option>
+<option value="고속 도로">고속 도로</option>
+<option value="일반 도로">일반 도로</option>
+</select>
+</div>
+<div id="zoneSelectWrap" style="display:none">
+<label class="text-sm font-medium text-gray-600 block mb-1">어린이 보호 구역</label>
+<select id="zoneSelect" class="border-2 border-orange-300 rounded-lg px-3 py-2 font-semibold" onchange="updateNestedFlow()">
+<option value="">선택하세요</option>
+<option value="있음">있음</option>
+<option value="없음">없음</option>
+</select>
+</div>
+</div>
+<div class="p-4 rounded-lg text-center font-bold text-lg" id="nestedResult" style="background:#f1f5f9;color:#64748b;min-height:48px;display:flex;align-items:center;justify-content:center">
+<span>도로 종류를 선택하세요</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ========== Section 3: 다중 조건문 ========== -->
+<section class="fade-in">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 bg-orange-600 text-white rounded-xl flex items-center justify-center font-bold text-lg">3</div>
+<h2 class="text-3xl font-black text-gray-900">다중 조건문</h2>
+</div>
+
+<div class="card p-8 mb-8 fade-in">
+<p class="text-gray-600 mb-6">여러 개의 조건을 순서대로 검사하여 <strong>해당하는 조건의 명령문</strong>을 실행합니다.</p>
+
+<div class="grid md:grid-cols-2 gap-6 mb-6">
+<div>
+<h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-code mr-2 text-orange-500"></i>형식</h4>
+<div class="code-block p-4">
+<pre><code><span class="kw">if</span> 조건식 <span class="num">1</span>:
+    명령문 <span class="num">1</span>
+<span class="kw">elif</span> 조건식 <span class="num">2</span>:
+    명령문 <span class="num">2</span>
+<span class="kw">else</span>:
+    명령문 <span class="num">3</span></code></pre>
+</div>
+</div>
+<div>
+<h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-project-diagram mr-2 text-orange-500"></i>순서도</h4>
+<svg viewBox="0 0 300 260" class="w-full max-w-sm mx-auto">
+<defs><marker id="ah4" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#c2410c"/></marker></defs>
+<rect x="100" y="5" width="80" height="28" class="flowchart-box"/>
+<text x="140" y="19" class="flowchart-text" style="font-size:11px">시작</text>
+<line x1="140" y1="33" x2="140" y2="50" class="flowchart-arrow"/>
+<polygon points="140,50 210,78 140,106 70,78" class="flowchart-diamond"/>
+<text x="140" y="78" class="flowchart-text" style="font-size:10px">조건식1</text>
+<text x="55" y="65" class="flowchart-label">참</text>
+<text x="215" y="65" class="flowchart-label">거짓</text>
+<line x1="70" y1="78" x2="20" y2="78" class="flowchart-arrow"/>
+<rect x="-15" y="64" width="70" height="28" class="flowchart-box"/>
+<text x="20" y="78" class="flowchart-text" style="font-size:10px">명령문1</text>
+<!-- elif -->
+<line x1="210" y1="78" x2="250" y2="78" stroke="#c2410c" stroke-width="2"/>
+<line x1="250" y1="78" x2="250" y2="120" class="flowchart-arrow"/>
+<polygon points="250,120 310,148 250,176 190,148" class="flowchart-diamond"/>
+<text x="250" y="148" class="flowchart-text" style="font-size:10px">조건식2</text>
+<text x="178" y="135" class="flowchart-label">참</text>
+<text x="280" y="178" class="flowchart-label">거짓</text>
+<line x1="190" y1="148" x2="140" y2="148" class="flowchart-arrow"/>
+<rect x="105" y="134" width="70" height="28" class="flowchart-box"/>
+<text x="140" y="148" class="flowchart-text" style="font-size:10px">명령문2</text>
+<!-- else -->
+<line x1="250" y1="176" x2="250" y2="195" class="flowchart-arrow"/>
+<rect x="215" y="195" width="70" height="28" class="flowchart-box"/>
+<text x="250" y="209" class="flowchart-text" style="font-size:10px">명령문3</text>
+<!-- Merge -->
+<line x1="20" y1="92" x2="20" y2="240" stroke="#c2410c" stroke-width="2"/>
+<line x1="20" y1="240" x2="140" y2="240" stroke="#c2410c" stroke-width="2"/>
+<line x1="140" y1="162" x2="140" y2="240" stroke="#c2410c" stroke-width="2"/>
+<line x1="250" y1="223" x2="250" y2="240" stroke="#c2410c" stroke-width="2"/>
+<line x1="250" y1="240" x2="140" y2="240" stroke="#c2410c" stroke-width="2"/>
+<circle cx="140" cy="240" r="3" fill="#c2410c"/>
+</svg>
+</div>
+</div>
+
+<!-- 예제 22 -->
+<div class="bg-orange-50 rounded-xl p-6 mb-6 fade-in">
+<div class="flex items-center gap-2 mb-3">
+<span class="bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full">예제 22</span>
+<h4 class="font-bold text-gray-800">점수 → 학점 변환</h4>
+</div>
+<div class="code-block p-4 mb-4">
+<pre><code>n = <span class="bi">int</span>(<span class="bi">input</span>())
+<span class="kw">if</span> n >= <span class="num">80</span>:
+    <span class="bi">print</span>(<span class="str">"A"</span>)
+<span class="kw">elif</span> n >= <span class="num">60</span>:
+    <span class="bi">print</span>(<span class="str">"B"</span>)
+<span class="kw">else</span>:
+    <span class="bi">print</span>(<span class="str">"C"</span>)</code></pre>
+</div>
+
+<!-- Interactive Grade Checker -->
+<div class="bg-white rounded-xl p-6 border border-orange-200">
+<h5 class="font-semibold text-gray-700 mb-3"><i class="fas fa-graduation-cap mr-2 text-orange-500"></i>학점 변환기</h5>
+<div class="flex flex-col sm:flex-row items-center gap-4">
+<div class="flex-1 w-full">
+<label class="text-sm font-medium text-gray-600 block mb-1">점수 입력 (0~100)</label>
+<input type="range" min="0" max="100" value="75" class="w-full accent-orange-600" id="gradeSlider" oninput="updateGrade(this.value)">
+<div class="flex justify-between text-xs text-gray-400 mt-1">
+<span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span>
+</div>
+</div>
+<div class="text-center">
+<div class="text-5xl font-black" id="gradeDisplay" style="color:#c2410c">B</div>
+<div class="text-sm text-gray-500">점수: <span id="gradeScore" class="font-bold text-gray-700">75</span>점</div>
+</div>
+</div>
+<div class="mt-3 grid grid-cols-3 gap-2 text-center text-sm">
+<div class="rounded-lg py-2 font-semibold" id="gradeA" style="background:#dcfce7;color:#16a34a">A (80~100)</div>
+<div class="rounded-lg py-2 font-semibold" id="gradeB" style="background:#fef3c7;color:#d97706;box-shadow:0 0 0 2px #f59e0b">B (60~79)</div>
+<div class="rounded-lg py-2 font-semibold" id="gradeC" style="background:#fee2e2;color:#dc2626">C (0~59)</div>
+</div>
+</div>
+</div>
+
+<!-- 활동 20 - 놀이기구 키 탑승 조건 -->
+<div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-6 fade-in">
+<div class="flex items-center gap-2 mb-3">
+<span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-pencil-alt mr-1"></i>활동 20</span>
+<h4 class="font-bold text-gray-800">놀이기구 키 탑승 조건 (다중 조건문)</h4>
+</div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+<div class="bg-red-100 border border-red-300 rounded-lg p-3 text-center">
+<div class="text-2xl mb-1">🚫</div>
+<div class="font-bold text-red-700 text-sm">&lt; 100cm</div>
+<div class="text-xs text-red-600">탑승 불가</div>
+</div>
+<div class="bg-yellow-100 border border-yellow-300 rounded-lg p-3 text-center">
+<div class="text-2xl mb-1">👨‍👧</div>
+<div class="font-bold text-yellow-700 text-sm">100~130cm</div>
+<div class="text-xs text-yellow-600">보호자 동행 시 탑승 가능</div>
+</div>
+<div class="bg-green-100 border border-green-300 rounded-lg p-3 text-center">
+<div class="text-2xl mb-1">✅</div>
+<div class="font-bold text-green-700 text-sm">130~195cm</div>
+<div class="text-xs text-green-600">탑승 가능</div>
+</div>
+<div class="bg-red-100 border border-red-300 rounded-lg p-3 text-center">
+<div class="text-2xl mb-1">🚫</div>
+<div class="font-bold text-red-700 text-sm">&ge; 195cm</div>
+<div class="text-xs text-red-600">탑승 불가</div>
+</div>
+</div>
+
+<!-- Height Checker for 활동 20 -->
+<div class="bg-white rounded-xl p-6 mb-4 border border-amber-200">
+<h5 class="font-semibold text-gray-700 mb-3"><i class="fas fa-ruler-vertical mr-2 text-amber-500"></i>키 탑승 조건 시뮬레이터</h5>
+<div class="flex flex-col sm:flex-row items-center gap-6">
+<div class="relative" style="height:220px;width:70px;flex-shrink:0">
+<div class="absolute rounded-lg border-2 border-gray-300 overflow-hidden" style="width:40px;left:15px;height:100%;bottom:0">
+<div class="absolute bottom-0 w-full" style="height:47.5%;background:#ef4444;opacity:.2"></div>
+<div class="absolute w-full" style="bottom:47.5%;height:15%;background:#eab308;opacity:.2"></div>
+<div class="absolute w-full" style="bottom:62.5%;height:32.5%;background:#22c55e;opacity:.2"></div>
+<div class="absolute w-full top-0" style="height:5%;background:#ef4444;opacity:.2"></div>
+</div>
+<div class="absolute text-xs font-bold" style="right:0;bottom:0;color:#94a3b8">0</div>
+<div class="absolute text-xs font-bold" style="right:0;bottom:47.5%;color:#ef4444">100</div>
+<div class="absolute text-xs font-bold" style="right:0;bottom:62.5%;color:#eab308">130</div>
+<div class="absolute text-xs font-bold" style="right:0;bottom:95%;color:#ef4444">195</div>
+<div class="absolute left-4 w-10 bg-orange-500 rounded-t" id="heightBar20" style="height:0;bottom:0;transition:height .5s"></div>
+</div>
+<div class="flex-1 w-full">
+<label class="text-sm font-medium text-gray-600 block mb-1">키 입력 (cm)</label>
+<input type="range" min="60" max="210" value="120" class="w-full accent-amber-500" id="heightSlider20" oninput="updateHeight20(this.value)">
+<div class="flex justify-between text-xs text-gray-400 mt-1">
+<span>60</span><span>100</span><span>130</span><span>195</span><span>210</span>
+</div>
+<div class="text-center mt-2 text-2xl font-black" id="heightVal20" style="color:#1e293b">120 cm</div>
+<div class="mt-3 p-4 rounded-lg text-center font-bold" id="heightResult20" style="background:#fef3c7;color:#d97706">
+<i class="fas fa-people-arrows mr-2"></i>보호자 동행 시 탑승 가능
+</div>
+</div>
+</div>
+</div>
+
+<!-- Fill-in exercise for 활동 20 -->
+<div class="bg-white rounded-xl p-6 border border-amber-200">
+<h5 class="font-semibold text-gray-700 mb-3"><i class="fas fa-keyboard mr-2 text-amber-500"></i>코드 완성하기</h5>
+<p class="text-sm text-gray-500 mb-3">빈칸에 알맞은 조건식을 입력하세요.</p>
+<div class="code-block p-4 mb-4 text-sm">
+<pre><code>height = <span class="bi">float</span>(<span class="bi">input</span>(<span class="str">"키를 입력하세요: "</span>))
+<span class="kw">if</span> <input type="text" id="ex20b1" class="exercise-input" style="width:140px" placeholder="조건식 1">
+    <span class="bi">print</span>(<span class="str">"탑승 불가"</span>)
+<span class="kw">elif</span> <input type="text" id="ex20b2" class="exercise-input" style="width:140px" placeholder="조건식 2">
+    <span class="bi">print</span>(<span class="str">"보호자 동행 시 탑승 가능"</span>)
+<span class="kw">elif</span> <input type="text" id="ex20b3" class="exercise-input" style="width:140px" placeholder="조건식 3">
+    <span class="bi">print</span>(<span class="str">"탑승 가능"</span>)
+<span class="kw">else</span>:
+    <span class="bi">print</span>(<span class="str">"탑승 불가"</span>)</code></pre>
+</div>
+<div class="flex items-center gap-3 flex-wrap">
+<button onclick="checkEx20()" class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-lg font-semibold transition"><i class="fas fa-check mr-1"></i>정답 확인</button>
+<button onclick="hintEx20()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold transition"><i class="fas fa-lightbulb mr-1"></i>힌트</button>
+<span id="ex20Result" class="text-sm font-medium"></span>
+</div>
+<div id="ex20Hint" class="mt-3 text-sm text-amber-700 hidden bg-amber-50 p-3 rounded-lg">
+<i class="fas fa-lightbulb mr-1"></i> 힌트: 키가 작은 순서부터 조건을 확인합니다. 100 미만, 130 이하, 195 미만 순서로 생각해 보세요.
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Summary -->
+<section class="fade-in">
+<div class="card p-8 bg-gradient-to-br from-orange-50 to-amber-50">
+<h3 class="text-xl font-bold text-orange-800 mb-4 flex items-center gap-2"><i class="fas fa-clipboard-list mr-2"></i>핵심 정리</h3>
+<div class="grid md:grid-cols-3 gap-4">
+<div class="bg-white rounded-xl p-5 border border-orange-200 text-center">
+<div class="text-3xl mb-2 text-orange-600"><i class="fas fa-arrow-right"></i></div>
+<h4 class="font-bold text-gray-800 mb-1">단순 조건문</h4>
+<p class="text-sm text-gray-500">if / if-else<br>하나의 조건으로 분기</p>
+</div>
+<div class="bg-white rounded-xl p-5 border border-orange-200 text-center">
+<div class="text-3xl mb-2 text-orange-600"><i class="fas fa-sitemap"></i></div>
+<h4 class="font-bold text-gray-800 mb-1">중첩 조건문</h4>
+<p class="text-sm text-gray-500">if 안에 if<br>세밀한 분기 처리</p>
+</div>
+<div class="bg-white rounded-xl p-5 border border-orange-200 text-center">
+<div class="text-3xl mb-2 text-orange-600"><i class="fas fa-list-ol"></i></div>
+<h4 class="font-bold text-gray-800 mb-1">다중 조건문</h4>
+<p class="text-sm text-gray-500">if-elif-else<br>여러 조건 순서대로 검사</p>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-gray-400 py-8 text-center text-sm mt-16">
+<div class="max-w-5xl mx-auto px-4">
+<p>정보 교과서 &mdash; III. 알고리즘과 프로그래밍 &gt; 04 제어 구조의 응용 &gt; 조건문</p>
+<p class="mt-2 text-gray-500">Interactive Educational Content</p>
+</div>
+</footer>
+
+<script>
+// ===== Fade-in on scroll =====
+const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:0.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+// ===== Speed Checker (예제 19) =====
+function updateSpeed(v){
+  v=parseInt(v);
+  document.getElementById('speedValue').textContent=v;
+  // needle: -90 at 0, +90 at 100
+  const angle=-90+(v/100)*180;
+  document.getElementById('speedNeedle').setAttribute('transform','rotate('+angle+',100,115)');
+  // arc
+  const maxDash=251;
+  document.getElementById('speedArc').setAttribute('stroke-dashoffset',maxDash-(v/100)*maxDash);
+  // output
+  const out=document.getElementById('speedOutput');
+  let html='<div style="color:#67e8f9">>>> speed = '+v+'</div>';
+  if(v>30){
+    html+='<div class="output-line" style="color:#86efac">과속입니다.</div>';
+  }
+  html+='<div class="output-line" style="color:#86efac">시속 30km를 유지하세요.</div>';
+  out.innerHTML=html;
+}
+
+// ===== Height Checker 활동 18 =====
+function checkHeight18(){
+  const h=parseFloat(document.getElementById('heightInput').value)||0;
+  const bar=document.getElementById('heightBar');
+  const pct=Math.min(Math.max((h-100)/100*100,0),100);
+  bar.style.height=pct+'%';
+  const result=document.getElementById('heightResult18');
+  const icon=document.getElementById('personIcon18');
+  if(h<140){
+    result.innerHTML='<div class="p-3 bg-red-100 text-red-700 rounded-lg"><i class="fas fa-ban mr-2"></i>더블스핀 놀이기구 <strong>탑승 불가</strong> ('+h+'cm)</div>';
+    icon.innerHTML='<i class="fas fa-person" style="color:#ef4444;font-size:36px"></i>';
+    bar.style.background='#ef4444';
+  } else {
+    result.innerHTML='<div class="p-3 bg-green-100 text-green-700 rounded-lg"><i class="fas fa-check-circle mr-2"></i>탑승 가능합니다! ('+h+'cm)</div>';
+    icon.innerHTML='<i class="fas fa-person" style="color:#22c55e;font-size:48px"></i>';
+    bar.style.background='#22c55e';
+  }
+}
+
+// ===== 예제 20 runner =====
+function runEx20(val){
+  const out=document.getElementById('ex20Output');
+  let html='<div style="color:#67e8f9">>>> road = "'+val+'"</div>';
+  if(val==='a'){
+    html+='<div class="output-line" style="color:#86efac">어린이 보호 구역은 시속 30km입니다.</div>';
+  } else {
+    html+='<div class="output-line" style="color:#86efac">일반 도로는 시속 50km입니다.</div>';
+  }
+  out.innerHTML=html;
+}
+
+// ===== 활동 19 check =====
+function checkEx19(){
+  const inp=document.getElementById('ex19blank');
+  const res=document.getElementById('ex19Result');
+  const val=inp.value.replace(/\s/g,'');
+  const answers=['age<=18:','age<19:','age<=18:'];
+  // Accept various forms
+  const acceptable=[
+    'age<=18:','age<=18','age<19:','age<19',
+    'age<=18:','age<=18','age<19:','age<19'
+  ];
+  const cleaned=val.replace(/：/g,':');
+  if(acceptable.some(a=>cleaned===a) || cleaned.match(/^age\s*<=\s*18\s*:?$/) || cleaned.match(/^age\s*<\s*19\s*:?$/)){
+    inp.classList.remove('exercise-wrong');
+    inp.classList.add('exercise-correct');
+    res.innerHTML='<span style="color:#16a34a"><i class="fas fa-check-circle mr-1"></i>정답입니다!</span>';
+  } else {
+    inp.classList.remove('exercise-correct');
+    inp.classList.add('exercise-wrong');
+    res.innerHTML='<span style="color:#dc2626"><i class="fas fa-times-circle mr-1"></i>다시 생각해 보세요. (힌트: 18세 <strong>이하</strong>)</span>';
+  }
+}
+
+// ===== Nested Flow (예제 21) =====
+function updateNestedFlow(){
+  const road=document.getElementById('roadSelect').value;
+  const zoneWrap=document.getElementById('zoneSelectWrap');
+  const zone=document.getElementById('zoneSelect').value;
+  const result=document.getElementById('nestedResult');
+
+  if(!road){
+    zoneWrap.style.display='none';
+    result.innerHTML='<span>도로 종류를 선택하세요</span>';
+    result.style.background='#f1f5f9';result.style.color='#64748b';
+    return;
+  }
+
+  if(road==='고속 도로'){
+    zoneWrap.style.display='none';
+    result.style.background='#dbeafe';result.style.color='#1d4ed8';
+    result.innerHTML='<i class="fas fa-road mr-2"></i>제한 속도는 <span style="font-size:1.5em">100</span> km/h (고속 도로)';
+  } else {
+    zoneWrap.style.display='block';
+    if(!zone){
+      result.innerHTML='<span>어린이 보호 구역 여부를 선택하세요</span>';
+      result.style.background='#f1f5f9';result.style.color='#64748b';
+      return;
+    }
+    if(zone==='있음'){
+      result.style.background='#fef3c7';result.style.color='#d97706';
+      result.innerHTML='<i class="fas fa-children mr-2"></i>제한 속도는 <span style="font-size:1.5em">30</span> km/h (어린이 보호 구역)';
+    } else {
+      result.style.background='#dcfce7';result.style.color='#16a34a';
+      result.innerHTML='<i class="fas fa-car mr-2"></i>제한 속도는 <span style="font-size:1.5em">50</span> km/h (일반 도로)';
+    }
+  }
+}
+
+// ===== Grade Checker (예제 22) =====
+function updateGrade(v){
+  v=parseInt(v);
+  document.getElementById('gradeScore').textContent=v;
+  const d=document.getElementById('gradeDisplay');
+  const a=document.getElementById('gradeA');
+  const b=document.getElementById('gradeB');
+  const c=document.getElementById('gradeC');
+  // Reset
+  [a,b,c].forEach(el=>{el.style.boxShadow='none';el.style.transform='scale(1)'});
+  if(v>=80){
+    d.textContent='A';d.style.color='#16a34a';
+    a.style.boxShadow='0 0 0 2px #22c55e';a.style.transform='scale(1.05)';
+  } else if(v>=60){
+    d.textContent='B';d.style.color='#d97706';
+    b.style.boxShadow='0 0 0 2px #f59e0b';b.style.transform='scale(1.05)';
+  } else {
+    d.textContent='C';d.style.color='#dc2626';
+    c.style.boxShadow='0 0 0 2px #ef4444';c.style.transform='scale(1.05)';
+  }
+}
+
+// ===== Height Checker 활동 20 =====
+function updateHeight20(v){
+  v=parseInt(v);
+  document.getElementById('heightVal20').textContent=v+' cm';
+  const bar=document.getElementById('heightBar20');
+  const pct=Math.min(Math.max((v-60)/150*100,0),100);
+  bar.style.height=pct+'%';
+  const res=document.getElementById('heightResult20');
+  if(v<100){
+    res.style.background='#fee2e2';res.style.color='#dc2626';
+    res.innerHTML='<i class="fas fa-ban mr-2"></i>탑승 불가';
+    bar.style.background='#ef4444';
+  } else if(v<=130){
+    res.style.background='#fef3c7';res.style.color='#d97706';
+    res.innerHTML='<i class="fas fa-people-arrows mr-2"></i>보호자 동행 시 탑승 가능';
+    bar.style.background='#eab308';
+  } else if(v<195){
+    res.style.background='#dcfce7';res.style.color='#16a34a';
+    res.innerHTML='<i class="fas fa-check-circle mr-2"></i>탑승 가능';
+    bar.style.background='#22c55e';
+  } else {
+    res.style.background='#fee2e2';res.style.color='#dc2626';
+    res.innerHTML='<i class="fas fa-ban mr-2"></i>탑승 불가';
+    bar.style.background='#ef4444';
+  }
+}
+
+// ===== 활동 20 Fill-in check =====
+function checkEx20(){
+  const b1=document.getElementById('ex20b1').value.replace(/\s/g,'').replace(/：/g,':');
+  const b2=document.getElementById('ex20b2').value.replace(/\s/g,'').replace(/：/g,':');
+  const b3=document.getElementById('ex20b3').value.replace(/\s/g,'').replace(/：/g,':');
+  const res=document.getElementById('ex20Result');
+
+  const ok1=b1.match(/^height<100:?$/);
+  const ok2=b2.match(/^height<=130:?$/);
+  const ok3=b3.match(/^height<195:?$/);
+
+  const e1=document.getElementById('ex20b1');
+  const e2=document.getElementById('ex20b2');
+  const e3=document.getElementById('ex20b3');
+
+  [e1,e2,e3].forEach(el=>{el.classList.remove('exercise-correct','exercise-wrong')});
+
+  if(ok1) e1.classList.add('exercise-correct'); else if(b1) e1.classList.add('exercise-wrong');
+  if(ok2) e2.classList.add('exercise-correct'); else if(b2) e2.classList.add('exercise-wrong');
+  if(ok3) e3.classList.add('exercise-correct'); else if(b3) e3.classList.add('exercise-wrong');
+
+  if(ok1&&ok2&&ok3){
+    res.innerHTML='<span style="color:#16a34a"><i class="fas fa-check-circle mr-1"></i>모두 정답입니다! 훌륭해요!</span>';
+  } else {
+    let msg=[];
+    if(!ok1) msg.push('조건식 1');
+    if(!ok2) msg.push('조건식 2');
+    if(!ok3) msg.push('조건식 3');
+    res.innerHTML='<span style="color:#dc2626"><i class="fas fa-times-circle mr-1"></i>'+msg.join(', ')+'을(를) 다시 확인해 보세요.</span>';
+  }
+}
+
+function hintEx20(){
+  document.getElementById('ex20Hint').classList.toggle('hidden');
+}
+
+// Init grade display
+updateGrade(75);
+updateHeight20(120);
+</script>
+</body>
+</html>

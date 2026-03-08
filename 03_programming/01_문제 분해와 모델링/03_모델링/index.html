@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모델링 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        },
+                        accent: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #ea580c, #d97706, #ea580c);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Tab styles */
+        .tab-btn {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ea580c, #d97706);
+            color: white;
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4);
+        }
+        .tab-btn:not(.active):hover {
+            background-color: #fff7ed;
+            color: #ea580c;
+        }
+        .tab-content {
+            display: none;
+            animation: tabFadeIn 0.4s ease-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* SVG node interactions */
+        .svg-node {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .svg-node:hover circle,
+        .svg-node:hover rect {
+            filter: brightness(1.15);
+            stroke-width: 3;
+        }
+        .svg-node:hover text {
+            font-weight: 700;
+        }
+
+        /* Graph edge highlight */
+        .graph-edge {
+            transition: stroke-width 0.3s ease, stroke 0.3s ease;
+        }
+        .graph-edge.highlighted {
+            stroke: #ea580c !important;
+            stroke-width: 4 !important;
+        }
+        .graph-node-highlight {
+            transition: all 0.3s ease;
+        }
+        .graph-node-highlight.highlighted circle {
+            fill: #ea580c !important;
+            stroke: #c2410c !important;
+        }
+        .graph-node-highlight.highlighted text {
+            fill: white !important;
+            font-weight: 700 !important;
+        }
+
+        /* Allergen checkbox */
+        .allergen-cell {
+            transition: all 0.2s ease;
+        }
+        .allergen-cell.checked {
+            background-color: #fff7ed;
+        }
+        .allergen-cell input[type="checkbox"]:checked + label {
+            color: #ea580c;
+            font-weight: 700;
+        }
+
+        /* Accordion */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.3s ease;
+        }
+        .accordion-content.open {
+            max-height: 2000px;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+        .accordion-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        /* Fire grid */
+        .fire-cell {
+            width: 48px;
+            height: 48px;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+        }
+        .fire-cell.burning {
+            background: linear-gradient(135deg, #ea580c, #dc2626);
+            color: white;
+            animation: firePulse 1s ease-in-out;
+        }
+        .fire-cell.blocked {
+            background-color: #374151;
+            color: white;
+        }
+        .fire-cell.safe {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        @keyframes firePulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Career card */
+        .career-card {
+            transition: all 0.3s ease;
+        }
+        .career-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px -12px rgba(234, 88, 12, 0.2);
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { background: #c2410c !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+            a { text-decoration: underline; }
+        }
+
+        @media (max-width: 768px) {
+            .fire-cell { width: 36px; height: 36px; font-size: 0.65rem; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">III. 알고리즘과 프로그래밍</span>
+                <span class="breadcrumb-item text-white font-medium">01 문제 분해와 모델링</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>III. 알고리즘과 프로그래밍 &gt; 01 문제 분해와 모델링</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        모델링
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        핵심 요소를 구조화하여 표현하는 과정
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-table mr-1"></i> 표
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-sitemap mr-1"></i> 트리
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-share-alt mr-1"></i> 그래프
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon - modeling / diagram icon -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Central node -->
+                        <circle cx="110" cy="90" r="24" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+                        <text x="110" y="86" text-anchor="middle" fill="white" font-size="10" font-weight="bold">모델</text>
+                        <text x="110" y="98" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="8">Model</text>
+
+                        <!-- Top node: 표 -->
+                        <line x1="110" y1="66" x2="60" y2="35" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <rect x="35" y="18" width="50" height="30" rx="6" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                        <text x="60" y="37" text-anchor="middle" fill="white" font-size="10" font-weight="600">표</text>
+
+                        <!-- Top-right node: 트리 -->
+                        <line x1="130" y1="74" x2="175" y2="40" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <rect x="150" y="23" width="50" height="30" rx="6" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                        <text x="175" y="42" text-anchor="middle" fill="white" font-size="10" font-weight="600">트리</text>
+
+                        <!-- Bottom node: 그래프 -->
+                        <line x1="110" y1="114" x2="110" y2="148" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <rect x="80" y="148" width="60" height="30" rx="6" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                        <text x="110" y="167" text-anchor="middle" fill="white" font-size="10" font-weight="600">그래프</text>
+
+                        <!-- Small decorative nodes -->
+                        <circle cx="38" cy="62" r="5" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                        <circle cx="182" cy="72" r="5" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                        <circle cx="60" cy="155" r="4" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                        <circle cx="165" cy="150" r="4" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+
+                        <!-- Decorative connections -->
+                        <line x1="60" y1="48" x2="38" y2="57" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+                        <line x1="175" y1="53" x2="182" y2="67" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+                        <line x1="95" y1="163" x2="64" y2="155" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+                        <line x1="125" y1="163" x2="161" y2="150" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+
+                        <!-- Floating labels -->
+                        <text x="30" y="195" fill="rgba(255,255,255,0.15)" font-size="7">Node  Edge  Cycle</text>
+                        <text x="120" y="205" fill="rgba(255,255,255,0.12)" font-size="7">구조화 &middot; 단순화</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>모델링의 개념과 필요성을 이해할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>표, 트리, 그래프의 특징을 비교하고 설명할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">3</span>
+                        <span>문제 상황에 적합한 모델링 방법을 선택하여 적용할 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 학습 요소: 모델링</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 표(Table)</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 트리(Tree)</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 그래프(Graph)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- SECTION: 모델링이란?                                                    -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-definition">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">모델링이란?</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">What is Modeling?</p>
+                </div>
+            </div>
+
+            <!-- Definition callout -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-500 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">모델링의 정의</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong>모델링(Modeling)</strong>이란 분해한 문제에서 추출한 핵심 요소들을
+                            이해하기 쉽게 <strong>표</strong>와 <strong>트리</strong>, <strong>그래프</strong> 등으로
+                            <strong>단순화</strong>하거나 <strong>구조화</strong>하는 과정을 의미합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model definition -->
+            <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mb-8">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-accent-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-cube text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-accent-800 mb-1">모델(Model)이란?</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            문제 해결에 필요한 핵심 요소들 간의 <strong>관계</strong>를 추상적으로 표현한 <strong>모형</strong>을 말합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Q&A: 추상화 vs 모델링 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden mb-8">
+                <button class="accordion-trigger w-full text-left p-5 flex items-center justify-between hover:bg-gray-50 transition-colors" onclick="toggleAccordion(this)">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
+                            <i class="fas fa-question-circle text-primary-600 text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-primary-600 uppercase tracking-wide">Q&A</span>
+                            <h3 class="font-bold text-gray-800">추상화와 모델링은 어떤 차이가 있나요?</h3>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 accordion-icon transition-transform"></i>
+                </button>
+                <div class="accordion-content px-5">
+                    <div class="bg-primary-50 rounded-xl p-4 border border-primary-100">
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong class="text-primary-700">추상화</strong>는 문제가 지닌 복잡성을 단순화하고 중요한 특징을 강조하는 과정으로,
+                            추상화에는 <strong>문제 분해</strong>와 <strong>핵심 요소 추출</strong>, <strong>모델링</strong> 과정이 모두 포함됩니다.
+                        </p>
+                        <div class="mt-4 flex flex-wrap items-center gap-2 text-sm">
+                            <span class="bg-primary-200 text-primary-800 px-3 py-1 rounded-full font-medium">추상화</span>
+                            <span class="text-gray-400">=</span>
+                            <span class="bg-white text-gray-700 px-3 py-1 rounded-full border border-primary-200">문제 분해</span>
+                            <span class="text-gray-400">+</span>
+                            <span class="bg-white text-gray-700 px-3 py-1 rounded-full border border-primary-200">핵심 요소 추출</span>
+                            <span class="text-gray-400">+</span>
+                            <span class="bg-primary-500 text-white px-3 py-1 rounded-full font-medium">모델링</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- London Underground example -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                <button class="accordion-trigger w-full text-left p-5 flex items-center justify-between hover:bg-gray-50 transition-colors" onclick="toggleAccordion(this)">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-accent-100 flex items-center justify-center">
+                            <i class="fas fa-subway text-accent-600 text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-accent-600 uppercase tracking-wide">예시</span>
+                            <h3 class="font-bold text-gray-800">런던 지하철 노선도의 변천</h3>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 accordion-icon transition-transform"></i>
+                </button>
+                <div class="accordion-content px-5">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="text-center">
+                            <div class="bg-gray-100 rounded-xl p-6 mb-3">
+                                <i class="fas fa-map text-4xl text-gray-400 mb-2"></i>
+                                <p class="text-sm text-gray-500 mt-2">1908년 복잡한 지리적 지도</p>
+                            </div>
+                            <span class="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">복잡한 원본</span>
+                        </div>
+                        <div class="text-center">
+                            <div class="bg-primary-50 rounded-xl p-6 mb-3 border border-primary-200">
+                                <i class="fas fa-route text-4xl text-primary-500 mb-2"></i>
+                                <p class="text-sm text-primary-700 mt-2">해리 벡 - 선과 기호로 단순화</p>
+                            </div>
+                            <span class="text-xs text-primary-600 bg-primary-100 px-3 py-1 rounded-full font-medium">모델링 결과</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center justify-center gap-3 text-sm text-gray-600">
+                        <span>복잡한 지리 정보</span>
+                        <i class="fas fa-long-arrow-alt-right text-primary-500 text-xl"></i>
+                        <span class="font-bold text-primary-700">선과 기호만으로 핵심 정보 표현</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION: TAB INTERFACE (표, 트리, 그래프)                                -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-tabs">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">모델링의 유형</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Types of Modeling</p>
+                </div>
+            </div>
+
+            <!-- Tab buttons -->
+            <div class="flex flex-wrap gap-2 mb-8 bg-white rounded-xl p-2 shadow-sm border border-gray-100">
+                <button class="tab-btn active flex-1 min-w-[120px] py-3 px-4 rounded-lg font-bold text-sm flex items-center justify-center gap-2" onclick="switchTab('table', this)">
+                    <i class="fas fa-table"></i> 표 (Table)
+                </button>
+                <button class="tab-btn flex-1 min-w-[120px] py-3 px-4 rounded-lg font-bold text-sm text-gray-600 flex items-center justify-center gap-2" onclick="switchTab('tree', this)">
+                    <i class="fas fa-sitemap"></i> 트리 (Tree)
+                </button>
+                <button class="tab-btn flex-1 min-w-[120px] py-3 px-4 rounded-lg font-bold text-sm text-gray-600 flex items-center justify-center gap-2" onclick="switchTab('graph', this)">
+                    <i class="fas fa-share-alt"></i> 그래프 (Graph)
+                </button>
+            </div>
+
+            <!-- ============ TAB 1: 표 (Table) ============ -->
+            <div id="tab-table" class="tab-content active">
+                <div class="space-y-8">
+                    <!-- Explanation -->
+                    <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center text-white text-sm">1</span>
+                            표 (Table)
+                        </h3>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            데이터를 <strong>가로축(행)</strong>과 <strong>세로축(열)</strong>으로 나누어 표현하는 구조입니다.
+                            주어진 조건들을 비교 및 평가하거나 복잡한 문제들을 보기 쉽게 정리할 수 있습니다.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-primary-50 text-primary-700 px-3 py-1 rounded-full border border-primary-200">
+                                <i class="fas fa-receipt mr-1"></i> 거래 내역 관리
+                            </span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-3 py-1 rounded-full border border-primary-200">
+                                <i class="fas fa-calendar-alt mr-1"></i> 프로젝트 일정 관리
+                            </span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-3 py-1 rounded-full border border-primary-200">
+                                <i class="fas fa-graduation-cap mr-1"></i> 학생 성적 관리
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 놀이공원 요금표 -->
+                    <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                        <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-ticket-alt text-primary-500"></i> 예시: 놀이공원 이용권별 요금표
+                        </h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse rounded-xl overflow-hidden">
+                                <thead>
+                                    <tr class="bg-gradient-to-r from-primary-500 to-primary-600 text-white">
+                                        <th class="px-4 py-3 text-left font-bold">종류</th>
+                                        <th class="px-4 py-3 text-center font-bold">대인</th>
+                                        <th class="px-4 py-3 text-center font-bold">청소년</th>
+                                        <th class="px-4 py-3 text-center font-bold">소인/경로</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-100 hover:bg-primary-50 transition-colors">
+                                        <td class="px-4 py-3 font-medium text-gray-800"><i class="fas fa-sun text-accent-400 mr-1"></i> 주간권</td>
+                                        <td class="px-4 py-3 text-center text-gray-700">56,000원</td>
+                                        <td class="px-4 py-3 text-center text-gray-700">47,000원</td>
+                                        <td class="px-4 py-3 text-center text-gray-700">44,000원</td>
+                                    </tr>
+                                    <tr class="hover:bg-primary-50 transition-colors">
+                                        <td class="px-4 py-3 font-medium text-gray-800"><i class="fas fa-moon text-indigo-400 mr-1"></i> 야간권(16시~)</td>
+                                        <td class="px-4 py-3 text-center text-gray-700">46,000원</td>
+                                        <td class="px-4 py-3 text-center text-gray-700">40,000원</td>
+                                        <td class="px-4 py-3 text-center text-gray-700">37,000원</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Interactive: 알레르기 테이블 -->
+                    <div class="bg-white rounded-2xl p-6 shadow-md border border-primary-200">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-primary-500 text-white text-xs font-bold px-3 py-1 rounded-full">활동 2</span>
+                            <h4 class="font-bold text-gray-800">알레르기 유발 물질 표 만들기</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">
+                            아래 메뉴별 알레르기 유발 물질 정보를 확인하고, 표에서 해당하는 칸을 체크해 보세요.
+                        </p>
+
+                        <!-- Allergen legend -->
+                        <div class="bg-gray-50 rounded-xl p-4 mb-4">
+                            <h5 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">식품 알레르기 정보</h5>
+                            <div class="flex flex-wrap gap-2 text-xs">
+                                <span class="bg-white px-2 py-1 rounded border border-gray-200"><strong>1</strong> 난류</span>
+                                <span class="bg-white px-2 py-1 rounded border border-gray-200"><strong>2</strong> 우유</span>
+                                <span class="bg-white px-2 py-1 rounded border border-gray-200"><strong>3</strong> 땅콩</span>
+                                <span class="bg-white px-2 py-1 rounded border border-gray-200"><strong>4</strong> 대두</span>
+                                <span class="bg-white px-2 py-1 rounded border border-gray-200"><strong>5</strong> 밀</span>
+                                <span class="bg-white px-2 py-1 rounded border border-gray-200"><strong>6</strong> 돼지고기</span>
+                                <span class="bg-white px-2 py-1 rounded border border-gray-200"><strong>7</strong> 토마토</span>
+                                <span class="bg-white px-2 py-1 rounded border border-gray-200"><strong>8</strong> 아황산염</span>
+                                <span class="bg-white px-2 py-1 rounded border border-gray-200"><strong>9</strong> 닭고기</span>
+                                <span class="bg-white px-2 py-1 rounded border border-gray-200"><strong>10</strong> 쇠고기</span>
+                                <span class="bg-white px-2 py-1 rounded border border-gray-200"><strong>11</strong> 조개류</span>
+                            </div>
+                        </div>
+
+                        <!-- Menu info -->
+                        <div class="bg-accent-50 rounded-xl p-4 mb-4 border border-accent-200">
+                            <h5 class="text-xs font-bold text-accent-700 uppercase tracking-wide mb-2"><i class="fas fa-utensils mr-1"></i> 메뉴별 알레르기 유발 물질</h5>
+                            <div class="grid sm:grid-cols-2 gap-2 text-sm text-gray-700">
+                                <div><strong>구슬아이스크림:</strong> 1, 2, 5</div>
+                                <div><strong>닭강정:</strong> 2, 3, 4, 5, 7, 8, 9, 10, 11</div>
+                                <div><strong>추로스:</strong> 2, 4, 5</div>
+                                <div><strong>치즈핫도그:</strong> 1, 2, 4, 5, 6, 7, 8, 9, 10, 11</div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive allergen table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm border-collapse" id="allergen-table">
+                                <thead>
+                                    <tr class="bg-primary-500 text-white">
+                                        <th class="px-2 py-2 text-left font-bold rounded-tl-lg">메뉴 \ 물질</th>
+                                        <th class="px-2 py-2 text-center font-medium" title="난류">1</th>
+                                        <th class="px-2 py-2 text-center font-medium" title="우유">2</th>
+                                        <th class="px-2 py-2 text-center font-medium" title="땅콩">3</th>
+                                        <th class="px-2 py-2 text-center font-medium" title="대두">4</th>
+                                        <th class="px-2 py-2 text-center font-medium" title="밀">5</th>
+                                        <th class="px-2 py-2 text-center font-medium" title="돼지고기">6</th>
+                                        <th class="px-2 py-2 text-center font-medium" title="토마토">7</th>
+                                        <th class="px-2 py-2 text-center font-medium" title="아황산염">8</th>
+                                        <th class="px-2 py-2 text-center font-medium" title="닭고기">9</th>
+                                        <th class="px-2 py-2 text-center font-medium" title="쇠고기">10</th>
+                                        <th class="px-2 py-2 text-center font-medium rounded-tr-lg" title="조개류">11</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allergen-tbody">
+                                    <!-- Rows generated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <button onclick="checkAllergenAnswers()" class="bg-primary-500 hover:bg-primary-600 text-white font-bold px-5 py-2 rounded-lg transition-colors text-sm shadow-sm">
+                                <i class="fas fa-check-circle mr-1"></i> 정답 확인
+                            </button>
+                            <button onclick="resetAllergenTable()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-5 py-2 rounded-lg transition-colors text-sm">
+                                <i class="fas fa-redo mr-1"></i> 초기화
+                            </button>
+                        </div>
+                        <div id="allergen-feedback" class="mt-3 hidden"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ TAB 2: 트리 (Tree) ============ -->
+            <div id="tab-tree" class="tab-content">
+                <div class="space-y-8">
+                    <!-- Explanation -->
+                    <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center text-white text-sm">2</span>
+                            트리 (Tree)
+                        </h3>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            데이터 간 관계를 <strong>계층적</strong>으로 표현하기에 적합한 구조입니다.
+                            <strong>루트 노드</strong>에서 하위 노드로 <strong>간선</strong>이 존재하고, <strong>사이클은 허용하지 않습니다</strong>.
+                        </p>
+
+                        <!-- Terminology -->
+                        <div class="grid sm:grid-cols-3 gap-3 mb-4">
+                            <div class="bg-primary-50 rounded-xl p-3 border border-primary-100 text-center">
+                                <div class="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center mx-auto mb-2">
+                                    <i class="fas fa-circle text-white text-xs"></i>
+                                </div>
+                                <h5 class="font-bold text-primary-800 text-sm">노드 (Node)</h5>
+                                <p class="text-xs text-gray-600 mt-1">데이터 항목</p>
+                            </div>
+                            <div class="bg-accent-50 rounded-xl p-3 border border-accent-100 text-center">
+                                <div class="w-10 h-10 rounded-full bg-accent-500 flex items-center justify-center mx-auto mb-2">
+                                    <i class="fas fa-minus text-white text-xs"></i>
+                                </div>
+                                <h5 class="font-bold text-accent-800 text-sm">간선 (Edge)</h5>
+                                <p class="text-xs text-gray-600 mt-1">관계를 선으로 표현</p>
+                            </div>
+                            <div class="bg-red-50 rounded-xl p-3 border border-red-100 text-center">
+                                <div class="w-10 h-10 rounded-full bg-red-400 flex items-center justify-center mx-auto mb-2">
+                                    <i class="fas fa-ban text-white text-xs"></i>
+                                </div>
+                                <h5 class="font-bold text-red-700 text-sm">사이클 (Cycle)</h5>
+                                <p class="text-xs text-gray-600 mt-1">순환 구조 (트리에서 불허)</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-primary-50 text-primary-700 px-3 py-1 rounded-full border border-primary-200">
+                                <i class="fas fa-folder mr-1"></i> 컴퓨터 폴더 구조
+                            </span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-3 py-1 rounded-full border border-primary-200">
+                                <i class="fas fa-sitemap mr-1"></i> 조직도
+                            </span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-3 py-1 rounded-full border border-primary-200">
+                                <i class="fas fa-paw mr-1"></i> 동물의 분류
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive SVG Tree: 동물 분류 -->
+                    <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                        <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-paw text-primary-500"></i> 예시: 동물 분류 트리
+                        </h4>
+                        <p class="text-sm text-gray-500 mb-4">노드를 클릭하면 정보를 확인할 수 있습니다.</p>
+
+                        <div class="flex justify-center overflow-x-auto">
+                            <svg id="animal-tree" width="520" height="280" viewBox="0 0 520 280" class="max-w-full">
+                                <!-- Edges -->
+                                <line x1="260" y1="55" x2="140" y2="125" stroke="#fdba74" stroke-width="2.5"/>
+                                <line x1="260" y1="55" x2="380" y2="125" stroke="#fdba74" stroke-width="2.5"/>
+                                <line x1="140" y1="155" x2="80" y2="220" stroke="#fdba74" stroke-width="2"/>
+                                <line x1="140" y1="155" x2="200" y2="220" stroke="#fdba74" stroke-width="2"/>
+                                <line x1="380" y1="155" x2="320" y2="220" stroke="#fdba74" stroke-width="2"/>
+                                <line x1="380" y1="155" x2="440" y2="220" stroke="#fdba74" stroke-width="2"/>
+
+                                <!-- Root: 동물 -->
+                                <g class="svg-node" onclick="showTreeInfo('동물', '루트 노드: 모든 동물의 상위 분류')">
+                                    <circle cx="260" cy="45" r="28" fill="#ea580c" stroke="#c2410c" stroke-width="2"/>
+                                    <text x="260" y="50" text-anchor="middle" fill="white" font-size="14" font-weight="bold">동물</text>
+                                </g>
+
+                                <!-- 육식 동물 -->
+                                <g class="svg-node" onclick="showTreeInfo('육식 동물', '다른 동물을 잡아먹고 사는 동물')">
+                                    <circle cx="140" cy="140" r="35" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="140" y="136" text-anchor="middle" fill="white" font-size="11" font-weight="bold">육식</text>
+                                    <text x="140" y="150" text-anchor="middle" fill="white" font-size="11" font-weight="bold">동물</text>
+                                </g>
+
+                                <!-- 초식 동물 -->
+                                <g class="svg-node" onclick="showTreeInfo('초식 동물', '풀이나 나뭇잎 등을 먹고 사는 동물')">
+                                    <circle cx="380" cy="140" r="35" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="380" y="136" text-anchor="middle" fill="white" font-size="11" font-weight="bold">초식</text>
+                                    <text x="380" y="150" text-anchor="middle" fill="white" font-size="11" font-weight="bold">동물</text>
+                                </g>
+
+                                <!-- Leaf nodes -->
+                                <g class="svg-node" onclick="showTreeInfo('사자', '대표적인 육식 동물, 백수의 왕')">
+                                    <circle cx="80" cy="235" r="24" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
+                                    <text x="80" y="239" text-anchor="middle" fill="#78350f" font-size="12" font-weight="bold">사자</text>
+                                </g>
+                                <g class="svg-node" onclick="showTreeInfo('호랑이', '대표적인 육식 동물, 아시아에 서식')">
+                                    <circle cx="200" cy="235" r="24" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
+                                    <text x="200" y="239" text-anchor="middle" fill="#78350f" font-size="12" font-weight="bold">호랑이</text>
+                                </g>
+                                <g class="svg-node" onclick="showTreeInfo('기린', '대표적인 초식 동물, 긴 목이 특징')">
+                                    <circle cx="320" cy="235" r="24" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
+                                    <text x="320" y="239" text-anchor="middle" fill="#78350f" font-size="12" font-weight="bold">기린</text>
+                                </g>
+                                <g class="svg-node" onclick="showTreeInfo('얼룩말', '대표적인 초식 동물, 줄무늬가 특징')">
+                                    <circle cx="440" cy="235" r="24" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
+                                    <text x="440" y="239" text-anchor="middle" fill="#78350f" font-size="12" font-weight="bold">얼룩말</text>
+                                </g>
+                            </svg>
+                        </div>
+
+                        <!-- Tree info popup -->
+                        <div id="tree-info" class="hidden mt-4 bg-primary-50 rounded-xl p-4 border border-primary-200 text-center">
+                            <h5 id="tree-info-title" class="font-bold text-primary-800 text-lg"></h5>
+                            <p id="tree-info-desc" class="text-gray-600 text-sm mt-1"></p>
+                        </div>
+                    </div>
+
+                    <!-- 활동4: 화재 확산 문제 -->
+                    <div class="bg-white rounded-2xl p-6 shadow-md border border-primary-200">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-primary-500 text-white text-xs font-bold px-3 py-1 rounded-full">활동 4</span>
+                            <h4 class="font-bold text-gray-800">화재 확산 시뮬레이션 (트리 모델링)</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">
+                            5x5 격자에서 (3,3)에서 화재가 발생합니다. 불은 상하좌우로 1시간에 1칸씩 퍼지며,
+                            일부 칸은 불이 번질 수 없습니다. 아래 버튼으로 시간 경과를 확인하세요.
+                        </p>
+
+                        <div class="flex flex-col items-center gap-4">
+                            <!-- Fire grid -->
+                            <div id="fire-grid" class="inline-grid gap-1" style="grid-template-columns: repeat(5, auto);">
+                                <!-- Generated by JS -->
+                            </div>
+
+                            <!-- Legend -->
+                            <div class="flex flex-wrap gap-3 text-xs">
+                                <span class="flex items-center gap-1"><span class="w-4 h-4 rounded bg-gradient-to-br from-orange-500 to-red-500 inline-block"></span> 화재 발생</span>
+                                <span class="flex items-center gap-1"><span class="w-4 h-4 rounded bg-gray-700 inline-block"></span> 불이 번질 수 없는 칸</span>
+                                <span class="flex items-center gap-1"><span class="w-4 h-4 rounded bg-green-200 inline-block border border-green-300"></span> 안전한 칸</span>
+                            </div>
+
+                            <!-- Controls -->
+                            <div class="flex gap-3 items-center">
+                                <button onclick="fireStep(-1)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-lg text-sm transition-colors">
+                                    <i class="fas fa-backward mr-1"></i> 이전
+                                </button>
+                                <span id="fire-time" class="text-lg font-bold text-primary-700 min-w-[100px] text-center">0시간</span>
+                                <button onclick="fireStep(1)" class="bg-primary-500 hover:bg-primary-600 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors shadow-sm">
+                                    다음 <i class="fas fa-forward ml-1"></i>
+                                </button>
+                                <button onclick="fireReset()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-lg text-sm transition-colors">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ TAB 3: 그래프 (Graph) ============ -->
+            <div id="tab-graph" class="tab-content">
+                <div class="space-y-8">
+                    <!-- Explanation -->
+                    <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center text-white text-sm">3</span>
+                            그래프 (Graph)
+                        </h3>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            데이터 간 <strong>연결 관계</strong>를 노드와 간선으로 표현하는 구조입니다.
+                            트리와 달리 <strong>사이클을 허용</strong>하며, 화살표로 <strong>방향성</strong>을 표현하거나
+                            간선 위에 <strong>가중치</strong>를 표시할 수 있습니다.
+                        </p>
+
+                        <!-- Tree vs Graph comparison -->
+                        <div class="grid sm:grid-cols-2 gap-4 mb-4">
+                            <div class="bg-accent-50 rounded-xl p-4 border border-accent-200">
+                                <h5 class="font-bold text-accent-800 text-sm mb-2"><i class="fas fa-sitemap mr-1"></i> 트리</h5>
+                                <ul class="text-xs text-gray-600 space-y-1">
+                                    <li><i class="fas fa-check text-green-500 mr-1"></i> 계층적 구조</li>
+                                    <li><i class="fas fa-times text-red-400 mr-1"></i> 사이클 불허</li>
+                                    <li><i class="fas fa-check text-green-500 mr-1"></i> 하나의 루트 노드</li>
+                                </ul>
+                            </div>
+                            <div class="bg-primary-50 rounded-xl p-4 border border-primary-200">
+                                <h5 class="font-bold text-primary-800 text-sm mb-2"><i class="fas fa-share-alt mr-1"></i> 그래프</h5>
+                                <ul class="text-xs text-gray-600 space-y-1">
+                                    <li><i class="fas fa-check text-green-500 mr-1"></i> 자유로운 연결 구조</li>
+                                    <li><i class="fas fa-check text-green-500 mr-1"></i> 사이클 허용</li>
+                                    <li><i class="fas fa-check text-green-500 mr-1"></i> 방향성/가중치 표현 가능</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-primary-50 text-primary-700 px-3 py-1 rounded-full border border-primary-200">
+                                <i class="fas fa-plane mr-1"></i> 항공 노선도
+                            </span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-3 py-1 rounded-full border border-primary-200">
+                                <i class="fas fa-subway mr-1"></i> 지하철 노선도
+                            </span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-3 py-1 rounded-full border border-primary-200">
+                                <i class="fas fa-users mr-1"></i> 인물 관계도
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive SVG Graph: 항공 노선도 -->
+                    <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                        <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-plane text-primary-500"></i> 예시: 항공 노선도
+                        </h4>
+                        <p class="text-sm text-gray-500 mb-4">노드(도시)를 클릭하면 해당 도시와 연결된 노선이 강조됩니다.</p>
+
+                        <div class="flex justify-center overflow-x-auto">
+                            <svg id="airline-graph" width="560" height="400" viewBox="0 0 560 400" class="max-w-full">
+                                <!-- Edges -->
+                                <line class="graph-edge" data-cities="인천,김포" x1="160" y1="80" x2="220" y2="130" stroke="#fed7aa" stroke-width="2"/>
+                                <line class="graph-edge" data-cities="인천,청주" x1="160" y1="80" x2="280" y2="180" stroke="#fed7aa" stroke-width="2"/>
+                                <line class="graph-edge" data-cities="인천,제주" x1="160" y1="80" x2="200" y2="340" stroke="#fed7aa" stroke-width="2"/>
+                                <line class="graph-edge" data-cities="김포,제주" x1="220" y1="130" x2="200" y2="340" stroke="#fed7aa" stroke-width="2"/>
+                                <line class="graph-edge" data-cities="청주,김해" x1="280" y1="180" x2="420" y2="260" stroke="#fed7aa" stroke-width="2"/>
+                                <line class="graph-edge" data-cities="청주,제주" x1="280" y1="180" x2="200" y2="340" stroke="#fed7aa" stroke-width="2"/>
+                                <line class="graph-edge" data-cities="광주,제주" x1="180" y1="260" x2="200" y2="340" stroke="#fed7aa" stroke-width="2"/>
+                                <line class="graph-edge" data-cities="울산,김해" x1="440" y1="180" x2="420" y2="260" stroke="#fed7aa" stroke-width="2"/>
+                                <line class="graph-edge" data-cities="김해,제주" x1="420" y1="260" x2="200" y2="340" stroke="#fed7aa" stroke-width="2"/>
+                                <line class="graph-edge" data-cities="인천,광주" x1="160" y1="80" x2="180" y2="260" stroke="#fed7aa" stroke-width="2"/>
+                                <line class="graph-edge" data-cities="인천,울산" x1="160" y1="80" x2="440" y2="180" stroke="#fed7aa" stroke-width="2"/>
+                                <line class="graph-edge" data-cities="김포,광주" x1="220" y1="130" x2="180" y2="260" stroke="#fed7aa" stroke-width="2"/>
+
+                                <!-- Nodes -->
+                                <g class="graph-node-highlight" data-city="인천" onclick="highlightCity('인천')" style="cursor:pointer">
+                                    <circle cx="160" cy="80" r="26" fill="#f97316" stroke="#c2410c" stroke-width="2"/>
+                                    <text x="160" y="84" text-anchor="middle" fill="white" font-size="11" font-weight="bold">인천</text>
+                                </g>
+                                <g class="graph-node-highlight" data-city="김포" onclick="highlightCity('김포')" style="cursor:pointer">
+                                    <circle cx="220" cy="130" r="24" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="220" y="134" text-anchor="middle" fill="white" font-size="11" font-weight="bold">김포</text>
+                                </g>
+                                <g class="graph-node-highlight" data-city="청주" onclick="highlightCity('청주')" style="cursor:pointer">
+                                    <circle cx="280" cy="180" r="24" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="280" y="184" text-anchor="middle" fill="white" font-size="11" font-weight="bold">청주</text>
+                                </g>
+                                <g class="graph-node-highlight" data-city="광주" onclick="highlightCity('광주')" style="cursor:pointer">
+                                    <circle cx="180" cy="260" r="24" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="180" y="264" text-anchor="middle" fill="white" font-size="11" font-weight="bold">광주</text>
+                                </g>
+                                <g class="graph-node-highlight" data-city="울산" onclick="highlightCity('울산')" style="cursor:pointer">
+                                    <circle cx="440" cy="180" r="24" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="440" y="184" text-anchor="middle" fill="white" font-size="11" font-weight="bold">울산</text>
+                                </g>
+                                <g class="graph-node-highlight" data-city="김해" onclick="highlightCity('김해')" style="cursor:pointer">
+                                    <circle cx="420" cy="260" r="24" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="420" y="264" text-anchor="middle" fill="white" font-size="11" font-weight="bold">김해</text>
+                                </g>
+                                <g class="graph-node-highlight" data-city="제주" onclick="highlightCity('제주')" style="cursor:pointer">
+                                    <circle cx="200" cy="340" r="28" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>
+                                    <text x="200" y="344" text-anchor="middle" fill="white" font-size="12" font-weight="bold">제주</text>
+                                </g>
+                            </svg>
+                        </div>
+                        <div id="city-info" class="hidden mt-4 bg-primary-50 rounded-xl p-3 border border-primary-200 text-center text-sm">
+                            <span id="city-info-text" class="text-primary-700 font-medium"></span>
+                        </div>
+                    </div>
+
+                    <!-- 활동3: 놀이공원 최단 거리 문제 -->
+                    <div class="bg-white rounded-2xl p-6 shadow-md border border-primary-200">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-primary-500 text-white text-xs font-bold px-3 py-1 rounded-full">활동 3</span>
+                            <h4 class="font-bold text-gray-800">놀이공원 최단 거리 찾기 (가중치 그래프)</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">
+                            롤러코스터에서 이벤트 홀까지의 최단 거리를 찾아보세요. 노드를 클릭하여 경로를 선택하면 거리가 계산됩니다.
+                        </p>
+
+                        <div class="flex justify-center overflow-x-auto">
+                            <svg id="park-graph" width="600" height="450" viewBox="0 0 600 450" class="max-w-full">
+                                <!-- Weighted edges -->
+                                <line class="park-edge" data-nodes="정문,급류타기" x1="120" y1="60" x2="60" y2="150" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="80" y="100" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">3</text>
+
+                                <line class="park-edge" data-nodes="정문,롤러코스터" x1="120" y1="60" x2="240" y2="140" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="190" y="90" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">5</text>
+
+                                <line class="park-edge" data-nodes="급류타기,이벤트홀" x1="60" y1="150" x2="60" y2="280" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="45" y="218" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">4</text>
+
+                                <line class="park-edge" data-nodes="급류타기,판다곰" x1="60" y1="150" x2="180" y2="230" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="108" y="183" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">2</text>
+
+                                <line class="park-edge" data-nodes="롤러코스터,판다곰" x1="240" y1="140" x2="180" y2="230" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="220" y="180" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">6</text>
+
+                                <line class="park-edge" data-nodes="롤러코스터,범퍼카" x1="240" y1="140" x2="380" y2="140" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="310" y="133" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">4</text>
+
+                                <line class="park-edge" data-nodes="판다곰,이벤트홀" x1="180" y1="230" x2="60" y2="280" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="110" y="262" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">3</text>
+
+                                <line class="park-edge" data-nodes="판다곰,식당" x1="180" y1="230" x2="300" y2="280" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="248" y="248" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">5</text>
+
+                                <line class="park-edge" data-nodes="범퍼카,자이로드롭" x1="380" y1="140" x2="480" y2="220" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="440" y="172" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">3</text>
+
+                                <line class="park-edge" data-nodes="범퍼카,식당" x1="380" y1="140" x2="300" y2="280" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="348" y="210" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">7</text>
+
+                                <line class="park-edge" data-nodes="식당,분수광장" x1="300" y1="280" x2="400" y2="350" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="358" y="308" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">2</text>
+
+                                <line class="park-edge" data-nodes="자이로드롭,대관람차" x1="480" y1="220" x2="520" y2="340" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="510" y="275" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">4</text>
+
+                                <line class="park-edge" data-nodes="분수광장,간식코너" x1="400" y1="350" x2="250" y2="410" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="330" y="387" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">3</text>
+
+                                <line class="park-edge" data-nodes="대관람차,분수광장" x1="520" y1="340" x2="400" y2="350" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="462" y="338" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">2</text>
+
+                                <line class="park-edge" data-nodes="이벤트홀,간식코너" x1="60" y1="280" x2="250" y2="410" stroke="#d4d4d8" stroke-width="2"/>
+                                <text x="145" y="355" text-anchor="middle" fill="#9a3412" font-size="10" font-weight="bold" class="park-weight">8</text>
+
+                                <!-- Park nodes -->
+                                <g class="park-node" data-name="정문" onclick="clickParkNode('정문')" style="cursor:pointer">
+                                    <circle cx="120" cy="60" r="22" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="120" y="64" text-anchor="middle" fill="white" font-size="9" font-weight="bold">정문</text>
+                                </g>
+                                <g class="park-node" data-name="급류타기" onclick="clickParkNode('급류타기')" style="cursor:pointer">
+                                    <circle cx="60" cy="150" r="25" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="60" y="147" text-anchor="middle" fill="white" font-size="8" font-weight="bold">급류</text>
+                                    <text x="60" y="158" text-anchor="middle" fill="white" font-size="8" font-weight="bold">타기</text>
+                                </g>
+                                <g class="park-node" data-name="롤러코스터" onclick="clickParkNode('롤러코스터')" style="cursor:pointer">
+                                    <circle cx="240" cy="140" r="28" fill="#ea580c" stroke="#c2410c" stroke-width="2.5"/>
+                                    <text x="240" y="136" text-anchor="middle" fill="white" font-size="8" font-weight="bold">롤러</text>
+                                    <text x="240" y="148" text-anchor="middle" fill="white" font-size="8" font-weight="bold">코스터</text>
+                                    <text x="240" y="160" text-anchor="middle" fill="#fde68a" font-size="7">출발</text>
+                                </g>
+                                <g class="park-node" data-name="이벤트홀" onclick="clickParkNode('이벤트홀')" style="cursor:pointer">
+                                    <circle cx="60" cy="280" r="26" fill="#ea580c" stroke="#c2410c" stroke-width="2.5"/>
+                                    <text x="60" y="276" text-anchor="middle" fill="white" font-size="8" font-weight="bold">이벤트</text>
+                                    <text x="60" y="288" text-anchor="middle" fill="white" font-size="8" font-weight="bold">홀</text>
+                                    <text x="60" y="300" text-anchor="middle" fill="#fde68a" font-size="7">도착</text>
+                                </g>
+                                <g class="park-node" data-name="판다곰" onclick="clickParkNode('판다곰')" style="cursor:pointer">
+                                    <circle cx="180" cy="230" r="22" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="180" y="234" text-anchor="middle" fill="white" font-size="9" font-weight="bold">판다곰</text>
+                                </g>
+                                <g class="park-node" data-name="범퍼카" onclick="clickParkNode('범퍼카')" style="cursor:pointer">
+                                    <circle cx="380" cy="140" r="22" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="380" y="144" text-anchor="middle" fill="white" font-size="9" font-weight="bold">범퍼카</text>
+                                </g>
+                                <g class="park-node" data-name="식당" onclick="clickParkNode('식당')" style="cursor:pointer">
+                                    <circle cx="300" cy="280" r="22" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="300" y="284" text-anchor="middle" fill="white" font-size="9" font-weight="bold">식당</text>
+                                </g>
+                                <g class="park-node" data-name="자이로드롭" onclick="clickParkNode('자이로드롭')" style="cursor:pointer">
+                                    <circle cx="480" cy="220" r="25" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="480" y="217" text-anchor="middle" fill="white" font-size="8" font-weight="bold">자이로</text>
+                                    <text x="480" y="228" text-anchor="middle" fill="white" font-size="8" font-weight="bold">드롭</text>
+                                </g>
+                                <g class="park-node" data-name="분수광장" onclick="clickParkNode('분수광장')" style="cursor:pointer">
+                                    <circle cx="400" cy="350" r="24" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="400" y="347" text-anchor="middle" fill="white" font-size="8" font-weight="bold">분수</text>
+                                    <text x="400" y="358" text-anchor="middle" fill="white" font-size="8" font-weight="bold">광장</text>
+                                </g>
+                                <g class="park-node" data-name="대관람차" onclick="clickParkNode('대관람차')" style="cursor:pointer">
+                                    <circle cx="520" cy="340" r="24" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="520" y="337" text-anchor="middle" fill="white" font-size="8" font-weight="bold">대관</text>
+                                    <text x="520" y="348" text-anchor="middle" fill="white" font-size="8" font-weight="bold">람차</text>
+                                </g>
+                                <g class="park-node" data-name="간식코너" onclick="clickParkNode('간식코너')" style="cursor:pointer">
+                                    <circle cx="250" cy="410" r="24" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+                                    <text x="250" y="407" text-anchor="middle" fill="white" font-size="8" font-weight="bold">간식</text>
+                                    <text x="250" y="418" text-anchor="middle" fill="white" font-size="8" font-weight="bold">코너</text>
+                                </g>
+                            </svg>
+                        </div>
+
+                        <!-- Path display -->
+                        <div class="mt-4 bg-gray-50 rounded-xl p-4">
+                            <div class="flex flex-wrap items-center gap-2 mb-2">
+                                <span class="text-sm font-bold text-gray-700">선택한 경로:</span>
+                                <span id="park-path" class="text-sm text-primary-700 font-medium">노드를 클릭하여 경로를 만드세요 (롤러코스터부터 시작)</span>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <span class="text-sm font-bold text-gray-700">총 거리:</span>
+                                <span id="park-distance" class="text-lg font-bold text-primary-600">0</span>
+                                <button onclick="resetParkPath()" class="ml-auto bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-1.5 rounded-lg text-xs transition-colors">
+                                    <i class="fas fa-redo mr-1"></i> 경로 초기화
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION: 디지털 사회의 직업                                               -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-careers">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">디지털 사회의 직업</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Careers in the Digital Society</p>
+                </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="career-card bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center mb-3">
+                        <i class="fas fa-brain text-primary-600"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-1">인공지능 전문가</h4>
+                    <p class="text-xs text-gray-500">AI 시스템을 설계하고 개발하는 전문가</p>
+                </div>
+                <div class="career-card bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="w-10 h-10 rounded-lg bg-accent-100 flex items-center justify-center mb-3">
+                        <i class="fas fa-car text-accent-600"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-1">자율주행 자동차 개발자</h4>
+                    <p class="text-xs text-gray-500">자율주행 기술을 연구하고 개발</p>
+                </div>
+                <div class="career-card bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mb-3">
+                        <i class="fas fa-database text-blue-600"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-1">빅데이터 플랫폼 운영자</h4>
+                    <p class="text-xs text-gray-500">대규모 데이터 플랫폼 관리 및 운영</p>
+                </div>
+                <div class="career-card bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center mb-3">
+                        <i class="fas fa-robot text-green-600"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-1">로봇 개발자</h4>
+                    <p class="text-xs text-gray-500">산업용/서비스 로봇 설계 및 제작</p>
+                </div>
+                <div class="career-card bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center mb-3">
+                        <i class="fas fa-code text-purple-600"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-1">소프트웨어 개발자</h4>
+                    <p class="text-xs text-gray-500">다양한 소프트웨어 프로그램 개발</p>
+                </div>
+                <div class="career-card bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center mb-3">
+                        <i class="fas fa-palette text-rose-600"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-1">UX/UI 디자이너</h4>
+                    <p class="text-xs text-gray-500">사용자 경험과 인터페이스 설계</p>
+                </div>
+                <div class="career-card bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center mb-3">
+                        <i class="fas fa-shield-alt text-teal-600"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-1">정보 보안 전문가</h4>
+                    <p class="text-xs text-gray-500">사이버 보안 시스템 구축 및 관리</p>
+                </div>
+                <div class="career-card bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center mb-3">
+                        <i class="fas fa-chart-line text-yellow-600"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-1">데이터 과학자</h4>
+                    <p class="text-xs text-gray-500">데이터 분석으로 인사이트 도출</p>
+                </div>
+                <div class="career-card bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center mb-3">
+                        <i class="fas fa-seedling text-emerald-600"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-1">스마트팜 구축가</h4>
+                    <p class="text-xs text-gray-500">ICT 기술을 농업에 접목</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION: 핵심 정리                                                      -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-summary">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">핵심 정리</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Key Summary</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-primary-500 to-accent-500 p-4">
+                    <h3 class="text-white font-bold text-lg flex items-center gap-2">
+                        <i class="fas fa-star"></i> 이 단원에서 배운 내용
+                    </h3>
+                </div>
+                <div class="p-6 space-y-5">
+                    <!-- 모델링 -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-project-diagram text-primary-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800">모델링</h4>
+                            <p class="text-sm text-gray-600">핵심 요소들을 표, 트리, 그래프 등으로 단순화하거나 구조화하는 과정</p>
+                        </div>
+                    </div>
+
+                    <div class="section-divider max-w-full opacity-30"></div>
+
+                    <!-- 표 -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-table text-primary-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800">표 (Table)</h4>
+                            <p class="text-sm text-gray-600">행과 열로 데이터를 정리하여 비교 및 평가에 적합한 구조</p>
+                        </div>
+                    </div>
+
+                    <div class="section-divider max-w-full opacity-30"></div>
+
+                    <!-- 트리 -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-accent-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-sitemap text-accent-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800">트리 (Tree)</h4>
+                            <p class="text-sm text-gray-600">계층적 관계를 표현하며, 루트 노드에서 하위로 갈라지고 사이클이 없는 구조</p>
+                        </div>
+                    </div>
+
+                    <div class="section-divider max-w-full opacity-30"></div>
+
+                    <!-- 그래프 -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-accent-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-share-alt text-accent-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800">그래프 (Graph)</h4>
+                            <p class="text-sm text-gray-600">노드와 간선으로 연결 관계를 표현하며, 사이클/방향/가중치 표현이 가능한 구조</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Page navigation -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <!-- 이전 페이지 -->
+                <div class="flex-1 flex justify-start">
+                    <a href="../02_추상화/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </a>
+                </div>
+
+                <!-- 목록으로 돌아가기 -->
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex justify-end">
+                    <a href="../04_선택활동/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    III. 알고리즘과 프로그래밍 &gt; 01 문제 분해와 모델링 &gt; 모델링
+                </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // ========================================
+        // Tab switching
+        // ========================================
+        function switchTab(tabName, btn) {
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            // Deactivate all buttons
+            document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+
+            // Show selected tab
+            const tabId = 'tab-' + tabName;
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // ========================================
+        // Accordion
+        // ========================================
+        function toggleAccordion(trigger) {
+            const content = trigger.nextElementSibling;
+            const icon = trigger.querySelector('.accordion-icon');
+
+            content.classList.toggle('open');
+            icon.classList.toggle('rotated');
+        }
+
+        // ========================================
+        // Tree info display
+        // ========================================
+        function showTreeInfo(name, desc) {
+            const info = document.getElementById('tree-info');
+            document.getElementById('tree-info-title').textContent = name;
+            document.getElementById('tree-info-desc').textContent = desc;
+            info.classList.remove('hidden');
+        }
+
+        // ========================================
+        // Allergen Table
+        // ========================================
+        const allergenData = {
+            '구슬아이스크림': [1,2,5],
+            '닭강정': [2,3,4,5,7,8,9,10,11],
+            '추로스': [2,4,5],
+            '치즈핫도그': [1,2,4,5,6,7,8,9,10,11]
+        };
+
+        function buildAllergenTable() {
+            const tbody = document.getElementById('allergen-tbody');
+            tbody.innerHTML = '';
+            const menus = Object.keys(allergenData);
+
+            menus.forEach((menu, mIdx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-gray-100';
+
+                const tdName = document.createElement('td');
+                tdName.className = 'px-2 py-2 font-medium text-gray-800 text-sm whitespace-nowrap';
+                tdName.textContent = menu;
+                tr.appendChild(tdName);
+
+                for (let i = 1; i <= 11; i++) {
+                    const td = document.createElement('td');
+                    td.className = 'px-1 py-2 text-center allergen-cell';
+
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.id = `allergen-${mIdx}-${i}`;
+                    input.className = 'w-4 h-4 accent-orange-500 cursor-pointer';
+                    input.dataset.menu = menu;
+                    input.dataset.allergen = i;
+
+                    td.appendChild(input);
+                    tr.appendChild(td);
+                }
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function checkAllergenAnswers() {
+            let correct = 0;
+            let total = 0;
+            const menus = Object.keys(allergenData);
+
+            menus.forEach((menu, mIdx) => {
+                for (let i = 1; i <= 11; i++) {
+                    const cb = document.getElementById(`allergen-${mIdx}-${i}`);
+                    const shouldBeChecked = allergenData[menu].includes(i);
+                    const td = cb.parentElement;
+                    total++;
+
+                    if (cb.checked === shouldBeChecked) {
+                        correct++;
+                        td.style.backgroundColor = '';
+                    } else {
+                        td.style.backgroundColor = shouldBeChecked ? '#fef3c7' : '#fef2f2';
+                    }
+                }
+            });
+
+            const feedback = document.getElementById('allergen-feedback');
+            const percent = Math.round(correct / total * 100);
+
+            if (percent === 100) {
+                feedback.innerHTML = '<div class="bg-green-50 border border-green-200 rounded-xl p-3 text-green-700 text-sm flex items-start gap-2"><i class="fas fa-check-circle text-green-500 mt-0.5"></i><div><strong>완벽합니다!</strong> 모든 알레르기 유발 물질을 정확하게 표시했습니다.</div></div>';
+            } else {
+                feedback.innerHTML = `<div class="bg-accent-50 border border-accent-200 rounded-xl p-3 text-accent-800 text-sm flex items-start gap-2"><i class="fas fa-info-circle text-accent-500 mt-0.5"></i><div><strong>${percent}% 정답!</strong> ${total}개 중 ${correct}개를 맞혔습니다. 노란색은 체크가 필요한 곳, 빨간색은 잘못 체크한 곳입니다.</div></div>`;
+            }
+            feedback.classList.remove('hidden');
+        }
+
+        function resetAllergenTable() {
+            const menus = Object.keys(allergenData);
+            menus.forEach((menu, mIdx) => {
+                for (let i = 1; i <= 11; i++) {
+                    const cb = document.getElementById(`allergen-${mIdx}-${i}`);
+                    cb.checked = false;
+                    cb.parentElement.style.backgroundColor = '';
+                }
+            });
+            document.getElementById('allergen-feedback').classList.add('hidden');
+        }
+
+        // ========================================
+        // Airline graph city highlighting
+        // ========================================
+        function highlightCity(cityName) {
+            // Reset all
+            document.querySelectorAll('.graph-edge').forEach(e => e.classList.remove('highlighted'));
+            document.querySelectorAll('.graph-node-highlight').forEach(n => n.classList.remove('highlighted'));
+
+            // Highlight selected node
+            const node = document.querySelector(`.graph-node-highlight[data-city="${cityName}"]`);
+            if (node) node.classList.add('highlighted');
+
+            // Highlight connected edges and neighbor nodes
+            const connectedCities = new Set();
+            document.querySelectorAll('.graph-edge').forEach(edge => {
+                const cities = edge.dataset.cities.split(',');
+                if (cities.includes(cityName)) {
+                    edge.classList.add('highlighted');
+                    cities.forEach(c => { if (c !== cityName) connectedCities.add(c); });
+                }
+            });
+
+            connectedCities.forEach(c => {
+                const n = document.querySelector(`.graph-node-highlight[data-city="${c}"]`);
+                if (n) n.classList.add('highlighted');
+            });
+
+            // Show info
+            const info = document.getElementById('city-info');
+            const text = document.getElementById('city-info-text');
+            text.textContent = `${cityName}에서 연결된 도시: ${[...connectedCities].join(', ')} (총 ${connectedCities.size}개 노선)`;
+            info.classList.remove('hidden');
+        }
+
+        // ========================================
+        // Park graph - shortest path activity
+        // ========================================
+        const parkEdges = {
+            '정문-급류타기': 3, '정문-롤러코스터': 5,
+            '급류타기-이벤트홀': 4, '급류타기-판다곰': 2,
+            '롤러코스터-판다곰': 6, '롤러코스터-범퍼카': 4,
+            '판다곰-이벤트홀': 3, '판다곰-식당': 5,
+            '범퍼카-자이로드롭': 3, '범퍼카-식당': 7,
+            '식당-분수광장': 2, '자이로드롭-대관람차': 4,
+            '분수광장-간식코너': 3, '대관람차-분수광장': 2,
+            '이벤트홀-간식코너': 8
+        };
+
+        let parkPath = [];
+        let parkTotalDist = 0;
+
+        function getEdgeWeight(a, b) {
+            return parkEdges[`${a}-${b}`] || parkEdges[`${b}-${a}`] || null;
+        }
+
+        function clickParkNode(name) {
+            if (parkPath.length === 0 && name !== '롤러코스터') {
+                alert('롤러코스터부터 시작하세요!');
+                return;
+            }
+
+            if (parkPath.includes(name)) return;
+
+            if (parkPath.length > 0) {
+                const last = parkPath[parkPath.length - 1];
+                const weight = getEdgeWeight(last, name);
+                if (weight === null) {
+                    alert(`${last}에서 ${name}으로 직접 갈 수 없습니다!`);
+                    return;
+                }
+                parkTotalDist += weight;
+
+                // Highlight the edge
+                document.querySelectorAll('.park-edge').forEach(e => {
+                    const nodes = e.dataset.nodes.split(',');
+                    if ((nodes[0] === last && nodes[1] === name) || (nodes[0] === name && nodes[1] === last)) {
+                        e.setAttribute('stroke', '#ea580c');
+                        e.setAttribute('stroke-width', '4');
+                    }
+                });
+            }
+
+            parkPath.push(name);
+
+            // Highlight node
+            const nodeG = document.querySelector(`.park-node[data-name="${name}"]`);
+            if (nodeG) {
+                const circle = nodeG.querySelector('circle');
+                circle.setAttribute('fill', '#c2410c');
+                circle.setAttribute('stroke', '#7c2d12');
+                circle.setAttribute('stroke-width', '3');
+            }
+
+            // Update display
+            document.getElementById('park-path').textContent = parkPath.join(' → ');
+            document.getElementById('park-distance').textContent = parkTotalDist;
+
+            if (name === '이벤트홀' && parkPath.length > 1) {
+                document.getElementById('park-distance').textContent = parkTotalDist + ' (도착!)';
+            }
+        }
+
+        function resetParkPath() {
+            parkPath = [];
+            parkTotalDist = 0;
+            document.getElementById('park-path').textContent = '노드를 클릭하여 경로를 만드세요 (롤러코스터부터 시작)';
+            document.getElementById('park-distance').textContent = '0';
+
+            // Reset edge styles
+            document.querySelectorAll('.park-edge').forEach(e => {
+                e.setAttribute('stroke', '#d4d4d8');
+                e.setAttribute('stroke-width', '2');
+            });
+
+            // Reset node styles
+            document.querySelectorAll('.park-node').forEach(n => {
+                const name = n.dataset.name;
+                const circle = n.querySelector('circle');
+                if (name === '롤러코스터' || name === '이벤트홀') {
+                    circle.setAttribute('fill', '#ea580c');
+                    circle.setAttribute('stroke', '#c2410c');
+                    circle.setAttribute('stroke-width', '2.5');
+                } else {
+                    circle.setAttribute('fill', '#fb923c');
+                    circle.setAttribute('stroke', '#ea580c');
+                    circle.setAttribute('stroke-width', '2');
+                }
+            });
+        }
+
+        // ========================================
+        // Fire spread simulation
+        // ========================================
+        let fireTime = 0;
+        const gridSize = 5;
+        // Blocked cells (row, col) - 0-indexed: (2,2) is the fire origin mapped to (3,3) in 1-indexed
+        const blocked = [[2,4], [4,2]]; // (3,5) and (5,3) in 1-indexed
+        const fireOrigin = [2, 2]; // (3,3) in 1-indexed
+
+        // Pre-compute fire spread per time step using BFS
+        const fireSpreadMap = {}; // time -> set of "r,c"
+        function computeFireSpread() {
+            const visited = new Set();
+            const queue = [[fireOrigin[0], fireOrigin[1], 0]];
+            visited.add(`${fireOrigin[0]},${fireOrigin[1]}`);
+            fireSpreadMap[0] = new Set([`${fireOrigin[0]},${fireOrigin[1]}`]);
+
+            const blockedSet = new Set(blocked.map(b => `${b[0]},${b[1]}`));
+
+            while (queue.length > 0) {
+                const [r, c, t] = queue.shift();
+                const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+                for (const [dr, dc] of dirs) {
+                    const nr = r + dr;
+                    const nc = c + dc;
+                    const key = `${nr},${nc}`;
+                    if (nr >= 0 && nr < gridSize && nc >= 0 && nc < gridSize
+                        && !visited.has(key) && !blockedSet.has(key)) {
+                        visited.add(key);
+                        const nt = t + 1;
+                        if (!fireSpreadMap[nt]) fireSpreadMap[nt] = new Set();
+                        fireSpreadMap[nt].add(key);
+                        queue.push([nr, nc, nt]);
+                    }
+                }
+            }
+        }
+
+        function getMaxFireTime() {
+            return Math.max(...Object.keys(fireSpreadMap).map(Number));
+        }
+
+        function renderFireGrid() {
+            const grid = document.getElementById('fire-grid');
+            grid.innerHTML = '';
+            const blockedSet = new Set(blocked.map(b => `${b[0]},${b[1]}`));
+
+            // Collect all burning cells up to current time
+            const burningCells = new Set();
+            for (let t = 0; t <= fireTime; t++) {
+                if (fireSpreadMap[t]) {
+                    fireSpreadMap[t].forEach(c => burningCells.add(c));
+                }
+            }
+
+            // Cells that just started burning this step
+            const newBurning = fireSpreadMap[fireTime] || new Set();
+
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'fire-cell';
+                    const key = `${r},${c}`;
+
+                    if (blockedSet.has(key)) {
+                        cell.classList.add('blocked');
+                        cell.innerHTML = '<i class="fas fa-ban text-xs"></i>';
+                        cell.title = '불이 번질 수 없는 칸';
+                    } else if (burningCells.has(key)) {
+                        cell.classList.add('burning');
+                        // Find what time this cell started burning
+                        let burnTime = 0;
+                        for (let t = 0; t <= fireTime; t++) {
+                            if (fireSpreadMap[t] && fireSpreadMap[t].has(key)) {
+                                burnTime = t;
+                                break;
+                            }
+                        }
+                        cell.innerHTML = `<i class="fas fa-fire text-sm"></i><span class="text-[10px] block">${burnTime}h</span>`;
+                        cell.title = `${burnTime}시간에 화재 발생`;
+                        if (newBurning.has(key) && fireTime > 0) {
+                            cell.style.animation = 'firePulse 0.6s ease-in-out';
+                        }
+                    } else {
+                        cell.classList.add('safe');
+                        cell.textContent = `(${r+1},${c+1})`;
+                        cell.title = '안전한 칸';
+                    }
+
+                    grid.appendChild(cell);
+                }
+            }
+
+            document.getElementById('fire-time').textContent = `${fireTime}시간`;
+        }
+
+        function fireStep(dir) {
+            const maxTime = getMaxFireTime();
+            const newTime = fireTime + dir;
+            if (newTime < 0 || newTime > maxTime) return;
+            fireTime = newTime;
+            renderFireGrid();
+        }
+
+        function fireReset() {
+            fireTime = 0;
+            renderFireGrid();
+        }
+
+        // ========================================
+        // Fade-in animation on scroll
+        // ========================================
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+
+        // ========================================
+        // Initialize
+        // ========================================
+        buildAllergenTable();
+        computeFireSpread();
+        renderFireGrid();
+    </script>
+
+</body>
+</html>

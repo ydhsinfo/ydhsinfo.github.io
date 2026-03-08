@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정보 보호 - 정보 보호와 보안</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#e7f5ff',
+                            100: '#d0ebff',
+                            200: '#a5d8ff',
+                            300: '#74c0fc',
+                            400: '#339af0',
+                            500: '#228be6',
+                            600: '#1c7ed6',
+                            700: '#1971c2',
+                            800: '#1864ab',
+                            900: '#145591',
+                        },
+                        accent: {
+                            50: '#e3fafc',
+                            100: '#c5f6fa',
+                            200: '#99e9f2',
+                            300: '#66d9e8',
+                            400: '#3bc9db',
+                            500: '#22b8cf',
+                            600: '#15aabf',
+                            700: '#1098ad',
+                            800: '#0c8599',
+                            900: '#0b7285',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        /* Fade-in animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fade-in-delay-1 { transition-delay: 0.1s; }
+        .fade-in-delay-2 { transition-delay: 0.2s; }
+        .fade-in-delay-3 { transition-delay: 0.3s; }
+        .fade-in-delay-4 { transition-delay: 0.4s; }
+        .fade-in-delay-5 { transition-delay: 0.5s; }
+        .fade-in-delay-6 { transition-delay: 0.6s; }
+
+        /* Card hover effects */
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(51, 154, 240, 0.15);
+        }
+
+        /* Hero gradient */
+        .hero-gradient {
+            background: linear-gradient(135deg, #339af0 0%, #1c7ed6 50%, #1971c2 100%);
+        }
+
+        /* Section divider */
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #339af0, #1c7ed6, #339af0);
+            border-radius: 2px;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e7f5ff; }
+        ::-webkit-scrollbar-thumb { background: #74c0fc; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #339af0; }
+
+        /* Number badge */
+        .number-badge {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #339af0, #1c7ed6);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        /* Section number */
+        .section-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #339af0, #1c7ed6);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        /* Info type card */
+        .info-type-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #d0ebff;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .info-type-card:hover {
+            border-color: #339af0;
+            box-shadow: 0 8px 24px rgba(51, 154, 240, 0.12);
+            transform: translateY(-4px);
+        }
+
+        /* Copyright grid card */
+        .copyright-card {
+            background: linear-gradient(135deg, #f8fbff, #e7f5ff);
+            border: 1px solid #d0ebff;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .copyright-card:hover {
+            background: linear-gradient(135deg, #e7f5ff, #d0ebff);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(51, 154, 240, 0.1);
+        }
+
+        /* Step flow */
+        .step-flow-item {
+            position: relative;
+        }
+        .step-flow-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid #74c0fc;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+
+        /* Portal card */
+        .portal-card {
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .portal-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 32px rgba(51, 154, 240, 0.15);
+        }
+
+        /* Quiz section */
+        .quiz-option {
+            border: 2px solid #d0ebff;
+            border-radius: 12px;
+            padding: 14px 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .quiz-option:hover {
+            border-color: #339af0;
+            background: #e7f5ff;
+        }
+        .quiz-option.selected {
+            border-color: #339af0;
+            background: #e7f5ff;
+        }
+        .quiz-option.correct {
+            border-color: #40c057;
+            background: #ebfbee;
+        }
+        .quiz-option.incorrect {
+            border-color: #fa5252;
+            background: #fff5f5;
+        }
+
+        /* Pulse animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .float-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Balance scale */
+        .balance-bar {
+            height: 6px;
+            background: linear-gradient(90deg, #339af0 0%, #74c0fc 30%, #ffd43b 50%, #ff8c00 70%, #fa5252 100%);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- Header / Breadcrumb -->
+    <nav class="bg-white shadow-sm border-b border-primary-100 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
+                <a href="../../../index.html" class="hover:text-primary-600 transition-colors">
+                    <i class="fas fa-home text-primary-400"></i>
+                    <span class="ml-1">정보</span>
+                </a>
+                <i class="fas fa-chevron-right text-xs text-gray-300"></i>
+                <span class="text-primary-600 font-medium">V. 디지털 문화</span>
+                <i class="fas fa-chevron-right text-xs text-gray-300"></i>
+                <span class="text-gray-600">02 정보 보호와 보안</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="window.print()" class="text-gray-400 hover:text-primary-500 transition-colors" title="인쇄">
+                    <i class="fas fa-print"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-gradient text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-8 left-12 w-36 h-36 border-2 border-white rounded-full"></div>
+            <div class="absolute top-24 right-16 w-20 h-20 border-2 border-white rounded-lg rotate-45"></div>
+            <div class="absolute bottom-8 left-1/4 w-44 h-44 border-2 border-white rounded-full"></div>
+            <div class="absolute bottom-16 right-8 w-28 h-28 border-2 border-white rounded-lg rotate-12"></div>
+            <div class="absolute top-1/2 left-2/3 w-16 h-16 border-2 border-white rounded-full"></div>
+        </div>
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-16 relative">
+            <div class="fade-in">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full border border-white/30">
+                        <i class="fas fa-shield-alt mr-1"></i> 정보 보호
+                    </span>
+                    <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full border border-white/30">
+                        <i class="fas fa-user-shield mr-1"></i> 개인 정보
+                    </span>
+                    <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full border border-white/30">
+                        <i class="fas fa-copyright mr-1"></i> 저작권
+                    </span>
+                    <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full border border-white/30">
+                        <i class="fas fa-share-alt mr-1"></i> 공유
+                    </span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 tracking-tight">
+                    정보 보호
+                </h1>
+                <p class="text-lg sm:text-xl text-blue-100 max-w-2xl leading-relaxed">
+                    보호해야 할 정보와 공유해야 할 정보를 구분하고 정보의 가치를 이해합니다
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Learning Objectives -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 -mt-6 relative z-10 mb-10">
+        <div class="fade-in bg-white rounded-2xl shadow-lg border border-primary-100 p-6 sm:p-8">
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-bullseye text-primary-500 text-lg"></i>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800">학습 목표</h2>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+                <div class="flex items-start gap-3 bg-primary-50/50 rounded-xl p-4">
+                    <div class="number-badge mt-0.5">1</div>
+                    <p class="text-gray-700 text-[15px] leading-relaxed">
+                        보호해야 할 정보와 공유해야 할 정보를 구분할 수 있다.
+                    </p>
+                </div>
+                <div class="flex items-start gap-3 bg-accent-50/50 rounded-xl p-4">
+                    <div class="number-badge mt-0.5" style="background: linear-gradient(135deg, #15aabf, #0c8599);">2</div>
+                    <p class="text-gray-700 text-[15px] leading-relaxed">
+                        정보의 공유와 보호의 균형을 이해할 수 있다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 pb-20">
+
+        <!-- ===================== Section 1: 보호해야 할 정보 ===================== -->
+        <section class="mb-16">
+            <div class="fade-in flex items-center gap-4 mb-8">
+                <div class="section-number">1</div>
+                <h2 class="text-2xl font-extrabold text-gray-800">보호해야 할 정보</h2>
+            </div>
+            <div class="section-divider mb-8"></div>
+
+            <!-- (1) 개인 정보 -->
+            <div class="fade-in mb-12">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-user-lock text-primary-500 text-lg"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">(1) 개인 정보</h3>
+                </div>
+
+                <!-- Definition box -->
+                <div class="bg-primary-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-6">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-quote-left text-primary-300 text-lg mt-1"></i>
+                        <div>
+                            <p class="text-gray-700 leading-relaxed">
+                                <strong class="text-primary-700">개인 정보</strong>란 살아 있는 개인에 관한 정보로서,
+                                성명, 주민등록번호 및 영상 등을 통하여 개인을 알아볼 수 있는 정보를 말합니다.
+                                해당 정보만으로는 특정 개인을 알아볼 수 없더라도 다른 정보와 쉽게 결합하여
+                                알아볼 수 있는 정보도 포함됩니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6 types of personal info grid -->
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Card 1: 인적 사항 -->
+                    <div class="fade-in fade-in-delay-1 info-type-card">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-id-card text-primary-600 text-lg"></i>
+                            </div>
+                            <h4 class="font-bold text-primary-700">인적 사항</h4>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">이름</span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">주민등록번호</span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">주소</span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">연락처</span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">가족 관계</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: 신체적 정보 -->
+                    <div class="fade-in fade-in-delay-2 info-type-card">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-accent-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-fingerprint text-accent-700 text-lg"></i>
+                            </div>
+                            <h4 class="font-bold text-accent-700">신체적 정보</h4>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="text-xs bg-accent-50 text-accent-800 px-2.5 py-1 rounded-full">얼굴</span>
+                            <span class="text-xs bg-accent-50 text-accent-800 px-2.5 py-1 rounded-full">홍채</span>
+                            <span class="text-xs bg-accent-50 text-accent-800 px-2.5 py-1 rounded-full">음성</span>
+                            <span class="text-xs bg-accent-50 text-accent-800 px-2.5 py-1 rounded-full">유전자 정보</span>
+                            <span class="text-xs bg-accent-50 text-accent-800 px-2.5 py-1 rounded-full">지문</span>
+                            <span class="text-xs bg-accent-50 text-accent-800 px-2.5 py-1 rounded-full">의료 기록</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: 사회적 정보 -->
+                    <div class="fade-in fade-in-delay-3 info-type-card">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-building text-primary-600 text-lg"></i>
+                            </div>
+                            <h4 class="font-bold text-primary-700">사회적 정보</h4>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">자격증</span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">학력</span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">병역 정보</span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">직장</span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">전과 기록</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: 정신적 정보 -->
+                    <div class="fade-in fade-in-delay-4 info-type-card">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-accent-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-brain text-accent-700 text-lg"></i>
+                            </div>
+                            <h4 class="font-bold text-accent-700">정신적 정보</h4>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="text-xs bg-accent-50 text-accent-800 px-2.5 py-1 rounded-full">물품 대여 기록</span>
+                            <span class="text-xs bg-accent-50 text-accent-800 px-2.5 py-1 rounded-full">구매 내역</span>
+                            <span class="text-xs bg-accent-50 text-accent-800 px-2.5 py-1 rounded-full">웹 사이트 검색 내역</span>
+                            <span class="text-xs bg-accent-50 text-accent-800 px-2.5 py-1 rounded-full">종교</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: 재산적 정보 -->
+                    <div class="fade-in fade-in-delay-5 info-type-card">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-wallet text-primary-600 text-lg"></i>
+                            </div>
+                            <h4 class="font-bold text-primary-700">재산적 정보</h4>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">월급</span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">신용 카드</span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">계좌 번호</span>
+                            <span class="text-xs bg-primary-50 text-primary-700 px-2.5 py-1 rounded-full">소유 주택</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 6: 기타 정보 -->
+                    <div class="fade-in fade-in-delay-6 info-type-card">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-accent-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-ellipsis-h text-accent-700 text-lg"></i>
+                            </div>
+                            <h4 class="font-bold text-accent-700">기타 정보</h4>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="text-xs bg-accent-50 text-accent-800 px-2.5 py-1 rounded-full">이메일 주소</span>
+                            <span class="text-xs bg-accent-50 text-accent-800 px-2.5 py-1 rounded-full">로그 파일</span>
+                            <span class="text-xs bg-accent-50 text-accent-800 px-2.5 py-1 rounded-full">GPS 위치 정보</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- (2) 저작물 -->
+            <div class="fade-in mb-8">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-copyright text-primary-500 text-lg"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">(2) 저작물</h3>
+                </div>
+
+                <!-- Definition -->
+                <div class="bg-primary-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-6">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-quote-left text-primary-300 text-lg mt-1"></i>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong class="text-primary-700">저작물</strong>이란 인간의 사상 또는 감정을 표현한 창작물로,
+                            시, 소설, 음악, 미술, 영화, 컴퓨터 프로그램 등이 해당합니다.
+                            저작물은 창작자의 권리가 보호되며, 무단으로 복제하거나 배포할 수 없습니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 9 types of copyright works -->
+                <div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-9 gap-3 mb-8">
+                    <div class="copyright-card">
+                        <div class="text-2xl mb-2"><i class="fas fa-book text-primary-400"></i></div>
+                        <p class="text-xs font-semibold text-gray-700">어문<br>저작물</p>
+                    </div>
+                    <div class="copyright-card">
+                        <div class="text-2xl mb-2"><i class="fas fa-music text-primary-500"></i></div>
+                        <p class="text-xs font-semibold text-gray-700">음악<br>저작물</p>
+                    </div>
+                    <div class="copyright-card">
+                        <div class="text-2xl mb-2"><i class="fas fa-palette text-accent-500"></i></div>
+                        <p class="text-xs font-semibold text-gray-700">미술<br>저작물</p>
+                    </div>
+                    <div class="copyright-card">
+                        <div class="text-2xl mb-2"><i class="fas fa-theater-masks text-primary-600"></i></div>
+                        <p class="text-xs font-semibold text-gray-700">연극<br>저작물</p>
+                    </div>
+                    <div class="copyright-card">
+                        <div class="text-2xl mb-2"><i class="fas fa-landmark text-accent-600"></i></div>
+                        <p class="text-xs font-semibold text-gray-700">건축<br>저작물</p>
+                    </div>
+                    <div class="copyright-card">
+                        <div class="text-2xl mb-2"><i class="fas fa-camera text-primary-700"></i></div>
+                        <p class="text-xs font-semibold text-gray-700">사진<br>저작물</p>
+                    </div>
+                    <div class="copyright-card">
+                        <div class="text-2xl mb-2"><i class="fas fa-film text-accent-700"></i></div>
+                        <p class="text-xs font-semibold text-gray-700">영상<br>저작물</p>
+                    </div>
+                    <div class="copyright-card">
+                        <div class="text-2xl mb-2"><i class="fas fa-drafting-compass text-primary-800"></i></div>
+                        <p class="text-xs font-semibold text-gray-700">도형<br>저작물</p>
+                    </div>
+                    <div class="copyright-card">
+                        <div class="text-2xl mb-2"><i class="fas fa-laptop-code text-accent-800"></i></div>
+                        <p class="text-xs font-semibold text-gray-700">컴퓨터 프로그램<br>저작물</p>
+                    </div>
+                </div>
+
+                <!-- 저작물 이용 절차 5 steps -->
+                <div class="fade-in bg-white rounded-2xl shadow-md border border-primary-100 p-6">
+                    <h4 class="text-lg font-bold text-gray-800 mb-5 flex items-center gap-2">
+                        <i class="fas fa-list-ol text-primary-500"></i>
+                        저작물 이용 절차
+                    </h4>
+                    <div class="flex flex-col sm:flex-row items-stretch gap-3">
+                        <div class="step-flow-item flex-1 bg-primary-50 rounded-xl p-4 text-center">
+                            <div class="number-badge mx-auto mb-2">1</div>
+                            <p class="text-sm font-semibold text-primary-700">저작물 확인</p>
+                            <p class="text-xs text-gray-500 mt-1">이용하려는 저작물의 종류 확인</p>
+                        </div>
+                        <div class="step-flow-item flex-1 bg-primary-50 rounded-xl p-4 text-center">
+                            <div class="number-badge mx-auto mb-2">2</div>
+                            <p class="text-sm font-semibold text-primary-700">저작권자 확인</p>
+                            <p class="text-xs text-gray-500 mt-1">저작권자가 누구인지 확인</p>
+                        </div>
+                        <div class="step-flow-item flex-1 bg-primary-50 rounded-xl p-4 text-center">
+                            <div class="number-badge mx-auto mb-2">3</div>
+                            <p class="text-sm font-semibold text-primary-700">이용 허락 요청</p>
+                            <p class="text-xs text-gray-500 mt-1">저작권자에게 이용 허락 요청</p>
+                        </div>
+                        <div class="step-flow-item flex-1 bg-primary-50 rounded-xl p-4 text-center">
+                            <div class="number-badge mx-auto mb-2">4</div>
+                            <p class="text-sm font-semibold text-primary-700">이용 조건 합의</p>
+                            <p class="text-xs text-gray-500 mt-1">이용 범위와 조건 합의</p>
+                        </div>
+                        <div class="flex-1 bg-primary-100 rounded-xl p-4 text-center">
+                            <div class="number-badge mx-auto mb-2" style="background: linear-gradient(135deg, #1c7ed6, #1864ab);">5</div>
+                            <p class="text-sm font-semibold text-primary-800">저작물 이용</p>
+                            <p class="text-xs text-gray-600 mt-1">합의된 조건에 따라 이용</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== Section 2: 공유해야 할 정보 ===================== -->
+        <section class="mb-16">
+            <div class="fade-in flex items-center gap-4 mb-8">
+                <div class="section-number" style="background: linear-gradient(135deg, #15aabf, #0c8599);">2</div>
+                <h2 class="text-2xl font-extrabold text-gray-800">공유해야 할 정보</h2>
+            </div>
+            <div class="section-divider mb-8" style="background: linear-gradient(90deg, #15aabf, #0c8599, #15aabf);"></div>
+
+            <!-- Intro -->
+            <div class="fade-in bg-accent-50/60 border border-accent-100 rounded-2xl p-6 mb-8">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-globe text-accent-500 text-lg mt-1"></i>
+                    <p class="text-gray-700 leading-relaxed">
+                        교통, 환경, 치안, 에너지 등 <strong class="text-accent-700">공공의 이익</strong>을 위한 정보는
+                        적극적으로 공유해야 합니다. 재난, 기후, 보건, 교육 정보 등은 국민의 안전과 복지를 위해
+                        공개되어야 하며, 이를 통해 사회 전체의 발전에 기여할 수 있습니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Public benefit info tags -->
+            <div class="fade-in flex flex-wrap gap-3 mb-8">
+                <span class="bg-accent-100 text-accent-800 px-4 py-2 rounded-xl text-sm font-semibold">
+                    <i class="fas fa-traffic-light mr-1.5"></i> 교통 정보
+                </span>
+                <span class="bg-primary-100 text-primary-800 px-4 py-2 rounded-xl text-sm font-semibold">
+                    <i class="fas fa-leaf mr-1.5"></i> 환경 정보
+                </span>
+                <span class="bg-accent-100 text-accent-800 px-4 py-2 rounded-xl text-sm font-semibold">
+                    <i class="fas fa-shield-alt mr-1.5"></i> 치안 정보
+                </span>
+                <span class="bg-primary-100 text-primary-800 px-4 py-2 rounded-xl text-sm font-semibold">
+                    <i class="fas fa-bolt mr-1.5"></i> 에너지 정보
+                </span>
+                <span class="bg-accent-100 text-accent-800 px-4 py-2 rounded-xl text-sm font-semibold">
+                    <i class="fas fa-exclamation-triangle mr-1.5"></i> 재난 정보
+                </span>
+                <span class="bg-primary-100 text-primary-800 px-4 py-2 rounded-xl text-sm font-semibold">
+                    <i class="fas fa-cloud-sun mr-1.5"></i> 기후 정보
+                </span>
+                <span class="bg-accent-100 text-accent-800 px-4 py-2 rounded-xl text-sm font-semibold">
+                    <i class="fas fa-heartbeat mr-1.5"></i> 보건 정보
+                </span>
+                <span class="bg-primary-100 text-primary-800 px-4 py-2 rounded-xl text-sm font-semibold">
+                    <i class="fas fa-graduation-cap mr-1.5"></i> 교육 정보
+                </span>
+            </div>
+
+            <!-- Data portal cards -->
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Portal 1 -->
+                <div class="fade-in fade-in-delay-1 portal-card bg-white shadow-md border border-gray-100 overflow-hidden">
+                    <div class="h-3" style="background: linear-gradient(135deg, #339af0, #1c7ed6);"></div>
+                    <div class="p-6">
+                        <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mb-4 float-icon">
+                            <i class="fas fa-database text-primary-500 text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-800 mb-2">공공 데이터 포털</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed mb-3">
+                            정부와 공공기관이 보유한 데이터를 누구나 자유롭게 이용할 수 있도록 개방하는 포털 사이트입니다.
+                        </p>
+                        <span class="text-xs bg-primary-50 text-primary-600 px-3 py-1 rounded-full font-medium">
+                            <i class="fas fa-external-link-alt mr-1"></i> data.go.kr
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Portal 2 -->
+                <div class="fade-in fade-in-delay-2 portal-card bg-white shadow-md border border-gray-100 overflow-hidden">
+                    <div class="h-3" style="background: linear-gradient(135deg, #15aabf, #0c8599);"></div>
+                    <div class="p-6">
+                        <div class="w-14 h-14 bg-accent-50 rounded-2xl flex items-center justify-center mb-4 float-icon" style="animation-delay: 0.5s;">
+                            <i class="fas fa-cloud-sun-rain text-accent-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-800 mb-2">기상 자료 개방 포털</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed mb-3">
+                            기상청에서 수집한 기상 관측 자료, 예보, 기후 데이터 등을 제공하는 포털입니다.
+                        </p>
+                        <span class="text-xs bg-accent-50 text-accent-700 px-3 py-1 rounded-full font-medium">
+                            <i class="fas fa-external-link-alt mr-1"></i> data.kma.go.kr
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Portal 3 -->
+                <div class="fade-in fade-in-delay-3 portal-card bg-white shadow-md border border-gray-100 overflow-hidden">
+                    <div class="h-3" style="background: linear-gradient(135deg, #339af0, #1971c2);"></div>
+                    <div class="p-6">
+                        <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mb-4 float-icon" style="animation-delay: 1s;">
+                            <i class="fas fa-globe-americas text-primary-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-800 mb-2">유엔 SDGs 데이터 포털</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed mb-3">
+                            유엔의 지속가능발전목표(SDGs) 관련 글로벌 데이터와 지표를 제공하는 포털입니다.
+                        </p>
+                        <span class="text-xs bg-primary-50 text-primary-600 px-3 py-1 rounded-full font-medium">
+                            <i class="fas fa-external-link-alt mr-1"></i> unstats.un.org
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== Section 3: 공유할 수 있는 정보 ===================== -->
+        <section class="mb-16">
+            <div class="fade-in flex items-center gap-4 mb-8">
+                <div class="section-number">3</div>
+                <h2 class="text-2xl font-extrabold text-gray-800">공유할 수 있는 정보</h2>
+            </div>
+            <div class="section-divider mb-8"></div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Card 1: 민간 데이터 -->
+                <div class="fade-in fade-in-delay-1 card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="h-2" style="background: linear-gradient(135deg, #339af0, #1c7ed6);"></div>
+                    <div class="p-6">
+                        <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mb-4">
+                            <i class="fas fa-building text-primary-500 text-2xl"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-2">민간 데이터</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            기업이나 민간 기관이 수집하고 생성한 데이터로, 공익적 목적이나 상업적 목적으로
+                            공유할 수 있습니다. 비식별 처리를 거쳐 안전하게 활용됩니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 2: 개인 데이터 -->
+                <div class="fade-in fade-in-delay-2 card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="h-2" style="background: linear-gradient(135deg, #15aabf, #0c8599);"></div>
+                    <div class="p-6">
+                        <div class="w-14 h-14 bg-accent-50 rounded-2xl flex items-center justify-center mb-4">
+                            <i class="fas fa-user-circle text-accent-600 text-2xl"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-2">개인 데이터</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            개인이 자발적으로 공유하기로 결정한 데이터입니다. 본인의 동의 하에
+                            연구, 서비스 개선 등의 목적으로 활용될 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 3: 오픈 소스 소프트웨어 -->
+                <div class="fade-in fade-in-delay-3 card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="h-2" style="background: linear-gradient(135deg, #339af0, #1971c2);"></div>
+                    <div class="p-6">
+                        <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mb-4">
+                            <i class="fas fa-code-branch text-primary-600 text-2xl"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-2">오픈 소스 소프트웨어</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            소스 코드가 공개되어 누구나 자유롭게 사용, 수정, 배포할 수 있는 소프트웨어입니다.
+                            리눅스, 파이썬 등이 대표적인 예입니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== Section 4: 정보의 공유와 보호 ===================== -->
+        <section class="mb-16">
+            <div class="fade-in flex items-center gap-4 mb-8">
+                <div class="section-number" style="background: linear-gradient(135deg, #15aabf, #0c8599);">4</div>
+                <h2 class="text-2xl font-extrabold text-gray-800">정보의 공유와 보호</h2>
+            </div>
+            <div class="section-divider mb-8" style="background: linear-gradient(90deg, #15aabf, #0c8599, #15aabf);"></div>
+
+            <!-- Balance concept -->
+            <div class="fade-in bg-white rounded-2xl shadow-md border border-primary-100 p-6 sm:p-8 mb-8">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-br from-primary-100 to-accent-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-balance-scale text-primary-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">공유와 보호의 균형</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            정보는 공유를 통해 사회 발전에 기여할 수 있지만, 동시에 적절한 보호가 없으면
+                            개인의 권리가 침해되거나 지적 재산권이 손상될 수 있습니다.
+                            따라서 정보의 공유와 보호 사이에서 적절한 <strong class="text-primary-600">균형</strong>을 유지하는 것이 중요합니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Balance visual -->
+                <div class="bg-gray-50 rounded-xl p-5 mb-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-lock text-primary-500"></i>
+                            <span class="text-sm font-semibold text-primary-700">보호</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-semibold text-accent-700">공유</span>
+                            <i class="fas fa-share-alt text-accent-500"></i>
+                        </div>
+                    </div>
+                    <div class="balance-bar mb-3"></div>
+                    <p class="text-center text-xs text-gray-500">
+                        <i class="fas fa-balance-scale mr-1"></i>
+                        정보의 특성에 따라 보호와 공유의 적절한 균형점을 찾아야 합니다
+                    </p>
+                </div>
+
+                <!-- Concerns -->
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="bg-primary-50/50 rounded-xl p-4 border border-primary-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-exclamation-circle text-primary-500"></i>
+                            <h4 class="font-semibold text-primary-700 text-sm">지적 재산권 침해 우려</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            정보의 무분별한 공유는 창작자의 지적 재산권을 침해할 수 있습니다.
+                            저작권, 특허권 등을 존중하면서 정보를 활용해야 합니다.
+                        </p>
+                    </div>
+                    <div class="bg-accent-50/50 rounded-xl p-4 border border-accent-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-exclamation-triangle text-accent-600"></i>
+                            <h4 class="font-semibold text-accent-700 text-sm">과도한 정보 보호 문제</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            국가나 기관의 과도한 정보 보호는 국민의 알 권리를 제한하고
+                            사회 발전을 저해할 수 있습니다. 공익을 위한 정보는 적극적으로 공개되어야 합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key insight -->
+            <div class="fade-in bg-gradient-to-r from-primary-50 to-accent-50 border border-primary-200 rounded-2xl p-5">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-primary-600 text-sm"></i>
+                    </div>
+                    <div>
+                        <p class="text-primary-800 font-semibold text-sm mb-1">핵심 정리</p>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            정보 사회에서는 개인 정보와 저작물 등 보호해야 할 정보와, 공공 데이터 및 오픈 소스 등
+                            공유해야 할 정보를 명확히 구분하는 것이 중요합니다. 정보의 특성과 목적에 따라
+                            보호와 공유의 균형을 유지하면서 정보를 올바르게 활용하는 자세가 필요합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== Quiz Section ===================== -->
+        <section class="mb-16">
+            <div class="fade-in flex items-center gap-4 mb-8">
+                <div class="w-14 h-14 hero-gradient rounded-2xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-question-circle text-white text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-extrabold text-gray-800">확인 문제</h2>
+                    <p class="text-sm text-gray-500">배운 내용을 확인해 봅시다</p>
+                </div>
+            </div>
+            <div class="section-divider mb-8"></div>
+
+            <div class="fade-in bg-white rounded-2xl shadow-md border border-primary-100 p-6 sm:p-8" id="quiz-container">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-primary-100 text-primary-700 text-xs font-bold px-3 py-1 rounded-full">문제 1</span>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800 mb-6">
+                    다음 중 '보호해야 할 정보'에 해당하지 <span class="text-primary-500 underline decoration-2 underline-offset-4">않는</span> 것은?
+                </h3>
+
+                <div class="space-y-3" id="quiz-options">
+                    <div class="quiz-option flex items-center gap-4" data-correct="false" onclick="selectQuizOption(this)">
+                        <div class="number-badge flex-shrink-0">1</div>
+                        <span class="text-gray-700">주소와 전화번호</span>
+                    </div>
+                    <div class="quiz-option flex items-center gap-4" data-correct="false" onclick="selectQuizOption(this)">
+                        <div class="number-badge flex-shrink-0">2</div>
+                        <span class="text-gray-700">위치 정보</span>
+                    </div>
+                    <div class="quiz-option flex items-center gap-4" data-correct="true" onclick="selectQuizOption(this)">
+                        <div class="number-badge flex-shrink-0">3</div>
+                        <span class="text-gray-700">기후 정보</span>
+                    </div>
+                    <div class="quiz-option flex items-center gap-4" data-correct="false" onclick="selectQuizOption(this)">
+                        <div class="number-badge flex-shrink-0">4</div>
+                        <span class="text-gray-700">진료 기록 정보</span>
+                    </div>
+                </div>
+
+                <!-- Feedback area -->
+                <div id="quiz-feedback" class="mt-6 hidden">
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../../01_디지털 사회와 진로/03_선택활동/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../02_정보 보안/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">V. 디지털 문화 &gt; 02 정보 보호와 보안 &gt; 정보 보호</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // IntersectionObserver for fade-in
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                },
+                {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -40px 0px',
+                }
+            );
+
+            document.querySelectorAll('.fade-in').forEach((el) => {
+                observer.observe(el);
+            });
+        });
+
+        // Quiz functionality
+        let quizAnswered = false;
+
+        function selectQuizOption(element) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+
+            const options = document.querySelectorAll('.quiz-option');
+            const isCorrect = element.dataset.correct === 'true';
+            const feedback = document.getElementById('quiz-feedback');
+
+            // Remove hover styles from all options
+            options.forEach(opt => {
+                opt.style.cursor = 'default';
+                if (opt.dataset.correct === 'true') {
+                    opt.classList.add('correct');
+                }
+            });
+
+            if (isCorrect) {
+                element.classList.add('correct');
+                feedback.innerHTML = `
+                    <div class="bg-green-50 border border-green-200 rounded-xl p-5">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fas fa-check-circle text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-green-800 font-semibold mb-1">정답입니다!</p>
+                                <p class="text-green-700 text-sm leading-relaxed">
+                                    기후 정보는 공공의 이익을 위해 <strong>공유해야 할 정보</strong>에 해당합니다.
+                                    주소, 전화번호, 위치 정보, 진료 기록은 모두 개인 정보로서 보호해야 할 정보입니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                element.classList.add('incorrect');
+                feedback.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-5">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fas fa-times-circle text-red-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-red-800 font-semibold mb-1">다시 생각해 보세요.</p>
+                                <p class="text-red-700 text-sm leading-relaxed">
+                                    정답은 <strong>3번 기후 정보</strong>입니다.
+                                    기후 정보는 공공의 이익을 위해 공유해야 할 정보에 해당합니다.
+                                    주소, 전화번호, 위치 정보, 진료 기록은 모두 개인 정보로서 보호해야 할 정보입니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            feedback.classList.remove('hidden');
+            feedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>

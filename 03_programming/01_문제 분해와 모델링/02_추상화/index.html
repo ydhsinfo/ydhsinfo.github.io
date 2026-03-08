@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>추상화 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        },
+                        accent: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #ea580c, #d97706, #ea580c);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Flow diagram animations */
+        .flow-arrow {
+            animation: flowPulse 2s ease-in-out infinite;
+        }
+        .flow-arrow:nth-child(2) { animation-delay: 0.3s; }
+        .flow-arrow:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes flowPulse {
+            0%, 100% { opacity: 0.4; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(4px); }
+        }
+
+        /* Step pulse animation */
+        .step-pulse {
+            animation: stepGlow 3s ease-in-out infinite;
+        }
+        .step-pulse:nth-child(2) { animation-delay: 1s; }
+        .step-pulse:nth-child(3) { animation-delay: 2s; }
+
+        @keyframes stepGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+            50% { box-shadow: 0 0 0 8px rgba(249, 115, 22, 0.15); }
+        }
+
+        /* Accordion styles */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.3s ease-out;
+        }
+        .accordion-content.open {
+            max-height: 2000px;
+        }
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+        .accordion-trigger.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Drag and drop styles */
+        .drag-item {
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+        .drag-item:active {
+            cursor: grabbing;
+        }
+        .drag-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+        .drag-item.placed {
+            cursor: default;
+            opacity: 0.6;
+        }
+
+        .drop-zone {
+            min-height: 48px;
+            transition: all 0.3s ease;
+        }
+        .drop-zone.drag-over {
+            background-color: #fff7ed;
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+        }
+        .drop-zone .placed-item {
+            animation: dropIn 0.3s ease-out;
+        }
+
+        @keyframes dropIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Comparison table hover */
+        .compare-row {
+            transition: all 0.3s ease;
+        }
+        .compare-row:hover {
+            background-color: #fff7ed;
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { background: #c2410c !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+            a { text-decoration: underline; }
+        }
+
+        @media (max-width: 768px) {
+            .flow-diagram-container { overflow-x: auto; }
+            .process-flow { flex-direction: column; align-items: center; }
+            .process-flow .flow-connector { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">III. 알고리즘과 프로그래밍</span>
+                <span class="breadcrumb-item text-white font-medium">01 문제 분해와 모델링</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-layer-group"></i>
+                        <span>III. 알고리즘과 프로그래밍 &gt; 01 문제 분해와 모델링</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        추상화
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        복잡한 문제를 단순화하는 핵심 과정
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-puzzle-piece mr-1"></i> 문제 분해
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-crosshairs mr-1"></i> 핵심 요소 추출
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-cubes mr-1"></i> 모델링
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon: Layered Abstraction -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Bottom layer (complex) -->
+                        <rect x="20" y="130" width="180" height="40" rx="8" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                        <circle cx="40" cy="150" r="4" fill="rgba(255,255,255,0.2)"/>
+                        <circle cx="55" cy="145" r="3" fill="rgba(255,255,255,0.15)"/>
+                        <circle cx="70" cy="152" r="5" fill="rgba(255,255,255,0.2)"/>
+                        <rect x="85" y="142" width="15" height="8" rx="2" fill="rgba(255,255,255,0.15)"/>
+                        <rect x="105" y="145" width="10" height="6" rx="2" fill="rgba(255,255,255,0.12)"/>
+                        <circle cx="130" cy="150" r="4" fill="rgba(255,255,255,0.18)"/>
+                        <rect x="145" y="143" width="12" height="7" rx="2" fill="rgba(255,255,255,0.15)"/>
+                        <circle cx="170" cy="148" r="3" fill="rgba(255,255,255,0.12)"/>
+                        <circle cx="185" cy="153" r="4" fill="rgba(255,255,255,0.15)"/>
+                        <text x="110" y="180" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="8">복잡한 문제</text>
+
+                        <!-- Arrow up -->
+                        <g class="flow-arrow">
+                            <path d="M110 125 L110 108" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M106 112 L110 106 L114 112" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        </g>
+                        <text x="135" y="118" fill="rgba(255,255,255,0.4)" font-size="7">분해</text>
+
+                        <!-- Middle layer (decomposed) -->
+                        <rect x="35" y="75" width="55" height="30" rx="6" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                        <circle cx="52" cy="90" r="4" fill="rgba(255,255,255,0.25)"/>
+                        <rect x="62" y="85" width="15" height="8" rx="2" fill="rgba(255,255,255,0.2)"/>
+                        <rect x="130" y="75" width="55" height="30" rx="6" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                        <circle cx="147" cy="90" r="4" fill="rgba(255,255,255,0.25)"/>
+                        <rect x="157" y="85" width="15" height="8" rx="2" fill="rgba(255,255,255,0.2)"/>
+
+                        <!-- Arrow up -->
+                        <g class="flow-arrow">
+                            <path d="M110 70 L110 53" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M106 57 L110 51 L114 57" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        </g>
+                        <text x="135" y="63" fill="rgba(255,255,255,0.4)" font-size="7">추출</text>
+
+                        <!-- Top layer (abstracted - simple) -->
+                        <rect x="70" y="20" width="80" height="30" rx="8" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+                        <circle cx="95" cy="35" r="5" fill="rgba(255,255,255,0.4)"/>
+                        <rect x="108" y="30" width="25" height="10" rx="3" fill="rgba(255,255,255,0.35)"/>
+                        <text x="110" y="15" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="8" font-weight="bold">핵심 요소</text>
+
+                        <!-- Decorative elements -->
+                        <text x="10" y="45" fill="rgba(255,255,255,0.12)" font-size="7">{ }</text>
+                        <text x="190" y="45" fill="rgba(255,255,255,0.12)" font-size="7">( )</text>
+                        <text x="5" y="100" fill="rgba(255,255,255,0.1)" font-size="6">abstract</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>추상화의 개념과 과정을 이해할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>문제를 작은 단위로 분해할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">3</span>
+                        <span>문제 해결에 필요한 핵심 요소를 추출할 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 학습 요소: 문제 분해</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 핵심 요소 추출</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 모델링</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- SECTION: 추상화란?                                                      -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-definition">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">추상화란?</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">What is Abstraction?</p>
+                </div>
+            </div>
+
+            <!-- Definition callout -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-500 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">추상화의 정의</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong>추상화</strong>란 복잡한 문제를 <strong>단순화</strong>하는 것으로, 먼저 문제를 작은 단위로 <strong>분해</strong>한 후
+                            불필요한 요소는 제거하고 꼭 필요한 <strong>핵심 요소만 뽑아내는</strong> 과정입니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Abstraction 3-step process flow -->
+            <div class="bg-white rounded-2xl shadow-md p-6 md:p-8">
+                <h3 class="text-lg font-bold text-gray-800 mb-6 text-center flex items-center justify-center gap-2">
+                    <i class="fas fa-project-diagram text-primary-500"></i>
+                    추상화의 3단계 과정
+                </h3>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 process-flow">
+                    <!-- Step 1 -->
+                    <div class="step-pulse flex-shrink-0 w-full md:w-56 bg-gradient-to-br from-primary-50 to-primary-100 border-2 border-primary-300 rounded-2xl p-5 text-center">
+                        <div class="w-14 h-14 rounded-full bg-primary-500 text-white flex items-center justify-center mx-auto mb-3 text-2xl shadow-md">
+                            <i class="fas fa-puzzle-piece"></i>
+                        </div>
+                        <div class="inline-block bg-primary-500 text-white text-xs font-bold rounded-full px-3 py-1 mb-2">STEP 1</div>
+                        <h4 class="font-bold text-primary-800 text-lg">문제 분해</h4>
+                        <p class="text-sm text-primary-700 mt-1">큰 문제를 작은 문제로 나누기</p>
+                    </div>
+
+                    <!-- Arrow connector -->
+                    <div class="flow-connector text-primary-400 text-2xl flex-shrink-0">
+                        <i class="fas fa-chevron-right hidden md:block"></i>
+                        <i class="fas fa-chevron-down md:hidden"></i>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="step-pulse flex-shrink-0 w-full md:w-56 bg-gradient-to-br from-accent-50 to-accent-100 border-2 border-accent-300 rounded-2xl p-5 text-center">
+                        <div class="w-14 h-14 rounded-full bg-accent-500 text-white flex items-center justify-center mx-auto mb-3 text-2xl shadow-md">
+                            <i class="fas fa-crosshairs"></i>
+                        </div>
+                        <div class="inline-block bg-accent-500 text-white text-xs font-bold rounded-full px-3 py-1 mb-2">STEP 2</div>
+                        <h4 class="font-bold text-accent-800 text-lg">핵심 요소 추출</h4>
+                        <p class="text-sm text-accent-700 mt-1">불필요한 요소 제거, 핵심만 추출</p>
+                    </div>
+
+                    <!-- Arrow connector -->
+                    <div class="flow-connector text-primary-400 text-2xl flex-shrink-0">
+                        <i class="fas fa-chevron-right hidden md:block"></i>
+                        <i class="fas fa-chevron-down md:hidden"></i>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="step-pulse flex-shrink-0 w-full md:w-56 bg-gradient-to-br from-primary-100 to-accent-100 border-2 border-primary-400 rounded-2xl p-5 text-center">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center mx-auto mb-3 text-2xl shadow-md">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <div class="inline-block bg-gradient-to-r from-primary-500 to-accent-500 text-white text-xs font-bold rounded-full px-3 py-1 mb-2">STEP 3</div>
+                        <h4 class="font-bold text-primary-800 text-lg">모델링</h4>
+                        <p class="text-sm text-primary-700 mt-1">핵심 요소를 구조화하여 표현</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 1: 문제 분해                                                    -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-decomposition">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">1. 문제 분해</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Problem Decomposition</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 md:p-8 mb-8">
+                <p class="text-gray-700 leading-relaxed text-lg mb-6">
+                    복잡한 문제를 해결하기 쉽게 <strong class="text-primary-700">작은 문제로 나누는 과정</strong>을 문제 분해라고 합니다.
+                    문제 사이의 <strong class="text-primary-700">관계나 순서</strong>에 유의하여 작은 문제로 분해하여 먼저 해결하고,
+                    그 결과를 종합하면 문제 전체를 해결할 방법을 찾을 수 있습니다.
+                </p>
+
+                <!-- Robot Example: Accordion -->
+                <div class="border-2 border-primary-200 rounded-xl overflow-hidden">
+                    <button class="accordion-trigger w-full flex items-center justify-between p-5 bg-primary-50 hover:bg-primary-100 transition-colors text-left" onclick="toggleAccordion(this)">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-lg bg-primary-500 text-white flex items-center justify-center text-lg">
+                                <i class="fas fa-robot"></i>
+                            </span>
+                            <div>
+                                <span class="font-bold text-primary-800 text-lg">예제 2</span>
+                                <span class="text-gray-600 ml-2">로봇 이동 문제 분해</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down accordion-icon text-primary-500 text-lg"></i>
+                    </button>
+                    <div class="accordion-content open">
+                        <div class="p-5 space-y-4">
+                            <p class="text-gray-600 text-sm mb-4">
+                                격자 공간에서 이동하는 로봇 문제를 작은 단위로 분해하면 다음과 같습니다.
+                            </p>
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <div class="card-hover bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
+                                    <div class="flex items-start gap-3">
+                                        <span class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center flex-shrink-0 text-sm font-bold">1</span>
+                                        <div>
+                                            <h5 class="font-semibold text-gray-800 mb-1">좌표 계산</h5>
+                                            <p class="text-sm text-gray-600">로봇의 현재 좌표를 계산하는 부분</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-hover bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
+                                    <div class="flex items-start gap-3">
+                                        <span class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center flex-shrink-0 text-sm font-bold">2</span>
+                                        <div>
+                                            <h5 class="font-semibold text-gray-800 mb-1">이동 처리</h5>
+                                            <p class="text-sm text-gray-600">이동 명령에 따라 로봇을 이동시키는 부분</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-hover bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
+                                    <div class="flex items-start gap-3">
+                                        <span class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center flex-shrink-0 text-sm font-bold">3</span>
+                                        <div>
+                                            <h5 class="font-semibold text-gray-800 mb-1">범위 감지</h5>
+                                            <p class="text-sm text-gray-600">격자 공간을 벗어난 이동을 감지하는 부분</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-hover bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
+                                    <div class="flex items-start gap-3">
+                                        <span class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center flex-shrink-0 text-sm font-bold">4</span>
+                                        <div>
+                                            <h5 class="font-semibold text-gray-800 mb-1">결과 반환</h5>
+                                            <p class="text-sm text-gray-600">로봇의 최종 도착 좌표를 반환하는 부분</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
+                                <i class="fas fa-info-circle text-amber-500 mt-0.5"></i>
+                                <p class="text-sm text-amber-800">
+                                    이처럼 복잡한 로봇 이동 문제를 <strong>4개의 작은 문제</strong>로 분해하면 각각을 독립적으로 해결할 수 있습니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 2: 핵심 요소 추출                                                -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-extraction">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-crosshairs"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">2. 핵심 요소 추출</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Key Element Extraction</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-6 md:p-8 mb-8">
+                <p class="text-gray-700 leading-relaxed text-lg mb-6">
+                    추상화의 <strong class="text-accent-700">가장 중요한 단계</strong>로, 문제 해결과 관련 없는 불필요한 요소를
+                    <strong class="text-red-600">제거</strong>하고 꼭 필요한
+                    <strong class="text-accent-700">핵심 요소를 추출</strong>하는 과정입니다.
+                </p>
+
+                <!-- Example 3: Comparison Table -->
+                <div class="border-2 border-accent-200 rounded-xl overflow-hidden mb-6">
+                    <button class="accordion-trigger w-full flex items-center justify-between p-5 bg-accent-50 hover:bg-accent-100 transition-colors text-left" onclick="toggleAccordion(this)">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-lg bg-accent-500 text-white flex items-center justify-center text-lg">
+                                <i class="fas fa-bus"></i>
+                            </span>
+                            <div>
+                                <span class="font-bold text-accent-800 text-lg">예제 3</span>
+                                <span class="text-gray-600 ml-2">버스 노선 추상화</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down accordion-icon text-accent-500 text-lg"></i>
+                    </button>
+                    <div class="accordion-content open">
+                        <div class="p-5">
+                            <p class="text-gray-600 text-sm mb-4">
+                                버스 노선도를 만들 때, 불필요한 요소와 필수 요소를 구분하면 다음과 같습니다.
+                            </p>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr>
+                                            <th class="bg-red-50 text-red-700 p-3 text-left rounded-tl-lg border-b-2 border-red-200">
+                                                <i class="fas fa-times-circle mr-1"></i> 불필요한 요소
+                                            </th>
+                                            <th class="bg-green-50 text-green-700 p-3 text-left rounded-tr-lg border-b-2 border-green-200">
+                                                <i class="fas fa-check-circle mr-1"></i> 필수 요소
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="compare-row">
+                                            <td class="p-3 border-b border-gray-100">
+                                                <span class="inline-flex items-center gap-1 text-red-600">
+                                                    <i class="fas fa-times text-xs"></i> 자전거 도로
+                                                </span>
+                                            </td>
+                                            <td class="p-3 border-b border-gray-100">
+                                                <span class="inline-flex items-center gap-1 text-green-600">
+                                                    <i class="fas fa-check text-xs"></i> 목적지를 경유하는 버스 번호
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr class="compare-row">
+                                            <td class="p-3 border-b border-gray-100">
+                                                <span class="inline-flex items-center gap-1 text-red-600">
+                                                    <i class="fas fa-times text-xs"></i> 주변 건물 정보
+                                                </span>
+                                            </td>
+                                            <td class="p-3 border-b border-gray-100">
+                                                <span class="inline-flex items-center gap-1 text-green-600">
+                                                    <i class="fas fa-check text-xs"></i> 정류장 위치
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr class="compare-row">
+                                            <td class="p-3 border-b border-gray-100">
+                                                <span class="inline-flex items-center gap-1 text-red-600">
+                                                    <i class="fas fa-times text-xs"></i> 도로 폭
+                                                </span>
+                                            </td>
+                                            <td class="p-3 border-b border-gray-100">
+                                                <span class="inline-flex items-center gap-1 text-green-600">
+                                                    <i class="fas fa-check text-xs"></i> 노선 경로
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr class="compare-row">
+                                            <td class="p-3">
+                                                <span class="inline-flex items-center gap-1 text-red-600">
+                                                    <i class="fas fa-times text-xs"></i> 가로수 위치
+                                                </span>
+                                            </td>
+                                            <td class="p-3">
+                                                <span class="inline-flex items-center gap-1 text-green-600">
+                                                    <i class="fas fa-check text-xs"></i> 배차 간격
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-4 bg-accent-50 border border-accent-200 rounded-lg p-3 flex items-start gap-2">
+                                <i class="fas fa-lightbulb text-accent-500 mt-0.5"></i>
+                                <p class="text-sm text-accent-800">
+                                    <strong>핵심 포인트:</strong> 같은 지도라도 목적에 따라 필요한 핵심 요소가 달라집니다. 버스 노선도에서는 버스 이용에 필요한 정보만 남기는 것이 추상화입니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- INTERACTIVE ACTIVITY: 카페 키오스크                                      -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-activity">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-coffee"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동: 카페 키오스크</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">예제 4 - 핵심 요소 분류하기</p>
+                </div>
+            </div>
+
+            <!-- Problem description -->
+            <div class="bg-white rounded-2xl shadow-md p-6 md:p-8 mb-6">
+                <div class="bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl p-5 mb-6 border border-primary-200">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-primary-500 text-white flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-primary-800 mb-2">문제 상황</h3>
+                            <p class="text-gray-700 leading-relaxed">
+                                소영이는 카페를 운영하는 어머니께 도움을 드리려고 <strong>키오스크 프로그램</strong>을 만들려고 합니다.
+                            </p>
+                            <div class="mt-3 grid sm:grid-cols-2 gap-3">
+                                <div class="bg-white/80 rounded-lg p-3 border border-primary-100">
+                                    <span class="text-xs font-bold text-primary-600 uppercase">현재 상태</span>
+                                    <p class="text-sm text-gray-700 mt-1">주문을 받지 않은 상태</p>
+                                </div>
+                                <div class="bg-white/80 rounded-lg p-3 border border-accent-100">
+                                    <span class="text-xs font-bold text-accent-600 uppercase">목표 상태</span>
+                                    <p class="text-sm text-gray-700 mt-1">사용자로부터 주문을 받아 결제 금액과 주문 번호를 출력한 상태</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decomposed problems with drop zones -->
+                <h3 class="font-bold text-gray-800 text-lg mb-4 flex items-center gap-2">
+                    <i class="fas fa-hand-pointer text-primary-500"></i>
+                    보기에서 각 문제의 핵심 요소를 클릭하여 분류하세요
+                </h3>
+
+                <!-- Draggable items pool -->
+                <div class="bg-gray-50 rounded-xl p-4 mb-6 border-2 border-dashed border-gray-300" id="item-pool">
+                    <h4 class="text-sm font-bold text-gray-500 uppercase mb-3">
+                        <i class="fas fa-th mr-1"></i> 보기
+                    </h4>
+                    <div class="flex flex-wrap gap-2" id="pool-items">
+                        <!-- Items will be generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Three drop zones for each decomposed problem -->
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <!-- Zone 1: 메뉴와 수량 선택 -->
+                    <div class="rounded-xl border-2 border-primary-200 bg-white overflow-hidden">
+                        <div class="bg-primary-500 text-white p-3 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <span class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">1</span>
+                                <h4 class="font-bold">메뉴와 수량 선택</h4>
+                            </div>
+                        </div>
+                        <div class="drop-zone p-3 min-h-[120px] flex flex-wrap gap-2 content-start" data-zone="zone1" onclick="handleZoneClick('zone1')">
+                            <p class="text-xs text-gray-400 w-full text-center mt-4 drop-placeholder">항목을 클릭하여 여기에 배치하세요</p>
+                        </div>
+                    </div>
+
+                    <!-- Zone 2: 결제 금액 출력 -->
+                    <div class="rounded-xl border-2 border-accent-200 bg-white overflow-hidden">
+                        <div class="bg-accent-500 text-white p-3 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <span class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">2</span>
+                                <h4 class="font-bold">결제 금액 출력</h4>
+                            </div>
+                        </div>
+                        <div class="drop-zone p-3 min-h-[120px] flex flex-wrap gap-2 content-start" data-zone="zone2" onclick="handleZoneClick('zone2')">
+                            <p class="text-xs text-gray-400 w-full text-center mt-4 drop-placeholder">항목을 클릭하여 여기에 배치하세요</p>
+                        </div>
+                    </div>
+
+                    <!-- Zone 3: 주문 번호 출력 -->
+                    <div class="rounded-xl border-2 border-primary-300 bg-white overflow-hidden">
+                        <div class="bg-gradient-to-r from-primary-500 to-accent-500 text-white p-3 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <span class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">3</span>
+                                <h4 class="font-bold">주문 번호 출력</h4>
+                            </div>
+                        </div>
+                        <div class="drop-zone p-3 min-h-[120px] flex flex-wrap gap-2 content-start" data-zone="zone3" onclick="handleZoneClick('zone3')">
+                            <p class="text-xs text-gray-400 w-full text-center mt-4 drop-placeholder">항목을 클릭하여 여기에 배치하세요</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Not essential zone -->
+                <div class="rounded-xl border-2 border-red-200 bg-white overflow-hidden mb-6">
+                    <div class="bg-red-400 text-white p-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-times-circle"></i>
+                            <h4 class="font-bold">불필요한 요소</h4>
+                            <span class="text-xs bg-white/20 rounded-full px-2 py-0.5 ml-2">핵심이 아닌 항목</span>
+                        </div>
+                    </div>
+                    <div class="drop-zone p-3 min-h-[60px] flex flex-wrap gap-2 content-start" data-zone="zone-unnecessary" onclick="handleZoneClick('zone-unnecessary')">
+                        <p class="text-xs text-gray-400 w-full text-center mt-2 drop-placeholder">핵심이 아닌 항목을 여기에 배치하세요</p>
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="checkKioskAnswers()" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-check-circle"></i>
+                        정답 확인
+                    </button>
+                    <button onclick="resetKiosk()" class="inline-flex items-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-6 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-undo"></i>
+                        초기화
+                    </button>
+                    <button onclick="showHint()" class="inline-flex items-center gap-2 bg-accent-100 hover:bg-accent-200 text-accent-700 font-medium px-6 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-lightbulb"></i>
+                        힌트
+                    </button>
+                </div>
+
+                <!-- Feedback area -->
+                <div id="kiosk-feedback" class="mt-4 hidden"></div>
+                <div id="kiosk-hint" class="mt-4 hidden"></div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- 핵심 정리                                                               -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-summary">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-bookmark"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">핵심 정리</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Key Summary</p>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-primary-50 via-white to-accent-50 rounded-2xl shadow-md p-6 md:p-8 border border-primary-100">
+                <div class="space-y-5">
+                    <!-- Summary item 1 -->
+                    <div class="card-hover bg-white rounded-xl p-5 border border-primary-100 shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-primary-100 text-primary-600 flex items-center justify-center flex-shrink-0 text-xl">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-1">추상화</h4>
+                                <p class="text-gray-600 text-sm leading-relaxed">
+                                    복잡한 문제를 단순화하는 것으로, 문제를 분해하고 불필요한 요소를 제거하여 핵심 요소만 추출하는 과정입니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary item 2 -->
+                    <div class="card-hover bg-white rounded-xl p-5 border border-primary-100 shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-primary-100 text-primary-600 flex items-center justify-center flex-shrink-0 text-xl">
+                                <i class="fas fa-puzzle-piece"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-1">문제 분해</h4>
+                                <p class="text-gray-600 text-sm leading-relaxed">
+                                    복잡한 문제를 해결하기 쉽게 작은 문제로 나누는 과정입니다. 분해된 문제를 해결하고 결과를 종합하면 전체 문제를 해결할 수 있습니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary item 3 -->
+                    <div class="card-hover bg-white rounded-xl p-5 border border-accent-100 shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-accent-100 text-accent-600 flex items-center justify-center flex-shrink-0 text-xl">
+                                <i class="fas fa-crosshairs"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-1">핵심 요소 추출</h4>
+                                <p class="text-gray-600 text-sm leading-relaxed">
+                                    추상화의 가장 중요한 단계로, 문제 해결과 관련 없는 불필요한 요소를 제거하고 꼭 필요한 핵심 요소를 추출하는 과정입니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary item 4 -->
+                    <div class="card-hover bg-white rounded-xl p-5 border border-primary-100 shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-100 to-accent-100 text-primary-600 flex items-center justify-center flex-shrink-0 text-xl">
+                                <i class="fas fa-cubes"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-1">추상화의 3단계</h4>
+                                <p class="text-gray-600 text-sm leading-relaxed">
+                                    <span class="inline-flex items-center gap-1 bg-primary-100 text-primary-700 rounded-full px-2 py-0.5 text-xs font-medium mr-1">1 문제 분해</span>
+                                    <i class="fas fa-arrow-right text-gray-300 text-xs mx-1"></i>
+                                    <span class="inline-flex items-center gap-1 bg-accent-100 text-accent-700 rounded-full px-2 py-0.5 text-xs font-medium mr-1">2 핵심 요소 추출</span>
+                                    <i class="fas fa-arrow-right text-gray-300 text-xs mx-1"></i>
+                                    <span class="inline-flex items-center gap-1 bg-primary-100 text-primary-700 rounded-full px-2 py-0.5 text-xs font-medium">3 모델링</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Page navigation -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <!-- 이전 페이지 -->
+                <div class="flex-1 flex justify-start">
+                    <a href="../01_문제 분석/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </a>
+                </div>
+
+                <!-- 목록으로 돌아가기 -->
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex justify-end">
+                    <a href="../03_모델링/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    III. 알고리즘과 프로그래밍 &gt; 01 문제 분해와 모델링 &gt; 추상화
+                </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // =============================================
+        // Accordion toggle
+        // =============================================
+        function toggleAccordion(trigger) {
+            const content = trigger.nextElementSibling;
+            const isOpen = content.classList.contains('open');
+
+            if (isOpen) {
+                content.classList.remove('open');
+                trigger.classList.remove('active');
+            } else {
+                content.classList.add('open');
+                trigger.classList.add('active');
+            }
+        }
+
+        // =============================================
+        // Kiosk Interactive Activity
+        // =============================================
+        const kioskItems = [
+            { id: 'item-menu', text: '메뉴명', icon: 'fa-utensils' },
+            { id: 'item-wait', text: '대기 시간', icon: 'fa-clock' },
+            { id: 'item-order-num', text: '주문 번호', icon: 'fa-hashtag' },
+            { id: 'item-pay-method', text: '결제 방식', icon: 'fa-credit-card' },
+            { id: 'item-customer', text: '고객 이름', icon: 'fa-user' },
+            { id: 'item-price', text: '메뉴 가격', icon: 'fa-won-sign' },
+            { id: 'item-total', text: '주문 금액', icon: 'fa-calculator' },
+            { id: 'item-qty', text: '수량', icon: 'fa-sort-numeric-up' },
+            { id: 'item-card', text: '신용 카드', icon: 'fa-credit-card' },
+            { id: 'item-packing', text: '포장', icon: 'fa-box' },
+            { id: 'item-delivery', text: '배달', icon: 'fa-truck' },
+        ];
+
+        // Correct answers:
+        // zone1 (메뉴와 수량 선택): 메뉴명, 메뉴 가격, 수량
+        // zone2 (결제 금액 출력): 주문 금액
+        // zone3 (주문 번호 출력): 주문 번호
+        // zone-unnecessary: 대기 시간, 결제 방식, 고객 이름, 신용 카드, 포장, 배달
+        const correctAnswers = {
+            'zone1': ['item-menu', 'item-price', 'item-qty'],
+            'zone2': ['item-total'],
+            'zone3': ['item-order-num'],
+            'zone-unnecessary': ['item-wait', 'item-pay-method', 'item-customer', 'item-card', 'item-packing', 'item-delivery']
+        };
+
+        let selectedItem = null;
+        let placements = {}; // itemId -> zoneId
+
+        function initKiosk() {
+            const poolContainer = document.getElementById('pool-items');
+            poolContainer.innerHTML = '';
+            placements = {};
+            selectedItem = null;
+
+            // Shuffle items
+            const shuffled = [...kioskItems].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach(item => {
+                const el = document.createElement('button');
+                el.id = item.id;
+                el.className = 'drag-item inline-flex items-center gap-2 bg-white border-2 border-gray-200 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:border-primary-400 hover:bg-primary-50 transition-all focus:outline-none focus:ring-2 focus:ring-primary-400';
+                el.innerHTML = `<i class="fas ${item.icon} text-primary-400"></i> ${item.text}`;
+                el.onclick = function(e) {
+                    e.stopPropagation();
+                    selectItem(item.id, el);
+                };
+                poolContainer.appendChild(el);
+            });
+
+            // Reset drop zones
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                const placeholder = zone.querySelector('.drop-placeholder');
+                // Remove placed items
+                zone.querySelectorAll('.placed-item').forEach(pi => pi.remove());
+                if (placeholder) placeholder.style.display = '';
+            });
+
+            // Hide feedback
+            document.getElementById('kiosk-feedback').classList.add('hidden');
+            document.getElementById('kiosk-hint').classList.add('hidden');
+        }
+
+        function selectItem(itemId, el) {
+            // If already placed, ignore
+            if (el.classList.contains('placed')) return;
+
+            // Deselect previous
+            if (selectedItem) {
+                const prev = document.getElementById(selectedItem);
+                if (prev) {
+                    prev.classList.remove('ring-2', 'ring-primary-500', 'bg-primary-100', 'border-primary-500');
+                }
+            }
+
+            if (selectedItem === itemId) {
+                selectedItem = null;
+                return;
+            }
+
+            selectedItem = itemId;
+            el.classList.add('ring-2', 'ring-primary-500', 'bg-primary-100', 'border-primary-500');
+        }
+
+        function handleZoneClick(zoneId) {
+            if (!selectedItem) return;
+
+            const zone = document.querySelector(`[data-zone="${zoneId}"]`);
+            const itemEl = document.getElementById(selectedItem);
+            const itemData = kioskItems.find(i => i.id === selectedItem);
+
+            if (!zone || !itemEl || !itemData) return;
+
+            // Place item in zone
+            placements[selectedItem] = zoneId;
+            itemEl.classList.add('placed');
+            itemEl.classList.remove('ring-2', 'ring-primary-500', 'bg-primary-100', 'border-primary-500');
+            itemEl.onclick = null;
+
+            // Hide placeholder
+            const placeholder = zone.querySelector('.drop-placeholder');
+            if (placeholder) placeholder.style.display = 'none';
+
+            // Create placed item element in zone
+            const placedEl = document.createElement('span');
+            placedEl.className = 'placed-item inline-flex items-center gap-1 bg-primary-100 text-primary-700 border border-primary-300 rounded-lg px-2.5 py-1.5 text-sm font-medium';
+            placedEl.dataset.itemId = selectedItem;
+            placedEl.innerHTML = `<i class="fas ${itemData.icon} text-xs"></i> ${itemData.text} <button class="ml-1 text-primary-400 hover:text-red-500 transition-colors" onclick="removeFromZone('${selectedItem}', '${zoneId}', event)"><i class="fas fa-times text-xs"></i></button>`;
+            zone.appendChild(placedEl);
+
+            selectedItem = null;
+        }
+
+        function removeFromZone(itemId, zoneId, event) {
+            event.stopPropagation();
+
+            // Remove from placements
+            delete placements[itemId];
+
+            // Remove placed element from zone
+            const zone = document.querySelector(`[data-zone="${zoneId}"]`);
+            const placedEl = zone.querySelector(`[data-item-id="${itemId}"]`);
+            if (placedEl) placedEl.remove();
+
+            // Show placeholder if zone is empty
+            const remaining = zone.querySelectorAll('.placed-item');
+            if (remaining.length === 0) {
+                const placeholder = zone.querySelector('.drop-placeholder');
+                if (placeholder) placeholder.style.display = '';
+            }
+
+            // Re-enable pool item
+            const poolItem = document.getElementById(itemId);
+            if (poolItem) {
+                const itemData = kioskItems.find(i => i.id === itemId);
+                poolItem.classList.remove('placed');
+                poolItem.onclick = function(e) {
+                    e.stopPropagation();
+                    selectItem(itemId, poolItem);
+                };
+            }
+        }
+
+        function checkKioskAnswers() {
+            const feedback = document.getElementById('kiosk-feedback');
+            let totalCorrect = 0;
+            let totalItems = kioskItems.length;
+            let details = [];
+
+            // Check each item's placement
+            kioskItems.forEach(item => {
+                const placedZone = placements[item.id];
+                // Find which zone this item should be in
+                let correctZone = null;
+                for (const [zone, items] of Object.entries(correctAnswers)) {
+                    if (items.includes(item.id)) {
+                        correctZone = zone;
+                        break;
+                    }
+                }
+
+                if (placedZone === correctZone) {
+                    totalCorrect++;
+                }
+            });
+
+            // Check if all items are placed
+            const placedCount = Object.keys(placements).length;
+            if (placedCount < totalItems) {
+                feedback.innerHTML = `
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                        <i class="fas fa-exclamation-triangle text-amber-500 text-lg mt-0.5"></i>
+                        <div>
+                            <p class="font-bold text-amber-800">아직 분류하지 않은 항목이 있습니다!</p>
+                            <p class="text-sm text-amber-700 mt-1">모든 항목(${totalItems}개)을 분류한 후 정답을 확인하세요. (현재 ${placedCount}/${totalItems}개 배치됨)</p>
+                        </div>
+                    </div>
+                `;
+                feedback.classList.remove('hidden');
+                return;
+            }
+
+            // Show results
+            const percentage = Math.round((totalCorrect / totalItems) * 100);
+            let resultClass, icon, message;
+
+            if (totalCorrect === totalItems) {
+                resultClass = 'bg-green-50 border-green-200';
+                icon = '<i class="fas fa-check-circle text-green-500 text-2xl"></i>';
+                message = `<p class="font-bold text-green-800 text-lg">완벽합니다!</p>
+                           <p class="text-sm text-green-700 mt-1">모든 항목을 올바르게 분류했습니다. 추상화의 핵심 요소 추출을 잘 이해하고 있네요!</p>`;
+            } else if (totalCorrect >= totalItems * 0.7) {
+                resultClass = 'bg-blue-50 border-blue-200';
+                icon = '<i class="fas fa-thumbs-up text-blue-500 text-2xl"></i>';
+                message = `<p class="font-bold text-blue-800 text-lg">잘하고 있어요!</p>
+                           <p class="text-sm text-blue-700 mt-1">${totalItems}개 중 ${totalCorrect}개를 맞혔습니다 (${percentage}%). 조금만 더 생각해 보세요!</p>`;
+            } else {
+                resultClass = 'bg-orange-50 border-orange-200';
+                icon = '<i class="fas fa-redo text-orange-500 text-2xl"></i>';
+                message = `<p class="font-bold text-orange-800 text-lg">다시 도전해 보세요!</p>
+                           <p class="text-sm text-orange-700 mt-1">${totalItems}개 중 ${totalCorrect}개를 맞혔습니다 (${percentage}%). 각 문제에 꼭 필요한 핵심 요소가 무엇인지 다시 생각해 보세요.</p>`;
+            }
+
+            // Highlight correct/incorrect items
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                const zoneId = zone.dataset.zone;
+                zone.querySelectorAll('.placed-item').forEach(placedEl => {
+                    const itemId = placedEl.dataset.itemId;
+                    let correctZone = null;
+                    for (const [z, items] of Object.entries(correctAnswers)) {
+                        if (items.includes(itemId)) {
+                            correctZone = z;
+                            break;
+                        }
+                    }
+
+                    if (zoneId === correctZone) {
+                        placedEl.classList.remove('bg-primary-100', 'text-primary-700', 'border-primary-300');
+                        placedEl.classList.add('bg-green-100', 'text-green-700', 'border-green-300');
+                    } else {
+                        placedEl.classList.remove('bg-primary-100', 'text-primary-700', 'border-primary-300');
+                        placedEl.classList.add('bg-red-100', 'text-red-700', 'border-red-300');
+                    }
+                });
+            });
+
+            feedback.innerHTML = `
+                <div class="${resultClass} border rounded-xl p-4 flex items-start gap-3">
+                    ${icon}
+                    <div>${message}</div>
+                </div>
+            `;
+            feedback.classList.remove('hidden');
+            feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function resetKiosk() {
+            initKiosk();
+        }
+
+        function showHint() {
+            const hint = document.getElementById('kiosk-hint');
+            hint.innerHTML = `
+                <div class="bg-accent-50 border border-accent-200 rounded-xl p-4 flex items-start gap-3">
+                    <i class="fas fa-lightbulb text-accent-500 text-lg mt-0.5"></i>
+                    <div>
+                        <p class="font-bold text-accent-800">힌트</p>
+                        <ul class="text-sm text-accent-700 mt-2 space-y-1.5">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-chevron-right text-xs mt-1 text-accent-400"></i>
+                                <span><strong>메뉴와 수량 선택:</strong> 고객이 무엇을 얼마나 주문할지 결정하는 데 필요한 정보는 무엇일까요?</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-chevron-right text-xs mt-1 text-accent-400"></i>
+                                <span><strong>결제 금액 출력:</strong> 최종적으로 얼마를 내야 하는지 보여주려면 어떤 정보가 필요할까요?</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-chevron-right text-xs mt-1 text-accent-400"></i>
+                                <span><strong>주문 번호 출력:</strong> 주문을 식별하기 위해 필요한 핵심 정보는 무엇일까요?</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-chevron-right text-xs mt-1 text-accent-400"></i>
+                                <span><strong>불필요한 요소:</strong> 키오스크 프로그램의 핵심 기능과 직접 관련이 없는 항목은 무엇일까요?</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            hint.classList.remove('hidden');
+        }
+
+        // Initialize kiosk on page load
+        document.addEventListener('DOMContentLoaded', initKiosk);
+
+        // =============================================
+        // Fade-in animation on scroll
+        // =============================================
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+
+        // =============================================
+        // Deselect item when clicking outside
+        // =============================================
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.drag-item') && !e.target.closest('.drop-zone')) {
+                if (selectedItem) {
+                    const prev = document.getElementById(selectedItem);
+                    if (prev) {
+                        prev.classList.remove('ring-2', 'ring-primary-500', 'bg-primary-100', 'border-primary-500');
+                    }
+                    selectedItem = null;
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

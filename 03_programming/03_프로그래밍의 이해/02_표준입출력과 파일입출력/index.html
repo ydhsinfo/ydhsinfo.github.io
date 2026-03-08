@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>표준입출력과 파일입출력 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        orange: {
+                            50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',
+                            500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'
+                        },
+                        amber: {
+                            50:'#fffbeb',100:'#fef3c7',200:'#fde68a',300:'#fcd34d',400:'#fbbf24',
+                            500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e',900:'#78350f'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%);
+        }
+
+        .hero-wave {
+            position: relative;
+        }
+        .hero-wave::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60'%3E%3Cpath fill='%23f9fafb' d='M0,32L80,37.3C160,43,320,53,480,53.3C640,53,800,43,960,37.3C1120,32,1280,32,1360,32L1440,32L1440,60L1360,60C1280,60,1120,60,960,60C800,60,640,60,480,60C320,60,160,60,80,60L0,60Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom center;
+            background-size: cover;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .info-card {
+            transition: all 0.3s ease;
+        }
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .section-number {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #ea580c, #d97706);
+            color: white;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .code-block {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1.25rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.7;
+            color: #e2e8f0;
+            overflow-x: auto;
+            position: relative;
+        }
+        .code-block .keyword { color: #60a5fa; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .comment { color: #64748b; }
+        .code-block .func { color: #c084fc; }
+        .code-block .builtin { color: #fbbf24; }
+
+        .code-output {
+            background: #0f172a;
+            border-radius: 0 0 12px 12px;
+            padding: 1rem 1.25rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            border-top: 1px solid #334155;
+        }
+
+        .run-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #ea580c, #d97706);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .run-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(234,88,12,0.4);
+        }
+
+        .flow-arrow {
+            width: 40px;
+            height: 2px;
+            background: #d97706;
+            position: relative;
+        }
+        .flow-arrow::after {
+            content: '';
+            position: absolute;
+            right: -1px;
+            top: -5px;
+            border: 6px solid transparent;
+            border-left: 8px solid #d97706;
+        }
+
+        .mode-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .mode-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        .mode-card.active {
+            border-color: #ea580c;
+            box-shadow: 0 0 0 3px rgba(234,88,12,0.15);
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .hero-gradient {
+                background: #c2410c !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            body { font-size: 12pt; }
+            section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-14">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-orange-700 transition-colors text-sm font-medium">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>전체 단원</span>
+                </a>
+                <span class="bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-orange-100">
+                    III. 알고리즘과 프로그래밍
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="bg-white border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
+            <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
+                <a href="../../../index.html" class="hover:text-orange-600 transition-colors">
+                    <i class="fas fa-home mr-1"></i>정보
+                </a>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-gray-600 font-medium">III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-gray-600 font-medium">03 프로그래밍의 이해</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-orange-700 font-semibold">표준입출력과 파일입출력</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-16 sm:py-20 hero-wave">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="max-w-3xl">
+                <span class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-6 border border-white/20">
+                    <i class="fas fa-keyboard"></i>
+                    프로그래밍의 이해
+                </span>
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                    표준입출력과<br>파일입출력
+                </h1>
+                <p class="text-base sm:text-lg text-orange-100 leading-relaxed max-w-xl">
+                    컴퓨터 프로그램은 사용자로부터 데이터를 입력받아 처리하고 결과를 출력하는 단계로 진행된다.
+                    키보드와 모니터를 이용하는 <strong class="text-white">표준입출력</strong>과 파일을 읽고 쓰는
+                    <strong class="text-white">파일입출력</strong>을 학습한다.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-16">
+
+        <!-- I/O Flow Diagram -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-10">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+                    <span class="section-number"><i class="fas fa-diagram-project text-xs"></i></span>
+                    입출력의 흐름
+                </h2>
+                <div class="space-y-8">
+                    <!-- Standard I/O Flow -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-orange-700 mb-4 uppercase tracking-wider">표준입출력 (Standard I/O)</h3>
+                        <svg viewBox="0 0 800 120" class="w-full max-w-3xl mx-auto" style="max-height:140px">
+                            <!-- Keyboard -->
+                            <rect x="10" y="30" width="150" height="60" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+                            <text x="85" y="55" text-anchor="middle" font-size="11" fill="#9a3412" font-weight="600">키보드</text>
+                            <text x="85" y="73" text-anchor="middle" font-size="10" fill="#c2410c">(입력 장치)</text>
+                            <text x="85" y="55" text-anchor="middle" font-size="16" fill="#ea580c" dy="-22">&#9000;</text>
+                            <!-- Arrow 1 -->
+                            <line x1="170" y1="60" x2="248" y2="60" stroke="#d97706" stroke-width="2.5" marker-end="url(#arrowOrange)"/>
+                            <text x="209" y="50" text-anchor="middle" font-size="9" fill="#92400e" font-weight="600">input()</text>
+                            <!-- Processing -->
+                            <rect x="258" y="25" width="160" height="70" rx="14" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                            <text x="338" y="55" text-anchor="middle" font-size="11" fill="#92400e" font-weight="700">프로그램 처리</text>
+                            <text x="338" y="73" text-anchor="middle" font-size="10" fill="#b45309">(CPU / 메모리)</text>
+                            <!-- Arrow 2 -->
+                            <line x1="428" y1="60" x2="508" y2="60" stroke="#d97706" stroke-width="2.5" marker-end="url(#arrowOrange)"/>
+                            <text x="468" y="50" text-anchor="middle" font-size="9" fill="#92400e" font-weight="600">print()</text>
+                            <!-- Monitor -->
+                            <rect x="518" y="30" width="150" height="60" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+                            <text x="593" y="55" text-anchor="middle" font-size="11" fill="#9a3412" font-weight="600">모니터</text>
+                            <text x="593" y="73" text-anchor="middle" font-size="10" fill="#c2410c">(출력 장치)</text>
+                            <defs>
+                                <marker id="arrowOrange" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#d97706"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                    <!-- File I/O Flow -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-amber-700 mb-4 uppercase tracking-wider">파일입출력 (File I/O)</h3>
+                        <svg viewBox="0 0 800 120" class="w-full max-w-3xl mx-auto" style="max-height:140px">
+                            <!-- File (source) -->
+                            <rect x="10" y="30" width="150" height="60" rx="14" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+                            <text x="85" y="55" text-anchor="middle" font-size="11" fill="#92400e" font-weight="600">파일 (데이터)</text>
+                            <text x="85" y="73" text-anchor="middle" font-size="10" fill="#b45309">.txt, .csv ...</text>
+                            <!-- Arrow 1 -->
+                            <line x1="170" y1="60" x2="248" y2="60" stroke="#b45309" stroke-width="2.5" marker-end="url(#arrowAmber)"/>
+                            <text x="209" y="50" text-anchor="middle" font-size="9" fill="#78350f" font-weight="600">read()</text>
+                            <!-- Processing -->
+                            <rect x="258" y="25" width="160" height="70" rx="14" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                            <text x="338" y="55" text-anchor="middle" font-size="11" fill="#92400e" font-weight="700">프로그램 처리</text>
+                            <text x="338" y="73" text-anchor="middle" font-size="10" fill="#b45309">(CPU / 메모리)</text>
+                            <!-- Arrow 2 -->
+                            <line x1="428" y1="60" x2="508" y2="60" stroke="#b45309" stroke-width="2.5" marker-end="url(#arrowAmber)"/>
+                            <text x="468" y="50" text-anchor="middle" font-size="9" fill="#78350f" font-weight="600">write()</text>
+                            <!-- File (output) -->
+                            <rect x="518" y="30" width="150" height="60" rx="14" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+                            <text x="593" y="55" text-anchor="middle" font-size="11" fill="#92400e" font-weight="600">파일 (결과)</text>
+                            <text x="593" y="73" text-anchor="middle" font-size="10" fill="#b45309">.txt, .csv ...</text>
+                            <defs>
+                                <marker id="arrowAmber" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#b45309"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 1: 표준입출력 -->
+        <!-- ============================================================ -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="section-number text-lg">1</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900">표준입출력</h2>
+            </div>
+
+            <!-- (1) input() -->
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-10 mb-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="bg-orange-100 text-orange-700 w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold">(1)</span>
+                    input() 함수
+                </h3>
+                <p class="text-gray-600 leading-relaxed mb-4">
+                    <code class="bg-orange-50 text-orange-700 px-2 py-0.5 rounded font-mono text-sm font-semibold">input()</code>은
+                    키보드로 데이터를 입력받는 명령어이다. 입력받은 값은 <strong class="text-gray-800">문자열(str)</strong>로 처리된다.
+                </p>
+
+                <!-- Format box -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+                    <p class="text-sm font-semibold text-amber-800 mb-2"><i class="fas fa-pen-fancy mr-1"></i> 형식</p>
+                    <code class="font-mono text-sm text-amber-900 bg-amber-100 px-3 py-1.5 rounded-lg inline-block">변수명 = input()</code>
+                    <span class="text-xs text-amber-700 ml-2">또는</span>
+                    <code class="font-mono text-sm text-amber-900 bg-amber-100 px-3 py-1.5 rounded-lg inline-block mt-1">변수명 = input("안내 메시지")</code>
+                </div>
+
+                <!-- Type conversion info -->
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+                    <p class="text-sm font-semibold text-blue-800 mb-3"><i class="fas fa-exchange-alt mr-1"></i> 형 변환 (Type Conversion)</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="bg-white rounded-lg p-3 border border-blue-100 text-center">
+                            <code class="text-sm font-mono text-blue-700">int("2025")</code>
+                            <div class="text-xs text-gray-500 mt-1">정숫값 <span class="font-bold text-gray-800">2025</span></div>
+                            <span class="inline-block mt-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full"><i class="fas fa-check text-[10px]"></i> 성공</span>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-blue-100 text-center">
+                            <code class="text-sm font-mono text-blue-700">float("3.8")</code>
+                            <div class="text-xs text-gray-500 mt-1">실숫값 <span class="font-bold text-gray-800">3.8</span></div>
+                            <span class="inline-block mt-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full"><i class="fas fa-check text-[10px]"></i> 성공</span>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-blue-100 text-center">
+                            <code class="text-sm font-mono text-red-600">int("3.8")</code>
+                            <div class="text-xs text-gray-500 mt-1">변환 불가</div>
+                            <span class="inline-block mt-1 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full"><i class="fas fa-times text-[10px]"></i> 오류</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 예제 12 -->
+                <div class="mt-8">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full">예제 12</span>
+                        <span class="text-sm font-semibold text-gray-700">키보드로 데이터 입력받아 출력하기</span>
+                    </div>
+                    <div class="relative">
+                        <div class="code-block" id="ex12-code">
+<span class="comment"># 예제 12: 키보드로 데이터 입력받아 출력하기</span>
+a = <span class="builtin">input</span>()
+<span class="builtin">print</span>(a)
+b = <span class="builtin">input</span>(<span class="string">"연도: "</span>)
+<span class="builtin">print</span>(b)
+                        </div>
+                        <button class="run-btn" onclick="runEx12()"><i class="fas fa-play mr-1"></i>실행</button>
+                    </div>
+                    <div class="code-output" id="ex12-output" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- 활동 15: Type Comparison -->
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-10 mb-8">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">활동 15</span>
+                    <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">개발</span>
+                    <span class="text-sm font-semibold text-gray-700">자료형에 따른 연산 비교</span>
+                </div>
+                <p class="text-gray-600 text-sm mb-6">
+                    아래에 값을 입력하고 두 프로그램의 결과를 비교해 보자. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs font-mono">input()</code>으로 입력받은 값은 문자열이므로
+                    <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs font-mono">+</code> 연산자가 문자열 이어붙이기로 동작한다.
+                </p>
+
+                <!-- Input area -->
+                <div class="flex items-center gap-3 mb-6 flex-wrap">
+                    <label class="text-sm font-semibold text-gray-700">입력값:</label>
+                    <input type="text" id="act15-input" value="5" class="border-2 border-orange-200 rounded-lg px-4 py-2 w-24 text-center font-mono font-bold focus:outline-none focus:border-orange-500 transition-colors">
+                    <button onclick="runAct15()" class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors">
+                        <i class="fas fa-play mr-1"></i>비교 실행
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Program 1 -->
+                    <div class="border-2 border-gray-200 rounded-xl overflow-hidden" id="act15-prog1">
+                        <div class="bg-gray-100 px-4 py-2 text-sm font-bold text-gray-700 flex items-center gap-2">
+                            <span class="bg-gray-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
+                            프로그램 1 (문자열)
+                        </div>
+                        <div class="code-block" style="border-radius:0">
+n = <span class="builtin">input</span>()
+<span class="builtin">print</span>(n + n)
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 border-t border-gray-200">
+                            <span class="text-xs text-gray-500">결과:</span>
+                            <span class="font-mono font-bold text-lg ml-2" id="act15-result1">--</span>
+                            <span class="text-xs ml-2 px-2 py-0.5 rounded-full" id="act15-type1"></span>
+                        </div>
+                    </div>
+                    <!-- Program 2 -->
+                    <div class="border-2 border-gray-200 rounded-xl overflow-hidden" id="act15-prog2">
+                        <div class="bg-gray-100 px-4 py-2 text-sm font-bold text-gray-700 flex items-center gap-2">
+                            <span class="bg-orange-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
+                            프로그램 2 (정수 변환)
+                        </div>
+                        <div class="code-block" style="border-radius:0">
+n = <span class="builtin">input</span>()
+n = <span class="builtin">int</span>(n)
+<span class="builtin">print</span>(n + n)
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 border-t border-gray-200">
+                            <span class="text-xs text-gray-500">결과:</span>
+                            <span class="font-mono font-bold text-lg ml-2" id="act15-result2">--</span>
+                            <span class="text-xs ml-2 px-2 py-0.5 rounded-full" id="act15-type2"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Explanation -->
+                <div class="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-4" id="act15-explain" style="display:none;">
+                    <p class="text-sm text-amber-900" id="act15-explain-text"></p>
+                </div>
+            </div>
+
+            <!-- (2) print() -->
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-10 mb-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="bg-orange-100 text-orange-700 w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold">(2)</span>
+                    print() 함수
+                </h3>
+                <p class="text-gray-600 leading-relaxed mb-4">
+                    <code class="bg-orange-50 text-orange-700 px-2 py-0.5 rounded font-mono text-sm font-semibold">print()</code>는
+                    모니터에 데이터를 출력하는 명령어이다. 값, 변수, 수식, 여러 값을 한 번에 출력할 수 있다.
+                </p>
+
+                <!-- Format box -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+                    <p class="text-sm font-semibold text-amber-800 mb-2"><i class="fas fa-pen-fancy mr-1"></i> 형식</p>
+                    <div class="flex flex-wrap gap-2">
+                        <code class="font-mono text-sm text-amber-900 bg-amber-100 px-3 py-1 rounded-lg">print(값)</code>
+                        <code class="font-mono text-sm text-amber-900 bg-amber-100 px-3 py-1 rounded-lg">print(변수명)</code>
+                        <code class="font-mono text-sm text-amber-900 bg-amber-100 px-3 py-1 rounded-lg">print(수식)</code>
+                        <code class="font-mono text-sm text-amber-900 bg-amber-100 px-3 py-1 rounded-lg">print(값1, 값2, ...)</code>
+                    </div>
+                </div>
+
+                <!-- 예제 13 -->
+                <div class="mt-8">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full">예제 13</span>
+                        <span class="text-sm font-semibold text-gray-700">다양한 출력</span>
+                    </div>
+                    <div class="relative">
+                        <div class="code-block" id="ex13-code">
+<span class="builtin">print</span>(<span class="string">"Python"</span>)            <span class="comment"># 값 출력</span>
+
+n = <span class="number">10</span>
+<span class="builtin">print</span>(n)                    <span class="comment"># 변수 출력</span>
+
+<span class="builtin">print</span>(<span class="number">3</span> / <span class="number">2</span> + <span class="number">5</span>)           <span class="comment"># 수식 출력</span>
+
+a = <span class="string">"Hello"</span>
+b = <span class="number">2025</span>
+c = <span class="string">"Goodbye"</span>
+d = <span class="number">2024</span>
+<span class="builtin">print</span>(a, b, c, d)          <span class="comment"># 여러 값 출력</span>
+                        </div>
+                        <button class="run-btn" onclick="runEx13()"><i class="fas fa-play mr-1"></i>실행</button>
+                    </div>
+                    <div class="code-output" id="ex13-output" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- 활동 16: 놀이공원 입장료 계산기 -->
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-10">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">활동 16</span>
+                    <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">개발</span>
+                    <span class="text-sm font-semibold text-gray-700">놀이공원 입장료 계산</span>
+                </div>
+
+                <!-- Price table -->
+                <div class="overflow-x-auto mb-6">
+                    <table class="w-full max-w-md text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-orange-50">
+                                <th class="border border-orange-200 px-4 py-2 text-orange-800 font-bold">구분</th>
+                                <th class="border border-orange-200 px-4 py-2 text-orange-800 font-bold">조건</th>
+                                <th class="border border-orange-200 px-4 py-2 text-orange-800 font-bold">입장료</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-orange-200 px-4 py-2 font-semibold text-center">대인</td>
+                                <td class="border border-orange-200 px-4 py-2 text-gray-600 text-center">만 18세 이상</td>
+                                <td class="border border-orange-200 px-4 py-2 text-orange-700 font-bold text-center">50,000원</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border border-orange-200 px-4 py-2 font-semibold text-center">소인</td>
+                                <td class="border border-orange-200 px-4 py-2 text-gray-600 text-center">만 18세 미만</td>
+                                <td class="border border-orange-200 px-4 py-2 text-orange-700 font-bold text-center">30,000원</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Code with blanks -->
+                <div class="code-block mb-4">
+adult = <span class="number">50000</span>
+child = <span class="number">30000</span>
+n = <span class="builtin">int</span>(<span class="builtin">input</span>(<span class="string">"대인: "</span>))
+m = <span class="comment">_______________</span>        <span class="comment"># 빈칸 1</span>
+<span class="builtin">print</span>(<span class="comment">_______________</span>)      <span class="comment"># 빈칸 2</span>
+                </div>
+
+                <!-- Interactive calculator -->
+                <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-5 border border-orange-100">
+                    <p class="text-sm font-bold text-orange-800 mb-4"><i class="fas fa-calculator mr-1"></i> 직접 계산해 보기</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="text-xs text-gray-600 font-semibold block mb-1">대인 인원수</label>
+                            <input type="number" id="act16-adult" value="2" min="0" max="100" class="w-full border-2 border-orange-200 rounded-lg px-4 py-2.5 font-mono font-bold text-center focus:outline-none focus:border-orange-500 transition-colors">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-600 font-semibold block mb-1">소인 인원수</label>
+                            <input type="number" id="act16-child" value="2" min="0" max="100" class="w-full border-2 border-orange-200 rounded-lg px-4 py-2.5 font-mono font-bold text-center focus:outline-none focus:border-orange-500 transition-colors">
+                        </div>
+                    </div>
+
+                    <!-- Fill in the blanks -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="text-xs text-gray-600 font-semibold block mb-1">빈칸 1: m = ?</label>
+                            <input type="text" id="act16-blank1" placeholder="코드를 입력하세요" class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 font-mono text-sm focus:outline-none focus:border-orange-500 transition-colors">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-600 font-semibold block mb-1">빈칸 2: print(?)</label>
+                            <input type="text" id="act16-blank2" placeholder="코드를 입력하세요" class="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 font-mono text-sm focus:outline-none focus:border-orange-500 transition-colors">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="checkAct16()" class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                            <i class="fas fa-check mr-1"></i>정답 확인
+                        </button>
+                        <button onclick="calcAct16()" class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                            <i class="fas fa-calculator mr-1"></i>계산하기
+                        </button>
+                    </div>
+
+                    <div id="act16-result" class="mt-4" style="display:none;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2: 파일입출력 -->
+        <!-- ============================================================ -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="section-number text-lg">2</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900">파일입출력</h2>
+            </div>
+
+            <!-- Intro card -->
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-10 mb-8">
+                <p class="text-gray-600 leading-relaxed mb-4">
+                    파일입출력은 <strong class="text-gray-800">파일 안의 데이터를 읽고 수정하고 저장</strong>하는 기능이다.
+                    프로그램에서 파일의 데이터를 직접 다룰 수 있어 매우 유용하다.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                    <div class="info-card bg-orange-50 rounded-xl p-4 border border-orange-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-bolt text-orange-500"></i>
+                            <span class="text-sm font-bold text-orange-800">빠른 처리</span>
+                        </div>
+                        <p class="text-xs text-orange-700">많은 양의 데이터를 빠르게 처리할 수 있다.</p>
+                    </div>
+                    <div class="info-card bg-amber-50 rounded-xl p-4 border border-amber-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-save text-amber-500"></i>
+                            <span class="text-sm font-bold text-amber-800">데이터 유지</span>
+                        </div>
+                        <p class="text-xs text-amber-700">프로그램 종료 후에도 데이터가 파일에 유지된다.</p>
+                    </div>
+                </div>
+
+                <!-- File I/O Flowchart -->
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-sitemap text-orange-500"></i>
+                    파일입출력 처리 과정
+                </h3>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2 mb-6">
+                    <!-- Step 1: Open -->
+                    <div class="bg-orange-100 border-2 border-orange-300 rounded-xl px-6 py-4 text-center min-w-[140px]">
+                        <i class="fas fa-folder-open text-orange-600 text-xl mb-1"></i>
+                        <div class="text-sm font-bold text-orange-800">파일 열기</div>
+                        <code class="text-xs text-orange-600 font-mono">open()</code>
+                    </div>
+                    <div class="hidden sm:block">
+                        <svg width="50" height="24" viewBox="0 0 50 24"><line x1="0" y1="12" x2="40" y2="12" stroke="#d97706" stroke-width="2.5"/><polygon points="38,6 50,12 38,18" fill="#d97706"/></svg>
+                    </div>
+                    <div class="sm:hidden">
+                        <svg width="24" height="30" viewBox="0 0 24 30"><line x1="12" y1="0" x2="12" y2="20" stroke="#d97706" stroke-width="2.5"/><polygon points="6,18 12,30 18,18" fill="#d97706"/></svg>
+                    </div>
+                    <!-- Step 2: Read/Write -->
+                    <div class="bg-amber-100 border-2 border-amber-300 rounded-xl px-6 py-4 text-center min-w-[140px]">
+                        <i class="fas fa-file-alt text-amber-600 text-xl mb-1"></i>
+                        <div class="text-sm font-bold text-amber-800">읽기 / 쓰기</div>
+                        <code class="text-xs text-amber-600 font-mono">read() / write()</code>
+                    </div>
+                    <div class="hidden sm:block">
+                        <svg width="50" height="24" viewBox="0 0 50 24"><line x1="0" y1="12" x2="40" y2="12" stroke="#d97706" stroke-width="2.5"/><polygon points="38,6 50,12 38,18" fill="#d97706"/></svg>
+                    </div>
+                    <div class="sm:hidden">
+                        <svg width="24" height="30" viewBox="0 0 24 30"><line x1="12" y1="0" x2="12" y2="20" stroke="#d97706" stroke-width="2.5"/><polygon points="6,18 12,30 18,18" fill="#d97706"/></svg>
+                    </div>
+                    <!-- Step 3: Close -->
+                    <div class="bg-yellow-100 border-2 border-yellow-300 rounded-xl px-6 py-4 text-center min-w-[140px]">
+                        <i class="fas fa-times-circle text-yellow-600 text-xl mb-1"></i>
+                        <div class="text-sm font-bold text-yellow-800">파일 닫기</div>
+                        <code class="text-xs text-yellow-600 font-mono">close()</code>
+                    </div>
+                </div>
+
+                <!-- open() format -->
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-2">
+                    <p class="text-sm font-semibold text-gray-700 mb-2"><i class="fas fa-code mr-1"></i> 파일 열기 형식</p>
+                    <code class="font-mono text-sm text-gray-800 bg-white px-3 py-1.5 rounded-lg inline-block border">파일 객체 = open(<span class="text-green-600">'파일명'</span>, <span class="text-blue-600">'접근 방식'</span>)</code>
+                </div>
+            </div>
+
+            <!-- File Mode Comparison Cards -->
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-10 mb-8">
+                <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <i class="fas fa-key text-orange-500"></i>
+                    파일 접근 방식
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5" id="mode-cards">
+                    <!-- r mode -->
+                    <div class="mode-card bg-white border-2 border-blue-200 rounded-xl p-5 text-center" onclick="selectMode('r')" data-mode="r">
+                        <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-book-open text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="text-2xl font-extrabold text-blue-600 mb-1 font-mono">"r"</div>
+                        <div class="text-sm font-bold text-gray-800 mb-2">읽기 모드 (Read)</div>
+                        <p class="text-xs text-gray-500 leading-relaxed">파일의 내용을 읽어온다. 파일이 존재하지 않으면 오류가 발생한다.</p>
+                        <div class="mt-3 bg-blue-50 rounded-lg p-2">
+                            <code class="text-xs font-mono text-blue-700">f.read()</code>
+                        </div>
+                    </div>
+                    <!-- w mode -->
+                    <div class="mode-card bg-white border-2 border-orange-200 rounded-xl p-5 text-center" onclick="selectMode('w')" data-mode="w">
+                        <div class="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-pen text-orange-600 text-xl"></i>
+                        </div>
+                        <div class="text-2xl font-extrabold text-orange-600 mb-1 font-mono">"w"</div>
+                        <div class="text-sm font-bold text-gray-800 mb-2">쓰기 모드 (Write)</div>
+                        <p class="text-xs text-gray-500 leading-relaxed">파일에 내용을 쓴다. <strong class="text-red-600">기존 내용은 삭제</strong>되고 새로 작성된다.</p>
+                        <div class="mt-3 bg-orange-50 rounded-lg p-2">
+                            <code class="text-xs font-mono text-orange-700">f.write()</code>
+                        </div>
+                    </div>
+                    <!-- a mode -->
+                    <div class="mode-card bg-white border-2 border-green-200 rounded-xl p-5 text-center" onclick="selectMode('a')" data-mode="a">
+                        <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-plus-circle text-green-600 text-xl"></i>
+                        </div>
+                        <div class="text-2xl font-extrabold text-green-600 mb-1 font-mono">"a"</div>
+                        <div class="text-sm font-bold text-gray-800 mb-2">추가 모드 (Append)</div>
+                        <p class="text-xs text-gray-500 leading-relaxed">파일 끝에 내용을 추가한다. 기존 내용은 <strong class="text-green-700">그대로 유지</strong>된다.</p>
+                        <div class="mt-3 bg-green-50 rounded-lg p-2">
+                            <code class="text-xs font-mono text-green-700">f.write()</code>
+                        </div>
+                    </div>
+                </div>
+                <!-- Mode demo area -->
+                <div class="mt-6 bg-gray-50 rounded-xl p-5 border border-gray-200" id="mode-demo" style="display:none;">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-file-alt text-gray-500"></i>
+                        <span class="text-sm font-bold text-gray-700" id="mode-demo-title"></span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <div class="text-xs text-gray-500 mb-1 font-semibold">실행 전 (파일 내용)</div>
+                            <div class="bg-white border border-gray-200 rounded-lg p-3 font-mono text-sm min-h-[60px]" id="mode-before"></div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 mb-1 font-semibold">실행 후 (파일 내용)</div>
+                            <div class="bg-white border border-gray-200 rounded-lg p-3 font-mono text-sm min-h-[60px]" id="mode-after"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 예제 14: 놀이기구 버킷리스트 -->
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-10 mb-8">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full">예제 14</span>
+                    <span class="text-sm font-semibold text-gray-700">놀이기구 버킷리스트 파일 처리</span>
+                </div>
+                <p class="text-gray-600 text-sm mb-6">
+                    놀이기구 버킷리스트가 담긴 텍스트 파일을 읽고, 쓰고, 추가하는 과정을 살펴보자.
+                </p>
+
+                <!-- File contents preview -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+                    <p class="text-xs font-semibold text-amber-800 mb-2"><i class="fas fa-file-lines mr-1"></i> 버킷리스트.txt 초기 내용</p>
+                    <div class="font-mono text-sm text-amber-900 bg-white rounded-lg p-3 border border-amber-100">
+                        롤러코스터<br>플룸라이드<br>바이킹<br>모노레일
+                    </div>
+                </div>
+
+                <!-- Tab navigation for sub-examples -->
+                <div class="flex flex-wrap border-b border-gray-200 mb-6 gap-1">
+                    <button onclick="switchEx14Tab('read')" class="ex14-tab px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors border-b-2 border-orange-500 text-orange-700 bg-orange-50" data-tab="read">
+                        <i class="fas fa-book-open mr-1"></i>파일 읽기
+                    </button>
+                    <button onclick="switchEx14Tab('readline')" class="ex14-tab px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="readline">
+                        <i class="fas fa-list mr-1"></i>한 줄씩 읽기
+                    </button>
+                    <button onclick="switchEx14Tab('write')" class="ex14-tab px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="write">
+                        <i class="fas fa-pen mr-1"></i>파일 쓰기 (w)
+                    </button>
+                    <button onclick="switchEx14Tab('append')" class="ex14-tab px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="append">
+                        <i class="fas fa-plus mr-1"></i>파일 추가 (a)
+                    </button>
+                </div>
+
+                <!-- Read tab -->
+                <div id="ex14-read" class="ex14-content">
+                    <div class="relative">
+                        <div class="code-block">
+<span class="comment"># 파일 읽기 (r 모드)</span>
+f = <span class="builtin">open</span>(<span class="string">"버킷리스트.txt"</span>, <span class="string">"r"</span>)
+data = f.<span class="func">read</span>()
+<span class="builtin">print</span>(data)
+f.<span class="func">close</span>()
+                        </div>
+                        <button class="run-btn" onclick="runEx14('read')"><i class="fas fa-play mr-1"></i>실행</button>
+                    </div>
+                    <div class="code-output" id="ex14-read-output" style="display:none;"></div>
+                </div>
+
+                <!-- Readline tab -->
+                <div id="ex14-readline" class="ex14-content" style="display:none;">
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
+                        <p class="text-sm font-bold text-blue-800 mb-1"><i class="fas fa-lightbulb mr-1"></i> 여기서 잠깐!</p>
+                        <p class="text-xs text-blue-700">for문을 사용하면 파일의 내용을 한 줄씩 읽어올 수 있다. <code class="bg-blue-100 px-1 rounded">end=""</code>는 print()의 기본 줄바꿈을 제거한다.</p>
+                    </div>
+                    <div class="relative">
+                        <div class="code-block">
+<span class="comment"># for문으로 한 줄씩 읽기</span>
+f = <span class="builtin">open</span>(<span class="string">"버킷리스트.txt"</span>, <span class="string">"r"</span>)
+<span class="keyword">for</span> row <span class="keyword">in</span> f:
+    <span class="builtin">print</span>(row, end=<span class="string">""</span>)
+f.<span class="func">close</span>()
+                        </div>
+                        <button class="run-btn" onclick="runEx14('readline')"><i class="fas fa-play mr-1"></i>실행</button>
+                    </div>
+                    <div class="code-output" id="ex14-readline-output" style="display:none;"></div>
+                </div>
+
+                <!-- Write tab -->
+                <div id="ex14-write" class="ex14-content" style="display:none;">
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
+                        <p class="text-sm font-bold text-red-800 mb-1"><i class="fas fa-exclamation-triangle mr-1"></i> 주의</p>
+                        <p class="text-xs text-red-700">"w" 모드는 <strong>기존 내용을 모두 삭제</strong>하고 새로운 내용을 작성한다.</p>
+                    </div>
+                    <div class="relative">
+                        <div class="code-block">
+<span class="comment"># 파일 쓰기 (w 모드) - 기존 내용 삭제 후 새로 작성</span>
+f = <span class="builtin">open</span>(<span class="string">"버킷리스트.txt"</span>, <span class="string">"w"</span>)
+f.<span class="func">write</span>(<span class="string">"회전목마"</span>)
+f.<span class="func">close</span>()
+                        </div>
+                        <button class="run-btn" onclick="runEx14('write')"><i class="fas fa-play mr-1"></i>실행</button>
+                    </div>
+                    <div class="code-output" id="ex14-write-output" style="display:none;"></div>
+                </div>
+
+                <!-- Append tab -->
+                <div id="ex14-append" class="ex14-content" style="display:none;">
+                    <div class="relative">
+                        <div class="code-block">
+<span class="comment"># 파일 추가 (a 모드)</span>
+data = <span class="builtin">input</span>(<span class="string">"타고 싶은 놀이기구는? "</span>)
+f = <span class="builtin">open</span>(<span class="string">"버킷리스트.txt"</span>, <span class="string">"a"</span>)
+f.<span class="func">write</span>(<span class="string">"\n"</span> + data)
+f.<span class="func">close</span>()
+                        </div>
+                        <button class="run-btn" onclick="runEx14('append')"><i class="fas fa-play mr-1"></i>실행</button>
+                    </div>
+                    <div class="code-output" id="ex14-append-output" style="display:none;"></div>
+                </div>
+
+                <!-- Virtual file state -->
+                <div class="mt-6 bg-gray-50 rounded-xl p-4 border border-gray-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-bold text-gray-700"><i class="fas fa-file-alt mr-1"></i> 현재 파일 상태</span>
+                        <button onclick="resetFileState()" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-600 px-3 py-1 rounded-lg transition-colors"><i class="fas fa-undo mr-1"></i>초기화</button>
+                    </div>
+                    <div class="font-mono text-sm bg-white rounded-lg p-3 border border-gray-200 min-h-[50px]" id="file-state">
+                        롤러코스터<br>플룸라이드<br>바이킹<br>모노레일
+                    </div>
+                </div>
+            </div>
+
+            <!-- 활동 17: 비식별화 처리 -->
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-10">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">활동 17</span>
+                    <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">개발</span>
+                    <span class="text-sm font-semibold text-gray-700">비식별화 처리</span>
+                </div>
+                <p class="text-gray-600 text-sm mb-6">
+                    당첨자명단.csv 파일의 개인정보를 비식별화 처리하여 새로운 파일로 저장하는 프로그램을 작성해 보자.
+                </p>
+
+                <!-- CSV Concept Card -->
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-table text-blue-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-blue-800 mb-1">CSV 파일이란?</p>
+                            <p class="text-xs text-blue-700 leading-relaxed">
+                                CSV(Comma-Separated Values)는 <strong>쉼표(,)로 데이터를 구분</strong>하는 텍스트 파일 형식이다.
+                                엑셀 등 스프레드시트 프로그램에서도 열 수 있으며, 프로그래밍에서 데이터를 저장하고 교환할 때 널리 사용된다.
+                            </p>
+                            <div class="mt-2 bg-white rounded-lg p-2 font-mono text-xs border border-blue-100">
+                                <span class="text-gray-500">예시:</span> 강감찬<span class="text-blue-600">,</span>010-1234-5678<span class="text-blue-600">,</span>서울
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step-by-step walkthrough -->
+                <div class="space-y-4 mb-8">
+                    <div class="flex items-start gap-3">
+                        <span class="bg-orange-100 text-orange-700 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</span>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-800">파일 수집</p>
+                            <p class="text-xs text-gray-500">당첨자 명단 데이터를 CSV 형식으로 준비한다.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="bg-orange-100 text-orange-700 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-800">코랩에 CSV 파일 업로드</p>
+                            <p class="text-xs text-gray-500">Google Colab 환경에 당첨자명단.csv를 업로드한다.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="bg-orange-100 text-orange-700 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</span>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-800">CSV 내용 확인</p>
+                            <p class="text-xs text-gray-500">파일을 읽어 원본 데이터를 확인한다.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="bg-orange-100 text-orange-700 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">4</span>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-800">비식별화 처리 프로그램 작성</p>
+                            <p class="text-xs text-gray-500">이름의 두 번째 글자를 'O'로, 전화번호는 뒷 4자리만 남긴다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code -->
+                <div class="relative">
+                    <div class="code-block">
+<span class="keyword">import</span> csv
+
+<span class="comment"># 원본 파일 열기 (읽기)</span>
+f1 = <span class="builtin">open</span>(<span class="string">"당첨자명단.csv"</span>, <span class="string">"r"</span>, encoding=<span class="string">"utf8"</span>)
+data1 = csv.<span class="func">reader</span>(f1)
+
+<span class="comment"># 결과 파일 열기 (쓰기)</span>
+f2 = <span class="builtin">open</span>(<span class="string">"비식별화처리.csv"</span>, <span class="string">"w"</span>, encoding=<span class="string">"utf8"</span>)
+data2 = csv.<span class="func">writer</span>(f2)
+
+<span class="keyword">for</span> row <span class="keyword">in</span> data1:
+    row[<span class="number">0</span>] = row[<span class="number">0</span>].<span class="func">replace</span>(row[<span class="number">0</span>][<span class="number">1</span>], <span class="string">'O'</span>)  <span class="comment"># 이름 두번째 글자 → 'O'</span>
+    row[<span class="number">1</span>] = row[<span class="number">1</span>][-<span class="number">4</span>:]                       <span class="comment"># 전화번호 뒷 4자리만</span>
+    data2.<span class="func">writerows</span>([row])
+
+f1.<span class="func">close</span>()
+f2.<span class="func">close</span>()
+                    </div>
+                </div>
+
+                <!-- De-identification Demo Table -->
+                <div class="mt-8">
+                    <h4 class="text-sm font-bold text-gray-700 mb-4 flex items-center gap-2">
+                        <i class="fas fa-magic text-orange-500"></i>
+                        비식별화 처리 결과 미리보기
+                    </h4>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Before -->
+                        <div>
+                            <div class="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1">
+                                <span class="w-3 h-3 bg-red-400 rounded-full inline-block"></span>
+                                처리 전 (당첨자명단.csv)
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border-collapse" id="before-table">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="border border-gray-200 px-3 py-2 text-gray-700 font-bold">이름</th>
+                                            <th class="border border-gray-200 px-3 py-2 text-gray-700 font-bold">전화번호</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="before-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- After -->
+                        <div>
+                            <div class="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1">
+                                <span class="w-3 h-3 bg-green-400 rounded-full inline-block"></span>
+                                처리 후 (비식별화처리.csv)
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border-collapse" id="after-table">
+                                    <thead>
+                                        <tr class="bg-green-50">
+                                            <th class="border border-green-200 px-3 py-2 text-green-700 font-bold">이름</th>
+                                            <th class="border border-green-200 px-3 py-2 text-green-700 font-bold">전화번호</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="after-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step-by-step demo controls -->
+                    <div class="mt-5 flex flex-wrap gap-3 items-center">
+                        <button onclick="deidStep()" class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors" id="deid-btn">
+                            <i class="fas fa-play mr-1"></i>한 단계씩 실행
+                        </button>
+                        <button onclick="deidAll()" class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                            <i class="fas fa-forward mr-1"></i>전체 실행
+                        </button>
+                        <button onclick="deidReset()" class="bg-gray-200 hover:bg-gray-300 text-gray-600 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                            <i class="fas fa-undo mr-1"></i>초기화
+                        </button>
+                        <span class="text-xs text-gray-500 ml-2" id="deid-status"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary / Navigation -->
+        <section class="fade-in">
+            <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-10">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <i class="fas fa-clipboard-check text-orange-600"></i>
+                    학습 정리
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl p-5 border border-orange-100">
+                        <h3 class="text-sm font-bold text-orange-700 mb-3 flex items-center gap-2">
+                            <i class="fas fa-keyboard"></i> 표준입출력
+                        </h3>
+                        <ul class="text-sm text-gray-600 space-y-2">
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-orange-400 text-xs mt-1"></i><span><code class="bg-gray-100 px-1.5 rounded font-mono text-xs">input()</code> : 키보드 입력 (문자열 반환)</span></li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-orange-400 text-xs mt-1"></i><span><code class="bg-gray-100 px-1.5 rounded font-mono text-xs">print()</code> : 모니터 출력</span></li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-orange-400 text-xs mt-1"></i><span><code class="bg-gray-100 px-1.5 rounded font-mono text-xs">int()</code>, <code class="bg-gray-100 px-1.5 rounded font-mono text-xs">float()</code> : 형 변환</span></li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-5 border border-amber-100">
+                        <h3 class="text-sm font-bold text-amber-700 mb-3 flex items-center gap-2">
+                            <i class="fas fa-file-alt"></i> 파일입출력
+                        </h3>
+                        <ul class="text-sm text-gray-600 space-y-2">
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-amber-400 text-xs mt-1"></i><span><code class="bg-gray-100 px-1.5 rounded font-mono text-xs">open(파일, 모드)</code> : 파일 열기</span></li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-amber-400 text-xs mt-1"></i><span>모드: <code class="bg-gray-100 px-1.5 rounded font-mono text-xs">"r"</code> 읽기 / <code class="bg-gray-100 px-1.5 rounded font-mono text-xs">"w"</code> 쓰기 / <code class="bg-gray-100 px-1.5 rounded font-mono text-xs">"a"</code> 추가</span></li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-amber-400 text-xs mt-1"></i><span><code class="bg-gray-100 px-1.5 rounded font-mono text-xs">close()</code> : 반드시 파일 닫기</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-8 mt-12">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+            <p class="text-sm text-gray-400">
+                <i class="fas fa-book-open mr-1"></i>
+                정보 교과서 &middot; III. 알고리즘과 프로그래밍 &middot; 03 프로그래밍의 이해
+            </p>
+        </div>
+    </footer>
+
+    <script>
+    // ========================
+    // Fade-in scroll animation
+    // ========================
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ========================
+    // 예제 12: input/print
+    // ========================
+    function runEx12() {
+        const output = document.getElementById('ex12-output');
+        output.style.display = 'block';
+        output.innerHTML = '';
+        let lines = [
+            '<span style="color:#fbbf24">입력&gt;</span> 시작이 반!',
+            '시작이 반!',
+            '',
+            '<span style="color:#fbbf24">연도: 입력&gt;</span> 2025',
+            '2025'
+        ];
+        let i = 0;
+        function showLine() {
+            if (i < lines.length) {
+                output.innerHTML += lines[i] + '\n';
+                i++;
+                setTimeout(showLine, 350);
+            }
+        }
+        showLine();
+    }
+
+    // ========================
+    // 활동 15: Type Comparison
+    // ========================
+    function runAct15() {
+        const val = document.getElementById('act15-input').value;
+        const r1 = document.getElementById('act15-result1');
+        const r2 = document.getElementById('act15-result2');
+        const t1 = document.getElementById('act15-type1');
+        const t2 = document.getElementById('act15-type2');
+        const explain = document.getElementById('act15-explain');
+        const explainText = document.getElementById('act15-explain-text');
+
+        // Program 1: string concatenation
+        const strResult = val + val;
+        r1.textContent = '"' + strResult + '"';
+        t1.textContent = 'str (문자열)';
+        t1.className = 'text-xs ml-2 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold';
+
+        // Program 2: integer addition
+        const num = parseInt(val);
+        if (isNaN(num)) {
+            r2.textContent = 'Error!';
+            t2.textContent = '변환 오류';
+            t2.className = 'text-xs ml-2 px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold';
+            document.getElementById('act15-prog2').style.borderColor = '#fca5a5';
+        } else {
+            const intResult = num + num;
+            r2.textContent = intResult;
+            t2.textContent = 'int (정수)';
+            t2.className = 'text-xs ml-2 px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-semibold';
+            document.getElementById('act15-prog2').style.borderColor = '#86efac';
+        }
+
+        document.getElementById('act15-prog1').style.borderColor = '#93c5fd';
+
+        // Explanation
+        explain.style.display = 'block';
+        if (!isNaN(num)) {
+            explainText.innerHTML = '<i class="fas fa-lightbulb mr-1 text-amber-600"></i> ' +
+                '<strong>프로그램 1</strong>: input()의 반환값은 문자열이므로 <code class="bg-amber-100 px-1 rounded text-xs font-mono">"' + val + '" + "' + val + '"</code> = <code class="bg-amber-100 px-1 rounded text-xs font-mono">"' + strResult + '"</code> (문자열 이어붙이기)<br>' +
+                '<strong>프로그램 2</strong>: int()로 정수 변환 후 <code class="bg-amber-100 px-1 rounded text-xs font-mono">' + num + ' + ' + num + '</code> = <code class="bg-amber-100 px-1 rounded text-xs font-mono">' + (num+num) + '</code> (정수 덧셈)';
+        } else {
+            explainText.innerHTML = '<i class="fas fa-exclamation-triangle mr-1 text-red-500"></i> ' +
+                '"' + val + '"는 정수로 변환할 수 없어 프로그램 2에서 오류가 발생합니다.';
+        }
+    }
+
+    // ========================
+    // 예제 13: print
+    // ========================
+    function runEx13() {
+        const output = document.getElementById('ex13-output');
+        output.style.display = 'block';
+        output.innerHTML = '';
+        const lines = ['Python', '10', '6.5', 'Hello 2025 Goodbye 2024'];
+        let i = 0;
+        function showLine() {
+            if (i < lines.length) {
+                output.innerHTML += lines[i] + '\n';
+                i++;
+                setTimeout(showLine, 400);
+            }
+        }
+        showLine();
+    }
+
+    // ========================
+    // 활동 16: 입장료 계산기
+    // ========================
+    function checkAct16() {
+        const b1 = document.getElementById('act16-blank1').value.trim().replace(/\s+/g, '');
+        const b2 = document.getElementById('act16-blank2').value.trim().replace(/\s+/g, '');
+        const result = document.getElementById('act16-result');
+        result.style.display = 'block';
+
+        const ans1 = 'int(input("소인:"))';
+        const b1n = b1.replace(/['"]/g, '"').replace(/\s/g, '');
+        const isBlank1 = b1n.includes('int(input(') && b1n.includes('소인');
+        const isBlank2 = b2.replace(/\s/g, '').includes('adult*n') && b2.replace(/\s/g, '').includes('child*m');
+
+        if (isBlank1 && isBlank2) {
+            result.innerHTML = '<div class="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-800"><i class="fas fa-check-circle mr-1"></i> <strong>정답입니다!</strong> 빈칸 1: <code class="bg-green-100 px-1 rounded font-mono text-xs">int(input("소인: "))</code>, 빈칸 2: <code class="bg-green-100 px-1 rounded font-mono text-xs">adult * n + child * m</code></div>';
+        } else {
+            let msg = '<div class="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-800"><i class="fas fa-times-circle mr-1"></i> ';
+            if (!isBlank1) msg += '빈칸 1을 다시 확인해 보세요. <span class="text-xs text-gray-500">힌트: 소인 인원을 정수로 입력받아야 합니다.</span><br>';
+            if (!isBlank2) msg += '빈칸 2를 다시 확인해 보세요. <span class="text-xs text-gray-500">힌트: 대인 요금 + 소인 요금을 계산합니다.</span>';
+            msg += '</div>';
+            result.innerHTML = msg;
+        }
+    }
+
+    function calcAct16() {
+        const n = parseInt(document.getElementById('act16-adult').value) || 0;
+        const m = parseInt(document.getElementById('act16-child').value) || 0;
+        const adult = 50000;
+        const child = 30000;
+        const total = adult * n + child * m;
+        const result = document.getElementById('act16-result');
+        result.style.display = 'block';
+        result.innerHTML = '<div class="bg-orange-50 border border-orange-200 rounded-lg p-4">' +
+            '<p class="text-sm font-semibold text-orange-800 mb-2"><i class="fas fa-receipt mr-1"></i> 계산 결과</p>' +
+            '<div class="grid grid-cols-2 gap-2 text-sm">' +
+            '<div class="text-gray-600">대인 ' + n + '명</div><div class="text-right font-mono font-bold">' + (adult * n).toLocaleString() + '원</div>' +
+            '<div class="text-gray-600">소인 ' + m + '명</div><div class="text-right font-mono font-bold">' + (child * m).toLocaleString() + '원</div>' +
+            '<div class="text-gray-800 font-bold border-t border-orange-200 pt-2">합계</div><div class="text-right font-mono font-extrabold text-orange-700 text-lg border-t border-orange-200 pt-2">' + total.toLocaleString() + '원</div>' +
+            '</div></div>';
+    }
+
+    // ========================
+    // File Mode Comparison
+    // ========================
+    function selectMode(mode) {
+        document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+        document.querySelector('[data-mode="' + mode + '"]').classList.add('active');
+
+        const demo = document.getElementById('mode-demo');
+        const title = document.getElementById('mode-demo-title');
+        const before = document.getElementById('mode-before');
+        const after = document.getElementById('mode-after');
+        demo.style.display = 'block';
+
+        const original = '롤러코스터\n플룸라이드\n바이킹\n모노레일';
+        if (mode === 'r') {
+            title.textContent = '"r" 모드 - 읽기';
+            before.innerHTML = original.replace(/\n/g, '<br>');
+            after.innerHTML = '<span class="text-gray-400">(파일 내용 변경 없음)</span><br>' + original.replace(/\n/g, '<br>');
+        } else if (mode === 'w') {
+            title.textContent = '"w" 모드 - 쓰기 (덮어쓰기)';
+            before.innerHTML = original.replace(/\n/g, '<br>');
+            after.innerHTML = '<span class="text-red-500 line-through opacity-50">' + original.replace(/\n/g, '<br>') + '</span><br><span class="text-orange-700 font-bold">회전목마</span>';
+        } else if (mode === 'a') {
+            title.textContent = '"a" 모드 - 추가';
+            before.innerHTML = original.replace(/\n/g, '<br>');
+            after.innerHTML = original.replace(/\n/g, '<br>') + '<br><span class="text-green-700 font-bold">회전목마</span>';
+        }
+    }
+
+    // ========================
+    // 예제 14: Tab Switching
+    // ========================
+    function switchEx14Tab(tabName) {
+        document.querySelectorAll('.ex14-tab').forEach(t => {
+            t.classList.remove('border-orange-500', 'text-orange-700', 'bg-orange-50');
+            t.classList.add('border-transparent', 'text-gray-500');
+        });
+        document.querySelectorAll('.ex14-content').forEach(c => c.style.display = 'none');
+
+        const activeTab = document.querySelector('[data-tab="' + tabName + '"]');
+        activeTab.classList.add('border-orange-500', 'text-orange-700', 'bg-orange-50');
+        activeTab.classList.remove('border-transparent', 'text-gray-500');
+        document.getElementById('ex14-' + tabName).style.display = 'block';
+    }
+
+    // Virtual file state
+    let fileContent = '롤러코스터\n플룸라이드\n바이킹\n모노레일';
+
+    function updateFileDisplay() {
+        document.getElementById('file-state').innerHTML = fileContent.replace(/\n/g, '<br>');
+    }
+
+    function resetFileState() {
+        fileContent = '롤러코스터\n플룸라이드\n바이킹\n모노레일';
+        updateFileDisplay();
+    }
+
+    function runEx14(action) {
+        if (action === 'read') {
+            const output = document.getElementById('ex14-read-output');
+            output.style.display = 'block';
+            output.textContent = fileContent;
+        } else if (action === 'readline') {
+            const output = document.getElementById('ex14-readline-output');
+            output.style.display = 'block';
+            output.innerHTML = '';
+            const lines = fileContent.split('\n');
+            let i = 0;
+            function showLine() {
+                if (i < lines.length) {
+                    output.textContent += lines[i] + '\n';
+                    i++;
+                    setTimeout(showLine, 400);
+                }
+            }
+            showLine();
+        } else if (action === 'write') {
+            fileContent = '회전목마';
+            updateFileDisplay();
+            const output = document.getElementById('ex14-write-output');
+            output.style.display = 'block';
+            output.innerHTML = '<span style="color:#94a3b8;">파일에 "회전목마"가 작성되었습니다. (기존 내용 삭제됨)</span>';
+        } else if (action === 'append') {
+            const newItem = '회전목마';
+            fileContent += '\n' + newItem;
+            updateFileDisplay();
+            const output = document.getElementById('ex14-append-output');
+            output.style.display = 'block';
+            output.innerHTML = '<span style="color:#fbbf24;">타고 싶은 놀이기구는? </span>회전목마\n<span style="color:#94a3b8;">파일에 "회전목마"가 추가되었습니다.</span>';
+        }
+    }
+
+    // ========================
+    // 활동 17: 비식별화 처리
+    // ========================
+    const originalData = [
+        ['강감찬', '010-1234-5678'],
+        ['이순신', '010-2345-6789'],
+        ['유관순', '010-3456-7890'],
+        ['세종대왕', '010-4567-8901'],
+        ['김유신', '010-5678-9012']
+    ];
+
+    let deidIndex = 0;
+
+    function deidentify(row) {
+        const name = row[0];
+        const phone = row[1];
+        // Replace second character with 'O'
+        const newName = name[0] + 'O' + name.slice(2);
+        // Keep last 4 digits of phone
+        const newPhone = phone.slice(-4);
+        return [newName, newPhone];
+    }
+
+    function buildBeforeTable() {
+        const tbody = document.getElementById('before-tbody');
+        tbody.innerHTML = '';
+        originalData.forEach((row, idx) => {
+            const tr = document.createElement('tr');
+            tr.id = 'before-row-' + idx;
+            tr.innerHTML = '<td class="border border-gray-200 px-3 py-2 font-mono">' + row[0] + '</td>' +
+                           '<td class="border border-gray-200 px-3 py-2 font-mono">' + row[1] + '</td>';
+            tbody.appendChild(tr);
+        });
+    }
+
+    function buildAfterTable() {
+        const tbody = document.getElementById('after-tbody');
+        tbody.innerHTML = '';
+        originalData.forEach((row, idx) => {
+            const tr = document.createElement('tr');
+            tr.id = 'after-row-' + idx;
+            tr.innerHTML = '<td class="border border-green-200 px-3 py-2 font-mono text-gray-300">---</td>' +
+                           '<td class="border border-green-200 px-3 py-2 font-mono text-gray-300">---</td>';
+            tbody.appendChild(tr);
+        });
+    }
+
+    function deidStep() {
+        if (deidIndex >= originalData.length) {
+            document.getElementById('deid-status').textContent = '모든 행 처리 완료!';
+            document.getElementById('deid-btn').disabled = true;
+            return;
+        }
+
+        const row = originalData[deidIndex];
+        const result = deidentify(row);
+
+        // Highlight before row
+        const beforeRow = document.getElementById('before-row-' + deidIndex);
+        beforeRow.style.backgroundColor = '#fff7ed';
+        beforeRow.style.transition = 'background-color 0.3s';
+
+        // Update after row
+        const afterRow = document.getElementById('after-row-' + deidIndex);
+        afterRow.innerHTML = '<td class="border border-green-200 px-3 py-2 font-mono font-bold text-green-800">' + result[0] + '</td>' +
+                             '<td class="border border-green-200 px-3 py-2 font-mono font-bold text-green-800">' + result[1] + '</td>';
+        afterRow.style.backgroundColor = '#dcfce7';
+        afterRow.style.transition = 'background-color 0.3s';
+
+        document.getElementById('deid-status').textContent = (deidIndex + 1) + ' / ' + originalData.length + ' 행 처리됨';
+
+        // Clear previous highlight
+        if (deidIndex > 0) {
+            document.getElementById('before-row-' + (deidIndex - 1)).style.backgroundColor = '';
+            document.getElementById('after-row-' + (deidIndex - 1)).style.backgroundColor = '';
+        }
+
+        deidIndex++;
+
+        if (deidIndex >= originalData.length) {
+            document.getElementById('deid-status').textContent = '모든 행 처리 완료! (' + originalData.length + '/' + originalData.length + ')';
+        }
+    }
+
+    function deidAll() {
+        while (deidIndex < originalData.length) {
+            const row = originalData[deidIndex];
+            const result = deidentify(row);
+            const afterRow = document.getElementById('after-row-' + deidIndex);
+            afterRow.innerHTML = '<td class="border border-green-200 px-3 py-2 font-mono font-bold text-green-800">' + result[0] + '</td>' +
+                                 '<td class="border border-green-200 px-3 py-2 font-mono font-bold text-green-800">' + result[1] + '</td>';
+            deidIndex++;
+        }
+        document.getElementById('deid-status').textContent = '모든 행 처리 완료! (' + originalData.length + '/' + originalData.length + ')';
+    }
+
+    function deidReset() {
+        deidIndex = 0;
+        document.getElementById('deid-status').textContent = '';
+        document.getElementById('deid-btn').disabled = false;
+        buildBeforeTable();
+        buildAfterTable();
+    }
+
+    // Initialize
+    buildBeforeTable();
+    buildAfterTable();
+    </script>
+</body>
+</html>

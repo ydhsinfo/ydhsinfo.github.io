@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대단원 마무리 - I. 컴퓨팅 시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #334155 0%, #1f2937 50%, #0f172a 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+        }
+
+        .quiz-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .quiz-option:hover {
+            background-color: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        .quiz-option.selected {
+            background-color: #e2e8f0;
+            border-color: #475569;
+            font-weight: 500;
+        }
+        .quiz-option.correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534;
+        }
+        .quiz-option.incorrect {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b;
+        }
+        .quiz-option.correct-answer {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534;
+        }
+
+        .star-btn {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .star-btn:hover {
+            transform: scale(1.1);
+        }
+        .star-btn.active {
+            color: #f59e0b;
+        }
+        .star-btn.inactive {
+            color: #d1d5db;
+        }
+
+        .result-correct {
+            background-color: #f0fdf4;
+            border-left: 4px solid #22c55e;
+        }
+        .result-incorrect {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+
+        .activity-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            transition: all 0.2s ease;
+        }
+        .activity-input:focus {
+            outline: none;
+            border-color: #475569;
+            box-shadow: 0 0 0 3px rgba(71, 85, 105, 0.15);
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .hero-gradient {
+                background: #334155 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            body { font-size: 12px; }
+            .quiz-option.correct {
+                background-color: #dcfce7 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .print-break { page-break-before: always; }
+        }
+
+        .section-number {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between h-14">
+                <a href="../../index.html" class="flex items-center gap-2 text-slate-600 hover:text-slate-800 transition-colors text-sm font-medium">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>전체 단원</span>
+                </a>
+                <span class="text-slate-800 font-semibold text-sm">I. 컴퓨팅 시스템</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-4 no-print">
+        <nav class="flex items-center gap-2 text-sm text-slate-500">
+            <span class="font-medium text-slate-700">I. 컴퓨팅 시스템</span>
+            <i class="fas fa-chevron-right text-xs text-slate-400"></i>
+            <span class="text-slate-500">대단원 마무리</span>
+        </nav>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero-gradient text-white mt-4 mx-4 sm:mx-auto max-w-5xl rounded-2xl overflow-hidden">
+        <div class="px-6 sm:px-10 py-10 sm:py-14">
+            <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-5">
+                <span>📝</span>
+                <span>정리 · 평가</span>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-extrabold mb-2 tracking-tight">대단원 마무리</h1>
+            <p class="text-slate-300 text-lg font-semibold mb-3">I. 컴퓨팅 시스템</p>
+            <p class="text-slate-300 text-base leading-relaxed max-w-2xl mb-8">
+                네트워크와 사물 인터넷에 대해 배운 내용을 정리하고 실력을 확인해 봅시다
+            </p>
+            <div class="flex flex-wrap gap-4">
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2.5 text-sm">
+                    <i class="fas fa-book-open text-slate-300"></i>
+                    <span>개념 정리 <strong class="text-white">2개 단원</strong></span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2.5 text-sm">
+                    <i class="fas fa-clipboard-check text-slate-300"></i>
+                    <span>실력 확인 <strong class="text-white">6문제</strong></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-12">
+
+        <!-- ============================================ -->
+        <!-- Student Info Section -->
+        <!-- ============================================ -->
+        <section class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div class="bg-slate-700 px-6 py-4 flex items-center gap-3">
+                <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-white text-sm flex-shrink-0">
+                    <i class="fas fa-user-pen"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-bold text-white">학생 정보</h2>
+                    <p class="text-slate-300 text-xs">답안 제출을 위해 정보를 입력하세요</p>
+                </div>
+            </div>
+            <div class="p-6 space-y-5">
+                <!-- Google Sheet URL -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">
+                        <i class="fas fa-table text-green-500 mr-1"></i>구글 시트 URL <span class="text-red-400">*</span>
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="url" id="sheetUrl" class="activity-input flex-1"
+                               placeholder="선생님이 공유한 구글 시트 주소를 붙여넣으세요"
+                               style="border-color: #86efac; background-color: #f0fdf4;">
+                        <button type="button" onclick="validateSheetUrl()"
+                                class="flex-shrink-0 px-4 py-2 bg-green-100 border-2 border-green-300 text-green-700 rounded-xl text-sm font-medium hover:bg-green-200 transition-all"
+                                title="URL 확인">
+                            <i class="fas fa-link-slash" id="sheetUrlIcon"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1.5">
+                        <i class="fas fa-circle-info mr-1"></i>
+                        예: https://docs.google.com/spreadsheets/d/abc123.../edit
+                    </p>
+                </div>
+                <!-- Student Info Fields -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">학년 <span class="text-red-400">*</span></label>
+                        <select id="studentGrade" class="activity-input" style="padding: 10px 12px;">
+                            <option value="">선택</option>
+                            <option value="1">1학년</option>
+                            <option value="2">2학년</option>
+                            <option value="3">3학년</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">반 <span class="text-red-400">*</span></label>
+                        <input type="number" id="studentClass" class="activity-input" placeholder="예: 3" min="1" max="20">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">번호 <span class="text-red-400">*</span></label>
+                        <input type="number" id="studentNumber" class="activity-input" placeholder="예: 15" min="1" max="50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">이름 <span class="text-red-400">*</span></label>
+                        <input type="text" id="studentName" class="activity-input" placeholder="이름 입력">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 개념 정리 Section -->
+        <!-- ============================================ -->
+        <section>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-slate-700 text-white rounded-xl w-10 h-10 flex items-center justify-center">
+                    <i class="fas fa-book-open text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">개념 정리</h2>
+                    <p class="text-sm text-slate-500">핵심 내용을 요약하여 정리합니다</p>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+
+                <!-- Card 01: 네트워크의 구성 -->
+                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden">
+                    <div class="bg-slate-50 border-b border-gray-200 px-6 py-4 flex items-center gap-3">
+                        <div class="section-number bg-slate-700 text-white">01</div>
+                        <h3 class="text-lg font-bold text-slate-800">네트워크의 구성</h3>
+                    </div>
+                    <div class="p-6 space-y-6">
+
+                        <!-- 비교표 -->
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                <i class="fas fa-exchange-alt text-slate-400"></i> 유선 네트워크 vs 무선 네트워크
+                            </h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border-collapse">
+                                    <thead>
+                                        <tr>
+                                            <th class="bg-slate-100 text-slate-700 font-semibold px-4 py-3 text-left rounded-tl-lg border-b border-gray-200 w-28">구분</th>
+                                            <th class="bg-slate-100 text-slate-700 font-semibold px-4 py-3 text-center border-b border-gray-200">장점</th>
+                                            <th class="bg-slate-100 text-slate-700 font-semibold px-4 py-3 text-center rounded-tr-lg border-b border-gray-200">단점</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-gray-100">
+                                            <td class="px-4 py-3 font-semibold text-slate-700 bg-slate-50">
+                                                <div class="flex items-center gap-2">
+                                                    <i class="fas fa-ethernet text-slate-500"></i> 유선
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 text-slate-600">안정적인 연결과 빠른 데이터 전송 속도</td>
+                                            <td class="px-4 py-3 text-slate-600">물리적인 연결이 필요</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-3 font-semibold text-slate-700 bg-slate-50 rounded-bl-lg">
+                                                <div class="flex items-center gap-2">
+                                                    <i class="fas fa-wifi text-slate-500"></i> 무선
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 text-slate-600">물리적인 연결 선을 사용하지 않아 자유로움</td>
+                                            <td class="px-4 py-3 text-slate-600 rounded-br-lg">비교적 보안에 약함</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 핵심 내용 -->
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
+                                <div class="mt-0.5 text-slate-400"><i class="fas fa-signal"></i></div>
+                                <div>
+                                    <span class="font-semibold text-slate-700">무선 네트워크 기술:</span>
+                                    <span class="text-slate-600"> 블루투스, 근거리 무선 통신망, 와이파이, 전자 태그 등</span>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
+                                <div class="mt-0.5 text-slate-400"><i class="fas fa-globe"></i></div>
+                                <div>
+                                    <span class="font-semibold text-slate-700">IP 주소 형식:</span>
+                                    <span class="text-slate-600"> IPv4, IPv6</span>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
+                                <div class="mt-0.5 text-slate-400"><i class="fas fa-share-alt"></i></div>
+                                <div>
+                                    <span class="text-slate-600">컴퓨팅 기기에 공유 설정을 하면 <strong class="text-slate-700">파일, 프린터</strong> 등을 공유할 수 있다.</span>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
+                                <div class="mt-0.5 text-slate-400"><i class="fas fa-cloud"></i></div>
+                                <div>
+                                    <span class="text-slate-600"><strong class="text-slate-700">클라우드 컴퓨팅</strong>을 사용하면 문서 공동 작업, 데이터 공유가 가능하다.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 02: 사물 인터넷 -->
+                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden">
+                    <div class="bg-slate-50 border-b border-gray-200 px-6 py-4 flex items-center gap-3">
+                        <div class="section-number bg-slate-700 text-white">02</div>
+                        <h3 class="text-lg font-bold text-slate-800">사물 인터넷</h3>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
+                            <div class="mt-0.5 text-slate-400"><i class="fas fa-network-wired"></i></div>
+                            <div>
+                                <span class="font-semibold text-slate-700">사물 인터넷:</span>
+                                <span class="text-slate-600"> 다양한 사물이 인터넷에 연결되어 일상생활 속에서 사용되는 기술</span>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
+                            <div class="mt-0.5 text-slate-400"><i class="fas fa-microchip"></i></div>
+                            <div>
+                                <span class="font-semibold text-slate-700">사물 인터넷 기술:</span>
+                                <span class="text-slate-600"> 센서 기술, 저장 기술, 분석 기술, 데이터 보안 기술 등</span>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
+                            <div class="mt-0.5 text-slate-400"><i class="fas fa-th-large"></i></div>
+                            <div>
+                                <span class="font-semibold text-slate-700">활용 분야:</span>
+                                <span class="text-slate-600"> 스마트 홈, 스마트 교육, 스마트 공장, 스마트 헬스케어 등</span>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
+                            <div class="mt-0.5 text-slate-400"><i class="fas fa-code"></i></div>
+                            <div>
+                                <span class="text-slate-600"><strong class="text-slate-700">마이크로비트</strong>의 내장 센서와 라디오 통신 기능을 활용하여 블록형/파이썬 코딩으로 구현 가능</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 실력 확인 Section -->
+        <!-- ============================================ -->
+        <section class="print-break">
+            <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-slate-700 text-white rounded-xl w-10 h-10 flex items-center justify-center">
+                        <i class="fas fa-clipboard-check text-sm"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">실력 확인</h2>
+                        <p class="text-sm text-slate-500">배운 내용을 문제로 확인해 봅시다</p>
+                    </div>
+                </div>
+                <div class="flex gap-2 no-print">
+                    <button onclick="resetQuiz()" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-slate-600 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-redo-alt"></i> 초기화
+                    </button>
+                    <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-slate-600 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-print"></i> 인쇄
+                    </button>
+                </div>
+            </div>
+
+            <!-- Score Display -->
+            <div id="scoreDisplay" class="hidden mb-6 bg-white rounded-2xl border border-gray-200 p-6 text-center">
+                <div class="text-4xl font-extrabold text-slate-800 mb-1" id="scoreValue"></div>
+                <p class="text-slate-500 text-sm" id="scoreText"></p>
+            </div>
+
+            <div class="space-y-6" id="quizContainer">
+
+                <!-- 문제 1 -->
+                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q1-card">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 1</span>
+                        <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">객관식</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-700 leading-relaxed mb-5">
+                            네트워크 구성에 필요한 장비 가운데 하나의 선으로 여러 대의 장비를 연결할 수 있는 장치로는 허브 또는 스위치를 사용한다. 또한 내부 네트워크와 외부 네트워크를 연결하기 위해서는 <strong class="text-slate-800">(      )</strong>을(를) 사용한다.
+                        </p>
+                        <div class="space-y-2" id="q1-options">
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="1" data-value="1">
+                                <input type="radio" name="q1" value="1" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9312;</span>
+                                <span>NFC</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="1" data-value="2">
+                                <input type="radio" name="q1" value="2" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9313;</span>
+                                <span>라우터</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="1" data-value="3">
+                                <input type="radio" name="q1" value="3" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9314;</span>
+                                <span>케이블</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="1" data-value="4">
+                                <input type="radio" name="q1" value="4" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9315;</span>
+                                <span>블루투스</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="1" data-value="5">
+                                <input type="radio" name="q1" value="5" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9316;</span>
+                                <span>액세스 포인트</span>
+                            </label>
+                        </div>
+                        <div id="q1-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
+                    </div>
+                </div>
+
+                <!-- 문제 2 -->
+                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q2-card">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 2</span>
+                        <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">객관식</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-700 leading-relaxed mb-4">
+                            무선 네트워크 기술에 대한 설명이다. <strong class="text-slate-800">(      )</strong> 안에 들어갈 용어를 바르게 짝지은 것은?
+                        </p>
+                        <div class="bg-slate-50 rounded-xl p-4 mb-5 space-y-3 text-sm text-slate-600 leading-relaxed">
+                            <p><strong class="text-slate-700">(㉠)</strong>은 10m 이내에서 무선으로 데이터를 주고받을 수 있는 기술로 무선 이어폰, 인공지능 스피커 등을 연결할 때 주로 사용</p>
+                            <p><strong class="text-slate-700">(㉡)</strong>은 대부분의 무선 네트워크에 사용되는 기술로 AP를 이용해 노트북, 스마트폰 등으로 인터넷 사용 가능</p>
+                            <p>무선 신호를 사용해서 사물의 정보를 인지하는 기술을 <strong class="text-slate-700">(㉢)</strong>(이)라고 하며, 하이패스, 교통 카드 등에 활용</p>
+                        </div>
+                        <div class="space-y-2" id="q2-options">
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="2" data-value="1">
+                                <input type="radio" name="q2" value="1" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9312;</span>
+                                <span>NFC / 블루투스 / 전자태그</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="2" data-value="2">
+                                <input type="radio" name="q2" value="2" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9313;</span>
+                                <span>와이파이 / NFC / 블루투스</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="2" data-value="3">
+                                <input type="radio" name="q2" value="3" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9314;</span>
+                                <span>블루투스 / 와이파이 / 전자태그</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="2" data-value="4">
+                                <input type="radio" name="q2" value="4" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9315;</span>
+                                <span>전자태그 / 블루투스 / NFC</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="2" data-value="5">
+                                <input type="radio" name="q2" value="5" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9316;</span>
+                                <span>와이파이 / 블루투스 / 전자태그</span>
+                            </label>
+                        </div>
+                        <div id="q2-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
+                    </div>
+                </div>
+
+                <!-- 문제 3 (주관식) -->
+                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q3-card">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 3</span>
+                        <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">주관식</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-700 leading-relaxed mb-4">
+                            사물 인터넷에 대한 설명이다. <strong class="text-slate-800">(가)</strong>에 들어갈 용어를 쓰시오.
+                        </p>
+                        <div class="bg-slate-50 rounded-xl p-4 mb-5 text-sm text-slate-600 leading-relaxed">
+                            "사물 인터넷은 생활 속에서 다양한 물건이 인터넷에 연결되어 데이터를 주고받을 수 있는 시스템이다. 사물 주변의 상황을 인식하기 위해 주로 <strong class="text-slate-700">(가)</strong>을(를) 사용한다."
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <label class="text-sm font-semibold text-slate-600">답:</label>
+                            <input type="text" id="q3-input" placeholder="답을 입력하세요" class="flex-1 max-w-xs border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition-all">
+                        </div>
+                        <div id="q3-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
+                    </div>
+                </div>
+
+                <!-- 문제 4 -->
+                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q4-card">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 4</span>
+                        <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">객관식</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-700 leading-relaxed mb-4">
+                            [처리 조건]에 맞는 사물 인터넷 장치를 구현하려고 할 때 필요한 마이크로비트의 <strong class="text-slate-800">내장된 출력 장치</strong>를 고른 것은?
+                        </p>
+                        <div class="bg-slate-50 rounded-xl p-4 mb-5 text-sm text-slate-600 leading-relaxed">
+                            <p class="font-semibold text-slate-700 mb-2">[처리 조건]</p>
+                            <p>횡단보도 보행 신호등이 언제 빨간색으로 변할지 보행자가 휴대 전화 장치로 알 수 있는 기능. <strong class="text-slate-700">불빛</strong>과 <strong class="text-slate-700">소리</strong>를 이용.</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 mb-5 text-sm text-slate-600 grid grid-cols-3 sm:grid-cols-6 gap-2 text-center">
+                            <span class="bg-white border border-gray-200 rounded-lg px-2 py-1.5">ㄱ. 버튼</span>
+                            <span class="bg-white border border-gray-200 rounded-lg px-2 py-1.5">ㄴ. LED</span>
+                            <span class="bg-white border border-gray-200 rounded-lg px-2 py-1.5">ㄷ. 스피커</span>
+                            <span class="bg-white border border-gray-200 rounded-lg px-2 py-1.5">ㄹ. 빛센서</span>
+                            <span class="bg-white border border-gray-200 rounded-lg px-2 py-1.5">ㅁ. 라디오신호</span>
+                            <span class="bg-white border border-gray-200 rounded-lg px-2 py-1.5">ㅂ. 가속도센서</span>
+                        </div>
+                        <div class="space-y-2" id="q4-options">
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="4" data-value="1">
+                                <input type="radio" name="q4" value="1" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9312;</span>
+                                <span>ㄱ, ㄴ</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="4" data-value="2">
+                                <input type="radio" name="q4" value="2" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9313;</span>
+                                <span>ㄴ, ㄷ</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="4" data-value="3">
+                                <input type="radio" name="q4" value="3" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9314;</span>
+                                <span>ㄷ, ㄹ</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="4" data-value="4">
+                                <input type="radio" name="q4" value="4" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9315;</span>
+                                <span>ㄹ, ㅁ</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="4" data-value="5">
+                                <input type="radio" name="q4" value="5" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9316;</span>
+                                <span>ㅁ, ㅂ</span>
+                            </label>
+                        </div>
+                        <div id="q4-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
+                    </div>
+                </div>
+
+                <!-- 문제 5 -->
+                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q5-card">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 5</span>
+                        <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">객관식</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-700 leading-relaxed mb-4">
+                            일상생활에서 일어날 수 있는 다양한 상황 중 <strong class="text-slate-800">사물 인터넷이 적용된 것</strong>을 있는 대로 고른 것은?
+                        </p>
+                        <div class="bg-slate-50 rounded-xl p-4 mb-5 space-y-2.5 text-sm text-slate-600 leading-relaxed">
+                            <p><strong class="text-slate-700">ㄱ.</strong> 스마트폰으로 찍은 내 사진을 친구들에게 전송</p>
+                            <p><strong class="text-slate-700">ㄴ.</strong> 노트북 컴퓨터를 켜면 자동으로 바이러스를 체크하고 치료</p>
+                            <p><strong class="text-slate-700">ㄷ.</strong> 버스가 정류장에 언제 도착할지에 대한 정보를 정류장에 있는 사람들에게 알려줌</p>
+                            <p><strong class="text-slate-700">ㄹ.</strong> 냉장고 안의 음료수 칸에 음료수가 없을 경우 사용자의 휴대 전화에 알리고 주문 사이트 연결</p>
+                        </div>
+                        <div class="space-y-2" id="q5-options">
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="5" data-value="1">
+                                <input type="radio" name="q5" value="1" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9312;</span>
+                                <span>ㄱ</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="5" data-value="2">
+                                <input type="radio" name="q5" value="2" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9313;</span>
+                                <span>ㄴ</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="5" data-value="3">
+                                <input type="radio" name="q5" value="3" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9314;</span>
+                                <span>ㄷ, ㄹ</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="5" data-value="4">
+                                <input type="radio" name="q5" value="4" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9315;</span>
+                                <span>ㄱ, ㄴ, ㄷ</span>
+                            </label>
+                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="5" data-value="5">
+                                <input type="radio" name="q5" value="5" class="hidden">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 option-circle">&#9316;</span>
+                                <span>ㄴ, ㄷ, ㄹ</span>
+                            </label>
+                        </div>
+                        <div id="q5-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
+                    </div>
+                </div>
+
+                <!-- 문제 6 (서술형) -->
+                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q6-card">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 6</span>
+                        <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">서술형</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-700 leading-relaxed mb-5">
+                            사물 인터넷 의료 분야에 적용되어 원격 의료 등이 가능해진 것을 <strong class="text-slate-800">스마트 의료</strong>라고 한다. 이와 같이 사물 인터넷이 적용된 다양한 사회의 형태를 찾아보자.
+                        </p>
+                        <textarea id="q6-input" rows="5" placeholder="사물 인터넷이 적용된 다양한 사회 형태를 서술하세요..." class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition-all resize-y leading-relaxed"></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Check Answers Button (hidden until submission) -->
+            <div class="mt-8 text-center no-print" id="checkBtnArea" style="display: none;">
+                <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-5 mb-4 inline-block">
+                    <p class="text-emerald-700 text-sm font-semibold mb-3">
+                        <i class="fas fa-circle-check mr-1.5"></i>답안 제출이 완료되었습니다. 이제 정답을 확인할 수 있습니다.
+                    </p>
+                    <button onclick="checkAllAnswers()" id="checkBtn" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors text-base shadow-lg shadow-emerald-200">
+                        <i class="fas fa-check-circle"></i> 정답 확인하기
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 평가하기 Section -->
+        <!-- ============================================ -->
+        <section class="print-break">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-slate-700 text-white rounded-xl w-10 h-10 flex items-center justify-center">
+                    <i class="fas fa-star text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">평가하기</h2>
+                    <p class="text-sm text-slate-500">스스로 학습 성과를 평가해 봅시다</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-gray-200">
+                                <th class="text-left px-6 py-4 font-semibold text-slate-700 w-16">번호</th>
+                                <th class="text-left px-6 py-4 font-semibold text-slate-700">평가 항목</th>
+                                <th class="text-center px-4 py-4 font-semibold text-slate-700 w-28">
+                                    <span class="text-amber-500">&#9733;&#9733;&#9733;</span><br><span class="text-xs text-slate-500">상</span>
+                                </th>
+                                <th class="text-center px-4 py-4 font-semibold text-slate-700 w-28">
+                                    <span class="text-amber-500">&#9733;&#9733;</span><span class="text-gray-300">&#9733;</span><br><span class="text-xs text-slate-500">중</span>
+                                </th>
+                                <th class="text-center px-4 py-4 font-semibold text-slate-700 w-28">
+                                    <span class="text-amber-500">&#9733;</span><span class="text-gray-300">&#9733;&#9733;</span><br><span class="text-xs text-slate-500">하</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-5 text-slate-500 font-bold">1</td>
+                                <td class="px-6 py-5 text-slate-700">네트워크의 개념과 구성 요소를 설명할 수 있는가?</td>
+                                <td class="text-center px-4 py-5">
+                                    <button class="star-btn text-2xl inactive" data-eval="1" data-level="3" onclick="setRating(1, 3)">
+                                        <span class="text-amber-400">&#9733;&#9733;&#9733;</span>
+                                    </button>
+                                </td>
+                                <td class="text-center px-4 py-5">
+                                    <button class="star-btn text-2xl inactive" data-eval="1" data-level="2" onclick="setRating(1, 2)">
+                                        <span class="text-amber-400">&#9733;&#9733;</span><span class="text-gray-300">&#9733;</span>
+                                    </button>
+                                </td>
+                                <td class="text-center px-4 py-5">
+                                    <button class="star-btn text-2xl inactive" data-eval="1" data-level="1" onclick="setRating(1, 1)">
+                                        <span class="text-amber-400">&#9733;</span><span class="text-gray-300">&#9733;&#9733;</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-5 text-slate-500 font-bold">2</td>
+                                <td class="px-6 py-5 text-slate-700">문제 해결에 적합한 사물 인터넷을 구현할 수 있는가?</td>
+                                <td class="text-center px-4 py-5">
+                                    <button class="star-btn text-2xl inactive" data-eval="2" data-level="3" onclick="setRating(2, 3)">
+                                        <span class="text-amber-400">&#9733;&#9733;&#9733;</span>
+                                    </button>
+                                </td>
+                                <td class="text-center px-4 py-5">
+                                    <button class="star-btn text-2xl inactive" data-eval="2" data-level="2" onclick="setRating(2, 2)">
+                                        <span class="text-amber-400">&#9733;&#9733;</span><span class="text-gray-300">&#9733;</span>
+                                    </button>
+                                </td>
+                                <td class="text-center px-4 py-5">
+                                    <button class="star-btn text-2xl inactive" data-eval="2" data-level="1" onclick="setRating(2, 1)">
+                                        <span class="text-amber-400">&#9733;</span><span class="text-gray-300">&#9733;&#9733;</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- Submit Section -->
+        <!-- ============================================ -->
+        <div class="flex flex-wrap justify-center gap-3 no-print">
+            <button id="submitBtn" onclick="submitData()" class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-800 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors text-base shadow-lg shadow-slate-300">
+                <i class="fas fa-paper-plane" id="submitIcon"></i>
+                <span id="submitText">답안 제출하기</span>
+            </button>
+        </div>
+
+        <!-- Submit Result Messages -->
+        <div id="submitResult" class="hidden text-center">
+            <div id="submitSuccess" class="hidden inline-flex items-center gap-3 bg-green-50 border-2 border-green-300 text-green-700 rounded-xl px-6 py-4 text-sm font-semibold">
+                <i class="fas fa-circle-check text-xl"></i>
+                <span>답안이 성공적으로 제출되었습니다!</span>
+            </div>
+            <div id="submitError" class="hidden inline-flex items-center gap-3 bg-red-50 border-2 border-red-300 text-red-700 rounded-xl px-6 py-4 text-sm font-semibold">
+                <i class="fas fa-circle-exclamation text-xl"></i>
+                <span id="submitErrorMsg">제출 중 오류가 발생했습니다. 다시 시도해 주세요.</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <!-- 이전 페이지 -->
+                <div class="flex-1 flex justify-start">
+                    <a href="../02_사물 인터넷/04_프로젝트활동/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-arrow-left"></i> 이전 페이지
+                    </a>
+                </div>
+                <!-- 목록으로 돌아가기 -->
+                <div class="flex-1 flex justify-center">
+                    <a href="../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex justify-end">
+                    <span class="inline-flex items-center gap-2 bg-gray-700/50 text-gray-500 font-medium px-5 py-3 rounded-xl cursor-not-allowed">
+                        다음 페이지 <i class="fas fa-arrow-right"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    I. 컴퓨팅 시스템 &gt; 대단원 마무리
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // =============================================
+        // 프록시 Apps Script Web App URL
+        // =============================================
+        const PROXY_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyEejiTLNmgN8OuIV7wu1WaDEuu2RNVZKI41XbG650he3wlTT0x-TxUcUEP7zeFyfqFQA/exec';
+
+        // Validate Google Sheet URL format
+        function validateSheetUrl() {
+            var url = document.getElementById('sheetUrl').value.trim();
+            var icon = document.getElementById('sheetUrlIcon');
+            var input = document.getElementById('sheetUrl');
+
+            if (!url) {
+                input.style.borderColor = '#fca5a5';
+                input.style.backgroundColor = '#fef2f2';
+                icon.className = 'fas fa-link-slash text-red-500';
+                return false;
+            }
+
+            var match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+            if (match) {
+                input.style.borderColor = '#86efac';
+                input.style.backgroundColor = '#f0fdf4';
+                icon.className = 'fas fa-circle-check text-green-500';
+                return true;
+            } else {
+                input.style.borderColor = '#fca5a5';
+                input.style.backgroundColor = '#fef2f2';
+                icon.className = 'fas fa-circle-xmark text-red-500';
+                alert('올바른 구글 시트 URL이 아닙니다.\n\n예시: https://docs.google.com/spreadsheets/d/abc123.../edit');
+                return false;
+            }
+        }
+
+        // Submit data to Google Sheets via proxy
+        function submitData() {
+            if (!PROXY_SCRIPT_URL) {
+                alert('⚠️ 제출 기능이 아직 설정되지 않았습니다.\n\n사이트 관리자에게 문의하세요.');
+                return;
+            }
+
+            // Validate Google Sheet URL
+            var sheetUrl = document.getElementById('sheetUrl').value.trim();
+            if (!sheetUrl) {
+                alert('구글 시트 URL을 입력해 주세요.\n선생님이 공유한 구글 시트 주소를 붙여넣으세요.');
+                document.getElementById('sheetUrl').focus();
+                return;
+            }
+            if (!validateSheetUrl()) return;
+
+            // Validate student info
+            var grade = document.getElementById('studentGrade').value;
+            var cls = document.getElementById('studentClass').value;
+            var num = document.getElementById('studentNumber').value;
+            var name = document.getElementById('studentName').value.trim();
+
+            if (!grade || !cls || !num || !name) {
+                alert('학년, 반, 번호, 이름을 모두 입력해 주세요.');
+                document.getElementById('studentGrade').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            // Collect quiz answers
+            var q1 = ''; var q2 = ''; var q4 = ''; var q5 = '';
+            var sel1 = document.querySelector('input[name="q1"]:checked');
+            if (sel1) q1 = sel1.parentElement.querySelector('span:last-child').textContent.trim();
+            var sel2 = document.querySelector('input[name="q2"]:checked');
+            if (sel2) q2 = sel2.parentElement.querySelector('span:last-child').textContent.trim();
+            var sel4 = document.querySelector('input[name="q4"]:checked');
+            if (sel4) q4 = sel4.parentElement.querySelector('span:last-child').textContent.trim();
+            var sel5 = document.querySelector('input[name="q5"]:checked');
+            if (sel5) q5 = sel5.parentElement.querySelector('span:last-child').textContent.trim();
+
+            var q3 = document.getElementById('q3-input').value.trim();
+            var q6 = document.getElementById('q6-input').value.trim();
+
+            // Get self-evaluation ratings
+            var eval1 = ''; var eval2 = '';
+            var activeEval1 = document.querySelector('[data-eval="1"].active');
+            if (activeEval1) eval1 = activeEval1.dataset.level === '3' ? '상' : activeEval1.dataset.level === '2' ? '중' : '하';
+            var activeEval2 = document.querySelector('[data-eval="2"].active');
+            if (activeEval2) eval2 = activeEval2.dataset.level === '3' ? '상' : activeEval2.dataset.level === '2' ? '중' : '하';
+
+            // Build payload
+            var payload = {
+                sheetUrl: sheetUrl,
+                grade: grade,
+                class: cls,
+                number: num,
+                name: name,
+                page: '대단원 마무리',
+                q1_answer: q1,
+                q2_answer: q2,
+                q3_answer: q3,
+                q4_answer: q4,
+                q5_answer: q5,
+                q6_answer: q6,
+                eval1: eval1,
+                eval2: eval2
+            };
+
+            // UI: loading state
+            var btn = document.getElementById('submitBtn');
+            var icon = document.getElementById('submitIcon');
+            var text = document.getElementById('submitText');
+            var resultDiv = document.getElementById('submitResult');
+            var successDiv = document.getElementById('submitSuccess');
+            var errorDiv = document.getElementById('submitError');
+            var errorMsg = document.getElementById('submitErrorMsg');
+
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+            icon.className = 'fas fa-spinner fa-spin';
+            text.textContent = '제출 중...';
+            resultDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+            errorDiv.classList.add('hidden');
+
+            fetch(PROXY_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload),
+                redirect: 'follow'
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(result) {
+                if (result.result === 'success') {
+                    icon.className = 'fas fa-circle-check';
+                    text.textContent = '제출 완료!';
+                    btn.style.opacity = '1';
+                    resultDiv.classList.remove('hidden');
+                    successDiv.classList.remove('hidden');
+
+                    // Show check answers button
+                    var checkArea = document.getElementById('checkBtnArea');
+                    checkArea.style.display = '';
+                    checkArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    throw new Error(result.message || '알 수 없는 오류');
+                }
+            })
+            .catch(function(err) {
+                icon.className = 'fas fa-paper-plane';
+                text.textContent = '답안 제출하기';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                resultDiv.classList.remove('hidden');
+                errorDiv.classList.remove('hidden');
+                errorMsg.textContent = '제출 실패: ' + err.message;
+            });
+        }
+
+        // Answer key
+        const answerKey = {
+            1: '2',  // 라우터
+            2: '3',  // 블루투스/와이파이/전자태그
+            3: '센서',
+            4: '2',  // ㄴ,ㄷ
+            5: '3'   // ㄷ,ㄹ
+        };
+
+        const explanations = {
+            1: '내부 네트워크와 외부 네트워크를 연결하기 위해서는 <strong>라우터</strong>를 사용합니다.',
+            2: '㉠ 블루투스 (10m 이내 근거리 무선 통신), ㉡ 와이파이 (AP 이용 인터넷), ㉢ 전자태그 (하이패스, 교통카드)',
+            3: '사물 주변의 상황을 인식하기 위해 주로 <strong>센서</strong>를 사용합니다.',
+            4: '불빛(LED)과 소리(스피커)를 이용한 <strong>출력 장치</strong>이므로 ㄴ과 ㄷ이 정답입니다.',
+            5: 'ㄷ(버스 도착 정보 안내)과 ㄹ(냉장고 음료수 자동 알림)이 사물 인터넷의 사례입니다.'
+        };
+
+        // Quiz option click handling
+        document.querySelectorAll('.quiz-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const qNum = this.dataset.question;
+                // Remove selected from siblings
+                document.querySelectorAll(`[data-question="${qNum}"]`).forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                // Check the radio
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+
+        function checkAllAnswers() {
+            let correctCount = 0;
+            const totalMC = 5; // Questions 1-5 are graded
+
+            // Check questions 1, 2, 4, 5 (multiple choice)
+            [1, 2, 4, 5].forEach(qNum => {
+                const selected = document.querySelector(`input[name="q${qNum}"]:checked`);
+                const resultDiv = document.getElementById(`q${qNum}-result`);
+                const options = document.querySelectorAll(`[data-question="${qNum}"]`);
+
+                resultDiv.classList.remove('hidden');
+
+                if (!selected) {
+                    resultDiv.className = 'mt-4 rounded-xl p-4 text-sm font-medium result-incorrect';
+                    resultDiv.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i>답을 선택해 주세요.';
+                    return;
+                }
+
+                const userAnswer = selected.value;
+                const correctAnswer = answerKey[qNum];
+
+                // Highlight options
+                options.forEach(opt => {
+                    opt.classList.remove('correct', 'incorrect', 'correct-answer');
+                    if (opt.dataset.value === correctAnswer) {
+                        opt.classList.add('correct-answer');
+                    }
+                    if (opt.dataset.value === userAnswer && userAnswer !== correctAnswer) {
+                        opt.classList.add('incorrect');
+                    }
+                    if (opt.dataset.value === userAnswer && userAnswer === correctAnswer) {
+                        opt.classList.add('correct');
+                    }
+                });
+
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    resultDiv.className = 'mt-4 rounded-xl p-4 text-sm font-medium result-correct';
+                    resultDiv.innerHTML = `<i class="fas fa-check-circle mr-2 text-green-500"></i><strong>정답입니다!</strong> ${explanations[qNum]}`;
+                } else {
+                    resultDiv.className = 'mt-4 rounded-xl p-4 text-sm font-medium result-incorrect';
+                    resultDiv.innerHTML = `<i class="fas fa-times-circle mr-2 text-red-500"></i><strong>오답입니다.</strong> ${explanations[qNum]}`;
+                }
+            });
+
+            // Check question 3 (short answer)
+            const q3Input = document.getElementById('q3-input').value.trim();
+            const q3Result = document.getElementById('q3-result');
+            q3Result.classList.remove('hidden');
+
+            if (!q3Input) {
+                q3Result.className = 'mt-4 rounded-xl p-4 text-sm font-medium result-incorrect';
+                q3Result.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i>답을 입력해 주세요.';
+            } else if (q3Input === '센서' || q3Input === 'sensor' || q3Input === '센서기술') {
+                correctCount++;
+                q3Result.className = 'mt-4 rounded-xl p-4 text-sm font-medium result-correct';
+                q3Result.innerHTML = `<i class="fas fa-check-circle mr-2 text-green-500"></i><strong>정답입니다!</strong> ${explanations[3]}`;
+            } else {
+                q3Result.className = 'mt-4 rounded-xl p-4 text-sm font-medium result-incorrect';
+                q3Result.innerHTML = `<i class="fas fa-times-circle mr-2 text-red-500"></i><strong>오답입니다.</strong> 정답: <strong>센서</strong>. ${explanations[3]}`;
+            }
+
+            // Show score
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const scoreValue = document.getElementById('scoreValue');
+            const scoreText = document.getElementById('scoreText');
+
+            scoreDisplay.classList.remove('hidden');
+            scoreValue.textContent = `${correctCount} / ${totalMC}`;
+
+            if (correctCount === totalMC) {
+                scoreText.textContent = '모든 문제를 맞혔습니다! 훌륭합니다!';
+                scoreDisplay.className = 'mb-6 bg-green-50 border border-green-200 rounded-2xl p-6 text-center';
+                scoreValue.className = 'text-4xl font-extrabold text-green-700 mb-1';
+            } else if (correctCount >= 3) {
+                scoreText.textContent = '잘 하고 있습니다! 틀린 문제를 다시 확인해 보세요.';
+                scoreDisplay.className = 'mb-6 bg-blue-50 border border-blue-200 rounded-2xl p-6 text-center';
+                scoreValue.className = 'text-4xl font-extrabold text-blue-700 mb-1';
+            } else {
+                scoreText.textContent = '개념을 다시 복습한 후 도전해 보세요.';
+                scoreDisplay.className = 'mb-6 bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center';
+                scoreValue.className = 'text-4xl font-extrabold text-amber-700 mb-1';
+            }
+
+            // Scroll to score
+            scoreDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function resetQuiz() {
+            // Reset radio buttons
+            document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+
+            // Reset text inputs
+            document.getElementById('q3-input').value = '';
+            document.getElementById('q6-input').value = '';
+
+            // Reset option styling
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect', 'correct-answer');
+            });
+
+            // Hide results
+            [1, 2, 3, 4, 5].forEach(q => {
+                const r = document.getElementById(`q${q}-result`);
+                r.classList.add('hidden');
+                r.className = 'mt-4 hidden rounded-xl p-4 text-sm font-medium';
+            });
+
+            // Hide score
+            document.getElementById('scoreDisplay').classList.add('hidden');
+
+            // Reset star ratings
+            document.querySelectorAll('.star-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('inactive');
+                btn.style.opacity = '0.5';
+            });
+
+            // Reset submit button
+            var submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                document.getElementById('submitIcon').className = 'fas fa-paper-plane';
+                document.getElementById('submitText').textContent = '답안 제출하기';
+                document.getElementById('submitResult').classList.add('hidden');
+            }
+
+            // Hide check answers button
+            document.getElementById('checkBtnArea').style.display = 'none';
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Star rating
+        function setRating(evalNum, level) {
+            // Reset all buttons for this eval row
+            document.querySelectorAll(`[data-eval="${evalNum}"]`).forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('inactive');
+                btn.style.opacity = '0.5';
+                btn.style.transform = 'scale(1)';
+            });
+
+            // Activate selected
+            const selected = document.querySelector(`[data-eval="${evalNum}"][data-level="${level}"]`);
+            selected.classList.remove('inactive');
+            selected.classList.add('active');
+            selected.style.opacity = '1';
+            selected.style.transform = 'scale(1.15)';
+        }
+
+        // Initialize star buttons
+        document.querySelectorAll('.star-btn').forEach(btn => {
+            btn.style.opacity = '0.5';
+        });
+    </script>
+
+</body>
+</html>

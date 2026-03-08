@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>선택활동 - 네트워크 장점 경험하기 | 정보</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        purple: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#c084fc',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7e22ce',
+                            800: '#6b21a8',
+                            900: '#581c87',
+                            950: '#3b0764',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        /* Fillable input/textarea styling */
+        .activity-input {
+            width: 100%;
+            min-height: 2.5rem;
+            padding: 0.5rem 0.75rem;
+            border: 2px solid #e9d5ff;
+            border-radius: 0.5rem;
+            background-color: #faf5ff;
+            font-size: 0.875rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            transition: all 0.2s ease;
+            resize: vertical;
+        }
+        .activity-input:focus {
+            outline: none;
+            border-color: #a855f7;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+        }
+        .activity-input::placeholder {
+            color: #c4b5fd;
+            font-style: italic;
+        }
+        .activity-input:not(:placeholder-shown) {
+            background-color: #fff;
+            border-color: #c084fc;
+        }
+
+        /* Pre-filled example cells */
+        .example-cell {
+            background-color: #f3e8ff;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            color: #581c87;
+            line-height: 1.6;
+            border-left: 3px solid #a855f7;
+        }
+
+        /* Self-evaluation buttons */
+        .eval-btn {
+            padding: 1rem 1.5rem;
+            border: 3px solid #e9d5ff;
+            border-radius: 1rem;
+            background: #faf5ff;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: center;
+            min-width: 120px;
+        }
+        .eval-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.2);
+        }
+        .eval-btn.selected {
+            border-color: #a855f7;
+            background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.3);
+        }
+        .eval-btn .emoji {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Activity card animation */
+        .activity-card {
+            transition: transform 0.2s ease;
+        }
+        .activity-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Table responsive wrapper */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .activity-input {
+                border: 1px solid #999 !important;
+                background: white !important;
+                min-height: 3rem !important;
+            }
+            .eval-btn.selected {
+                border: 3px solid #7e22ce !important;
+                background: #f3e8ff !important;
+            }
+            .hero-section {
+                background: #7e22ce !important;
+                color: white !important;
+            }
+            nav, .action-buttons {
+                display: none !important;
+            }
+            .activity-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Scrollbar styling */
+        .table-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #f3e8ff;
+            border-radius: 3px;
+        }
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: #c084fc;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-sm border-b border-purple-100 sticky top-0 z-50 no-print">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="../../../index.html" class="flex items-center gap-2 text-purple-700 hover:text-purple-900 transition-colors text-sm font-medium">
+                <i class="fas fa-arrow-left"></i>
+                <span>전체 단원</span>
+            </a>
+            <div class="flex items-center gap-2 text-sm text-purple-600">
+                <i class="fas fa-book-open"></i>
+                <span class="hidden sm:inline">I. 컴퓨팅 시스템</span>
+                <span class="sm:hidden">컴퓨팅 시스템</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section bg-gradient-to-br from-purple-700 via-purple-800 to-violet-900 text-white relative overflow-hidden">
+        <!-- Decorative background elements -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-32 h-32 border-2 border-white rounded-full"></div>
+            <div class="absolute top-20 right-20 w-48 h-48 border border-white rounded-full"></div>
+            <div class="absolute bottom-10 left-1/3 w-24 h-24 border-2 border-white rounded-full"></div>
+            <div class="absolute -bottom-8 right-10 w-40 h-40 border border-white rounded-full"></div>
+        </div>
+
+        <div class="max-w-5xl mx-auto px-4 py-12 md:py-16 relative z-10">
+            <!-- Breadcrumb -->
+            <div class="flex items-center gap-2 text-purple-200 text-sm mb-6 flex-wrap">
+                <span>I. 컴퓨팅 시스템</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span>01 네트워크의 구성</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span class="text-white font-medium">선택활동</span>
+            </div>
+
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm mb-5">
+                <i class="fas fa-users text-purple-200"></i>
+                <span class="font-medium">협력 · 실습</span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 leading-tight">
+                선택활동
+            </h1>
+            <p class="text-xl md:text-2xl font-semibold text-purple-100 mb-3">
+                네트워크 장점 경험하기
+            </p>
+            <p class="text-purple-200 text-base md:text-lg max-w-2xl leading-relaxed">
+                미러링, 무선 파일 전송, 클라우드 공유를 직접 체험해 봅시다
+            </p>
+
+            <!-- Quick info -->
+            <div class="flex flex-wrap gap-4 mt-8 text-sm">
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                    <i class="fas fa-layer-group text-purple-300"></i>
+                    <span>활동 3개</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                    <i class="fas fa-clock text-purple-300"></i>
+                    <span>소요 시간: 약 40분</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                    <i class="fas fa-pen-to-square text-purple-300"></i>
+                    <span>직접 작성 활동</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 py-10 space-y-10">
+
+        <!-- ============================================ -->
+        <!-- Student Info Section -->
+        <!-- ============================================ -->
+        <section class="bg-white rounded-2xl shadow-md border border-purple-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-purple-500 to-violet-500 px-6 py-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
+                    <i class="fas fa-user-pen"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">학생 정보</h2>
+                    <p class="text-purple-100 text-xs">활동 제출을 위해 정보를 입력하세요</p>
+                </div>
+            </div>
+            <div class="p-6 space-y-5">
+                <!-- Google Sheet URL -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                        <i class="fas fa-table text-green-500 mr-1"></i>구글 시트 URL <span class="text-red-400">*</span>
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="url" id="sheetUrl" class="activity-input w-full"
+                               placeholder="선생님이 공유한 구글 시트 주소를 붙여넣으세요"
+                               style="border-color: #86efac; background-color: #f0fdf4;">
+                        <button type="button" onclick="validateSheetUrl()"
+                                class="flex-shrink-0 px-4 py-2 bg-green-100 border-2 border-green-300 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-all"
+                                title="URL 확인">
+                            <i class="fas fa-link-slash" id="sheetUrlIcon"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1.5">
+                        <i class="fas fa-circle-info mr-1"></i>
+                        예: https://docs.google.com/spreadsheets/d/abc123.../edit
+                    </p>
+                </div>
+                <!-- Student Info Fields -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">학년 <span class="text-red-400">*</span></label>
+                        <select id="studentGrade" class="activity-input w-full" style="padding: 10px 12px;">
+                            <option value="">선택</option>
+                            <option value="1">1학년</option>
+                            <option value="2">2학년</option>
+                            <option value="3">3학년</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">반 <span class="text-red-400">*</span></label>
+                        <input type="number" id="studentClass" class="activity-input w-full" placeholder="예: 3" min="1" max="20">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">번호 <span class="text-red-400">*</span></label>
+                        <input type="number" id="studentNumber" class="activity-input w-full" placeholder="예: 15" min="1" max="50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">이름 <span class="text-red-400">*</span></label>
+                        <input type="text" id="studentName" class="activity-input w-full" placeholder="이름 입력">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- Activity 1: 미러링 실습 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-purple-100 overflow-hidden">
+            <!-- Activity Header -->
+            <div class="bg-gradient-to-r from-purple-600 to-violet-600 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                    1
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">미러링 실습</h2>
+                    <p class="text-purple-100 text-sm mt-0.5"><i class="fas fa-desktop mr-1"></i> 화면 미러링 체험</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-6">
+                <!-- Description -->
+                <div class="bg-purple-50 border-l-4 border-purple-400 rounded-r-lg p-4 md:p-5">
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">
+                        <i class="fas fa-info-circle text-purple-500 mr-1"></i>
+                        태블릿, 노트북, 스마트폰의 화면을 교실의 TV에 미러링해 보고 기기별로 미러링하는 방법을 적어 보자.
+                        또한 확장, 복제 등 미러링 모드가 있는 경우 각각의 모드가 어떻게 다른지 경험한 후 기록해 보자.
+                    </p>
+                </div>
+
+                <!-- Interactive Table -->
+                <div class="table-wrapper">
+                    <table class="w-full border-collapse min-w-[640px]">
+                        <thead>
+                            <tr>
+                                <th class="bg-purple-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tl-lg w-[20%]">
+                                    <i class="fas fa-mobile-screen mr-2"></i>미러링한 기기
+                                </th>
+                                <th class="bg-purple-700 text-white px-4 py-3 text-left text-sm font-semibold w-[40%]">
+                                    <i class="fas fa-link mr-2"></i>미러링 방법
+                                </th>
+                                <th class="bg-purple-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tr-lg w-[40%]">
+                                    <i class="fas fa-arrows-left-right mr-2"></i>모드별 차이점 (확장, 복제 등)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Example Row -->
+                            <tr class="border-b border-purple-100">
+                                <td class="px-4 py-3 align-top">
+                                    <div class="example-cell">
+                                        <i class="fas fa-mobile-alt text-purple-400 mr-1"></i> 스마트폰
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <div class="example-cell">
+                                        에어플레이: 미러링 아이콘을 클릭하고 TV를 선택하여 연결
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <div class="example-cell">
+                                        스마트폰을 가로로 들었을 때와 세로로 들었을 때 TV에 미러링되는 화면의 크기가 다르게 표시됨. 가로 모드에서는 전체 화면 표시 가능
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- Row Indicator -->
+                            <tr>
+                                <td colspan="3" class="px-4 pt-2 pb-0">
+                                    <span class="inline-flex items-center text-xs text-purple-400 font-medium">
+                                        <i class="fas fa-star text-purple-300 mr-1"></i> 위는 예시입니다. 아래 칸에 직접 작성해 보세요.
+                                    </span>
+                                </td>
+                            </tr>
+                            <!-- Empty Row 1 -->
+                            <tr class="border-b border-purple-100">
+                                <td class="px-4 py-3 align-top">
+                                    <input type="text" class="activity-input" data-activity="1" placeholder="예: 태블릿, 노트북 등">
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <textarea class="activity-input" data-activity="1" rows="3" placeholder="미러링 연결 방법을 구체적으로 적어 보세요"></textarea>
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <textarea class="activity-input" data-activity="1" rows="3" placeholder="확장, 복제 등 모드별로 어떤 차이가 있었나요?"></textarea>
+                                </td>
+                            </tr>
+                            <!-- Empty Row 2 -->
+                            <tr>
+                                <td class="px-4 py-3 align-top">
+                                    <input type="text" class="activity-input" data-activity="1" placeholder="예: 태블릿, 노트북 등">
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <textarea class="activity-input" data-activity="1" rows="3" placeholder="미러링 연결 방법을 구체적으로 적어 보세요"></textarea>
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <textarea class="activity-input" data-activity="1" rows="3" placeholder="확장, 복제 등 모드별로 어떤 차이가 있었나요?"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- Activity 2: 무선 파일 전송 실습 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-purple-100 overflow-hidden">
+            <!-- Activity Header -->
+            <div class="bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                    2
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">무선 파일 전송 실습</h2>
+                    <p class="text-purple-100 text-sm mt-0.5"><i class="fas fa-wifi mr-1"></i> 무선 네트워크 파일 전송 체험</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-6">
+                <!-- Description -->
+                <div class="bg-violet-50 border-l-4 border-violet-400 rounded-r-lg p-4 md:p-5">
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">
+                        <i class="fas fa-info-circle text-violet-500 mr-1"></i>
+                        무선 네트워크 기술의 다양한 방법을 이용하여 친구에게 파일을 전송해 보고 각 방법의 특징을 적어 보자.
+                        단, <strong class="text-purple-700">두 가지 이상의 방법</strong>을 적용한다.
+                    </p>
+                </div>
+
+                <!-- Hint box -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                    <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-amber-500"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-amber-800 mb-1">힌트</p>
+                        <p class="text-sm text-amber-700">
+                            와이파이 사용, 블루투스 사용, 모바일 기기의 공유 기능 사용(에어드롭, 퀵셰어) 등 다양한 방법을 시도해 보세요.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Interactive Table -->
+                <div class="table-wrapper">
+                    <table class="w-full border-collapse min-w-[640px]">
+                        <thead>
+                            <tr>
+                                <th class="bg-violet-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tl-lg w-[25%]">
+                                    <i class="fas fa-share-nodes mr-2"></i>전송 방법
+                                </th>
+                                <th class="bg-violet-700 text-white px-4 py-3 text-left text-sm font-semibold w-[37.5%]">
+                                    <i class="fas fa-thumbs-up mr-2"></i>장점 및 편리한 점
+                                </th>
+                                <th class="bg-violet-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tr-lg w-[37.5%]">
+                                    <i class="fas fa-thumbs-down mr-2"></i>단점 및 불편한 점
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Empty Row 1 -->
+                            <tr class="border-b border-purple-100">
+                                <td class="px-4 py-3 align-top">
+                                    <input type="text" class="activity-input" data-activity="2" placeholder="예: 블루투스">
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <textarea class="activity-input" data-activity="2" rows="3" placeholder="이 방법의 장점이나 편리한 점을 적어 보세요"></textarea>
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <textarea class="activity-input" data-activity="2" rows="3" placeholder="이 방법의 단점이나 불편한 점을 적어 보세요"></textarea>
+                                </td>
+                            </tr>
+                            <!-- Empty Row 2 -->
+                            <tr class="border-b border-purple-100">
+                                <td class="px-4 py-3 align-top">
+                                    <input type="text" class="activity-input" data-activity="2" placeholder="예: 에어드롭">
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <textarea class="activity-input" data-activity="2" rows="3" placeholder="이 방법의 장점이나 편리한 점을 적어 보세요"></textarea>
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <textarea class="activity-input" data-activity="2" rows="3" placeholder="이 방법의 단점이나 불편한 점을 적어 보세요"></textarea>
+                                </td>
+                            </tr>
+                            <!-- Empty Row 3 -->
+                            <tr>
+                                <td class="px-4 py-3 align-top">
+                                    <input type="text" class="activity-input" data-activity="2" placeholder="예: 와이파이 다이렉트">
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <textarea class="activity-input" data-activity="2" rows="3" placeholder="이 방법의 장점이나 편리한 점을 적어 보세요"></textarea>
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <textarea class="activity-input" data-activity="2" rows="3" placeholder="이 방법의 단점이나 불편한 점을 적어 보세요"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- Activity 3: 클라우드 공유 실습 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-purple-100 overflow-hidden">
+            <!-- Activity Header -->
+            <div class="bg-gradient-to-r from-purple-600 to-fuchsia-600 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                    3
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">클라우드 공유 실습</h2>
+                    <p class="text-purple-100 text-sm mt-0.5"><i class="fas fa-cloud mr-1"></i> 클라우드 파일 공유 체험</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-6">
+                <!-- Description -->
+                <div class="bg-fuchsia-50 border-l-4 border-fuchsia-400 rounded-r-lg p-4 md:p-5">
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">
+                        <i class="fas fa-info-circle text-fuchsia-500 mr-1"></i>
+                        클라우드 컴퓨팅에 가입한 후 사진이나 문서를 친구들과 공유해 보자.
+                    </p>
+                </div>
+
+                <!-- Interactive Table -->
+                <div class="table-wrapper">
+                    <table class="w-full border-collapse min-w-[640px]">
+                        <thead>
+                            <tr>
+                                <th class="bg-fuchsia-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tl-lg w-[28%]">
+                                    <i class="fas fa-cloud-arrow-up mr-2"></i>공유 클라우드 컴퓨팅
+                                </th>
+                                <th class="bg-fuchsia-700 text-white px-4 py-3 text-left text-sm font-semibold w-[47%]">
+                                    <i class="fas fa-share mr-2"></i>공유 방법
+                                </th>
+                                <th class="bg-fuchsia-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tr-lg w-[25%]">
+                                    <i class="fas fa-file mr-2"></i>공유 파일명
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Example Row -->
+                            <tr class="border-b border-purple-100">
+                                <td class="px-4 py-3 align-top">
+                                    <div class="example-cell">
+                                        <i class="fas fa-cloud text-purple-400 mr-1"></i> ○○ 드라이브, N사 MYBOX 등
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <div class="example-cell">
+                                        사진 파일을 선택한 후 [링크 복사]를 클릭하여 친구에게 링크를 보낸다. [액세스 관리]에서 '링크가 있는 모든 사용자'로 권한을 변경한다.
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <div class="example-cell">
+                                        my.jpg
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- Row Indicator -->
+                            <tr>
+                                <td colspan="3" class="px-4 pt-2 pb-0">
+                                    <span class="inline-flex items-center text-xs text-purple-400 font-medium">
+                                        <i class="fas fa-star text-purple-300 mr-1"></i> 위는 예시입니다. 아래 칸에 직접 작성해 보세요.
+                                    </span>
+                                </td>
+                            </tr>
+                            <!-- Empty Row 1 -->
+                            <tr class="border-b border-purple-100">
+                                <td class="px-4 py-3 align-top">
+                                    <input type="text" class="activity-input" data-activity="3" placeholder="예: 구글 드라이브">
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <textarea class="activity-input" data-activity="3" rows="3" placeholder="파일을 공유한 방법을 구체적으로 적어 보세요"></textarea>
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <input type="text" class="activity-input" data-activity="3" placeholder="예: photo.jpg">
+                                </td>
+                            </tr>
+                            <!-- Empty Row 2 -->
+                            <tr>
+                                <td class="px-4 py-3 align-top">
+                                    <input type="text" class="activity-input" data-activity="3" placeholder="예: 네이버 MYBOX">
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <textarea class="activity-input" data-activity="3" rows="3" placeholder="파일을 공유한 방법을 구체적으로 적어 보세요"></textarea>
+                                </td>
+                                <td class="px-4 py-3 align-top">
+                                    <input type="text" class="activity-input" data-activity="3" placeholder="예: report.docx">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- Self-Evaluation Section -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-purple-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-purple-700 to-purple-800 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white flex-shrink-0">
+                    <i class="fas fa-clipboard-check text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">스스로 평가하기</h2>
+                    <p class="text-purple-200 text-sm mt-0.5">자기 평가</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- Evaluation Question -->
+                <div class="bg-purple-50 rounded-xl p-5 md:p-6 mb-8 text-center">
+                    <p class="text-lg md:text-xl font-semibold text-purple-900 leading-relaxed">
+                        <i class="fas fa-question-circle text-purple-500 mr-2"></i>
+                        네트워크를 통해 파일을 공유하고,<br class="hidden md:inline">
+                        클라우드 컴퓨팅 기술을 활용할 수 있는가?
+                    </p>
+                </div>
+
+                <!-- Evaluation Buttons -->
+                <div class="flex flex-wrap justify-center gap-4 md:gap-6" id="evalGroup">
+                    <button type="button" class="eval-btn" data-value="잘함" onclick="selectEval(this)">
+                        <span class="emoji">&#128522;</span>
+                        <span class="text-sm font-semibold text-purple-800">잘함</span>
+                    </button>
+                    <button type="button" class="eval-btn" data-value="보통" onclick="selectEval(this)">
+                        <span class="emoji">&#128528;</span>
+                        <span class="text-sm font-semibold text-purple-800">보통</span>
+                    </button>
+                    <button type="button" class="eval-btn" data-value="노력필요" onclick="selectEval(this)">
+                        <span class="emoji">&#128533;</span>
+                        <span class="text-sm font-semibold text-purple-800">노력필요</span>
+                    </button>
+                </div>
+
+                <!-- Selected indicator -->
+                <div id="evalResult" class="mt-6 text-center text-sm text-purple-500 hidden">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    <span id="evalResultText"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- Action Buttons -->
+        <!-- ============================================ -->
+        <div class="action-buttons flex flex-wrap justify-center gap-4 no-print">
+            <button onclick="resetAll()" class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-purple-300 text-purple-700 rounded-xl font-semibold text-sm hover:bg-purple-50 hover:border-purple-400 transition-all shadow-sm">
+                <i class="fas fa-rotate-left"></i>
+                초기화
+            </button>
+            <button onclick="printPage()" class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-purple-300 text-purple-700 rounded-xl font-semibold text-sm hover:bg-purple-50 hover:border-purple-400 transition-all shadow-sm">
+                <i class="fas fa-print"></i>
+                인쇄하기
+            </button>
+            <button id="submitBtn" onclick="submitData()" class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-purple-700 hover:to-violet-700 transition-all shadow-lg hover:shadow-xl">
+                <i class="fas fa-paper-plane" id="submitIcon"></i>
+                <span id="submitText">제출하기</span>
+            </button>
+        </div>
+
+        <!-- Submit Result Messages -->
+        <div id="submitResult" class="hidden text-center">
+            <div id="submitSuccess" class="hidden inline-flex items-center gap-3 bg-green-50 border-2 border-green-300 text-green-700 rounded-xl px-6 py-4 text-sm font-semibold">
+                <i class="fas fa-circle-check text-xl"></i>
+                <span>제출이 완료되었습니다!</span>
+            </div>
+            <div id="submitError" class="hidden inline-flex items-center gap-3 bg-red-50 border-2 border-red-300 text-red-700 rounded-xl px-6 py-4 text-sm font-semibold">
+                <i class="fas fa-circle-exclamation text-xl"></i>
+                <span id="submitErrorMsg">제출 중 오류가 발생했습니다. 다시 시도해 주세요.</span>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- Teacher Setup Guide Link -->
+        <!-- ============================================ -->
+        <div class="flex justify-center pt-2 no-print">
+            <a href="../../../apps_script_guide/setup_guide.html"
+               class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-50 border-2 border-amber-300 text-amber-700 rounded-xl font-semibold text-sm hover:bg-amber-100 hover:border-amber-400 transition-all shadow-sm">
+                <i class="fas fa-gear"></i>
+                교사용 제출 기능 설정 가이드
+            </a>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- Back to Unit Button -->
+        <!-- ============================================ -->
+        <div class="flex justify-center pt-4 pb-2">
+            <a href="../../../index.html"
+               class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-semibold text-base hover:from-purple-700 hover:to-violet-700 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                <i class="fas fa-arrow-left"></i>
+                전체 단원으로 돌아가기
+            </a>
+        </div>
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <!-- 이전 페이지 -->
+                <div class="flex-1 flex justify-start">
+                    <a href="../02_네트워크 환경/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-arrow-left"></i> 이전 페이지
+                    </a>
+                </div>
+                <!-- 목록으로 돌아가기 -->
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex justify-end">
+                    <a href="../../02_사물 인터넷/01_사물 인터넷의 개념/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        다음 페이지 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    I. 컴퓨팅 시스템 &gt; 01 네트워크의 구성 &gt; 선택활동
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // =============================================
+        // 프록시 Apps Script Web App URL
+        // 사이트 개발자(관리자)가 1회 배포 후 아래에 입력
+        // 다른 교사들은 이 URL을 수정할 필요 없음
+        // =============================================
+        const PROXY_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyEejiTLNmgN8OuIV7wu1WaDEuu2RNVZKI41XbG650he3wlTT0x-TxUcUEP7zeFyfqFQA/exec';
+
+        // Validate Google Sheet URL format
+        function validateSheetUrl() {
+            var url = document.getElementById('sheetUrl').value.trim();
+            var icon = document.getElementById('sheetUrlIcon');
+            var input = document.getElementById('sheetUrl');
+
+            if (!url) {
+                input.style.borderColor = '#fca5a5';
+                input.style.backgroundColor = '#fef2f2';
+                icon.className = 'fas fa-link-slash text-red-500';
+                return false;
+            }
+
+            var match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+            if (match) {
+                input.style.borderColor = '#86efac';
+                input.style.backgroundColor = '#f0fdf4';
+                icon.className = 'fas fa-circle-check text-green-500';
+                return true;
+            } else {
+                input.style.borderColor = '#fca5a5';
+                input.style.backgroundColor = '#fef2f2';
+                icon.className = 'fas fa-circle-xmark text-red-500';
+                alert('올바른 구글 시트 URL이 아닙니다.\n\n예시: https://docs.google.com/spreadsheets/d/abc123.../edit');
+                return false;
+            }
+        }
+
+        // Submit data to Google Sheets via proxy
+        function submitData() {
+            // Check if proxy URL is configured
+            if (!PROXY_SCRIPT_URL) {
+                alert('⚠️ 제출 기능이 아직 설정되지 않았습니다.\n\n사이트 관리자에게 문의하세요.');
+                return;
+            }
+
+            // Validate Google Sheet URL
+            var sheetUrl = document.getElementById('sheetUrl').value.trim();
+            if (!sheetUrl) {
+                alert('구글 시트 URL을 입력해 주세요.\n선생님이 공유한 구글 시트 주소를 붙여넣으세요.');
+                document.getElementById('sheetUrl').focus();
+                return;
+            }
+            if (!validateSheetUrl()) return;
+
+            // Validate student info
+            var grade = document.getElementById('studentGrade').value;
+            var cls = document.getElementById('studentClass').value;
+            var num = document.getElementById('studentNumber').value;
+            var name = document.getElementById('studentName').value.trim();
+
+            if (!grade || !cls || !num || !name) {
+                alert('학년, 반, 번호, 이름을 모두 입력해 주세요.');
+                document.getElementById('studentGrade').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            // Collect all activity inputs
+            var allInputs = document.querySelectorAll('.activity-input[data-activity]');
+            var act1 = [], act2 = [], act3 = [];
+            allInputs.forEach(function(el) {
+                var val = el.value.trim();
+                var act = el.getAttribute('data-activity');
+                if (act === '1') act1.push(val);
+                else if (act === '2') act2.push(val);
+                else if (act === '3') act3.push(val);
+            });
+
+            // Get self-evaluation
+            var evalBtn = document.querySelector('.eval-btn.selected');
+            var selfEval = evalBtn ? evalBtn.getAttribute('data-value') : '';
+
+            // Build payload (includes sheetUrl for proxy)
+            var payload = {
+                sheetUrl: sheetUrl,
+                grade: grade,
+                class: cls,
+                number: num,
+                name: name,
+                page: '네트워크 선택활동',
+                // 활동1: 미러링 (2행 x 3열)
+                act1_row1_device: act1[0] || '', act1_row1_method: act1[1] || '', act1_row1_mode: act1[2] || '',
+                act1_row2_device: act1[3] || '', act1_row2_method: act1[4] || '', act1_row2_mode: act1[5] || '',
+                // 활동2: 무선 전송 (3행 x 3열)
+                act2_row1_method: act2[0] || '', act2_row1_pros: act2[1] || '', act2_row1_cons: act2[2] || '',
+                act2_row2_method: act2[3] || '', act2_row2_pros: act2[4] || '', act2_row2_cons: act2[5] || '',
+                act2_row3_method: act2[6] || '', act2_row3_pros: act2[7] || '', act2_row3_cons: act2[8] || '',
+                // 활동3: 클라우드 공유 (2행 x 3열)
+                act3_row1_service: act3[0] || '', act3_row1_method: act3[1] || '', act3_row1_file: act3[2] || '',
+                act3_row2_service: act3[3] || '', act3_row2_method: act3[4] || '', act3_row2_file: act3[5] || '',
+                // 자기 평가
+                selfEval: selfEval
+            };
+
+            // UI: loading state
+            var btn = document.getElementById('submitBtn');
+            var icon = document.getElementById('submitIcon');
+            var text = document.getElementById('submitText');
+            var resultDiv = document.getElementById('submitResult');
+            var successDiv = document.getElementById('submitSuccess');
+            var errorDiv = document.getElementById('submitError');
+            var errorMsg = document.getElementById('submitErrorMsg');
+
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+            icon.className = 'fas fa-spinner fa-spin';
+            text.textContent = '제출 중...';
+            resultDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+            errorDiv.classList.add('hidden');
+
+            // Send to proxy Apps Script (text/plain avoids CORS preflight)
+            fetch(PROXY_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload),
+                redirect: 'follow'
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(result) {
+                if (result.result === 'success') {
+                    icon.className = 'fas fa-circle-check';
+                    text.textContent = '제출 완료!';
+                    btn.style.opacity = '1';
+                    resultDiv.classList.remove('hidden');
+                    successDiv.classList.remove('hidden');
+                } else {
+                    throw new Error(result.message || '알 수 없는 오류');
+                }
+            })
+            .catch(function(err) {
+                icon.className = 'fas fa-paper-plane';
+                text.textContent = '제출하기';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                resultDiv.classList.remove('hidden');
+                errorDiv.classList.remove('hidden');
+                errorMsg.textContent = '제출 실패: ' + err.message;
+                console.error('Submit error:', err);
+            });
+        }
+
+        // Self-evaluation button selection
+        function selectEval(btn) {
+            // Remove selected state from all buttons
+            document.querySelectorAll('.eval-btn').forEach(function(b) {
+                b.classList.remove('selected');
+            });
+            // Add selected state to clicked button
+            btn.classList.add('selected');
+
+            // Show result
+            var resultDiv = document.getElementById('evalResult');
+            var resultText = document.getElementById('evalResultText');
+            resultDiv.classList.remove('hidden');
+            resultText.textContent = '"' + btn.getAttribute('data-value') + '"을(를) 선택했습니다.';
+        }
+
+        // Reset all form inputs and evaluation
+        function resetAll() {
+            if (!confirm('모든 입력 내용을 초기화하시겠습니까?\n작성한 내용이 모두 지워집니다.')) {
+                return;
+            }
+
+            // Clear all inputs and textareas (including student info)
+            document.querySelectorAll('.activity-input').forEach(function(input) {
+                if (input.tagName === 'SELECT') {
+                    input.selectedIndex = 0;
+                } else {
+                    input.value = '';
+                }
+            });
+
+            // Reset Google Sheet URL field
+            var sheetInput = document.getElementById('sheetUrl');
+            if (sheetInput) {
+                sheetInput.value = '';
+                sheetInput.style.borderColor = '#86efac';
+                sheetInput.style.backgroundColor = '#f0fdf4';
+                document.getElementById('sheetUrlIcon').className = 'fas fa-link-slash';
+            }
+
+            // Reset submit button state
+            var submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                document.getElementById('submitIcon').className = 'fas fa-paper-plane';
+                document.getElementById('submitText').textContent = '제출하기';
+                document.getElementById('submitResult').classList.add('hidden');
+            }
+
+            // Reset evaluation buttons
+            document.querySelectorAll('.eval-btn').forEach(function(btn) {
+                btn.classList.remove('selected');
+            });
+
+            // Hide evaluation result
+            var resultDiv = document.getElementById('evalResult');
+            resultDiv.classList.add('hidden');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Print page
+        function printPage() {
+            window.print();
+        }
+
+        // Add subtle animation on scroll
+        (function() {
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.activity-card').forEach(function(card) {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    observer.observe(card);
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

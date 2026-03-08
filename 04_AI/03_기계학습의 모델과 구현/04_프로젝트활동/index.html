@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로젝트활동 - 재활용품 분류 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Noto Sans KR', 'sans-serif'] },
+                    colors: {
+                        primary: { 50:'#faf5ff',100:'#f3e8ff',200:'#e9d5ff',300:'#d8b4fe',400:'#cc5de8',500:'#a855f7',600:'#9c36b5',700:'#7c3aed',800:'#6b21a8',900:'#581c87' },
+                        accent: { 50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#7950f2',600:'#6366f1',700:'#4f46e5',800:'#4338ca',900:'#3730a3' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        .hero-gradient { background: linear-gradient(135deg, #9c36b5 0%, #7c3aed 50%, #7950f2 100%) !important; color: #ffffff !important; }
+        .hero-gradient * { color: inherit; }
+        .hero-gradient h1 { color: #ffffff !important; }
+        .hero-gradient p { color: rgba(255,255,255,0.92) !important; }
+        .hero-gradient .breadcrumb-item { color: rgba(255,255,255,0.7) !important; }
+        .hero-gradient .breadcrumb-item:last-child { color: #ffffff !important; }
+        .hero-pattern { background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%), radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%); }
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15); }
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .section-divider { height: 4px; background: linear-gradient(90deg, #9c36b5, #7950f2, #9c36b5); border-radius: 2px; }
+        .breadcrumb-item + .breadcrumb-item::before { content: '>'; margin: 0 0.5rem; color: rgba(255,255,255,0.6); }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, padding 0.4s ease-out; }
+        .accordion-content.open { max-height: 1200px; }
+        .tab-btn { transition: all 0.3s ease; border-bottom: 3px solid transparent; }
+        .tab-btn.active { border-bottom-color: #9c36b5; color: #9c36b5; font-weight: 700; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .quiz-option { transition: all 0.2s ease; cursor: pointer; }
+        .quiz-option:hover { transform: translateX(4px); }
+        .quiz-option.correct { background-color: #dcfce7 !important; border-color: #22c55e !important; }
+        .quiz-option.wrong { background-color: #fef2f2 !important; border-color: #ef4444 !important; }
+        .code-block { background: #1e1e2e; color: #cdd6f4; border-radius: 12px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 0.85rem; line-height: 1.7; }
+        .code-block .comment { color: #6c7086; } .code-block .keyword { color: #cba6f7; }
+        .code-block .string { color: #a6e3a1; } .code-block .function { color: #89b4fa; } .code-block .variable { color: #f9e2af; }
+        @media print { .hero-pattern { background: #9c36b5 !important; } .fade-in { opacity:1!important; transform:none!important; } .card-hover:hover { transform:none; box-shadow:none; } footer { display:none; } .no-print { display:none!important; } body { font-size:12pt; } .shadow-md,.shadow-lg,.shadow-sm { box-shadow:none!important; } a { text-decoration:underline; } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #9c36b5 0%, #7c3aed 50%, #7950f2 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1"><i class="fas fa-home text-xs"></i> 정보</span>
+                <span class="breadcrumb-item">IV. 인공지능</span>
+                <span class="breadcrumb-item text-white font-medium">03 기계학습의 모델과 구현</span>
+            </nav>
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>창의 · 융합 · 코딩 프로젝트</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">프로젝트활동<br class="hidden sm:block"> - 재활용품 분류</h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">기계학습을 활용하여 재활용품을 자동 분류하는 프로그램을 직접 만들어 봅니다</p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-recycle mr-1"></i> 재활용 분류</span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-robot mr-1"></i> 티처블머신</span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-camera mr-1"></i> 이미지 분류</span>
+                    </div>
+                </div>
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <circle cx="110" cy="110" r="85" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+                        <path d="M110 55 C140 55 165 80 160 110" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <path d="M160 120 C155 150 130 170 100 160" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <path d="M90 155 C65 145 50 115 60 90" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <polygon points="110,45 120,65 100,65" fill="rgba(255,255,255,0.3)"/>
+                        <polygon points="165,135 155,155 145,140" fill="rgba(255,255,255,0.3)"/>
+                        <polygon points="55,135 65,155 75,140" fill="rgba(255,255,255,0.3)"/>
+                        <circle cx="110" cy="110" r="25" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <text x="110" y="106" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="10" font-weight="bold">AI</text>
+                        <text x="110" y="120" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="8">ML</text>
+                        <rect x="22" y="35" width="32" height="22" rx="4" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+                        <text x="38" y="50" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="7">유리</text>
+                        <rect x="166" y="35" width="32" height="22" rx="4" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+                        <text x="182" y="50" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="7">종이</text>
+                        <rect x="140" y="175" width="50" height="22" rx="4" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+                        <text x="165" y="190" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="7">플라스틱</text>
+                        <rect x="20" y="165" width="28" height="20" rx="4" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <circle cx="34" cy="175" r="5" stroke="rgba(255,255,255,0.4)" stroke-width="1" fill="none"/>
+                        <circle cx="34" cy="175" r="2" fill="rgba(255,255,255,0.3)"/>
+                    </svg>
+                </div>
+            </div>
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-bullseye"></i> 프로젝트 목표</h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>기계학습의 전체 과정을 이해하고, 이미지 분류 모델을 직접 만들 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>재활용품 분류 문제를 기계학습으로 해결하는 프로젝트를 수행할 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 기계학습</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 이미지 분류</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 티처블머신</span>
+                    <span class="text-xs bg-emerald-400/30 rounded-full px-3 py-1"><i class="fas fa-globe mr-1"></i> 융합: 통합 사회</span>
+                </div>
+            </div>
+        </div>
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===== PROBLEM AWARENESS ===== -->
+        <section class="fade-in" id="section-problem">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center text-white text-xl shadow-lg"><i class="fas fa-exclamation-triangle"></i></div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">문제 인식</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Problem Awareness</p>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-red-50 to-orange-50 border-l-4 border-red-400 rounded-r-xl p-6 mb-8 shadow-sm">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-full bg-red-400 flex items-center justify-center flex-shrink-0"><i class="fas fa-recycle text-white text-lg"></i></div>
+                    <div>
+                        <h3 class="font-bold text-red-800 text-lg mb-2">재활용의 현실</h3>
+                        <p class="text-gray-700 leading-relaxed text-lg">우리나라의 분리배출 참여율은 <strong class="text-red-600 text-xl">약 90%</strong>이지만, 실제 재활용되는 비율은 <strong class="text-red-600 text-xl">약 40%</strong>에 불과합니다.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg"><i class="fas fa-hand-holding-heart text-white text-2xl"></i></div>
+                    <div class="inline-flex items-center justify-center bg-green-100 text-green-700 font-bold text-sm rounded-full px-3 py-1 mb-3">분리배출 참여율</div>
+                    <div class="text-5xl font-extrabold text-green-600 mb-2">90%</div>
+                    <p class="text-gray-500 text-sm">국민들의 분리배출 참여 의지는 높습니다</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg"><i class="fas fa-chart-line text-white text-2xl"></i></div>
+                    <div class="inline-flex items-center justify-center bg-red-100 text-red-700 font-bold text-sm rounded-full px-3 py-1 mb-3">실제 재활용 비율</div>
+                    <div class="text-5xl font-extrabold text-red-500 mb-2">~40%</div>
+                    <p class="text-gray-500 text-sm">잘못된 분류로 실제 재활용률은 낮습니다</p>
+                </div>
+            </div>
+            <div class="bg-blue-50 rounded-2xl p-5 border border-blue-100">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-lightbulb text-blue-500 text-xl mt-1"></i>
+                    <div>
+                        <h4 class="font-bold text-blue-800 mb-1">프로젝트 아이디어</h4>
+                        <p class="text-gray-700 leading-relaxed">기계학습을 활용하면 카메라가 재활용품을 자동으로 인식하고 <strong>유리, 종이, 플라스틱</strong> 등으로 정확하게 분류할 수 있습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== STEP 1: 문제 정의하기 ===== -->
+        <section class="fade-in" id="step-1">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white text-xl shadow-lg font-extrabold">1</div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">단계 1: 문제 정의하기</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Define the Problem</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-search text-purple-600"></i></div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">해결하고자 하는 문제</h3>
+                        <p class="text-gray-700 leading-relaxed">카메라로 재활용품을 촬영하면 인공지능이 해당 물품을 인식하여 <strong class="text-purple-700">유리, 종이, 플라스틱</strong> 등으로 자동 분류하는 프로그램을 만듭니다.</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-gradient-to-br from-sky-50 to-sky-100 rounded-xl p-4 text-center border border-sky-200">
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-sky-400 flex items-center justify-center"><i class="fas fa-wine-bottle text-white text-lg"></i></div>
+                        <span class="font-bold text-sky-700">유리</span>
+                    </div>
+                    <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 text-center border border-amber-200">
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-amber-400 flex items-center justify-center"><i class="fas fa-newspaper text-white text-lg"></i></div>
+                        <span class="font-bold text-amber-700">종이</span>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center border border-green-200">
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-green-500 flex items-center justify-center"><i class="fas fa-bottle-water text-white text-lg"></i></div>
+                        <span class="font-bold text-green-700">플라스틱</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== STEP 2: 데이터 수집 및 전처리 ===== -->
+        <section class="fade-in" id="step-2">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xl shadow-lg font-extrabold">2</div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">단계 2: 데이터 수집 및 전처리</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Data Collection &amp; Preprocessing</p>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center"><i class="fas fa-search text-white"></i></div>
+                        <h3 class="font-bold text-gray-900">구글 이미지 검색</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-3">구글 이미지 검색에서 유리병, 종이 박스, 플라스틱 용기 등의 키워드로 학습에 사용할 이미지를 수집합니다.</p>
+                    <div class="bg-blue-50 rounded-lg p-3 text-sm text-blue-700"><i class="fas fa-search mr-1"></i> "재활용 유리병", "종이 박스", "플라스틱 병"</div>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center"><i class="fas fa-database text-white"></i></div>
+                        <h3 class="font-bold text-gray-900">캐글(Kaggle) 데이터셋</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-3">캐글에서 "recyclable"로 검색하면 이미 정리된 재활용품 이미지 데이터셋을 찾을 수 있습니다.</p>
+                    <div class="bg-teal-50 rounded-lg p-3 text-sm text-teal-700"><i class="fas fa-database mr-1"></i> kaggle.com에서 "recyclable" 검색</div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-400 rounded-r-xl p-5 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-green-400 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fas fa-check text-white text-sm"></i></div>
+                    <div>
+                        <h3 class="font-bold text-green-800 mb-3">학습에 좋은 이미지 조건</h3>
+                        <div class="grid sm:grid-cols-3 gap-3">
+                            <div class="bg-white/70 rounded-lg p-3 text-center"><i class="fas fa-image text-green-500 text-2xl mb-2"></i><p class="text-sm font-medium text-gray-700">배경이 단순한 이미지</p></div>
+                            <div class="bg-white/70 rounded-lg p-3 text-center"><i class="fas fa-expand text-green-500 text-2xl mb-2"></i><p class="text-sm font-medium text-gray-700">사물이 확대된 이미지</p></div>
+                            <div class="bg-white/70 rounded-lg p-3 text-center"><i class="fas fa-shapes text-green-500 text-2xl mb-2"></i><p class="text-sm font-medium text-gray-700">형태가 뚜렷한 이미지</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== STEP 3: 모델 생성 ===== -->
+        <section class="fade-in" id="step-3">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center text-white text-xl shadow-lg font-extrabold">3</div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">단계 3: 모델 생성</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Model Creation with Teachable Machine</p>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-violet-50 to-purple-50 border-l-4 border-violet-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-violet-400 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fas fa-globe text-white text-sm"></i></div>
+                    <div>
+                        <h3 class="font-bold text-violet-800 mb-1">티처블머신(Teachable Machine)</h3>
+                        <p class="text-gray-700 leading-relaxed mb-2">구글에서 제공하는 웹 기반 기계학습 도구로, 코딩 없이도 이미지 분류 모델을 쉽게 만들 수 있습니다.</p>
+                        <a href="https://teachablemachine.withgoogle.com/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-violet-700 transition-colors"><i class="fas fa-external-link-alt"></i> teachablemachine.withgoogle.com</a>
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion('step3-1')" class="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-3"><span class="w-8 h-8 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center font-bold text-sm">1</span><span class="font-bold text-gray-900">이미지 프로젝트 선택</span></div>
+                        <i id="step3-1-icon" class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div id="step3-1" class="accordion-content"><div class="px-5 pb-5"><p class="text-gray-600 leading-relaxed">티처블머신 사이트에 접속하여 <strong>"시작하기"</strong>를 클릭한 후, <strong>"이미지 프로젝트"</strong>를 선택합니다.</p></div></div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion('step3-2')" class="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-3"><span class="w-8 h-8 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center font-bold text-sm">2</span><span class="font-bold text-gray-900">3개 클래스 생성</span></div>
+                        <i id="step3-2-icon" class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div id="step3-2" class="accordion-content"><div class="px-5 pb-5">
+                        <p class="text-gray-600 leading-relaxed mb-4">재활용품 분류를 위해 3개의 클래스를 만듭니다.</p>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="bg-sky-50 border border-sky-200 rounded-lg p-3 text-center"><div class="font-bold text-sky-700 mb-1">Class 1</div><div class="text-sm text-gray-600">유리</div></div>
+                            <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-center"><div class="font-bold text-amber-700 mb-1">Class 2</div><div class="text-sm text-gray-600">종이</div></div>
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-center"><div class="font-bold text-green-700 mb-1">Class 3</div><div class="text-sm text-gray-600">플라스틱</div></div>
+                        </div>
+                    </div></div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion('step3-3')" class="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-3"><span class="w-8 h-8 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center font-bold text-sm">3</span><span class="font-bold text-gray-900">이미지 업로드 또는 웹캠 촬영</span></div>
+                        <i id="step3-3-icon" class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div id="step3-3" class="accordion-content"><div class="px-5 pb-5">
+                        <p class="text-gray-600 leading-relaxed mb-4">각 클래스에 학습 데이터를 추가합니다. 두 가지 방법을 사용할 수 있습니다.</p>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="bg-indigo-50 rounded-xl p-4 border border-indigo-100"><div class="flex items-center gap-2 mb-2"><i class="fas fa-upload text-indigo-500"></i><span class="font-bold text-indigo-700">이미지 업로드</span></div><p class="text-sm text-gray-600">수집한 이미지 파일을 드래그 앤 드롭으로 업로드합니다.</p></div>
+                            <div class="bg-pink-50 rounded-xl p-4 border border-pink-100"><div class="flex items-center gap-2 mb-2"><i class="fas fa-camera text-pink-500"></i><span class="font-bold text-pink-700">웹캠 촬영</span></div><p class="text-sm text-gray-600">웹캠으로 직접 재활용품을 촬영하여 사용합니다.</p></div>
+                        </div>
+                    </div></div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion('step3-4')" class="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-3"><span class="w-8 h-8 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center font-bold text-sm">4</span><span class="font-bold text-gray-900">모델 학습시키기</span></div>
+                        <i id="step3-4-icon" class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div id="step3-4" class="accordion-content"><div class="px-5 pb-5">
+                        <p class="text-gray-600 leading-relaxed">모든 클래스에 충분한 이미지를 추가한 후 <strong>"모델 학습시키기"</strong> 버튼을 클릭합니다.</p>
+                        <div class="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-yellow-800"><i class="fas fa-info-circle mr-1"></i><strong>팁:</strong> 각 클래스당 최소 30장 이상의 이미지를 사용하면 더 정확한 모델을 만들 수 있습니다.</div>
+                    </div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== STEP 4: 모델 평가 ===== -->
+        <section class="fade-in" id="step-4">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-xl shadow-lg font-extrabold">4</div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">단계 4: 모델 평가</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Model Evaluation</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-clipboard-check text-teal-600"></i></div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">새로운 데이터로 테스트하기</h3>
+                        <p class="text-gray-700 leading-relaxed">학습에 사용하지 않은 <strong>새로운 재활용품</strong>으로 모델의 분류 성능을 테스트합니다.</p>
+                    </div>
+                </div>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="bg-teal-50 rounded-xl p-4 border border-teal-100">
+                        <div class="flex items-center gap-2 mb-3"><div class="w-8 h-8 rounded-full bg-teal-400 flex items-center justify-center"><i class="fas fa-camera text-white text-sm"></i></div><span class="font-bold text-teal-700">웹캠 테스트</span></div>
+                        <p class="text-sm text-gray-600">실시간으로 웹캠 앞에 재활용품을 놓고 분류 결과를 확인합니다.</p>
+                    </div>
+                    <div class="bg-cyan-50 rounded-xl p-4 border border-cyan-100">
+                        <div class="flex items-center gap-2 mb-3"><div class="w-8 h-8 rounded-full bg-cyan-400 flex items-center justify-center"><i class="fas fa-file-upload text-white text-sm"></i></div><span class="font-bold text-cyan-700">파일 업로드 테스트</span></div>
+                        <p class="text-sm text-gray-600">새로운 이미지 파일을 업로드하여 분류 정확도를 확인합니다.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Interactive checklist -->
+            <div class="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl p-5 border border-teal-100">
+                <h4 class="font-bold text-teal-800 mb-3 flex items-center gap-2"><i class="fas fa-tasks"></i> 평가 체크리스트</h4>
+                <div class="space-y-2" id="checklist">
+                    <label class="flex items-center gap-3 bg-white/60 rounded-lg p-3 cursor-pointer hover:bg-white/80 transition-colors"><input type="checkbox" class="w-5 h-5 rounded text-teal-500 focus:ring-teal-400" onchange="updateProgress()"><span class="text-sm text-gray-700">유리 제품을 올바르게 분류하는가?</span></label>
+                    <label class="flex items-center gap-3 bg-white/60 rounded-lg p-3 cursor-pointer hover:bg-white/80 transition-colors"><input type="checkbox" class="w-5 h-5 rounded text-teal-500 focus:ring-teal-400" onchange="updateProgress()"><span class="text-sm text-gray-700">종이 제품을 올바르게 분류하는가?</span></label>
+                    <label class="flex items-center gap-3 bg-white/60 rounded-lg p-3 cursor-pointer hover:bg-white/80 transition-colors"><input type="checkbox" class="w-5 h-5 rounded text-teal-500 focus:ring-teal-400" onchange="updateProgress()"><span class="text-sm text-gray-700">플라스틱 제품을 올바르게 분류하는가?</span></label>
+                    <label class="flex items-center gap-3 bg-white/60 rounded-lg p-3 cursor-pointer hover:bg-white/80 transition-colors"><input type="checkbox" class="w-5 h-5 rounded text-teal-500 focus:ring-teal-400" onchange="updateProgress()"><span class="text-sm text-gray-700">학습에 사용하지 않은 새로운 이미지로 테스트했는가?</span></label>
+                    <label class="flex items-center gap-3 bg-white/60 rounded-lg p-3 cursor-pointer hover:bg-white/80 transition-colors"><input type="checkbox" class="w-5 h-5 rounded text-teal-500 focus:ring-teal-400" onchange="updateProgress()"><span class="text-sm text-gray-700">분류 정확도가 만족스러운 수준인가?</span></label>
+                </div>
+                <div class="mt-4">
+                    <div class="flex justify-between text-sm text-teal-700 mb-1"><span>평가 진행률</span><span id="progress-text">0 / 5</span></div>
+                    <div class="w-full bg-white/60 rounded-full h-3 overflow-hidden"><div id="progress-bar" class="h-full bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full transition-all duration-500" style="width: 0%"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== STEP 5: 모델 활용 및 배포 ===== -->
+        <section class="fade-in" id="step-5">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white text-xl shadow-lg font-extrabold">5</div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">단계 5: 모델 활용 및 배포</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Model Deployment &amp; Application</p>
+                </div>
+            </div>
+            <div class="border-b border-gray-200 mb-6">
+                <div class="flex gap-1 overflow-x-auto">
+                    <button onclick="switchTab(event, 'tab-share')" class="tab-btn active px-5 py-3 text-sm font-medium text-gray-600 whitespace-nowrap"><i class="fas fa-share-alt mr-1"></i> 공유 및 내보내기</button>
+                    <button onclick="switchTab(event, 'tab-python')" class="tab-btn px-5 py-3 text-sm font-medium text-gray-600 whitespace-nowrap"><i class="fas fa-code mr-1"></i> Python 코드 활용</button>
+                    <button onclick="switchTab(event, 'tab-iot')" class="tab-btn px-5 py-3 text-sm font-medium text-gray-600 whitespace-nowrap"><i class="fas fa-microchip mr-1"></i> IoT 접목</button>
+                </div>
+            </div>
+            <!-- Tab: Share -->
+            <div id="tab-share" class="tab-content active">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center mb-4"><i class="fas fa-link text-white text-xl"></i></div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">공유 가능한 링크 생성</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">티처블머신에서 학습한 모델을 클라우드에 업로드하고, 공유 가능한 링크를 생성하여 다른 사람들과 공유할 수 있습니다.</p>
+                    </div>
+                    <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center mb-4"><i class="fas fa-download text-white text-xl"></i></div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Keras / TensorFlow로 내보내기</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">학습된 모델을 Keras 또는 TensorFlow 형식으로 내보내어 Python 환경에서 활용할 수 있습니다.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Tab: Python -->
+            <div id="tab-python" class="tab-content">
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center"><i class="fab fa-python text-white text-xl"></i></div>
+                        <div><h3 class="font-bold text-gray-900">Python 코드로 활용 (Jupyter Notebook)</h3><p class="text-gray-500 text-sm">내보낸 모델을 Python에서 실행하기</p></div>
+                    </div>
+                    <div class="code-block p-5 mb-4"><pre><code><span class="comment"># 필요한 라이브러리 설치</span>
+<span class="comment"># pip install tensorflow pillow numpy</span>
+
+<span class="keyword">from</span> tensorflow.<span class="function">keras</span>.models <span class="keyword">import</span> load_model
+<span class="keyword">from</span> PIL <span class="keyword">import</span> Image
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># 모델 로드</span>
+<span class="variable">model</span> = <span class="function">load_model</span>(<span class="string">"keras_model.h5"</span>)
+<span class="variable">labels</span> = [<span class="string">"유리"</span>, <span class="string">"종이"</span>, <span class="string">"플라스틱"</span>]
+
+<span class="comment"># 이미지 전처리</span>
+<span class="variable">image</span> = Image.<span class="function">open</span>(<span class="string">"test_image.jpg"</span>)
+<span class="variable">image</span> = <span class="variable">image</span>.<span class="function">resize</span>((224, 224))
+<span class="variable">img_array</span> = np.<span class="function">array</span>(<span class="variable">image</span>) / 255.0
+<span class="variable">img_array</span> = np.<span class="function">expand_dims</span>(<span class="variable">img_array</span>, axis=0)
+
+<span class="comment"># 예측</span>
+<span class="variable">prediction</span> = <span class="variable">model</span>.<span class="function">predict</span>(<span class="variable">img_array</span>)
+<span class="variable">result</span> = <span class="variable">labels</span>[np.<span class="function">argmax</span>(<span class="variable">prediction</span>)]
+<span class="function">print</span>(<span class="string">f"분류 결과: <span class="variable">{result}</span>"</span>)</code></pre></div>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-yellow-800"><i class="fas fa-lightbulb mr-1"></i><strong>참고:</strong> Jupyter Notebook을 사용하면 코드를 단계별로 실행하며 결과를 바로 확인할 수 있습니다.</div>
+                </div>
+            </div>
+            <!-- Tab: IoT -->
+            <div id="tab-iot" class="tab-content">
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-microchip text-indigo-600"></i></div>
+                        <div>
+                            <h3 class="font-bold text-gray-900 text-lg mb-2">사물 인터넷(IoT) 기기와 접목</h3>
+                            <p class="text-gray-700 leading-relaxed">학습된 모델을 라즈베리파이 등의 IoT 기기와 연결하면, 실제 재활용 분리수거 시스템을 만들 수 있습니다.</p>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-5">
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
+                            <div class="bg-white rounded-xl p-4 shadow-sm border border-indigo-100 min-w-[110px]"><i class="fas fa-camera text-indigo-500 text-2xl mb-2"></i><p class="text-xs font-bold text-gray-700">카메라 인식</p></div>
+                            <i class="fas fa-arrow-right text-indigo-300 text-xl hidden sm:block"></i><i class="fas fa-arrow-down text-indigo-300 text-xl sm:hidden"></i>
+                            <div class="bg-white rounded-xl p-4 shadow-sm border border-indigo-100 min-w-[110px]"><i class="fas fa-brain text-purple-500 text-2xl mb-2"></i><p class="text-xs font-bold text-gray-700">AI 분류</p></div>
+                            <i class="fas fa-arrow-right text-indigo-300 text-xl hidden sm:block"></i><i class="fas fa-arrow-down text-indigo-300 text-xl sm:hidden"></i>
+                            <div class="bg-white rounded-xl p-4 shadow-sm border border-indigo-100 min-w-[110px]"><i class="fas fa-microchip text-teal-500 text-2xl mb-2"></i><p class="text-xs font-bold text-gray-700">IoT 제어</p></div>
+                            <i class="fas fa-arrow-right text-indigo-300 text-xl hidden sm:block"></i><i class="fas fa-arrow-down text-indigo-300 text-xl sm:hidden"></i>
+                            <div class="bg-white rounded-xl p-4 shadow-sm border border-indigo-100 min-w-[110px]"><i class="fas fa-recycle text-green-500 text-2xl mb-2"></i><p class="text-xs font-bold text-gray-700">자동 분리배출</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== INTERACTIVE QUIZ ===== -->
+        <section class="fade-in" id="section-quiz">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg"><i class="fas fa-question-circle"></i></div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">확인 문제</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Check Your Understanding</p>
+                </div>
+            </div>
+            <!-- Quiz 1 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6">
+                <div class="flex items-start gap-3 mb-4">
+                    <span class="w-8 h-8 rounded-full bg-primary-400 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">Q1</span>
+                    <h3 class="font-bold text-gray-900">티처블머신에서 재활용품 분류 모델을 만들 때, 가장 먼저 선택해야 하는 프로젝트 유형은?</h3>
+                </div>
+                <div id="quiz1-container" class="space-y-2 ml-11">
+                    <div class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-sm" onclick="checkQuiz('quiz1', this, false)"><span class="font-bold text-gray-400 mr-2">A.</span> 오디오 프로젝트</div>
+                    <div class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-sm" onclick="checkQuiz('quiz1', this, true)"><span class="font-bold text-gray-400 mr-2">B.</span> 이미지 프로젝트</div>
+                    <div class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-sm" onclick="checkQuiz('quiz1', this, false)"><span class="font-bold text-gray-400 mr-2">C.</span> 포즈 프로젝트</div>
+                    <div class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-sm" onclick="checkQuiz('quiz1', this, false)"><span class="font-bold text-gray-400 mr-2">D.</span> 텍스트 프로젝트</div>
+                </div>
+                <div id="quiz1-result" class="hidden ml-11"></div>
+            </div>
+            <!-- Quiz 2 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6">
+                <div class="flex items-start gap-3 mb-4">
+                    <span class="w-8 h-8 rounded-full bg-primary-400 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">Q2</span>
+                    <h3 class="font-bold text-gray-900">기계학습 모델의 학습 데이터로 적합하지 않은 이미지는?</h3>
+                </div>
+                <div id="quiz2-container" class="space-y-2 ml-11">
+                    <div class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-sm" onclick="checkQuiz('quiz2', this, false)"><span class="font-bold text-gray-400 mr-2">A.</span> 배경이 단순한 이미지</div>
+                    <div class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-sm" onclick="checkQuiz('quiz2', this, false)"><span class="font-bold text-gray-400 mr-2">B.</span> 사물이 확대된 이미지</div>
+                    <div class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-sm" onclick="checkQuiz('quiz2', this, true)"><span class="font-bold text-gray-400 mr-2">C.</span> 여러 사물이 겹쳐져 있고 배경이 복잡한 이미지</div>
+                    <div class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-sm" onclick="checkQuiz('quiz2', this, false)"><span class="font-bold text-gray-400 mr-2">D.</span> 형태가 뚜렷한 이미지</div>
+                </div>
+                <div id="quiz2-result" class="hidden ml-11"></div>
+            </div>
+            <!-- Quiz 3 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div class="flex items-start gap-3 mb-4">
+                    <span class="w-8 h-8 rounded-full bg-primary-400 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">Q3</span>
+                    <h3 class="font-bold text-gray-900">모델 평가 단계에서 반드시 사용해야 하는 데이터는?</h3>
+                </div>
+                <div id="quiz3-container" class="space-y-2 ml-11">
+                    <div class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-sm" onclick="checkQuiz('quiz3', this, false)"><span class="font-bold text-gray-400 mr-2">A.</span> 학습에 사용한 동일한 이미지</div>
+                    <div class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-sm" onclick="checkQuiz('quiz3', this, true)"><span class="font-bold text-gray-400 mr-2">B.</span> 학습에 사용하지 않은 새로운 이미지</div>
+                    <div class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-sm" onclick="checkQuiz('quiz3', this, false)"><span class="font-bold text-gray-400 mr-2">C.</span> 다른 프로젝트의 모델 데이터</div>
+                    <div class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-sm" onclick="checkQuiz('quiz3', this, false)"><span class="font-bold text-gray-400 mr-2">D.</span> 텍스트 데이터</div>
+                </div>
+                <div id="quiz3-result" class="hidden ml-11"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../03_선택활동/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"><i class="fas fa-th-list"></i> 목록으로 돌아가기</a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../../04_대단원 마무리/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">IV. 인공지능 &gt; 03 기계학습의 모델과 구현 &gt; 프로젝트활동 - 재활용품 분류</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // Accordion Toggle
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(id + '-icon');
+            const parent = content.closest('section');
+            if (parent) {
+                parent.querySelectorAll('.accordion-content').forEach(ac => {
+                    if (ac.id !== id && ac.classList.contains('open')) {
+                        ac.classList.remove('open');
+                        const otherIcon = document.getElementById(ac.id + '-icon');
+                        if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
+                    }
+                });
+            }
+            content.classList.toggle('open');
+            if (icon) { icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)'; }
+        }
+
+        // Tab Switching
+        function switchTab(event, tabId) {
+            const tabContainer = event.target.closest('section');
+            tabContainer.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            tabContainer.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            event.target.closest('.tab-btn').classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Quiz System
+        const quizAnswered = {};
+        function checkQuiz(quizId, element, isCorrect) {
+            if (quizAnswered[quizId]) return;
+            quizAnswered[quizId] = true;
+            const container = document.getElementById(quizId + '-container');
+            const resultDiv = document.getElementById(quizId + '-result');
+            const options = container.querySelectorAll('.quiz-option');
+            options.forEach(opt => { opt.style.cursor = 'default'; opt.style.opacity = '0.7'; });
+            element.style.opacity = '1';
+            if (isCorrect) {
+                element.classList.add('correct');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-green-50 border border-green-200 ml-11';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500 text-lg"></i><span class="font-bold text-green-700">정답입니다!</span></div>';
+                if (quizId === 'quiz1') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">재활용품을 분류하려면 이미지를 인식해야 하므로 <strong>이미지 프로젝트</strong>를 선택해야 합니다.</p>';
+                else if (quizId === 'quiz2') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">배경이 복잡하고 사물이 겹쳐진 이미지는 모델이 특징을 정확히 학습하기 어려워 <strong>적합하지 않습니다</strong>.</p>';
+                else if (quizId === 'quiz3') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">모델의 실제 성능을 평가하려면 <strong>학습에 사용하지 않은 새로운 데이터</strong>로 테스트해야 합니다.</p>';
+            } else {
+                element.classList.add('wrong');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-red-50 border border-red-200 ml-11';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-times-circle text-red-500 text-lg"></i><span class="font-bold text-red-700">오답입니다.</span></div>';
+                if (quizId === 'quiz1') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">정답은 <strong>이미지 프로젝트</strong>입니다. 재활용품은 이미지로 분류해야 합니다.</p>';
+                else if (quizId === 'quiz2') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">정답은 <strong>여러 사물이 겹쳐져 있고 배경이 복잡한 이미지</strong>입니다.</p>';
+                else if (quizId === 'quiz3') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">정답은 <strong>학습에 사용하지 않은 새로운 이미지</strong>입니다.</p>';
+                options.forEach(opt => { if (opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+            }
+            resultDiv.classList.remove('hidden');
+        }
+
+        // Checklist Progress
+        function updateProgress() {
+            const checked = document.querySelectorAll('#checklist input[type="checkbox"]:checked').length;
+            document.getElementById('progress-bar').style.width = (checked / 5) * 100 + '%';
+            document.getElementById('progress-text').textContent = checked + ' / 5';
+        }
+
+        // Fade-in animation on scroll
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.fade-in').forEach(el => fadeInObserver.observe(el));
+    </script>
+</body>
+</html>

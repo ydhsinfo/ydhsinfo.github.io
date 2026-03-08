@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>탐색 알고리즘 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        orange: {
+                            50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',
+                            500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'
+                        },
+                        amber: {
+                            50:'#fffbeb',100:'#fef3c7',200:'#fde68a',300:'#fcd34d',400:'#fbbf24',
+                            500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e',900:'#78350f'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%);
+        }
+
+        .hero-wave {
+            position: relative;
+        }
+        .hero-wave::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60'%3E%3Cpath fill='%23f9fafb' d='M0,32L80,37.3C160,43,320,53,480,53.3C640,53,800,43,960,37.3C1120,32,1280,32,1360,32L1440,32L1440,60L1360,60C1280,60,1120,60,960,60C800,60,640,60,480,60C320,60,160,60,80,60L0,60Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom center;
+            background-size: cover;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .info-card {
+            transition: all 0.3s ease;
+        }
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .section-number {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #ea580c, #d97706);
+            color: white;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        /* Array cells */
+        .array-cell {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            transition: all 0.35s ease;
+            position: relative;
+        }
+        .array-cell.checking {
+            border-color: #fb923c;
+            background: #fff7ed;
+            transform: scale(1.12);
+            box-shadow: 0 0 16px rgba(249,115,22,0.35);
+        }
+        .array-cell.found {
+            border-color: #16a34a;
+            background: #dcfce7;
+            transform: scale(1.15);
+            box-shadow: 0 0 20px rgba(22,163,74,0.4);
+            animation: pulse-found 0.6s ease-in-out;
+        }
+        .array-cell.eliminated {
+            border-color: #e5e7eb;
+            background: #f3f4f6;
+            color: #9ca3af;
+            transform: scale(0.92);
+            opacity: 0.5;
+        }
+        .array-cell.in-range {
+            border-color: #fbbf24;
+            background: #fffbeb;
+        }
+
+        @keyframes pulse-found {
+            0% { transform: scale(1.15); }
+            50% { transform: scale(1.25); }
+            100% { transform: scale(1.15); }
+        }
+
+        .index-label {
+            position: absolute;
+            bottom: -20px;
+            font-size: 0.65rem;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        .pointer-label {
+            position: absolute;
+            top: -26px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        /* Graph node */
+        .graph-node {
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        .graph-node.visited {
+            fill: #ea580c;
+            stroke: #c2410c;
+        }
+        .graph-node.current {
+            fill: #fbbf24;
+            stroke: #d97706;
+            filter: drop-shadow(0 0 8px rgba(251,191,36,0.6));
+        }
+        .graph-edge {
+            transition: stroke 0.4s ease, stroke-width 0.4s ease;
+        }
+        .graph-edge.active {
+            stroke: #ea580c;
+            stroke-width: 3;
+        }
+
+        /* Fruit cards */
+        .fruit-card {
+            transition: all 0.3s ease;
+        }
+        .fruit-card.checking {
+            border-color: #fb923c;
+            background: #fff7ed;
+            transform: scale(1.08);
+            box-shadow: 0 0 12px rgba(249,115,22,0.3);
+        }
+        .fruit-card.found {
+            border-color: #16a34a;
+            background: #dcfce7;
+            transform: scale(1.1);
+            box-shadow: 0 0 16px rgba(22,163,74,0.35);
+        }
+        .fruit-card.eliminated {
+            opacity: 0.4;
+            transform: scale(0.93);
+        }
+
+        /* Comparison bar */
+        .compare-bar {
+            transition: width 1s ease-out;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .hero-gradient {
+                background: #c2410c !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            body { font-size: 12pt; }
+            section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-14">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-orange-700 transition-colors text-sm font-medium">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>전체 단원</span>
+                </a>
+                <span class="bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-orange-100">
+                    III. 알고리즘과 프로그래밍
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="bg-white border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
+            <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
+                <a href="../../../index.html" class="hover:text-orange-600 transition-colors">
+                    <i class="fas fa-home mr-1"></i>정보
+                </a>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-gray-600 font-medium">III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-gray-600 font-medium">02 알고리즘</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-orange-700 font-semibold">탐색 알고리즘</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-16 sm:py-20 hero-wave">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="max-w-3xl">
+                <span class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-6 border border-white/20">
+                    <i class="fas fa-magnifying-glass"></i>
+                    탐색 알고리즘
+                </span>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
+                    탐색 알고리즘
+                </h1>
+                <p class="text-lg sm:text-xl text-orange-100 font-medium mb-4">
+                    원하는 데이터를 효율적으로 찾는 방법
+                </p>
+                <p class="text-orange-50/90 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                    여러 개의 데이터 중에서 원하는 데이터를 찾는 다양한 탐색 알고리즘의 원리를 이해하고, 직접 시뮬레이션하며 효율성을 비교합니다.
+                </p>
+                <div class="flex flex-wrap gap-3 text-sm mb-8">
+                    <span class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-search text-orange-200"></i>
+                        <span>순차 탐색</span>
+                    </span>
+                    <span class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-compress-arrows-alt text-orange-200"></i>
+                        <span>이진 탐색</span>
+                    </span>
+                    <span class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-balance-scale text-orange-200"></i>
+                        <span>효율성 비교</span>
+                    </span>
+                    <span class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-project-diagram text-orange-200"></i>
+                        <span>그래프 탐색</span>
+                    </span>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/15">
+                    <h3 class="text-sm font-bold mb-3 flex items-center gap-2">
+                        <i class="fas fa-bullseye text-amber-300"></i>
+                        학습 목표
+                    </h3>
+                    <ul class="space-y-2 text-sm text-orange-50/95">
+                        <li class="flex items-start gap-2">
+                            <span class="bg-amber-400 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 flex-shrink-0">1</span>
+                            순차 탐색의 원리와 과정을 이해하고 설명할 수 있다.
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="bg-amber-400 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 flex-shrink-0">2</span>
+                            이진 탐색의 원리와 과정을 이해하고 설명할 수 있다.
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="bg-amber-400 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 flex-shrink-0">3</span>
+                            두 탐색 알고리즘의 효율성을 비교할 수 있다.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-16">
+
+        <!-- ============================================ -->
+        <!-- INTRO: 탐색이란? -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="text-center mb-10">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3">
+                    <i class="fas fa-magnifying-glass text-orange-500 mr-2"></i>
+                    탐색이란?
+                </h2>
+                <p class="text-gray-500 text-sm sm:text-base max-w-2xl mx-auto">
+                    탐색은 여러 개의 데이터 중에서 <strong class="text-gray-700">원하는 데이터를 찾는 과정</strong>입니다. 우리의 일상에서도 탐색은 매우 자주 사용됩니다.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div class="info-card bg-white rounded-2xl p-6 shadow-md border border-orange-100 text-center">
+                    <div class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-address-book text-orange-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">연락처 검색</h3>
+                    <p class="text-sm text-gray-500">전화번호부에서 특정 사람의 번호를 찾는 과정</p>
+                </div>
+                <div class="info-card bg-white rounded-2xl p-6 shadow-md border border-amber-100 text-center">
+                    <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-route text-amber-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">빠른 길 찾기</h3>
+                    <p class="text-sm text-gray-500">네비게이션에서 목적지까지 최적 경로를 탐색</p>
+                </div>
+                <div class="info-card bg-white rounded-2xl p-6 shadow-md border border-orange-100 text-center">
+                    <div class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-book text-orange-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">도서관에서 책 찾기</h3>
+                    <p class="text-sm text-gray-500">수많은 책 중에서 원하는 책을 찾는 과정</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECTION 1: 순차 탐색 -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="section-number">1</span>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900">순차 탐색 <span class="text-orange-500 text-lg font-bold">(Linear Search)</span></h2>
+                    <p class="text-gray-500 text-sm mt-1">데이터를 처음부터 차례대로 비교하며 찾는 가장 단순한 탐색 방법</p>
+                </div>
+            </div>
+
+            <!-- Concept Card -->
+            <div class="bg-white rounded-2xl shadow-md border border-orange-100 p-6 mb-8">
+                <div class="flex items-start gap-4 mb-5">
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-arrow-right text-orange-600 text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 mb-2">작동 원리</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            나열된 데이터를 <strong class="text-orange-700">처음부터 차례대로</strong> 비교하며 원하는 데이터를 찾는 방법입니다.
+                            가장 단순한 탐색 알고리즘으로, <strong class="text-orange-700">적은 양의 데이터</strong>를 탐색할 때 유리합니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Static Example -->
+                <div class="bg-orange-50 rounded-xl p-5">
+                    <h4 class="font-bold text-sm text-orange-800 mb-4">
+                        <i class="fas fa-play-circle mr-1"></i>
+                        예시: [10, 20, 30, 40, 50, 60, 70]에서 50 찾기
+                    </h4>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center gap-3">
+                            <span class="bg-orange-200 text-orange-800 text-xs font-bold px-2 py-1 rounded w-14 text-center">단계 1</span>
+                            <span class="text-gray-700">10 ≠ 50 → 다음으로 이동</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="bg-orange-200 text-orange-800 text-xs font-bold px-2 py-1 rounded w-14 text-center">단계 2</span>
+                            <span class="text-gray-700">20 ≠ 50 → 다음으로 이동</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="bg-orange-200 text-orange-800 text-xs font-bold px-2 py-1 rounded w-14 text-center">단계 3</span>
+                            <span class="text-gray-700">30 ≠ 50 → 다음으로 이동</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="bg-orange-200 text-orange-800 text-xs font-bold px-2 py-1 rounded w-14 text-center">단계 4</span>
+                            <span class="text-gray-700">40 ≠ 50 → 다음으로 이동</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="bg-green-200 text-green-800 text-xs font-bold px-2 py-1 rounded w-14 text-center">단계 5</span>
+                            <span class="text-green-700 font-bold">50 = 50 → 탐색 종료! (5번 비교)</span>
+                            <i class="fas fa-check-circle text-green-500"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Linear Search Simulator -->
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-orange-200 p-6 sm:p-8" id="linearSearchSim">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-gamepad text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">순차 탐색 시뮬레이터</h3>
+                        <p class="text-xs text-gray-500">숫자를 선택하고 순차 탐색 과정을 관찰해보세요!</p>
+                    </div>
+                </div>
+
+                <!-- Target Selection -->
+                <div class="mb-6">
+                    <label class="text-sm font-semibold text-gray-700 mb-3 block">찾을 숫자를 선택하세요:</label>
+                    <div class="flex flex-wrap gap-2" id="linearTargetButtons">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Array Visualization -->
+                <div class="flex flex-wrap justify-center gap-3 mb-6 py-6" id="linearArray">
+                    <!-- Generated by JS -->
+                </div>
+
+                <!-- Status & Controls -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div id="linearStatus" class="text-sm font-medium text-gray-500 bg-gray-100 px-4 py-2 rounded-lg">
+                        <i class="fas fa-info-circle mr-1"></i> 찾을 숫자를 선택해주세요
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="linearStepOnce()" id="linearStepBtn" class="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-semibold hover:bg-orange-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                            <i class="fas fa-step-forward mr-1"></i> 한 단계
+                        </button>
+                        <button onclick="linearAutoRun()" id="linearAutoBtn" class="px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-semibold hover:bg-amber-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                            <i class="fas fa-play mr-1"></i> 자동 실행
+                        </button>
+                        <button onclick="linearReset()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors">
+                            <i class="fas fa-redo mr-1"></i> 초기화
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Comparison Counter -->
+                <div class="mt-4 flex items-center gap-4 bg-orange-50 rounded-lg px-4 py-3 border border-orange-100">
+                    <span class="text-sm text-orange-700 font-semibold">비교 횟수:</span>
+                    <span id="linearCompareCount" class="text-2xl font-extrabold text-orange-600">0</span>
+                    <span class="text-sm text-gray-500">회</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECTION 2: 이진 탐색 -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="section-number">2</span>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900">이진 탐색 <span class="text-orange-500 text-lg font-bold">(Binary Search)</span></h2>
+                    <p class="text-gray-500 text-sm mt-1">정렬된 데이터에서 중앙값과 비교하여 탐색 범위를 절반씩 줄이는 방법</p>
+                </div>
+            </div>
+
+            <!-- Concept Card -->
+            <div class="bg-white rounded-2xl shadow-md border border-orange-100 p-6 mb-4">
+                <div class="flex items-start gap-4 mb-5">
+                    <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-compress-arrows-alt text-amber-600 text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 mb-2">작동 원리</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            나열된 데이터의 <strong class="text-orange-700">중앙에 있는 데이터를 기준</strong>으로 찾는 데이터가 왼쪽인지 오른쪽인지 판단하며 탐색합니다.
+                            <strong class="text-red-600">데이터가 반드시 정렬되어 있어야</strong> 합니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- L, M, R explanation -->
+                <div class="grid grid-cols-3 gap-3 mb-5">
+                    <div class="bg-blue-50 rounded-lg p-3 text-center border border-blue-100">
+                        <span class="inline-block bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-1">L</span>
+                        <p class="text-xs text-gray-600 font-medium">왼쪽 위치</p>
+                    </div>
+                    <div class="bg-red-50 rounded-lg p-3 text-center border border-red-100">
+                        <span class="inline-block bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-1">M</span>
+                        <p class="text-xs text-gray-600 font-medium">가운데 위치</p>
+                        <p class="text-[10px] text-gray-400 mt-0.5">M = (L+R)/2 (소수점 버림)</p>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-3 text-center border border-green-100">
+                        <span class="inline-block bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-1">R</span>
+                        <p class="text-xs text-gray-600 font-medium">오른쪽 위치</p>
+                    </div>
+                </div>
+
+                <!-- Static Example -->
+                <div class="bg-amber-50 rounded-xl p-5">
+                    <h4 class="font-bold text-sm text-amber-800 mb-4">
+                        <i class="fas fa-play-circle mr-1"></i>
+                        예시: [10, 20, 30, 40, 50, 60, 70]에서 50 찾기
+                    </h4>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-start gap-3">
+                            <span class="bg-amber-200 text-amber-800 text-xs font-bold px-2 py-1 rounded w-14 text-center flex-shrink-0 mt-0.5">단계 1</span>
+                            <div>
+                                <span class="text-gray-700">L=0, R=6, M=3 → 중앙값=<strong>40</strong></span><br>
+                                <span class="text-orange-600 font-medium">50 > 40 → 오른쪽 탐색</span>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="bg-amber-200 text-amber-800 text-xs font-bold px-2 py-1 rounded w-14 text-center flex-shrink-0 mt-0.5">단계 2</span>
+                            <div>
+                                <span class="text-gray-700">L=4, R=6, M=5 → 중앙값=<strong>60</strong></span><br>
+                                <span class="text-orange-600 font-medium">50 < 60 → 왼쪽 탐색</span>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="bg-green-200 text-green-800 text-xs font-bold px-2 py-1 rounded w-14 text-center flex-shrink-0 mt-0.5">단계 3</span>
+                            <div>
+                                <span class="text-gray-700">L=4, R=4, M=4 → 중앙값=<strong>50</strong></span><br>
+                                <span class="text-green-700 font-bold">50 = 50 → 탐색 종료! (3번 비교) <i class="fas fa-check-circle"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key difference callout -->
+            <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-4 mb-8 border border-red-200 flex items-center gap-3">
+                <i class="fas fa-exclamation-triangle text-red-500 text-xl flex-shrink-0"></i>
+                <p class="text-sm text-red-800">
+                    <strong>주의!</strong> 이진 탐색은 데이터가 <strong>반드시 정렬(오름차순 또는 내림차순)</strong>되어 있어야 사용할 수 있습니다.
+                </p>
+            </div>
+
+            <!-- Interactive Binary Search Simulator -->
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-amber-200 p-6 sm:p-8" id="binarySearchSim">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-gamepad text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">이진 탐색 시뮬레이터</h3>
+                        <p class="text-xs text-gray-500">숫자를 선택하고 탐색 범위가 절반씩 줄어드는 과정을 관찰해보세요!</p>
+                    </div>
+                </div>
+
+                <!-- Target Selection -->
+                <div class="mb-6">
+                    <label class="text-sm font-semibold text-gray-700 mb-3 block">찾을 숫자를 선택하세요:</label>
+                    <div class="flex flex-wrap gap-2" id="binaryTargetButtons">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Array Visualization with pointers -->
+                <div class="relative">
+                    <div class="flex flex-wrap justify-center gap-3 mb-2 pt-8 pb-8" id="binaryArray">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Step Log -->
+                <div id="binaryStepLog" class="mb-4 space-y-2 max-h-48 overflow-y-auto">
+                    <!-- Steps will be added here -->
+                </div>
+
+                <!-- Status & Controls -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div id="binaryStatus" class="text-sm font-medium text-gray-500 bg-gray-100 px-4 py-2 rounded-lg">
+                        <i class="fas fa-info-circle mr-1"></i> 찾을 숫자를 선택해주세요
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="binaryStepOnce()" id="binaryStepBtn" class="px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-semibold hover:bg-amber-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                            <i class="fas fa-step-forward mr-1"></i> 한 단계
+                        </button>
+                        <button onclick="binaryAutoRun()" id="binaryAutoBtn" class="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-semibold hover:bg-orange-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                            <i class="fas fa-play mr-1"></i> 자동 실행
+                        </button>
+                        <button onclick="binaryReset()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors">
+                            <i class="fas fa-redo mr-1"></i> 초기화
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Comparison Counter -->
+                <div class="mt-4 flex items-center gap-4 bg-amber-50 rounded-lg px-4 py-3 border border-amber-100">
+                    <span class="text-sm text-amber-700 font-semibold">비교 횟수:</span>
+                    <span id="binaryCompareCount" class="text-2xl font-extrabold text-amber-600">0</span>
+                    <span class="text-sm text-gray-500">회</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECTION 3: 효율성 비교 -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="section-number">3</span>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900">효율성 비교</h2>
+                    <p class="text-gray-500 text-sm mt-1">순차 탐색과 이진 탐색의 장단점 비교</p>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden mb-8">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-orange-600 to-amber-600 text-white">
+                                <th class="py-4 px-6 text-left font-bold">비교 항목</th>
+                                <th class="py-4 px-6 text-center font-bold">
+                                    <i class="fas fa-arrow-right mr-1"></i> 순차 탐색
+                                </th>
+                                <th class="py-4 px-6 text-center font-bold">
+                                    <i class="fas fa-compress-arrows-alt mr-1"></i> 이진 탐색
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-100">
+                                <td class="py-4 px-6 font-semibold text-gray-700">정렬 필요 여부</td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
+                                        <i class="fas fa-times-circle"></i> 불필요
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold">
+                                        <i class="fas fa-check-circle"></i> 필요
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-100 bg-gray-50/50">
+                                <td class="py-4 px-6 font-semibold text-gray-700">탐색 방법</td>
+                                <td class="py-4 px-6 text-center text-gray-600">처음부터 순서대로</td>
+                                <td class="py-4 px-6 text-center text-gray-600">중앙값 비교 후 범위 축소</td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="py-4 px-6 font-semibold text-gray-700">최악의 비교 횟수</td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="text-orange-600 font-bold text-lg">N번</span>
+                                    <span class="block text-xs text-gray-400 mt-1">(데이터 개수만큼)</span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="text-amber-600 font-bold text-lg">log<sub>2</sub>N번</span>
+                                    <span class="block text-xs text-gray-400 mt-1">(매번 절반으로 줄임)</span>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-100 bg-gray-50/50">
+                                <td class="py-4 px-6 font-semibold text-gray-700">적은 데이터</td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="text-green-600 font-semibold"><i class="fas fa-thumbs-up mr-1"></i>효과적</span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="text-gray-500 font-semibold">차이 적음</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-semibold text-gray-700">대량 데이터</td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="text-red-500 font-semibold"><i class="fas fa-thumbs-down mr-1"></i>비효율적</span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="text-green-600 font-semibold"><i class="fas fa-thumbs-up mr-1"></i>매우 효율적</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Interactive Efficiency Calculator -->
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-orange-200 p-6 sm:p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-calculator text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">효율성 비교 계산기</h3>
+                        <p class="text-xs text-gray-500">데이터 개수를 입력하면 최악의 경우 비교 횟수를 비교합니다</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center gap-4 mb-6">
+                    <label class="text-sm font-semibold text-gray-700">데이터 개수 (N):</label>
+                    <input type="number" id="efficiencyInput" value="100" min="1" max="1000000000"
+                        class="w-48 px-4 py-2 border-2 border-orange-200 rounded-lg text-center font-bold focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all"
+                        oninput="calculateEfficiency()">
+                    <div class="flex gap-2 flex-wrap">
+                        <button onclick="setEfficiency(7)" class="px-3 py-1.5 bg-orange-100 text-orange-700 rounded-lg text-xs font-bold hover:bg-orange-200 transition-colors">7개</button>
+                        <button onclick="setEfficiency(100)" class="px-3 py-1.5 bg-orange-100 text-orange-700 rounded-lg text-xs font-bold hover:bg-orange-200 transition-colors">100개</button>
+                        <button onclick="setEfficiency(1000)" class="px-3 py-1.5 bg-orange-100 text-orange-700 rounded-lg text-xs font-bold hover:bg-orange-200 transition-colors">1,000개</button>
+                        <button onclick="setEfficiency(1000000)" class="px-3 py-1.5 bg-orange-100 text-orange-700 rounded-lg text-xs font-bold hover:bg-orange-200 transition-colors">1,000,000개</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Linear -->
+                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-100">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-arrow-right text-orange-500"></i>
+                            <span class="font-bold text-orange-800">순차 탐색</span>
+                        </div>
+                        <div class="text-3xl font-extrabold text-orange-600 mb-1" id="linearWorst">100</div>
+                        <div class="text-xs text-gray-500">최악의 비교 횟수 (= N)</div>
+                        <div class="mt-3 h-4 bg-orange-200 rounded-full overflow-hidden">
+                            <div id="linearBar" class="compare-bar h-full bg-orange-500 rounded-full" style="width:100%"></div>
+                        </div>
+                    </div>
+                    <!-- Binary -->
+                    <div class="bg-amber-50 rounded-xl p-5 border border-amber-100">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-compress-arrows-alt text-amber-500"></i>
+                            <span class="font-bold text-amber-800">이진 탐색</span>
+                        </div>
+                        <div class="text-3xl font-extrabold text-amber-600 mb-1" id="binaryWorst">7</div>
+                        <div class="text-xs text-gray-500">최악의 비교 횟수 (= <span class="font-mono">log<sub>2</sub>N</span>)</div>
+                        <div class="mt-3 h-4 bg-amber-200 rounded-full overflow-hidden">
+                            <div id="binaryBar" class="compare-bar h-full bg-amber-500 rounded-full" style="width:7%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="efficiencyMessage" class="mt-4 text-center text-sm font-semibold text-orange-700 bg-orange-50 py-3 rounded-lg border border-orange-100">
+                    이진 탐색이 순차 탐색보다 약 <strong>14배</strong> 빠릅니다!
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 보물찾기 모험 (BFS vs DFS) -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-gradient-to-br from-orange-400 to-amber-400 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-gem text-white text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900">보물찾기 모험</h2>
+                    <p class="text-gray-500 text-sm mt-1">그래프에서 보물을 찾는 두 가지 방법을 비교해보세요</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-orange-200 p-6 sm:p-8">
+                <p class="text-sm text-gray-600 mb-6 leading-relaxed">
+                    그래프는 노드(꼭짓점)와 간선(연결선)으로 이루어진 자료구조입니다.
+                    아래 그래프에서 <strong class="text-orange-700">A에서 시작</strong>하여 <strong class="text-amber-600">보물(F)</strong>을 찾아보세요!
+                </p>
+
+                <!-- Graph SVG -->
+                <div class="flex justify-center mb-6">
+                    <svg id="graphSvg" viewBox="0 0 500 320" class="w-full max-w-lg" style="height:auto;">
+                        <!-- Edges -->
+                        <line id="edge-AB" x1="80" y1="80" x2="200" y2="40" class="graph-edge" stroke="#d1d5db" stroke-width="2" />
+                        <line id="edge-AC" x1="80" y1="80" x2="200" y2="150" class="graph-edge" stroke="#d1d5db" stroke-width="2" />
+                        <line id="edge-BD" x1="200" y1="40" x2="340" y2="40" class="graph-edge" stroke="#d1d5db" stroke-width="2" />
+                        <line id="edge-CE" x1="200" y1="150" x2="340" y2="130" class="graph-edge" stroke="#d1d5db" stroke-width="2" />
+                        <line id="edge-CF" x1="200" y1="150" x2="340" y2="230" class="graph-edge" stroke="#d1d5db" stroke-width="2" />
+                        <line id="edge-EF" x1="340" y1="130" x2="340" y2="230" class="graph-edge" stroke="#d1d5db" stroke-width="2" />
+
+                        <!-- Nodes -->
+                        <circle id="node-A" cx="80" cy="80" r="28" fill="#fff7ed" stroke="#fb923c" stroke-width="3" class="graph-node"/>
+                        <text x="80" y="86" text-anchor="middle" font-size="16" font-weight="bold" fill="#c2410c">A</text>
+                        <text x="80" y="125" text-anchor="middle" font-size="10" fill="#9ca3af">시작</text>
+
+                        <circle id="node-B" cx="200" cy="40" r="28" fill="#fff7ed" stroke="#fb923c" stroke-width="3" class="graph-node"/>
+                        <text x="200" y="46" text-anchor="middle" font-size="16" font-weight="bold" fill="#c2410c">B</text>
+
+                        <circle id="node-C" cx="200" cy="150" r="28" fill="#fff7ed" stroke="#fb923c" stroke-width="3" class="graph-node"/>
+                        <text x="200" y="156" text-anchor="middle" font-size="16" font-weight="bold" fill="#c2410c">C</text>
+
+                        <circle id="node-D" cx="340" cy="40" r="28" fill="#fff7ed" stroke="#fb923c" stroke-width="3" class="graph-node"/>
+                        <text x="340" y="46" text-anchor="middle" font-size="16" font-weight="bold" fill="#c2410c">D</text>
+
+                        <circle id="node-E" cx="340" cy="130" r="28" fill="#fff7ed" stroke="#fb923c" stroke-width="3" class="graph-node"/>
+                        <text x="340" y="136" text-anchor="middle" font-size="16" font-weight="bold" fill="#c2410c">E</text>
+
+                        <circle id="node-F" cx="340" cy="230" r="28" fill="#fef3c7" stroke="#f59e0b" stroke-width="3" class="graph-node"/>
+                        <text x="340" y="234" text-anchor="middle" font-size="16" font-weight="bold" fill="#92400e">F</text>
+                        <text x="340" y="275" text-anchor="middle" font-size="10" fill="#d97706" font-weight="bold">
+                            <tspan>&#x1f48e; 보물</tspan>
+                        </text>
+                    </svg>
+                </div>
+
+                <!-- Mode Selection -->
+                <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                    <button onclick="startGraphTraversal('bfs')" id="bfsBtn"
+                        class="flex-1 px-5 py-3 bg-orange-500 text-white rounded-xl text-sm font-bold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
+                        <i class="fas fa-arrows-alt-h"></i>
+                        방법 1: 가까운 곳부터 (BFS)
+                    </button>
+                    <button onclick="startGraphTraversal('dfs')" id="dfsBtn"
+                        class="flex-1 px-5 py-3 bg-amber-500 text-white rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors flex items-center justify-center gap-2">
+                        <i class="fas fa-arrow-down"></i>
+                        방법 2: 깊이 우선 (DFS)
+                    </button>
+                    <button onclick="resetGraph()"
+                        class="px-5 py-3 bg-gray-200 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-300 transition-colors flex items-center justify-center gap-2">
+                        <i class="fas fa-redo"></i> 초기화
+                    </button>
+                </div>
+
+                <!-- Traversal Log -->
+                <div id="graphLog" class="bg-gray-50 rounded-xl p-4 border border-gray-200 min-h-[60px]">
+                    <p class="text-sm text-gray-400 text-center">위 버튼을 눌러 탐색을 시작하세요</p>
+                </div>
+
+                <!-- Result Summary -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                    <div class="bg-orange-50 rounded-lg p-4 border border-orange-100">
+                        <h4 class="text-sm font-bold text-orange-700 mb-2">
+                            <i class="fas fa-arrows-alt-h mr-1"></i>BFS (너비 우선 탐색)
+                        </h4>
+                        <p class="text-xs text-gray-600">가까운 곳부터 탐색: A → B → C → D → E → F</p>
+                        <p class="text-xs text-orange-600 font-semibold mt-1">보물을 6번째에 발견!</p>
+                    </div>
+                    <div class="bg-amber-50 rounded-lg p-4 border border-amber-100">
+                        <h4 class="text-sm font-bold text-amber-700 mb-2">
+                            <i class="fas fa-arrow-down mr-1"></i>DFS (깊이 우선 탐색)
+                        </h4>
+                        <p class="text-xs text-gray-600">깊이 우선 탐색: A → B → D → C → E → F</p>
+                        <p class="text-xs text-amber-600 font-semibold mt-1">보물을 6번째에 발견!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 활동 11: 과일 탐색 퀴즈 -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl shadow-lg p-6 sm:p-8 text-white">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                        <i class="fas fa-flask text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg">활동 11: 과일 데이터 탐색</h3>
+                        <p class="text-orange-100 text-xs">과일 데이터에서 순차 탐색과 이진 탐색을 비교해보세요</p>
+                    </div>
+                </div>
+
+                <p class="text-sm text-orange-50 mb-6 leading-relaxed">
+                    정렬된 과일 데이터 <strong>[귤, 딸기, 망고, 바나나, 사과, 키위, 포도]</strong>에서 원하는 과일을 찾아봅시다.
+                </p>
+
+                <!-- Fruit Cards -->
+                <div class="flex flex-wrap justify-center gap-3 mb-6" id="fruitArray">
+                    <!-- Generated by JS -->
+                </div>
+
+                <!-- Fruit Target Selection -->
+                <div class="mb-6">
+                    <label class="text-sm font-semibold text-orange-100 mb-3 block">찾을 과일을 선택하세요:</label>
+                    <div class="flex flex-wrap gap-2" id="fruitTargetButtons">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Mode Selection -->
+                <div class="flex flex-wrap gap-3 mb-4">
+                    <button onclick="runFruitSearch('linear')" id="fruitLinearBtn"
+                        class="px-5 py-2.5 bg-white text-orange-600 rounded-lg text-sm font-bold hover:bg-orange-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                        <i class="fas fa-arrow-right mr-1"></i> 순차 탐색 실행
+                    </button>
+                    <button onclick="runFruitSearch('binary')" id="fruitBinaryBtn"
+                        class="px-5 py-2.5 bg-white text-amber-600 rounded-lg text-sm font-bold hover:bg-amber-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                        <i class="fas fa-compress-arrows-alt mr-1"></i> 이진 탐색 실행
+                    </button>
+                    <button onclick="resetFruit()"
+                        class="px-5 py-2.5 bg-white/20 text-white rounded-lg text-sm font-bold hover:bg-white/30 transition-colors">
+                        <i class="fas fa-redo mr-1"></i> 초기화
+                    </button>
+                </div>
+
+                <!-- Fruit Status -->
+                <div id="fruitStatus" class="bg-white/15 backdrop-blur-sm rounded-lg p-3 text-sm text-center text-orange-50 border border-white/20">
+                    과일을 선택한 후 탐색 방법을 실행해보세요
+                </div>
+
+                <!-- Fruit Results Comparison -->
+                <div id="fruitResults" class="hidden mt-4 grid grid-cols-2 gap-3">
+                    <div class="bg-white/15 backdrop-blur-sm rounded-lg p-3 text-center border border-white/20">
+                        <div class="text-xs text-orange-200 mb-1">순차 탐색</div>
+                        <div id="fruitLinearResult" class="text-xl font-extrabold">-</div>
+                        <div class="text-[10px] text-orange-200">비교 횟수</div>
+                    </div>
+                    <div class="bg-white/15 backdrop-blur-sm rounded-lg p-3 text-center border border-white/20">
+                        <div class="text-xs text-amber-200 mb-1">이진 탐색</div>
+                        <div id="fruitBinaryResult" class="text-xl font-extrabold">-</div>
+                        <div class="text-[10px] text-amber-200">비교 횟수</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 핵심 정리 -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-6 sm:p-8 border border-orange-200">
+                <h2 class="text-xl font-extrabold text-gray-900 mb-6 flex items-center gap-2">
+                    <i class="fas fa-bookmark text-orange-500"></i>
+                    핵심 정리
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- 순차 탐색 -->
+                    <div class="bg-white rounded-xl p-5 shadow-sm border border-orange-100">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-arrow-right text-white text-sm"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-900">순차 탐색</h3>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-orange-400 mt-1 text-xs"></i>
+                                데이터를 처음부터 차례대로 비교
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-orange-400 mt-1 text-xs"></i>
+                                정렬이 필요 없음
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-orange-400 mt-1 text-xs"></i>
+                                적은 양의 데이터에 적합
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-orange-400 mt-1 text-xs"></i>
+                                최악의 경우 N번 비교
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 이진 탐색 -->
+                    <div class="bg-white rounded-xl p-5 shadow-sm border border-amber-100">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-compress-arrows-alt text-white text-sm"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-900">이진 탐색</h3>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-amber-400 mt-1 text-xs"></i>
+                                중앙값과 비교하여 범위를 절반씩 축소
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-amber-400 mt-1 text-xs"></i>
+                                데이터가 반드시 정렬되어 있어야 함
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-amber-400 mt-1 text-xs"></i>
+                                대량 데이터에서 매우 효율적
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-amber-400 mt-1 text-xs"></i>
+                                최악의 경우 log<sub>2</sub>N번 비교
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 그래프 탐색 -->
+                    <div class="bg-white rounded-xl p-5 shadow-sm border border-orange-100 md:col-span-2">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-project-diagram text-white text-sm"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-900">그래프 탐색</h3>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-check text-orange-400 mt-1 text-xs flex-shrink-0"></i>
+                                <span class="text-sm text-gray-600"><strong>BFS (너비 우선)</strong>: 가까운 노드부터 탐색 - 최단 경로 탐색에 유리</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-check text-amber-400 mt-1 text-xs flex-shrink-0"></i>
+                                <span class="text-sm text-gray-600"><strong>DFS (깊이 우선)</strong>: 한 방향으로 깊이 탐색 - 경로 탐색에 유리</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../02_정렬 알고리즘/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../04_선택활동/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">III. 알고리즘과 프로그래밍 &gt; 02 알고리즘 &gt; 탐색 알고리즘</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // ===========================================
+    // Intersection Observer for fade-in
+    // ===========================================
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ===========================================
+    // LINEAR SEARCH SIMULATOR
+    // ===========================================
+    const linearData = [10, 20, 30, 40, 50, 60, 70];
+    let linearTarget = null;
+    let linearCurrentIndex = -1;
+    let linearCompares = 0;
+    let linearDone = false;
+    let linearAutoRunning = false;
+
+    function initLinearSim() {
+        const container = document.getElementById('linearArray');
+        container.innerHTML = linearData.map((val, i) => `
+            <div class="array-cell" id="lc-${i}">
+                ${val}
+                <span class="index-label">[${i}]</span>
+            </div>
+        `).join('');
+
+        const btnContainer = document.getElementById('linearTargetButtons');
+        btnContainer.innerHTML = linearData.map(val => `
+            <button onclick="selectLinearTarget(${val})" class="px-4 py-2 rounded-lg text-sm font-bold border-2 transition-all
+                ${linearTarget === val ? 'bg-orange-500 text-white border-orange-500' : 'bg-white text-orange-600 border-orange-200 hover:border-orange-400'}
+            ">${val}</button>
+        `).join('');
+    }
+
+    function selectLinearTarget(val) {
+        linearReset();
+        linearTarget = val;
+        initLinearSim();
+        document.getElementById('linearStepBtn').disabled = false;
+        document.getElementById('linearAutoBtn').disabled = false;
+        document.getElementById('linearStatus').innerHTML = `<i class="fas fa-search mr-1 text-orange-500"></i> <strong>${val}</strong>을(를) 찾습니다. 탐색을 시작하세요!`;
+        document.getElementById('linearStatus').className = 'text-sm font-medium text-orange-700 bg-orange-50 px-4 py-2 rounded-lg border border-orange-200';
+    }
+
+    function linearStepOnce() {
+        if (linearDone || linearTarget === null) return;
+
+        linearCurrentIndex++;
+        linearCompares++;
+        document.getElementById('linearCompareCount').textContent = linearCompares;
+
+        // Reset previous cells
+        linearData.forEach((_, i) => {
+            const cell = document.getElementById(`lc-${i}`);
+            if (i < linearCurrentIndex) {
+                cell.className = 'array-cell eliminated';
+            } else {
+                cell.className = 'array-cell';
+            }
+        });
+
+        const currentCell = document.getElementById(`lc-${linearCurrentIndex}`);
+
+        if (linearData[linearCurrentIndex] === linearTarget) {
+            currentCell.className = 'array-cell found';
+            linearDone = true;
+            linearAutoRunning = false;
+            document.getElementById('linearStepBtn').disabled = true;
+            document.getElementById('linearAutoBtn').disabled = true;
+            document.getElementById('linearStatus').innerHTML = `<i class="fas fa-check-circle mr-1 text-green-500"></i> <strong>${linearTarget}</strong>을(를) 찾았습니다! (${linearCompares}번 비교)`;
+            document.getElementById('linearStatus').className = 'text-sm font-medium text-green-700 bg-green-50 px-4 py-2 rounded-lg border border-green-200';
+        } else {
+            currentCell.className = 'array-cell checking';
+            document.getElementById('linearStatus').innerHTML = `<i class="fas fa-search mr-1 text-orange-500"></i> ${linearData[linearCurrentIndex]} ≠ ${linearTarget} → 다음으로 이동 (${linearCompares}번째 비교)`;
+            document.getElementById('linearStatus').className = 'text-sm font-medium text-orange-700 bg-orange-50 px-4 py-2 rounded-lg border border-orange-200';
+
+            if (linearCurrentIndex >= linearData.length - 1) {
+                linearDone = true;
+                linearAutoRunning = false;
+                document.getElementById('linearStepBtn').disabled = true;
+                document.getElementById('linearAutoBtn').disabled = true;
+                document.getElementById('linearStatus').innerHTML = `<i class="fas fa-times-circle mr-1 text-red-500"></i> 데이터를 찾지 못했습니다. (${linearCompares}번 비교)`;
+                document.getElementById('linearStatus').className = 'text-sm font-medium text-red-700 bg-red-50 px-4 py-2 rounded-lg border border-red-200';
+            }
+        }
+    }
+
+    function linearAutoRun() {
+        if (linearAutoRunning || linearDone) return;
+        linearAutoRunning = true;
+        document.getElementById('linearAutoBtn').disabled = true;
+        document.getElementById('linearStepBtn').disabled = true;
+
+        function step() {
+            if (!linearAutoRunning || linearDone) {
+                if (!linearDone) {
+                    document.getElementById('linearStepBtn').disabled = false;
+                    document.getElementById('linearAutoBtn').disabled = false;
+                }
+                return;
+            }
+            linearStepOnce();
+            if (!linearDone) {
+                setTimeout(step, 600);
+            }
+        }
+        step();
+    }
+
+    function linearReset() {
+        linearTarget = null;
+        linearCurrentIndex = -1;
+        linearCompares = 0;
+        linearDone = false;
+        linearAutoRunning = false;
+        document.getElementById('linearCompareCount').textContent = '0';
+        document.getElementById('linearStepBtn').disabled = true;
+        document.getElementById('linearAutoBtn').disabled = true;
+        document.getElementById('linearStatus').innerHTML = '<i class="fas fa-info-circle mr-1"></i> 찾을 숫자를 선택해주세요';
+        document.getElementById('linearStatus').className = 'text-sm font-medium text-gray-500 bg-gray-100 px-4 py-2 rounded-lg';
+        initLinearSim();
+    }
+
+    // ===========================================
+    // BINARY SEARCH SIMULATOR
+    // ===========================================
+    const binaryData = [10, 20, 30, 40, 50, 60, 70];
+    let binaryTarget = null;
+    let bL = 0, bR = 6, bM = 3;
+    let binaryCompares = 0;
+    let binaryDone = false;
+    let binaryAutoRunning = false;
+    let binaryStepNum = 0;
+
+    function initBinarySim() {
+        const container = document.getElementById('binaryArray');
+        container.innerHTML = binaryData.map((val, i) => `
+            <div class="array-cell" id="bc-${i}" style="position:relative;">
+                ${val}
+                <span class="index-label">[${i}]</span>
+            </div>
+        `).join('');
+        document.getElementById('binaryStepLog').innerHTML = '';
+    }
+
+    function updateBinaryPointers() {
+        // Clear all pointers
+        binaryData.forEach((_, i) => {
+            const cell = document.getElementById(`bc-${i}`);
+            const existing = cell.querySelector('.pointer-label');
+            if (existing) existing.remove();
+        });
+
+        if (binaryDone) return;
+
+        // Add pointers
+        const pointers = [];
+        if (bL === bM && bM === bR) {
+            pointers.push({ idx: bM, labels: ['L', 'M', 'R'], color: 'bg-purple-500 text-white' });
+        } else if (bL === bM) {
+            pointers.push({ idx: bL, labels: ['L', 'M'], color: 'bg-blue-500 text-white' });
+            pointers.push({ idx: bR, labels: ['R'], color: 'bg-green-500 text-white' });
+        } else if (bM === bR) {
+            pointers.push({ idx: bL, labels: ['L'], color: 'bg-blue-500 text-white' });
+            pointers.push({ idx: bR, labels: ['M', 'R'], color: 'bg-green-500 text-white' });
+        } else {
+            pointers.push({ idx: bL, labels: ['L'], color: 'bg-blue-500 text-white' });
+            pointers.push({ idx: bM, labels: ['M'], color: 'bg-red-500 text-white' });
+            pointers.push({ idx: bR, labels: ['R'], color: 'bg-green-500 text-white' });
+        }
+
+        pointers.forEach(p => {
+            const cell = document.getElementById(`bc-${p.idx}`);
+            if (cell) {
+                const label = document.createElement('span');
+                label.className = `pointer-label ${p.color}`;
+                label.textContent = p.labels.join(',');
+                cell.appendChild(label);
+            }
+        });
+    }
+
+    function updateBinaryCells() {
+        binaryData.forEach((val, i) => {
+            const cell = document.getElementById(`bc-${i}`);
+            cell.className = 'array-cell';
+
+            if (i >= bL && i <= bR) {
+                cell.classList.add('in-range');
+                if (i === bM) {
+                    cell.classList.remove('in-range');
+                    cell.classList.add('checking');
+                }
+            } else {
+                cell.classList.add('eliminated');
+            }
+        });
+    }
+
+    function selectBinaryTarget(val) {
+        binaryReset();
+        binaryTarget = val;
+        bL = 0; bR = binaryData.length - 1;
+        bM = Math.floor((bL + bR) / 2);
+
+        // Reinit buttons
+        const btnContainer = document.getElementById('binaryTargetButtons');
+        btnContainer.innerHTML = binaryData.map(v => `
+            <button onclick="selectBinaryTarget(${v})" class="px-4 py-2 rounded-lg text-sm font-bold border-2 transition-all
+                ${binaryTarget === v ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-amber-600 border-amber-200 hover:border-amber-400'}
+            ">${v}</button>
+        `).join('');
+
+        initBinarySim();
+        updateBinaryCells();
+        updateBinaryPointers();
+
+        document.getElementById('binaryStepBtn').disabled = false;
+        document.getElementById('binaryAutoBtn').disabled = false;
+        document.getElementById('binaryStatus').innerHTML = `<i class="fas fa-search mr-1 text-amber-500"></i> <strong>${val}</strong>을(를) 찾습니다. 탐색을 시작하세요!`;
+        document.getElementById('binaryStatus').className = 'text-sm font-medium text-amber-700 bg-amber-50 px-4 py-2 rounded-lg border border-amber-200';
+    }
+
+    function binaryStepOnce() {
+        if (binaryDone || binaryTarget === null) return;
+
+        binaryStepNum++;
+        binaryCompares++;
+        document.getElementById('binaryCompareCount').textContent = binaryCompares;
+
+        bM = Math.floor((bL + bR) / 2);
+        const midVal = binaryData[bM];
+
+        updateBinaryCells();
+        updateBinaryPointers();
+
+        const logDiv = document.getElementById('binaryStepLog');
+
+        if (midVal === binaryTarget) {
+            // Found!
+            binaryDone = true;
+            binaryAutoRunning = false;
+            document.getElementById('binaryStepBtn').disabled = true;
+            document.getElementById('binaryAutoBtn').disabled = true;
+
+            const cell = document.getElementById(`bc-${bM}`);
+            cell.className = 'array-cell found';
+
+            // Clear pointers on found
+            binaryData.forEach((_, i) => {
+                const c = document.getElementById(`bc-${i}`);
+                const p = c.querySelector('.pointer-label');
+                if (p) p.remove();
+            });
+
+            document.getElementById('binaryStatus').innerHTML = `<i class="fas fa-check-circle mr-1 text-green-500"></i> <strong>${binaryTarget}</strong>을(를) 찾았습니다! (${binaryCompares}번 비교)`;
+            document.getElementById('binaryStatus').className = 'text-sm font-medium text-green-700 bg-green-50 px-4 py-2 rounded-lg border border-green-200';
+
+            logDiv.innerHTML += `
+                <div class="flex items-center gap-2 text-sm bg-green-50 rounded-lg px-3 py-2 border border-green-200">
+                    <span class="bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded">${binaryStepNum}</span>
+                    <span class="text-green-700">L=${bL}, R=${bR}, M=${bM} → 중앙값=${midVal} = ${binaryTarget} → <strong>탐색 종료!</strong></span>
+                </div>`;
+        } else if (midVal < binaryTarget) {
+            // Go right
+            document.getElementById('binaryStatus').innerHTML = `<i class="fas fa-search mr-1 text-amber-500"></i> 중앙값 ${midVal} < ${binaryTarget} → <strong>오른쪽</strong> 탐색 (${binaryCompares}번째 비교)`;
+            document.getElementById('binaryStatus').className = 'text-sm font-medium text-amber-700 bg-amber-50 px-4 py-2 rounded-lg border border-amber-200';
+
+            logDiv.innerHTML += `
+                <div class="flex items-center gap-2 text-sm bg-amber-50 rounded-lg px-3 py-2 border border-amber-100">
+                    <span class="bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded">${binaryStepNum}</span>
+                    <span class="text-gray-700">L=${bL}, R=${bR}, M=${bM} → 중앙값=${midVal}, ${binaryTarget} > ${midVal} → 오른쪽 탐색</span>
+                </div>`;
+            bL = bM + 1;
+        } else {
+            // Go left
+            document.getElementById('binaryStatus').innerHTML = `<i class="fas fa-search mr-1 text-amber-500"></i> 중앙값 ${midVal} > ${binaryTarget} → <strong>왼쪽</strong> 탐색 (${binaryCompares}번째 비교)`;
+            document.getElementById('binaryStatus').className = 'text-sm font-medium text-amber-700 bg-amber-50 px-4 py-2 rounded-lg border border-amber-200';
+
+            logDiv.innerHTML += `
+                <div class="flex items-center gap-2 text-sm bg-amber-50 rounded-lg px-3 py-2 border border-amber-100">
+                    <span class="bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded">${binaryStepNum}</span>
+                    <span class="text-gray-700">L=${bL}, R=${bR}, M=${bM} → 중앙값=${midVal}, ${binaryTarget} < ${midVal} → 왼쪽 탐색</span>
+                </div>`;
+            bR = bM - 1;
+        }
+
+        if (!binaryDone && bL > bR) {
+            binaryDone = true;
+            binaryAutoRunning = false;
+            document.getElementById('binaryStepBtn').disabled = true;
+            document.getElementById('binaryAutoBtn').disabled = true;
+            document.getElementById('binaryStatus').innerHTML = `<i class="fas fa-times-circle mr-1 text-red-500"></i> 데이터를 찾지 못했습니다. (${binaryCompares}번 비교)`;
+            document.getElementById('binaryStatus').className = 'text-sm font-medium text-red-700 bg-red-50 px-4 py-2 rounded-lg border border-red-200';
+        }
+
+        if (!binaryDone) {
+            bM = Math.floor((bL + bR) / 2);
+            updateBinaryCells();
+            updateBinaryPointers();
+        }
+
+        logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    function binaryAutoRun() {
+        if (binaryAutoRunning || binaryDone) return;
+        binaryAutoRunning = true;
+        document.getElementById('binaryAutoBtn').disabled = true;
+        document.getElementById('binaryStepBtn').disabled = true;
+
+        function step() {
+            if (!binaryAutoRunning || binaryDone) {
+                if (!binaryDone) {
+                    document.getElementById('binaryStepBtn').disabled = false;
+                    document.getElementById('binaryAutoBtn').disabled = false;
+                }
+                return;
+            }
+            binaryStepOnce();
+            if (!binaryDone) {
+                setTimeout(step, 800);
+            }
+        }
+        step();
+    }
+
+    function binaryReset() {
+        binaryTarget = null;
+        bL = 0; bR = binaryData.length - 1; bM = 3;
+        binaryCompares = 0;
+        binaryDone = false;
+        binaryAutoRunning = false;
+        binaryStepNum = 0;
+        document.getElementById('binaryCompareCount').textContent = '0';
+        document.getElementById('binaryStepBtn').disabled = true;
+        document.getElementById('binaryAutoBtn').disabled = true;
+        document.getElementById('binaryStatus').innerHTML = '<i class="fas fa-info-circle mr-1"></i> 찾을 숫자를 선택해주세요';
+        document.getElementById('binaryStatus').className = 'text-sm font-medium text-gray-500 bg-gray-100 px-4 py-2 rounded-lg';
+        document.getElementById('binaryStepLog').innerHTML = '';
+
+        const btnContainer = document.getElementById('binaryTargetButtons');
+        btnContainer.innerHTML = binaryData.map(v => `
+            <button onclick="selectBinaryTarget(${v})" class="px-4 py-2 rounded-lg text-sm font-bold border-2 transition-all bg-white text-amber-600 border-amber-200 hover:border-amber-400">${v}</button>
+        `).join('');
+
+        initBinarySim();
+    }
+
+    // ===========================================
+    // EFFICIENCY CALCULATOR
+    // ===========================================
+    function calculateEfficiency() {
+        const n = parseInt(document.getElementById('efficiencyInput').value) || 1;
+        const linearW = n;
+        const binaryW = Math.ceil(Math.log2(Math.max(n, 1)));
+
+        document.getElementById('linearWorst').textContent = linearW.toLocaleString();
+        document.getElementById('binaryWorst').textContent = binaryW.toLocaleString();
+
+        const maxWidth = Math.max(linearW, 1);
+        document.getElementById('linearBar').style.width = '100%';
+        document.getElementById('binaryBar').style.width = Math.max((binaryW / maxWidth) * 100, 2) + '%';
+
+        const ratio = linearW > 0 ? Math.round(linearW / Math.max(binaryW, 1)) : 1;
+        document.getElementById('efficiencyMessage').innerHTML =
+            n <= 1
+            ? '데이터가 1개일 때는 두 방법 모두 1번 비교합니다.'
+            : `이진 탐색이 순차 탐색보다 약 <strong>${ratio.toLocaleString()}배</strong> 빠릅니다!`;
+    }
+
+    function setEfficiency(n) {
+        document.getElementById('efficiencyInput').value = n;
+        calculateEfficiency();
+    }
+
+    // ===========================================
+    // GRAPH TRAVERSAL (BFS / DFS)
+    // ===========================================
+    const graphAdj = {
+        'A': ['B', 'C'],
+        'B': ['A', 'D'],
+        'C': ['A', 'E', 'F'],
+        'D': ['B'],
+        'E': ['C', 'F'],
+        'F': ['C', 'E']
+    };
+
+    const edgeMap = {
+        'A-B': 'edge-AB', 'B-A': 'edge-AB',
+        'A-C': 'edge-AC', 'C-A': 'edge-AC',
+        'B-D': 'edge-BD', 'D-B': 'edge-BD',
+        'C-E': 'edge-CE', 'E-C': 'edge-CE',
+        'C-F': 'edge-CF', 'F-C': 'edge-CF',
+        'E-F': 'edge-EF', 'F-E': 'edge-EF'
+    };
+
+    let graphAnimating = false;
+
+    function resetGraph() {
+        graphAnimating = false;
+        ['A','B','C','D','E','F'].forEach(n => {
+            const node = document.getElementById('node-' + n);
+            node.setAttribute('fill', n === 'F' ? '#fef3c7' : '#fff7ed');
+            node.setAttribute('stroke', n === 'F' ? '#f59e0b' : '#fb923c');
+            node.style.filter = '';
+        });
+        Object.values(edgeMap).forEach(id => {
+            const edge = document.getElementById(id);
+            if (edge) {
+                edge.setAttribute('stroke', '#d1d5db');
+                edge.setAttribute('stroke-width', '2');
+                edge.classList.remove('active');
+            }
+        });
+        document.getElementById('graphLog').innerHTML = '<p class="text-sm text-gray-400 text-center">위 버튼을 눌러 탐색을 시작하세요</p>';
+        document.getElementById('bfsBtn').disabled = false;
+        document.getElementById('dfsBtn').disabled = false;
+    }
+
+    function startGraphTraversal(mode) {
+        if (graphAnimating) return;
+        resetGraph();
+        graphAnimating = true;
+        document.getElementById('bfsBtn').disabled = true;
+        document.getElementById('dfsBtn').disabled = true;
+
+        let order;
+        let edges;
+        let label;
+
+        if (mode === 'bfs') {
+            order = ['A', 'B', 'C', 'D', 'E', 'F'];
+            edges = ['A-B', 'A-C', 'B-D', 'C-E', 'C-F'];
+            label = 'BFS (너비 우선)';
+        } else {
+            order = ['A', 'B', 'D', 'C', 'E', 'F'];
+            edges = ['A-B', 'B-D', 'A-C', 'C-E', 'E-F'];
+            label = 'DFS (깊이 우선)';
+        }
+
+        const logDiv = document.getElementById('graphLog');
+        logDiv.innerHTML = `<p class="text-sm font-bold text-orange-700 mb-2"><i class="fas fa-play-circle mr-1"></i> ${label} 탐색 시작</p>`;
+
+        let step = 0;
+        function animate() {
+            if (!graphAnimating || step >= order.length) {
+                graphAnimating = false;
+                document.getElementById('bfsBtn').disabled = false;
+                document.getElementById('dfsBtn').disabled = false;
+                return;
+            }
+
+            const nodeName = order[step];
+            const node = document.getElementById('node-' + nodeName);
+
+            // Mark previous node as visited
+            if (step > 0) {
+                const prevNode = document.getElementById('node-' + order[step - 1]);
+                prevNode.setAttribute('fill', '#ea580c');
+                prevNode.setAttribute('stroke', '#c2410c');
+                prevNode.style.filter = '';
+            }
+
+            // Highlight current
+            node.setAttribute('fill', '#fbbf24');
+            node.setAttribute('stroke', '#d97706');
+            node.style.filter = 'drop-shadow(0 0 8px rgba(251,191,36,0.6))';
+
+            // Highlight edge
+            if (step > 0 && edges[step - 1]) {
+                const edgeId = edgeMap[edges[step - 1]];
+                if (edgeId) {
+                    const edgeEl = document.getElementById(edgeId);
+                    edgeEl.setAttribute('stroke', '#ea580c');
+                    edgeEl.setAttribute('stroke-width', '3');
+                }
+            }
+
+            const isFound = nodeName === 'F';
+            logDiv.innerHTML += `
+                <div class="flex items-center gap-2 text-sm ${isFound ? 'text-green-700 font-bold' : 'text-gray-700'}">
+                    <span class="bg-orange-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0">${step + 1}</span>
+                    ${nodeName} 방문${isFound ? ' → 보물 발견!' : ''}
+                    ${isFound ? '<i class="fas fa-gem text-amber-500"></i>' : ''}
+                </div>`;
+
+            if (isFound) {
+                node.setAttribute('fill', '#22c55e');
+                node.setAttribute('stroke', '#16a34a');
+                node.style.filter = 'drop-shadow(0 0 12px rgba(34,197,94,0.6))';
+                // Mark as visited too
+                const prevNode = document.getElementById('node-' + order[step - 1]);
+                if (prevNode) {
+                    prevNode.setAttribute('fill', '#ea580c');
+                    prevNode.setAttribute('stroke', '#c2410c');
+                    prevNode.style.filter = '';
+                }
+                graphAnimating = false;
+                document.getElementById('bfsBtn').disabled = false;
+                document.getElementById('dfsBtn').disabled = false;
+                return;
+            }
+
+            step++;
+            setTimeout(animate, 700);
+        }
+        animate();
+    }
+
+    // ===========================================
+    // FRUIT SEARCH (활동11)
+    // ===========================================
+    const fruits = ['귤', '딸기', '망고', '바나나', '사과', '키위', '포도'];
+    const fruitEmojis = { '귤': '🍊', '딸기': '🍓', '망고': '🥭', '바나나': '🍌', '사과': '🍎', '키위': '🥝', '포도': '🍇' };
+    let fruitTarget = null;
+    let fruitLinearCount = null;
+    let fruitBinaryCount = null;
+
+    function initFruitSim() {
+        const container = document.getElementById('fruitArray');
+        container.innerHTML = fruits.map((f, i) => `
+            <div class="fruit-card bg-white/90 backdrop-blur-sm rounded-xl px-4 py-3 border-2 border-white/30 text-center" id="fc-${i}">
+                <div class="text-2xl mb-1">${fruitEmojis[f]}</div>
+                <div class="text-sm font-bold text-gray-800">${f}</div>
+                <div class="text-[10px] text-gray-400">[${i}]</div>
+            </div>
+        `).join('');
+
+        const btnContainer = document.getElementById('fruitTargetButtons');
+        btnContainer.innerHTML = fruits.map(f => `
+            <button onclick="selectFruitTarget('${f}')" class="px-3 py-1.5 rounded-lg text-sm font-bold transition-all
+                ${fruitTarget === f ? 'bg-white text-orange-600 shadow-md' : 'bg-white/20 text-white hover:bg-white/30 border border-white/20'}
+            ">${fruitEmojis[f]} ${f}</button>
+        `).join('');
+    }
+
+    function selectFruitTarget(f) {
+        fruitTarget = f;
+        fruitLinearCount = null;
+        fruitBinaryCount = null;
+        initFruitSim();
+        document.getElementById('fruitLinearBtn').disabled = false;
+        document.getElementById('fruitBinaryBtn').disabled = false;
+        document.getElementById('fruitStatus').textContent = `"${f}"을(를) 찾습니다. 탐색 방법을 선택하세요!`;
+        document.getElementById('fruitResults').classList.add('hidden');
+    }
+
+    function runFruitSearch(mode) {
+        if (!fruitTarget) return;
+
+        // Reset fruit cards
+        fruits.forEach((_, i) => {
+            const card = document.getElementById(`fc-${i}`);
+            card.className = 'fruit-card bg-white/90 backdrop-blur-sm rounded-xl px-4 py-3 border-2 border-white/30 text-center';
+        });
+
+        let steps = [];
+        if (mode === 'linear') {
+            // Sequential search
+            for (let i = 0; i < fruits.length; i++) {
+                steps.push({ index: i, found: fruits[i] === fruitTarget });
+                if (fruits[i] === fruitTarget) break;
+            }
+            fruitLinearCount = steps.length;
+        } else {
+            // Binary search
+            let l = 0, r = fruits.length - 1;
+            while (l <= r) {
+                let m = Math.floor((l + r) / 2);
+                const cmp = fruits[m].localeCompare(fruitTarget, 'ko');
+                steps.push({ index: m, found: cmp === 0, l, r });
+                if (cmp === 0) break;
+                if (cmp < 0) l = m + 1;
+                else r = m - 1;
+            }
+            fruitBinaryCount = steps.length;
+        }
+
+        // Animate
+        let stepIdx = 0;
+        document.getElementById('fruitLinearBtn').disabled = true;
+        document.getElementById('fruitBinaryBtn').disabled = true;
+
+        function animateStep() {
+            if (stepIdx >= steps.length) {
+                document.getElementById('fruitLinearBtn').disabled = false;
+                document.getElementById('fruitBinaryBtn').disabled = false;
+                updateFruitResults();
+                return;
+            }
+
+            const s = steps[stepIdx];
+
+            // Mark eliminated
+            if (mode === 'binary' && s.l !== undefined) {
+                fruits.forEach((_, i) => {
+                    const card = document.getElementById(`fc-${i}`);
+                    if (i < s.l || i > s.r) {
+                        card.className = 'fruit-card bg-white/90 backdrop-blur-sm rounded-xl px-4 py-3 border-2 border-white/30 text-center eliminated';
+                    }
+                });
+            }
+
+            if (stepIdx > 0 && mode === 'linear') {
+                const prevCard = document.getElementById(`fc-${steps[stepIdx-1].index}`);
+                prevCard.className = 'fruit-card bg-white/90 backdrop-blur-sm rounded-xl px-4 py-3 border-2 border-white/30 text-center eliminated';
+            }
+
+            const card = document.getElementById(`fc-${s.index}`);
+            if (s.found) {
+                card.className = 'fruit-card bg-white/90 backdrop-blur-sm rounded-xl px-4 py-3 border-2 border-white/30 text-center found';
+                document.getElementById('fruitStatus').textContent = `"${fruitTarget}"을(를) 찾았습니다! (${mode === 'linear' ? '순차' : '이진'} 탐색: ${steps.length}번 비교)`;
+            } else {
+                card.className = 'fruit-card bg-white/90 backdrop-blur-sm rounded-xl px-4 py-3 border-2 border-white/30 text-center checking';
+                document.getElementById('fruitStatus').textContent = `${fruits[s.index]} 확인 중... (${stepIdx + 1}번째 비교)`;
+            }
+
+            stepIdx++;
+            setTimeout(animateStep, 600);
+        }
+        animateStep();
+    }
+
+    function updateFruitResults() {
+        if (fruitLinearCount !== null || fruitBinaryCount !== null) {
+            document.getElementById('fruitResults').classList.remove('hidden');
+            document.getElementById('fruitLinearResult').textContent = fruitLinearCount !== null ? fruitLinearCount + '회' : '-';
+            document.getElementById('fruitBinaryResult').textContent = fruitBinaryCount !== null ? fruitBinaryCount + '회' : '-';
+        }
+    }
+
+    function resetFruit() {
+        fruitTarget = null;
+        fruitLinearCount = null;
+        fruitBinaryCount = null;
+        document.getElementById('fruitLinearBtn').disabled = true;
+        document.getElementById('fruitBinaryBtn').disabled = true;
+        document.getElementById('fruitStatus').textContent = '과일을 선택한 후 탐색 방법을 실행해보세요';
+        document.getElementById('fruitResults').classList.add('hidden');
+        initFruitSim();
+    }
+
+    // ===========================================
+    // INITIALIZATION
+    // ===========================================
+    document.addEventListener('DOMContentLoaded', () => {
+        initLinearSim();
+
+        // Init binary buttons
+        const binaryBtnContainer = document.getElementById('binaryTargetButtons');
+        binaryBtnContainer.innerHTML = binaryData.map(v => `
+            <button onclick="selectBinaryTarget(${v})" class="px-4 py-2 rounded-lg text-sm font-bold border-2 transition-all bg-white text-amber-600 border-amber-200 hover:border-amber-400">${v}</button>
+        `).join('');
+        initBinarySim();
+
+        initFruitSim();
+        calculateEfficiency();
+    });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>선택활동 - 우리 동네 기온 현황 분석하기 | 함수와 라이브러리</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'korean': ['"Noto Sans KR"', 'sans-serif'] },
+                    colors: {
+                        primary: { 50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12' },
+                        amber: { 50:'#fffbeb',100:'#fef3c7',200:'#fde68a',300:'#fcd34d',400:'#fbbf24',500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e',900:'#78350f' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        .hero-gradient { background: linear-gradient(135deg, #f97316 0%, #ea580c 30%, #d97706 60%, #b45309 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(249,115,22,0.15); }
+        .step-connector { position: relative; }
+        .step-connector::after { content:''; position:absolute; left:50%; top:100%; width:2px; height:24px; background:linear-gradient(to bottom, #f97316, #fbbf24); }
+        .step-connector:last-child::after { display:none; }
+        .code-block { background: #1e1e2e; color: #cdd6f4; border-radius: 12px; padding: 16px 20px; font-family: 'Courier New', monospace; font-size: 0.875rem; line-height: 1.7; overflow-x: auto; }
+        .code-keyword { color: #cba6f7; }
+        .code-string { color: #a6e3a1; }
+        .code-func { color: #89b4fa; }
+        .code-comment { color: #6c7086; }
+        .code-number { color: #fab387; }
+        .code-op { color: #f38ba8; }
+        .bar-chart-bar { transition: all 0.5s cubic-bezier(0.34,1.56,0.64,1); transform-origin: bottom; }
+        .bar-chart-bar:hover { filter: brightness(1.15); }
+        .highlight-min { background: #dbeafe !important; border: 2px solid #3b82f6 !important; }
+        .highlight-max { background: #fee2e2 !important; border: 2px solid #ef4444 !important; }
+        .highlight-positive { background: #dcfce7 !important; border: 2px solid #22c55e !important; }
+        .fade-in { animation: fadeIn 0.5s ease forwards; opacity:0; }
+        @keyframes fadeIn { to { opacity:1; } }
+        .slide-up { animation: slideUp 0.5s ease forwards; opacity:0; transform:translateY(20px); }
+        @keyframes slideUp { to { opacity:1; transform:translateY(0); } }
+        .pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
+        @keyframes pulseGlow { 0%,100%{ box-shadow:0 0 0 0 rgba(249,115,22,0.3); } 50%{ box-shadow:0 0 0 8px rgba(249,115,22,0); } }
+        .progress-step { transition: all 0.3s ease; }
+        .progress-step.active { background: #f97316; color: white; transform: scale(1.15); }
+        .progress-step.completed { background: #22c55e; color: white; }
+        .rubric-radio:checked + label { background: #f97316; color: white; border-color: #f97316; }
+        .page-indicator { transition: all 0.3s ease; }
+        .page-indicator.active { background: #f97316; width: 2rem; }
+        .tooltip { position:relative; }
+        .tooltip::after { content:attr(data-tip); position:absolute; bottom:110%; left:50%; transform:translateX(-50%); background:#1e293b; color:white; padding:4px 10px; border-radius:6px; font-size:0.75rem; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+        .tooltip:hover::after { opacity:1; }
+        .dataframe-cell { transition: background 0.3s ease, border-color 0.3s ease; }
+        @media print { .no-print { display:none; } }
+    </style>
+</head>
+<body class="bg-gray-50 font-korean">
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 text-6xl"><i class="fas fa-temperature-half"></i></div>
+            <div class="absolute top-20 right-20 text-5xl"><i class="fas fa-chart-bar"></i></div>
+            <div class="absolute bottom-10 left-1/4 text-4xl"><i class="fas fa-database"></i></div>
+            <div class="absolute bottom-20 right-1/3 text-7xl"><i class="fas fa-sun"></i></div>
+            <div class="absolute top-1/2 left-1/2 text-3xl"><i class="fas fa-snowflake"></i></div>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 py-16 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center space-x-2 text-orange-100 text-sm mb-8 flex-wrap">
+                <a href="../../../index.html" class="hover:text-white transition-colors flex items-center gap-1">
+                    <i class="fas fa-home"></i> 정보
+                </a>
+                <i class="fas fa-chevron-right text-xs text-orange-200"></i>
+                <span>III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-xs text-orange-200"></i>
+                <span>05 함수와 라이브러리</span>
+                <i class="fas fa-chevron-right text-xs text-orange-200"></i>
+                <span class="text-white font-semibold">선택활동</span>
+            </nav>
+
+            <a href="../../../index.html" class="inline-flex items-center gap-2 text-orange-100 hover:text-white transition-colors mb-6 text-sm group no-print">
+                <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                목차로 돌아가기
+            </a>
+
+            <div class="flex items-start gap-5">
+                <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-4 hidden sm:flex items-center justify-center">
+                    <i class="fas fa-temperature-half text-4xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="bg-white/25 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full">선택활동</span>
+                        <span class="bg-amber-400/30 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full">
+                            <i class="fas fa-users mr-1"></i> 모둠 활동
+                        </span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black mb-3 leading-tight">우리 동네 기온 현황<br>분석하기</h1>
+                    <p class="text-orange-100 text-lg max-w-xl">pandas와 matplotlib를 활용하여 우리 동네 기온 데이터를 수집, 분석, 시각화하는 프로젝트 활동</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page Navigation (5 pages) -->
+    <div class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-orange-100 shadow-sm no-print">
+        <div class="max-w-6xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 overflow-x-auto pb-1">
+                    <button onclick="goToPage(0)" class="page-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all bg-orange-500 text-white" data-page="0">
+                        <i class="fas fa-bullseye"></i><span class="hidden sm:inline">문제 정의</span><span class="sm:hidden">1</span>
+                    </button>
+                    <button onclick="goToPage(1)" class="page-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all text-gray-500 hover:bg-orange-50" data-page="1">
+                        <i class="fas fa-download"></i><span class="hidden sm:inline">데이터 수집</span><span class="sm:hidden">2</span>
+                    </button>
+                    <button onclick="goToPage(2)" class="page-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all text-gray-500 hover:bg-orange-50" data-page="2">
+                        <i class="fas fa-magnifying-glass-chart"></i><span class="hidden sm:inline">데이터 분석</span><span class="sm:hidden">3</span>
+                    </button>
+                    <button onclick="goToPage(3)" class="page-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all text-gray-500 hover:bg-orange-50" data-page="3">
+                        <i class="fas fa-check-circle"></i><span class="hidden sm:inline">문제 해결</span><span class="sm:hidden">4</span>
+                    </button>
+                    <button onclick="goToPage(4)" class="page-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all text-gray-500 hover:bg-orange-50" data-page="4">
+                        <i class="fas fa-clipboard-check"></i><span class="hidden sm:inline">평가</span><span class="sm:hidden">5</span>
+                    </button>
+                </div>
+                <div class="flex items-center gap-1 ml-4">
+                    <div class="page-indicator h-1.5 rounded-full bg-orange-500 active" data-dot="0"></div>
+                    <div class="page-indicator h-1.5 w-1.5 rounded-full bg-gray-300" data-dot="1"></div>
+                    <div class="page-indicator h-1.5 w-1.5 rounded-full bg-gray-300" data-dot="2"></div>
+                    <div class="page-indicator h-1.5 w-1.5 rounded-full bg-gray-300" data-dot="3"></div>
+                    <div class="page-indicator h-1.5 w-1.5 rounded-full bg-gray-300" data-dot="4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-4 py-10">
+
+        <!-- ===================== PAGE 0: 문제 정의하기 ===================== -->
+        <div id="page-0" class="page-content">
+            <!-- 4-Step Progress Indicator -->
+            <div class="mb-10">
+                <div class="flex items-center justify-center gap-0 flex-wrap">
+                    <div class="flex items-center">
+                        <div class="progress-step active w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-lg cursor-pointer" onclick="goToPage(0)">1</div>
+                        <span class="ml-2 text-sm font-semibold text-orange-600">문제 정의</span>
+                    </div>
+                    <div class="w-8 sm:w-16 h-0.5 bg-gray-300 mx-2"></div>
+                    <div class="flex items-center">
+                        <div class="progress-step bg-gray-200 text-gray-500 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm cursor-pointer" onclick="goToPage(1)">2</div>
+                        <span class="ml-2 text-sm text-gray-500">데이터 수집</span>
+                    </div>
+                    <div class="w-8 sm:w-16 h-0.5 bg-gray-300 mx-2"></div>
+                    <div class="flex items-center">
+                        <div class="progress-step bg-gray-200 text-gray-500 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm cursor-pointer" onclick="goToPage(2)">3</div>
+                        <span class="ml-2 text-sm text-gray-500">데이터 분석</span>
+                    </div>
+                    <div class="w-8 sm:w-16 h-0.5 bg-gray-300 mx-2"></div>
+                    <div class="flex items-center">
+                        <div class="progress-step bg-gray-200 text-gray-500 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm cursor-pointer" onclick="goToPage(3)">4</div>
+                        <span class="ml-2 text-sm text-gray-500">문제 해결</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Left: 문제 정의 설명 -->
+                <div>
+                    <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-8 card-hover">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-amber-500 rounded-xl flex items-center justify-center text-white shadow-lg">
+                                <i class="fas fa-bullseye text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-800">Step 1. 문제 정의하기</h2>
+                                <p class="text-sm text-gray-500">분석할 문제를 명확히 정의합니다</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-orange-50 border-l-4 border-orange-400 rounded-r-xl p-5 mb-6">
+                            <h3 class="font-bold text-orange-800 mb-2"><i class="fas fa-question-circle mr-2"></i>분석 문제</h3>
+                            <p class="text-orange-700 text-lg font-medium">우리 동네에서 1월~2월 사이에 가장 추웠던 날은 언제이고, 기온은 몇 도일까?</p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
+                                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-map-marker-alt text-orange-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-700">분석 대상</h4>
+                                    <p class="text-gray-600 text-sm">우리 동네(지역)의 일별 기온 데이터</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
+                                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-calendar-days text-orange-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-700">분석 기간</h4>
+                                    <p class="text-gray-600 text-sm">1월 1일 ~ 2월 28일 (약 59일간)</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
+                                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-list-check text-orange-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-700">추가 분석 항목</h4>
+                                    <ul class="text-gray-600 text-sm space-y-1 mt-1">
+                                        <li><i class="fas fa-snowflake text-blue-400 mr-1"></i> 가장 추웠던 날과 기온</li>
+                                        <li><i class="fas fa-sun text-amber-400 mr-1"></i> 가장 따뜻했던 날과 기온</li>
+                                        <li><i class="fas fa-sort mr-1 text-gray-400"></i> 기온 오름차순/내림차순 정렬</li>
+                                        <li><i class="fas fa-filter mr-1 text-green-500"></i> 영상 기온인 날 필터링</li>
+                                        <li><i class="fas fa-chart-bar mr-1 text-purple-500"></i> 기온 변화 그래프 시각화</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: 분석 흐름도 -->
+                <div>
+                    <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-8 card-hover">
+                        <h3 class="text-lg font-bold text-gray-800 mb-6"><i class="fas fa-project-diagram text-orange-500 mr-2"></i>데이터 분석 프로세스</h3>
+                        <div class="space-y-0">
+                            <div class="step-connector text-center">
+                                <div class="inline-flex items-center gap-3 bg-orange-500 text-white px-6 py-3 rounded-xl shadow-lg">
+                                    <i class="fas fa-bullseye"></i>
+                                    <span class="font-semibold">1. 문제 정의하기</span>
+                                </div>
+                            </div>
+                            <div class="h-6"></div>
+                            <div class="step-connector text-center">
+                                <div class="inline-flex items-center gap-3 bg-amber-500 text-white px-6 py-3 rounded-xl shadow-lg">
+                                    <i class="fas fa-download"></i>
+                                    <span class="font-semibold">2. 데이터 수집하기</span>
+                                </div>
+                            </div>
+                            <div class="h-6"></div>
+                            <div class="step-connector text-center">
+                                <div class="inline-flex items-center gap-3 bg-orange-600 text-white px-6 py-3 rounded-xl shadow-lg">
+                                    <i class="fas fa-magnifying-glass-chart"></i>
+                                    <span class="font-semibold">3. 데이터 분석하기</span>
+                                </div>
+                            </div>
+                            <div class="h-6"></div>
+                            <div class="text-center">
+                                <div class="inline-flex items-center gap-3 bg-amber-600 text-white px-6 py-3 rounded-xl shadow-lg">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span class="font-semibold">4. 문제 해결하기</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 p-5 bg-amber-50 border border-amber-200 rounded-xl">
+                            <h4 class="font-bold text-amber-800 mb-2"><i class="fas fa-lightbulb mr-2"></i>활동 목표</h4>
+                            <p class="text-amber-700 text-sm leading-relaxed">
+                                파이썬의 <code class="bg-amber-100 px-1.5 py-0.5 rounded text-amber-900 font-mono text-xs">pandas</code> 라이브러리를 활용하여 CSV 파일의 기온 데이터를 불러오고,
+                                다양한 함수를 사용하여 분석한 뒤, <code class="bg-amber-100 px-1.5 py-0.5 rounded text-amber-900 font-mono text-xs">matplotlib</code>으로 시각화합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Page Button -->
+            <div class="flex justify-end mt-8">
+                <button onclick="goToPage(1)" class="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-lg">
+                    다음: 데이터 수집하기 <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===================== PAGE 1: 데이터 수집하기 ===================== -->
+        <div id="page-1" class="page-content hidden">
+            <div class="mb-10">
+                <div class="flex items-center justify-center gap-0 flex-wrap">
+                    <div class="flex items-center">
+                        <div class="progress-step completed w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-lg cursor-pointer" onclick="goToPage(0)"><i class="fas fa-check"></i></div>
+                        <span class="ml-2 text-sm text-green-600">문제 정의</span>
+                    </div>
+                    <div class="w-8 sm:w-16 h-0.5 bg-green-400 mx-2"></div>
+                    <div class="flex items-center">
+                        <div class="progress-step active w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-lg cursor-pointer" onclick="goToPage(1)">2</div>
+                        <span class="ml-2 text-sm font-semibold text-orange-600">데이터 수집</span>
+                    </div>
+                    <div class="w-8 sm:w-16 h-0.5 bg-gray-300 mx-2"></div>
+                    <div class="flex items-center">
+                        <div class="progress-step bg-gray-200 text-gray-500 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm cursor-pointer" onclick="goToPage(2)">3</div>
+                        <span class="ml-2 text-sm text-gray-500">데이터 분석</span>
+                    </div>
+                    <div class="w-8 sm:w-16 h-0.5 bg-gray-300 mx-2"></div>
+                    <div class="flex items-center">
+                        <div class="progress-step bg-gray-200 text-gray-500 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm cursor-pointer" onclick="goToPage(3)">4</div>
+                        <span class="ml-2 text-sm text-gray-500">문제 해결</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Left: 수집 방법 -->
+                <div class="space-y-6">
+                    <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-8 card-hover">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-amber-500 rounded-xl flex items-center justify-center text-white shadow-lg">
+                                <i class="fas fa-download text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-800">Step 2. 데이터 수집하기</h2>
+                                <p class="text-sm text-gray-500">기상 자료 포털에서 데이터를 다운로드합니다</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-blue-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">1</span>
+                                    <h4 class="font-semibold text-blue-800">기상 자료 개방 포털 접속</h4>
+                                </div>
+                                <p class="text-blue-700 text-sm ml-8">기상청의 기상 자료 개방 포털에 접속하여 원하는 지역과 기간의 기온 데이터를 검색합니다.</p>
+                            </div>
+                            <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-blue-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">2</span>
+                                    <h4 class="font-semibold text-blue-800">CSV 파일 다운로드</h4>
+                                </div>
+                                <p class="text-blue-700 text-sm ml-8">검색 결과를 CSV(쉼표로 구분된 값) 형식으로 다운로드합니다.</p>
+                            </div>
+                            <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-blue-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">3</span>
+                                    <h4 class="font-semibold text-blue-800">스프레드시트로 가공</h4>
+                                </div>
+                                <p class="text-blue-700 text-sm ml-8">다운로드한 CSV를 스프레드시트에서 열어 <code class="bg-blue-100 px-1 py-0.5 rounded font-mono text-xs">day</code>와 <code class="bg-blue-100 px-1 py-0.5 rounded font-mono text-xs">temp</code> 두 열로 정리합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CSV 파일 구조 설명 -->
+                    <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 card-hover">
+                        <h3 class="font-bold text-gray-800 mb-4"><i class="fas fa-file-csv text-green-500 mr-2"></i>temp.csv 파일 구조</h3>
+                        <div class="code-block text-sm">
+                            <span class="code-comment"># temp.csv</span><br>
+                            <span class="code-string">day</span>,<span class="code-string">temp</span><br>
+                            <span class="code-string">2025-01-01</span>,<span class="code-number">-0.3</span><br>
+                            <span class="code-string">2025-01-02</span>,<span class="code-number">2.2</span><br>
+                            <span class="code-string">2025-01-03</span>,<span class="code-number">-1.1</span><br>
+                            <span class="code-string">2025-01-04</span>,<span class="code-number">-3.3</span><br>
+                            <span class="code-comment">... (총 59일 데이터)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Interactive Data Table -->
+                <div>
+                    <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-gray-800"><i class="fas fa-table text-orange-500 mr-2"></i>수집된 기온 데이터</h3>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500">총 <strong id="dataCount">59</strong>개 데이터</span>
+                                <button onclick="toggleFullData()" class="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-lg hover:bg-orange-200 transition-colors">
+                                    <i class="fas fa-expand mr-1"></i><span id="toggleDataLabel">전체 보기</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-auto max-h-[500px] rounded-xl border border-gray-200" id="dataTableContainer">
+                            <table class="w-full text-sm" id="rawDataTable">
+                                <thead class="bg-orange-50 sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left font-semibold text-orange-800 border-b border-orange-200">#</th>
+                                        <th class="px-4 py-3 text-left font-semibold text-orange-800 border-b border-orange-200">day (날짜)</th>
+                                        <th class="px-4 py-3 text-right font-semibold text-orange-800 border-b border-orange-200">temp (기온 °C)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rawDataBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4 flex items-center gap-4 text-xs text-gray-500">
+                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-blue-100 border border-blue-300 inline-block"></span> 최저 기온</span>
+                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-red-100 border border-red-300 inline-block"></span> 최고 기온</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between mt-8">
+                <button onclick="goToPage(0)" class="flex items-center gap-2 bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors">
+                    <i class="fas fa-arrow-left"></i> 이전
+                </button>
+                <button onclick="goToPage(2)" class="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-lg">
+                    다음: 데이터 분석하기 <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===================== PAGE 2: 데이터 분석하기 ===================== -->
+        <div id="page-2" class="page-content hidden">
+            <div class="mb-10">
+                <div class="flex items-center justify-center gap-0 flex-wrap">
+                    <div class="flex items-center">
+                        <div class="progress-step completed w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-lg cursor-pointer" onclick="goToPage(0)"><i class="fas fa-check"></i></div>
+                        <span class="ml-2 text-sm text-green-600">문제 정의</span>
+                    </div>
+                    <div class="w-8 sm:w-16 h-0.5 bg-green-400 mx-2"></div>
+                    <div class="flex items-center">
+                        <div class="progress-step completed w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-lg cursor-pointer" onclick="goToPage(1)"><i class="fas fa-check"></i></div>
+                        <span class="ml-2 text-sm text-green-600">데이터 수집</span>
+                    </div>
+                    <div class="w-8 sm:w-16 h-0.5 bg-green-400 mx-2"></div>
+                    <div class="flex items-center">
+                        <div class="progress-step active w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-lg cursor-pointer" onclick="goToPage(2)">3</div>
+                        <span class="ml-2 text-sm font-semibold text-orange-600">데이터 분석</span>
+                    </div>
+                    <div class="w-8 sm:w-16 h-0.5 bg-gray-300 mx-2"></div>
+                    <div class="flex items-center">
+                        <div class="progress-step bg-gray-200 text-gray-500 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm cursor-pointer" onclick="goToPage(3)">4</div>
+                        <span class="ml-2 text-sm text-gray-500">문제 해결</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-amber-500 rounded-xl flex items-center justify-center text-white shadow-lg">
+                    <i class="fas fa-magnifying-glass-chart text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Step 3. 데이터 분석하기</h2>
+                    <p class="text-sm text-gray-500">pandas를 활용하여 기온 데이터를 분석합니다</p>
+                </div>
+            </div>
+
+            <!-- 코드 1: DataFrame 생성 -->
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 mb-6 card-hover">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">코드 1</span>
+                    <h3 class="font-bold text-gray-800">CSV 파일 불러오기 & DataFrame 생성</h3>
+                </div>
+                <div class="code-block mb-4">
+                    <span class="code-keyword">import</span> <span class="code-func">pandas</span> <span class="code-keyword">as</span> pd<br><br>
+                    <span class="code-comment"># CSV 파일 불러오기</span><br>
+                    df = pd.<span class="code-func">read_csv</span>(<span class="code-string">"temp.csv"</span>)<br><br>
+                    <span class="code-comment"># 월-일만 추출</span><br>
+                    df[<span class="code-string">"day"</span>] = df[<span class="code-string">"day"</span>].str[<span class="code-number">5</span>:]<br><br>
+                    <span class="code-func">print</span>(df)
+                </div>
+
+                <!-- Interactive DataFrame Viewer -->
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-sm font-semibold text-gray-600"><i class="fas fa-table mr-1"></i> DataFrame 출력 결과</h4>
+                        <div class="flex items-center gap-2 text-xs">
+                            <span class="bg-gray-200 text-gray-600 px-2 py-1 rounded">59 rows x 2 columns</span>
+                        </div>
+                    </div>
+                    <div class="overflow-auto max-h-72 rounded-lg border border-gray-200">
+                        <table class="w-full text-sm font-mono">
+                            <thead class="bg-gray-100 sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-2 text-left text-gray-600 border-b font-medium w-16">index</th>
+                                    <th class="px-3 py-2 text-left text-gray-600 border-b font-medium">day</th>
+                                    <th class="px-3 py-2 text-right text-gray-600 border-b font-medium">temp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dfViewerBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 코드 2: 최솟값/최댓값 -->
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 mb-6 card-hover">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">코드 2</span>
+                    <h3 class="font-bold text-gray-800">가장 추웠던 날 & 가장 따뜻했던 날</h3>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <div class="code-block text-xs">
+                            <span class="code-comment"># 가장 추웠던 날</span><br>
+                            df[df[<span class="code-string">"temp"</span>]<span class="code-op">==</span>df[<span class="code-string">"temp"</span>].<span class="code-func">min</span>()][<span class="code-string">"day"</span>]
+                        </div>
+                    </div>
+                    <div>
+                        <div class="code-block text-xs">
+                            <span class="code-comment"># 가장 따뜻했던 날</span><br>
+                            df[df[<span class="code-string">"temp"</span>]<span class="code-op">==</span>df[<span class="code-string">"temp"</span>].<span class="code-func">max</span>()][<span class="code-string">"day"</span>]
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Min/Max Finder -->
+                <div class="bg-gray-50 rounded-xl p-5">
+                    <div class="flex items-center gap-2 mb-4">
+                        <h4 class="text-sm font-semibold text-gray-600"><i class="fas fa-search mr-1"></i> 결과 확인하기</h4>
+                        <button onclick="findMinMax()" class="bg-orange-500 text-white text-xs px-4 py-1.5 rounded-lg hover:bg-orange-600 transition-colors pulse-glow">
+                            <i class="fas fa-play mr-1"></i> 실행
+                        </button>
+                    </div>
+                    <div id="minMaxResult" class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-4 border-2 border-dashed border-gray-200 text-center text-gray-400">
+                            <i class="fas fa-snowflake text-3xl mb-2"></i>
+                            <p class="text-sm">실행 버튼을 눌러<br>가장 추웠던 날을 찾아보세요</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border-2 border-dashed border-gray-200 text-center text-gray-400">
+                            <i class="fas fa-sun text-3xl mb-2"></i>
+                            <p class="text-sm">실행 버튼을 눌러<br>가장 따뜻했던 날을 찾아보세요</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 코드 3: 정렬 -->
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 mb-6 card-hover">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">코드 3</span>
+                    <h3 class="font-bold text-gray-800">기온 정렬하기</h3>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <div class="code-block text-xs">
+                            <span class="code-comment"># 오름차순 정렬</span><br>
+                            df.<span class="code-func">sort_values</span>(<span class="code-string">by</span>=<span class="code-string">"temp"</span>)
+                        </div>
+                    </div>
+                    <div>
+                        <div class="code-block text-xs">
+                            <span class="code-comment"># 내림차순 정렬</span><br>
+                            df.<span class="code-func">sort_values</span>(<span class="code-string">by</span>=<span class="code-string">"temp"</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">ascending</span>=<span class="code-keyword">False</span>)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sort Toggle -->
+                <div class="bg-gray-50 rounded-xl p-5">
+                    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                        <h4 class="text-sm font-semibold text-gray-600"><i class="fas fa-sort mr-1"></i> 정렬 결과 미리보기</h4>
+                        <div class="flex items-center gap-2">
+                            <button onclick="sortData('original')" class="sort-btn text-xs px-3 py-1.5 rounded-lg transition-colors bg-orange-500 text-white" data-sort="original">
+                                <i class="fas fa-clock mr-1"></i>원본
+                            </button>
+                            <button onclick="sortData('asc')" class="sort-btn text-xs px-3 py-1.5 rounded-lg transition-colors bg-gray-200 text-gray-600 hover:bg-gray-300" data-sort="asc">
+                                <i class="fas fa-sort-amount-up mr-1"></i>오름차순
+                            </button>
+                            <button onclick="sortData('desc')" class="sort-btn text-xs px-3 py-1.5 rounded-lg transition-colors bg-gray-200 text-gray-600 hover:bg-gray-300" data-sort="desc">
+                                <i class="fas fa-sort-amount-down mr-1"></i>내림차순
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-auto max-h-60 rounded-lg border border-gray-200">
+                        <table class="w-full text-sm font-mono">
+                            <thead class="bg-gray-100 sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-2 text-left text-gray-600 border-b font-medium w-16">index</th>
+                                    <th class="px-3 py-2 text-left text-gray-600 border-b font-medium">day</th>
+                                    <th class="px-3 py-2 text-right text-gray-600 border-b font-medium">temp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sortedDataBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 코드 4: 필터링 -->
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 mb-6 card-hover">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">코드 4</span>
+                    <h3 class="font-bold text-gray-800">영상인 날 필터링하기</h3>
+                </div>
+                <div class="code-block mb-4">
+                    <span class="code-comment"># 영상 기온(0°C 이상)인 날만 필터링</span><br>
+                    df[df[<span class="code-string">"temp"</span>] <span class="code-op">>=</span> <span class="code-number">0</span>]
+                </div>
+
+                <!-- Filter Demo -->
+                <div class="bg-gray-50 rounded-xl p-5">
+                    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                        <h4 class="text-sm font-semibold text-gray-600"><i class="fas fa-filter mr-1"></i> 필터링 결과</h4>
+                        <div class="flex items-center gap-2">
+                            <button onclick="filterData('all')" class="filter-btn text-xs px-3 py-1.5 rounded-lg transition-colors bg-orange-500 text-white" data-filter="all">
+                                전체 (<span id="filterAllCount">59</span>일)
+                            </button>
+                            <button onclick="filterData('positive')" class="filter-btn text-xs px-3 py-1.5 rounded-lg transition-colors bg-gray-200 text-gray-600 hover:bg-gray-300" data-filter="positive">
+                                <i class="fas fa-temperature-high mr-1 text-green-500"></i>영상 (<span id="filterPosCount">0</span>일)
+                            </button>
+                            <button onclick="filterData('negative')" class="filter-btn text-xs px-3 py-1.5 rounded-lg transition-colors bg-gray-200 text-gray-600 hover:bg-gray-300" data-filter="negative">
+                                <i class="fas fa-temperature-low mr-1 text-blue-500"></i>영하 (<span id="filterNegCount">0</span>일)
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-auto max-h-60 rounded-lg border border-gray-200">
+                        <table class="w-full text-sm font-mono">
+                            <thead class="bg-gray-100 sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-2 text-left text-gray-600 border-b font-medium">day</th>
+                                    <th class="px-3 py-2 text-right text-gray-600 border-b font-medium">temp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="filteredDataBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 코드 5: 막대 그래프 -->
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 mb-6 card-hover">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">코드 5</span>
+                    <h3 class="font-bold text-gray-800">matplotlib로 막대 그래프 그리기</h3>
+                </div>
+                <div class="code-block mb-4">
+                    <span class="code-keyword">import</span> <span class="code-func">matplotlib.pyplot</span> <span class="code-keyword">as</span> plt<br><br>
+                    plt.<span class="code-func">bar</span>(df[<span class="code-string">"day"</span>], df[<span class="code-string">"temp"</span>])<br>
+                    plt.<span class="code-func">xlabel</span>(<span class="code-string">"날짜"</span>)<br>
+                    plt.<span class="code-func">ylabel</span>(<span class="code-string">"기온(°C)"</span>)<br>
+                    plt.<span class="code-func">title</span>(<span class="code-string">"우리 동네 1~2월 기온 현황"</span>)<br>
+                    plt.<span class="code-func">xticks</span>(rotation=<span class="code-number">90</span>)<br>
+                    plt.<span class="code-func">show</span>()
+                </div>
+
+                <!-- Interactive Bar Chart -->
+                <div class="bg-gray-50 rounded-xl p-5">
+                    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+                        <h4 class="text-sm font-semibold text-gray-700"><i class="fas fa-chart-bar mr-1 text-orange-500"></i> 우리 동네 1~2월 기온 현황</h4>
+                        <div class="flex items-center gap-2">
+                            <button onclick="highlightChart('none')" class="chart-hl-btn text-xs px-2 py-1 rounded bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors" data-hl="none">기본</button>
+                            <button onclick="highlightChart('minmax')" class="chart-hl-btn text-xs px-2 py-1 rounded bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors" data-hl="minmax">최저/최고</button>
+                            <button onclick="highlightChart('positive')" class="chart-hl-btn text-xs px-2 py-1 rounded bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors" data-hl="positive">영상/영하</button>
+                        </div>
+                    </div>
+                    <div class="relative" style="height: 320px;">
+                        <!-- Y axis labels -->
+                        <div class="absolute left-0 top-0 bottom-8 w-10 flex flex-col justify-between text-xs text-gray-400 font-mono">
+                            <span id="yMax">10</span>
+                            <span>0</span>
+                            <span id="yMin">-15</span>
+                        </div>
+                        <!-- 0 line -->
+                        <div class="absolute left-12 right-0 border-t border-gray-400 border-dashed" id="zeroLine" style="top:55%;"></div>
+                        <!-- Chart area -->
+                        <div class="absolute left-12 right-0 top-0 bottom-8 flex items-end" id="barChartArea"></div>
+                        <!-- X axis label -->
+                        <div class="absolute bottom-0 left-0 right-0 text-center text-xs text-gray-500 font-medium">날짜</div>
+                    </div>
+                    <div class="text-center text-xs text-gray-500 mt-2">* 막대에 마우스를 올려 상세 정보를 확인하세요</div>
+                    <!-- Chart tooltip -->
+                    <div id="chartTooltip" class="fixed bg-gray-800 text-white text-xs px-3 py-2 rounded-lg shadow-lg pointer-events-none z-50 hidden">
+                        <div id="chartTooltipContent"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 하나 더 알기: pandas DataFrame 구조 -->
+            <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border-2 border-amber-200 p-6 mb-6">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-plus-circle mr-1"></i>하나 더 알기</span>
+                    <h3 class="font-bold text-gray-800">pandas DataFrame 구조</h3>
+                </div>
+                <p class="text-gray-700 text-sm mb-4">DataFrame은 행(row)과 열(column)로 구성된 2차원 표 형태의 데이터 구조입니다.</p>
+                <div class="bg-white rounded-xl p-5 border border-amber-200">
+                    <div class="overflow-auto">
+                        <table class="text-sm font-mono mx-auto">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-2 bg-gray-200 border border-gray-300 text-gray-500 text-center">index <i class="fas fa-arrow-down text-xs ml-1"></i></th>
+                                    <th class="px-6 py-2 bg-orange-100 border border-orange-200 text-orange-700 text-center">
+                                        column<br><span class="text-xs font-normal">day</span>
+                                    </th>
+                                    <th class="px-6 py-2 bg-orange-100 border border-orange-200 text-orange-700 text-center">
+                                        column<br><span class="text-xs font-normal">temp</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="px-4 py-2 bg-gray-100 border border-gray-300 text-gray-500 text-center font-bold">0</td>
+                                    <td class="px-6 py-2 border border-gray-200 text-center bg-amber-50">01-01</td>
+                                    <td class="px-6 py-2 border border-gray-200 text-center bg-amber-50">-0.3</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 bg-gray-100 border border-gray-300 text-gray-500 text-center font-bold">1</td>
+                                    <td class="px-6 py-2 border border-gray-200 text-center">01-02</td>
+                                    <td class="px-6 py-2 border border-gray-200 text-center">2.2</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 bg-gray-100 border border-gray-300 text-gray-500 text-center font-bold">2</td>
+                                    <td class="px-6 py-2 border border-gray-200 text-center bg-amber-50">01-03</td>
+                                    <td class="px-6 py-2 border border-gray-200 text-center bg-amber-50">-1.1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex items-center justify-center gap-6 mt-4 text-xs flex-wrap">
+                        <span class="flex items-center gap-1"><span class="w-4 h-4 bg-gray-200 rounded border border-gray-300 inline-block"></span> index (행 번호)</span>
+                        <span class="flex items-center gap-1"><span class="w-4 h-4 bg-orange-100 rounded border border-orange-200 inline-block"></span> column (열 이름)</span>
+                        <span class="flex items-center gap-1"><i class="fas fa-arrows-alt-h text-gray-400"></i> row (행 데이터)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 하나 더 하기 -->
+            <div class="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl border-2 border-orange-200 p-6 mb-6">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-rocket mr-1"></i>하나 더 하기</span>
+                    <h3 class="font-bold text-gray-800">min(), max() 활용 & 조건 필터링</h3>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-xl p-4 border border-orange-100">
+                        <h4 class="font-semibold text-gray-700 text-sm mb-3"><i class="fas fa-thermometer-empty text-blue-500 mr-1"></i> min() / max() 함수</h4>
+                        <div class="code-block text-xs">
+                            <span class="code-comment"># 최저 기온</span><br>
+                            df[<span class="code-string">"temp"</span>].<span class="code-func">min</span>()&nbsp;&nbsp;<span class="code-comment"># -14.0</span><br><br>
+                            <span class="code-comment"># 최고 기온</span><br>
+                            df[<span class="code-string">"temp"</span>].<span class="code-func">max</span>()&nbsp;&nbsp;<span class="code-comment"># 8.8</span>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 border border-orange-100">
+                        <h4 class="font-semibold text-gray-700 text-sm mb-3"><i class="fas fa-filter text-green-500 mr-1"></i> 조건 필터링</h4>
+                        <div class="code-block text-xs">
+                            <span class="code-comment"># 영하인 날만 필터링</span><br>
+                            df[df[<span class="code-string">"temp"</span>] <span class="code-op">&lt;</span> <span class="code-number">0</span>]<br><br>
+                            <span class="code-comment"># -10도 이하인 날</span><br>
+                            df[df[<span class="code-string">"temp"</span>] <span class="code-op">&lt;=</span> <span class="code-number">-10</span>]
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between mt-8">
+                <button onclick="goToPage(1)" class="flex items-center gap-2 bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors">
+                    <i class="fas fa-arrow-left"></i> 이전
+                </button>
+                <button onclick="goToPage(3)" class="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-lg">
+                    다음: 문제 해결하기 <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===================== PAGE 3: 문제 해결하기 ===================== -->
+        <div id="page-3" class="page-content hidden">
+            <div class="mb-10">
+                <div class="flex items-center justify-center gap-0 flex-wrap">
+                    <div class="flex items-center">
+                        <div class="progress-step completed w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-lg cursor-pointer" onclick="goToPage(0)"><i class="fas fa-check"></i></div>
+                        <span class="ml-2 text-sm text-green-600">문제 정의</span>
+                    </div>
+                    <div class="w-8 sm:w-16 h-0.5 bg-green-400 mx-2"></div>
+                    <div class="flex items-center">
+                        <div class="progress-step completed w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-lg cursor-pointer" onclick="goToPage(1)"><i class="fas fa-check"></i></div>
+                        <span class="ml-2 text-sm text-green-600">데이터 수집</span>
+                    </div>
+                    <div class="w-8 sm:w-16 h-0.5 bg-green-400 mx-2"></div>
+                    <div class="flex items-center">
+                        <div class="progress-step completed w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-lg cursor-pointer" onclick="goToPage(2)"><i class="fas fa-check"></i></div>
+                        <span class="ml-2 text-sm text-green-600">데이터 분석</span>
+                    </div>
+                    <div class="w-8 sm:w-16 h-0.5 bg-green-400 mx-2"></div>
+                    <div class="flex items-center">
+                        <div class="progress-step active w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-lg cursor-pointer" onclick="goToPage(3)">4</div>
+                        <span class="ml-2 text-sm font-semibold text-orange-600">문제 해결</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-amber-500 rounded-xl flex items-center justify-center text-white shadow-lg">
+                    <i class="fas fa-check-circle text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Step 4. 문제 해결하기</h2>
+                    <p class="text-sm text-gray-500">분석 결과를 정리합니다</p>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8 mb-8">
+                <!-- 분석 결과 정리 -->
+                <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-8 card-hover">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6"><i class="fas fa-clipboard-list text-orange-500 mr-2"></i>분석 결과 정리</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-blue-50 rounded-xl border border-blue-100 flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-500 text-white rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-snowflake text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-blue-500 font-medium">가장 추웠던 날</p>
+                                <p class="text-xl font-bold text-blue-800" id="resultMinDay">01-23</p>
+                                <p class="text-sm text-blue-600">기온: <span class="font-bold" id="resultMinTemp">-14.0</span>°C</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-red-50 rounded-xl border border-red-100 flex items-center gap-4">
+                            <div class="w-12 h-12 bg-red-500 text-white rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-sun text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-red-500 font-medium">가장 따뜻했던 날</p>
+                                <p class="text-xl font-bold text-red-800" id="resultMaxDay">02-14</p>
+                                <p class="text-sm text-red-600">기온: <span class="font-bold" id="resultMaxTemp">8.8</span>°C</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-green-50 rounded-xl border border-green-100 flex items-center gap-4">
+                            <div class="w-12 h-12 bg-green-500 text-white rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-temperature-high text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-green-500 font-medium">영상 기온(0°C 이상)인 날</p>
+                                <p class="text-xl font-bold text-green-800"><span id="resultPosCount">0</span>일</p>
+                                <p class="text-sm text-green-600" id="resultPosDays"></p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-purple-50 rounded-xl border border-purple-100 flex items-center gap-4">
+                            <div class="w-12 h-12 bg-purple-500 text-white rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-calculator text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-purple-500 font-medium">평균 기온</p>
+                                <p class="text-xl font-bold text-purple-800"><span id="resultAvgTemp">0</span>°C</p>
+                                <p class="text-sm text-purple-600">1월~2월 평균</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 결론 및 인사이트 -->
+                <div class="space-y-6">
+                    <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-8 card-hover">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4"><i class="fas fa-lightbulb text-amber-500 mr-2"></i>결론</h3>
+                        <div class="bg-orange-50 border-l-4 border-orange-400 rounded-r-xl p-5">
+                            <p class="text-gray-700 leading-relaxed">
+                                분석 기간(1~2월) 중 <strong>가장 추웠던 날</strong>은 <strong class="text-blue-600">1월 23일</strong>로 기온이
+                                <strong class="text-blue-600">-14.0°C</strong>까지 내려갔으며,
+                                <strong>가장 따뜻했던 날</strong>은 <strong class="text-red-600">2월 14일</strong>로
+                                <strong class="text-red-600">8.8°C</strong>를 기록했습니다.
+                            </p>
+                            <p class="text-gray-700 leading-relaxed mt-3">
+                                전체 59일 중 영상 기온인 날은 <strong id="conclusionPosCount">0</strong>일에 불과하여,
+                                1~2월은 대부분 영하의 추운 날씨가 지속되었음을 알 수 있습니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-8 card-hover">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4"><i class="fas fa-code text-orange-500 mr-2"></i>사용된 주요 코드 정리</h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                <code class="bg-gray-200 px-2 py-1 rounded font-mono text-xs flex-shrink-0">pd.read_csv()</code>
+                                <span class="text-gray-600">CSV 파일 읽기</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                <code class="bg-gray-200 px-2 py-1 rounded font-mono text-xs flex-shrink-0">.str[5:]</code>
+                                <span class="text-gray-600">문자열 슬라이싱</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                <code class="bg-gray-200 px-2 py-1 rounded font-mono text-xs flex-shrink-0">.min() / .max()</code>
+                                <span class="text-gray-600">최솟값 / 최댓값</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                <code class="bg-gray-200 px-2 py-1 rounded font-mono text-xs flex-shrink-0">.sort_values()</code>
+                                <span class="text-gray-600">데이터 정렬</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                <code class="bg-gray-200 px-2 py-1 rounded font-mono text-xs flex-shrink-0">df[조건]</code>
+                                <span class="text-gray-600">조건 필터링</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                <code class="bg-gray-200 px-2 py-1 rounded font-mono text-xs flex-shrink-0">plt.bar()</code>
+                                <span class="text-gray-600">막대 그래프</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between mt-8">
+                <button onclick="goToPage(2)" class="flex items-center gap-2 bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors">
+                    <i class="fas fa-arrow-left"></i> 이전
+                </button>
+                <button onclick="goToPage(4)" class="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-lg">
+                    다음: 모둠 활동 평가 <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===================== PAGE 4: 모둠 활동 평가하기 ===================== -->
+        <div id="page-4" class="page-content hidden">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-amber-500 rounded-xl flex items-center justify-center text-white shadow-lg">
+                    <i class="fas fa-clipboard-check text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">모둠 활동 평가하기</h2>
+                    <p class="text-sm text-gray-500">활동을 돌아보고 자기 평가를 해봅시다</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-8 mb-8">
+                <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+                    <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-star text-amber-400 mr-2"></i>자기 평가 (5점 척도)</h3>
+                    <div class="text-sm text-gray-500">
+                        총점: <span class="text-orange-600 font-bold text-lg" id="rubricTotal">0</span> / 25점
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm" id="rubricTable">
+                        <thead>
+                            <tr class="bg-orange-50">
+                                <th class="px-4 py-3 text-left font-semibold text-orange-800 border-b-2 border-orange-200 w-8">#</th>
+                                <th class="px-4 py-3 text-left font-semibold text-orange-800 border-b-2 border-orange-200 min-w-[200px]">평가 항목</th>
+                                <th class="px-2 py-3 text-center font-semibold text-orange-800 border-b-2 border-orange-200 w-14">1점</th>
+                                <th class="px-2 py-3 text-center font-semibold text-orange-800 border-b-2 border-orange-200 w-14">2점</th>
+                                <th class="px-2 py-3 text-center font-semibold text-orange-800 border-b-2 border-orange-200 w-14">3점</th>
+                                <th class="px-2 py-3 text-center font-semibold text-orange-800 border-b-2 border-orange-200 w-14">4점</th>
+                                <th class="px-2 py-3 text-center font-semibold text-orange-800 border-b-2 border-orange-200 w-14">5점</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rubricBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Result Display -->
+                <div id="rubricResult" class="mt-6 hidden">
+                    <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-6 border border-orange-200">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-16 h-16 rounded-full bg-orange-500 text-white flex items-center justify-center text-2xl font-bold" id="rubricScoreCircle">0</div>
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-800" id="rubricGrade">평가를 완료해 주세요</h4>
+                                <p class="text-sm text-gray-600" id="rubricMessage"></p>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-gradient-to-r from-orange-400 to-amber-400 h-3 rounded-full transition-all duration-500" id="rubricBar" style="width:0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-center">
+                    <button onclick="resetRubric()" class="text-sm text-gray-500 hover:text-orange-500 transition-colors">
+                        <i class="fas fa-redo mr-1"></i> 평가 초기화
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex justify-between mt-8">
+                <button onclick="goToPage(3)" class="flex items-center gap-2 bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors">
+                    <i class="fas fa-arrow-left"></i> 이전
+                </button>
+                <a href="../../../index.html" class="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-lg">
+                    <i class="fas fa-home"></i> 목차로 돌아가기
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 mt-16">
+        <div class="max-w-6xl mx-auto px-4 py-8">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-book text-white text-sm"></i>
+                    </div>
+                    <span class="text-sm">고등학교 정보 교과서</span>
+                </div>
+                <div class="text-xs text-center sm:text-right">
+                    <p>III. 알고리즘과 프로그래밍 > 05 함수와 라이브러리 > 선택활동</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // ============ SAMPLE DATA ============
+    const sampleData = [
+        {day:"2025-01-01",temp:-0.3},{day:"2025-01-02",temp:2.2},{day:"2025-01-03",temp:-1.1},{day:"2025-01-04",temp:-3.3},
+        {day:"2025-01-05",temp:1.4},{day:"2025-01-06",temp:-2.7},{day:"2025-01-07",temp:-5.1},{day:"2025-01-08",temp:-6.8},
+        {day:"2025-01-09",temp:-4.2},{day:"2025-01-10",temp:-7.5},{day:"2025-01-11",temp:-8.3},{day:"2025-01-12",temp:-6.1},
+        {day:"2025-01-13",temp:-9.7},{day:"2025-01-14",temp:-7.2},{day:"2025-01-15",temp:-5.5},{day:"2025-01-16",temp:-10.3},
+        {day:"2025-01-17",temp:-8.9},{day:"2025-01-18",temp:0.5},{day:"2025-01-19",temp:1.1},{day:"2025-01-20",temp:-3.8},
+        {day:"2025-01-21",temp:-11.2},{day:"2025-01-22",temp:-12.5},{day:"2025-01-23",temp:-14.0},{day:"2025-01-24",temp:-11.8},
+        {day:"2025-01-25",temp:-9.4},{day:"2025-01-26",temp:-7.6},{day:"2025-01-27",temp:-6.3},{day:"2025-01-28",temp:-4.9},
+        {day:"2025-01-29",temp:-8.1},{day:"2025-01-30",temp:-5.7},{day:"2025-01-31",temp:-3.2},
+        {day:"2025-02-01",temp:-4.6},{day:"2025-02-02",temp:-2.8},{day:"2025-02-03",temp:-6.4},{day:"2025-02-04",temp:-5.2},
+        {day:"2025-02-05",temp:-3.9},{day:"2025-02-06",temp:-1.5},{day:"2025-02-07",temp:-4.7},{day:"2025-02-08",temp:-2.1},
+        {day:"2025-02-09",temp:-0.8},{day:"2025-02-10",temp:3.5},{day:"2025-02-11",temp:1.8},{day:"2025-02-12",temp:5.2},
+        {day:"2025-02-13",temp:6.7},{day:"2025-02-14",temp:8.8},{day:"2025-02-15",temp:4.3},{day:"2025-02-16",temp:2.1},
+        {day:"2025-02-17",temp:-1.3},{day:"2025-02-18",temp:-3.6},{day:"2025-02-19",temp:-0.4},{day:"2025-02-20",temp:1.9},
+        {day:"2025-02-21",temp:3.7},{day:"2025-02-22",temp:0.8},{day:"2025-02-23",temp:-2.4},{day:"2025-02-24",temp:-4.1},
+        {day:"2025-02-25",temp:-1.7},{day:"2025-02-26",temp:2.6},{day:"2025-02-27",temp:4.8},{day:"2025-02-28",temp:7.1}
+    ];
+
+    // Process data (extract month-day)
+    const data = sampleData.map((d,i) => ({
+        index: i,
+        day: d.day.substring(5),
+        fullDay: d.day,
+        temp: d.temp
+    }));
+
+    const minTemp = Math.min(...data.map(d=>d.temp));
+    const maxTemp = Math.max(...data.map(d=>d.temp));
+    const minDay = data.find(d=>d.temp===minTemp);
+    const maxDay = data.find(d=>d.temp===maxTemp);
+    const positiveDays = data.filter(d=>d.temp>=0);
+    const negativeDays = data.filter(d=>d.temp<0);
+    const avgTemp = (data.reduce((s,d)=>s+d.temp,0)/data.length).toFixed(1);
+
+    // ============ PAGE NAVIGATION ============
+    let currentPage = 0;
+
+    function goToPage(page) {
+        document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
+        document.getElementById('page-' + page).classList.remove('hidden');
+        currentPage = page;
+
+        // Update nav buttons
+        document.querySelectorAll('.page-btn').forEach(btn => {
+            btn.classList.remove('bg-orange-500','text-white');
+            btn.classList.add('text-gray-500');
+            if (parseInt(btn.dataset.page) === page) {
+                btn.classList.add('bg-orange-500','text-white');
+                btn.classList.remove('text-gray-500');
+            }
+        });
+
+        // Update dots
+        document.querySelectorAll('.page-indicator').forEach(dot => {
+            dot.classList.remove('active','bg-orange-500');
+            dot.classList.add('bg-gray-300');
+            dot.style.width = '0.375rem';
+            if (parseInt(dot.dataset.dot) === page) {
+                dot.classList.add('active','bg-orange-500');
+                dot.classList.remove('bg-gray-300');
+                dot.style.width = '2rem';
+            }
+        });
+
+        window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    // ============ RAW DATA TABLE (Page 1) ============
+    let showFullData = false;
+
+    function renderRawDataTable() {
+        const tbody = document.getElementById('rawDataBody');
+        const items = showFullData ? data : data.slice(0,10);
+        let html = '';
+        items.forEach(d => {
+            let cls = '';
+            if (d.temp === minTemp) cls = 'bg-blue-50';
+            else if (d.temp === maxTemp) cls = 'bg-red-50';
+            html += `<tr class="${cls} hover:bg-orange-50 transition-colors">
+                <td class="px-4 py-2 border-b border-gray-100 text-gray-400 font-mono text-xs">${d.index}</td>
+                <td class="px-4 py-2 border-b border-gray-100 text-gray-700 font-mono">${d.fullDay}</td>
+                <td class="px-4 py-2 border-b border-gray-100 text-right font-mono ${d.temp<0?'text-blue-600':'text-red-500'} font-semibold">${d.temp.toFixed(1)}</td>
+            </tr>`;
+        });
+        if (!showFullData) {
+            html += `<tr><td colspan="3" class="px-4 py-3 text-center text-gray-400 text-sm border-b border-gray-100">... 나머지 ${data.length - 10}개 데이터 ...</td></tr>`;
+        }
+        tbody.innerHTML = html;
+    }
+
+    function toggleFullData() {
+        showFullData = !showFullData;
+        document.getElementById('toggleDataLabel').textContent = showFullData ? '간략히 보기' : '전체 보기';
+        renderRawDataTable();
+    }
+
+    // ============ DATAFRAME VIEWER (Page 2) ============
+    function renderDfViewer() {
+        const tbody = document.getElementById('dfViewerBody');
+        let html = '';
+        data.forEach(d => {
+            let cls = '';
+            if (d.temp === minTemp) cls = 'highlight-min';
+            else if (d.temp === maxTemp) cls = 'highlight-max';
+            html += `<tr class="hover:bg-orange-50 transition-colors">
+                <td class="px-3 py-1.5 border-b border-gray-100 text-gray-400 text-xs">${d.index}</td>
+                <td class="px-3 py-1.5 border-b border-gray-100 text-gray-700 dataframe-cell ${cls}">${d.day}</td>
+                <td class="px-3 py-1.5 border-b border-gray-100 text-right dataframe-cell ${cls} ${d.temp<0?'text-blue-600':'text-red-500'} font-semibold">${d.temp.toFixed(1)}</td>
+            </tr>`;
+        });
+        tbody.innerHTML = html;
+    }
+
+    // ============ MIN/MAX FINDER ============
+    function findMinMax() {
+        const container = document.getElementById('minMaxResult');
+        container.innerHTML = `
+            <div class="bg-blue-50 rounded-lg p-5 border-2 border-blue-300 slide-up">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fas fa-snowflake text-blue-500 text-2xl"></i>
+                    <div>
+                        <p class="text-xs text-blue-500 font-medium">가장 추웠던 날</p>
+                        <p class="text-2xl font-bold text-blue-800">${minDay.day}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-3xl font-black text-blue-600">${minDay.temp.toFixed(1)}°C</span>
+                </div>
+                <div class="mt-2 text-xs text-blue-500 font-mono bg-blue-100 px-3 py-1 rounded">
+                    df[df["temp"]==df["temp"].min()]["day"]
+                </div>
+            </div>
+            <div class="bg-red-50 rounded-lg p-5 border-2 border-red-300 slide-up" style="animation-delay:0.15s">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fas fa-sun text-red-500 text-2xl"></i>
+                    <div>
+                        <p class="text-xs text-red-500 font-medium">가장 따뜻했던 날</p>
+                        <p class="text-2xl font-bold text-red-800">${maxDay.day}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-3xl font-black text-red-600">${maxDay.temp.toFixed(1)}°C</span>
+                </div>
+                <div class="mt-2 text-xs text-red-500 font-mono bg-red-100 px-3 py-1 rounded">
+                    df[df["temp"]==df["temp"].max()]["day"]
+                </div>
+            </div>
+        `;
+    }
+
+    // ============ SORT TOGGLE ============
+    function sortData(mode) {
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.classList.remove('bg-orange-500','text-white');
+            btn.classList.add('bg-gray-200','text-gray-600');
+            if (btn.dataset.sort === mode) {
+                btn.classList.add('bg-orange-500','text-white');
+                btn.classList.remove('bg-gray-200','text-gray-600');
+            }
+        });
+
+        let sorted = [...data];
+        if (mode === 'asc') sorted.sort((a,b) => a.temp - b.temp);
+        else if (mode === 'desc') sorted.sort((a,b) => b.temp - a.temp);
+
+        const tbody = document.getElementById('sortedDataBody');
+        let html = '';
+        sorted.forEach(d => {
+            let bg = '';
+            if (d.temp === minTemp) bg = 'bg-blue-50';
+            else if (d.temp === maxTemp) bg = 'bg-red-50';
+            html += `<tr class="${bg} hover:bg-orange-50 transition-colors">
+                <td class="px-3 py-1.5 border-b border-gray-100 text-gray-400 text-xs">${d.index}</td>
+                <td class="px-3 py-1.5 border-b border-gray-100 text-gray-700">${d.day}</td>
+                <td class="px-3 py-1.5 border-b border-gray-100 text-right ${d.temp<0?'text-blue-600':'text-red-500'} font-semibold">${d.temp.toFixed(1)}</td>
+            </tr>`;
+        });
+        tbody.innerHTML = html;
+    }
+
+    // ============ FILTER DEMO ============
+    function filterData(mode) {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('bg-orange-500','text-white');
+            btn.classList.add('bg-gray-200','text-gray-600');
+            if (btn.dataset.filter === mode) {
+                btn.classList.add('bg-orange-500','text-white');
+                btn.classList.remove('bg-gray-200','text-gray-600');
+            }
+        });
+
+        let filtered = data;
+        if (mode === 'positive') filtered = positiveDays;
+        else if (mode === 'negative') filtered = negativeDays;
+
+        const tbody = document.getElementById('filteredDataBody');
+        let html = '';
+        filtered.forEach(d => {
+            html += `<tr class="hover:bg-orange-50 transition-colors ${mode==='positive'?'bg-green-50':mode==='negative'?'bg-blue-50':''}">
+                <td class="px-3 py-1.5 border-b border-gray-100 text-gray-700">${d.day}</td>
+                <td class="px-3 py-1.5 border-b border-gray-100 text-right ${d.temp<0?'text-blue-600':'text-green-600'} font-semibold">${d.temp.toFixed(1)}</td>
+            </tr>`;
+        });
+        tbody.innerHTML = html;
+    }
+
+    // ============ BAR CHART ============
+    let chartHighlight = 'none';
+
+    function renderBarChart() {
+        const container = document.getElementById('barChartArea');
+        const absMax = Math.max(Math.abs(minTemp), Math.abs(maxTemp));
+        const totalRange = absMax * 2 + 4;
+        const zeroPos = (absMax + 2) / totalRange;
+
+        document.getElementById('yMax').textContent = Math.ceil(maxTemp + 1);
+        document.getElementById('yMin').textContent = Math.floor(minTemp - 1);
+        document.getElementById('zeroLine').style.top = (zeroPos * 100) + '%';
+
+        let html = '';
+        const barWidth = Math.max(100 / data.length - 0.5, 0.8);
+
+        data.forEach((d, i) => {
+            const barHeight = (Math.abs(d.temp) / totalRange) * 100;
+            let color, barStyle;
+
+            if (chartHighlight === 'minmax') {
+                if (d.temp === minTemp) color = '#3b82f6';
+                else if (d.temp === maxTemp) color = '#ef4444';
+                else color = '#d1d5db';
+            } else if (chartHighlight === 'positive') {
+                color = d.temp >= 0 ? '#22c55e' : '#3b82f6';
+            } else {
+                color = d.temp >= 0 ? '#f97316' : '#60a5fa';
+            }
+
+            if (d.temp >= 0) {
+                const bottom = zeroPos * 100;
+                barStyle = `position:absolute; left:${(i/data.length)*100}%; bottom:${100 - bottom}%; width:${barWidth}%; height:${barHeight}%; background:${color}; border-radius:2px 2px 0 0; transform-origin:bottom;`;
+                // Bars above zero line: bottom should be at zero line position from bottom
+                barStyle = `position:absolute; left:${(i/data.length)*100}%; width:${barWidth}%; height:${barHeight}%; background:${color}; border-radius:2px 2px 0 0;`;
+                const bottomPct = (1 - zeroPos) * 100;
+                barStyle = `position:absolute; left:${(i/data.length)*100}%; bottom:${bottomPct}%; width:${barWidth}%; height:${barHeight}%; background:${color}; border-radius:2px 2px 0 0;`;
+            } else {
+                const topOfBar = zeroPos * 100;
+                barStyle = `position:absolute; left:${(i/data.length)*100}%; top:${topOfBar}%; width:${barWidth}%; height:${barHeight}%; background:${color}; border-radius:0 0 2px 2px;`;
+            }
+
+            html += `<div class="bar-chart-bar" style="${barStyle}"
+                onmouseenter="showTooltip(event, '${d.day}', ${d.temp})"
+                onmouseleave="hideTooltip()"
+                onmousemove="moveTooltip(event)"></div>`;
+        });
+
+        container.innerHTML = html;
+    }
+
+    function highlightChart(mode) {
+        document.querySelectorAll('.chart-hl-btn').forEach(btn => {
+            btn.classList.remove('bg-orange-500','text-white');
+            btn.classList.add('bg-gray-200','text-gray-600');
+            if (btn.dataset.hl === mode) {
+                btn.classList.add('bg-orange-500','text-white');
+                btn.classList.remove('bg-gray-200','text-gray-600');
+            }
+        });
+        chartHighlight = mode;
+        renderBarChart();
+    }
+
+    function showTooltip(e, day, temp) {
+        const tooltip = document.getElementById('chartTooltip');
+        const content = document.getElementById('chartTooltipContent');
+        content.innerHTML = `<strong>${day}</strong><br>${temp.toFixed(1)}°C`;
+        tooltip.classList.remove('hidden');
+        moveTooltip(e);
+    }
+
+    function moveTooltip(e) {
+        const tooltip = document.getElementById('chartTooltip');
+        tooltip.style.left = (e.clientX + 12) + 'px';
+        tooltip.style.top = (e.clientY - 40) + 'px';
+    }
+
+    function hideTooltip() {
+        document.getElementById('chartTooltip').classList.add('hidden');
+    }
+
+    // ============ RUBRIC ============
+    const rubricItems = [
+        '문제를 명확하게 정의하고, 분석 목표를 구체적으로 설정하였다.',
+        '기상 자료 포털에서 데이터를 수집하고, CSV로 정리하였다.',
+        'pandas를 활용하여 데이터를 분석하고, 의미 있는 결과를 도출하였다.',
+        'matplotlib를 활용하여 데이터를 시각적으로 표현하였다.',
+        '모둠원과 협력하여 활동에 적극적으로 참여하였다.'
+    ];
+
+    const rubricScores = [0,0,0,0,0];
+
+    function renderRubric() {
+        const tbody = document.getElementById('rubricBody');
+        let html = '';
+        rubricItems.forEach((item, i) => {
+            html += `<tr class="border-b border-gray-100 hover:bg-orange-50/30 transition-colors">
+                <td class="px-4 py-4 text-gray-400 font-bold">${i+1}</td>
+                <td class="px-4 py-4 text-gray-700 text-sm leading-relaxed">${item}</td>`;
+            for (let s = 1; s <= 5; s++) {
+                const id = `rubric_${i}_${s}`;
+                html += `<td class="px-2 py-4 text-center">
+                    <input type="radio" name="rubric_${i}" id="${id}" value="${s}" class="rubric-radio hidden" onchange="updateRubric(${i},${s})">
+                    <label for="${id}" class="w-9 h-9 rounded-full border-2 border-gray-200 flex items-center justify-center cursor-pointer text-xs font-bold text-gray-400 hover:border-orange-300 hover:text-orange-500 transition-all mx-auto">${s}</label>
+                </td>`;
+            }
+            html += '</tr>';
+        });
+        tbody.innerHTML = html;
+    }
+
+    function updateRubric(item, score) {
+        rubricScores[item] = score;
+        const total = rubricScores.reduce((a,b)=>a+b,0);
+        document.getElementById('rubricTotal').textContent = total;
+
+        const allAnswered = rubricScores.every(s => s > 0);
+        const resultDiv = document.getElementById('rubricResult');
+
+        if (allAnswered) {
+            resultDiv.classList.remove('hidden');
+            document.getElementById('rubricScoreCircle').textContent = total;
+            document.getElementById('rubricBar').style.width = (total/25*100) + '%';
+
+            let grade, msg;
+            if (total >= 23) { grade = '매우 우수'; msg = '훌륭합니다! 데이터 분석 프로젝트를 성공적으로 수행했습니다.'; }
+            else if (total >= 19) { grade = '우수'; msg = '잘했습니다! 조금 더 발전시킬 부분을 찾아보세요.'; }
+            else if (total >= 15) { grade = '보통'; msg = '기본적인 활동은 잘 수행했습니다. 부족한 부분을 보완해 보세요.'; }
+            else if (total >= 10) { grade = '노력 필요'; msg = '더 많은 연습이 필요합니다. 각 단계를 다시 확인해 보세요.'; }
+            else { grade = '기초 부족'; msg = '기초부터 다시 학습해 봅시다. 선생님께 도움을 요청하세요.'; }
+
+            document.getElementById('rubricGrade').textContent = grade + ' (' + total + '/25)';
+            document.getElementById('rubricMessage').textContent = msg;
+        } else {
+            resultDiv.classList.add('hidden');
+        }
+    }
+
+    function resetRubric() {
+        rubricScores.fill(0);
+        document.getElementById('rubricTotal').textContent = '0';
+        document.getElementById('rubricResult').classList.add('hidden');
+        renderRubric();
+    }
+
+    // ============ UPDATE RESULT COUNTS ============
+    function updateResults() {
+        document.getElementById('filterAllCount').textContent = data.length;
+        document.getElementById('filterPosCount').textContent = positiveDays.length;
+        document.getElementById('filterNegCount').textContent = negativeDays.length;
+        document.getElementById('resultPosCount').textContent = positiveDays.length;
+        document.getElementById('conclusionPosCount').textContent = positiveDays.length;
+        document.getElementById('resultAvgTemp').textContent = avgTemp;
+        document.getElementById('resultMinDay').textContent = minDay.day;
+        document.getElementById('resultMinTemp').textContent = minDay.temp.toFixed(1);
+        document.getElementById('resultMaxDay').textContent = maxDay.day;
+        document.getElementById('resultMaxTemp').textContent = maxDay.temp.toFixed(1);
+        document.getElementById('resultPosDays').textContent = positiveDays.map(d=>d.day).join(', ');
+    }
+
+    // ============ INIT ============
+    function init() {
+        renderRawDataTable();
+        renderDfViewer();
+        sortData('original');
+        filterData('all');
+        renderBarChart();
+        renderRubric();
+        updateResults();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

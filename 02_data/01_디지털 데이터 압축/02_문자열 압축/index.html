@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문자열 압축 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#ecfeff',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            800: '#155e75',
+                            900: '#164e63',
+                        },
+                        accent: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#0284c7',
+                            800: '#0369a1',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #0891b2 0%, #0284c7 50%, #0369a1 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #0891b2, #0284c7, #0369a1);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .tooltip-container {
+            position: relative;
+        }
+        .tooltip-container .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s;
+            position: absolute;
+            z-index: 20;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            margin-bottom: 6px;
+        }
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Compression animation */
+        .compress-char {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.2rem;
+            height: 2.2rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+
+        .compress-char.highlight {
+            transform: scale(1.15);
+            border-color: #0891b2;
+            box-shadow: 0 0 12px rgba(8,145,178,0.4);
+        }
+
+        .compress-char.merged {
+            animation: mergeAnim 0.5s ease forwards;
+        }
+
+        @keyframes mergeAnim {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Arrow animation for LZ */
+        .lz-arrow {
+            stroke-dasharray: 6 3;
+            animation: arrowFlow 1.5s linear infinite;
+        }
+        @keyframes arrowFlow {
+            to { stroke-dashoffset: -18; }
+        }
+
+        /* Pulse for interactive elements */
+        .pulse-ring {
+            animation: pulseRing 2s ease-in-out infinite;
+        }
+        @keyframes pulseRing {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(8,145,178,0.3); }
+            50% { box-shadow: 0 0 0 8px rgba(8,145,178,0); }
+        }
+
+        /* Step indicator */
+        .step-active {
+            background: linear-gradient(135deg, #0891b2, #0284c7);
+            color: white;
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { background: #0891b2 !important; }
+            .no-print { display: none !important; }
+            .card-hover { transform: none !important; box-shadow: none !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            body { background: white !important; }
+            main { padding-top: 0 !important; }
+            section { break-inside: avoid; }
+            .print-break { page-break-before: always; }
+        }
+
+        @media (max-width: 768px) {
+            .compress-char {
+                width: 1.8rem;
+                height: 1.8rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #0891b2 0%, #0284c7 50%, #0369a1 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">II. 데이터</span>
+                <span class="breadcrumb-item font-semibold">01 디지털 데이터 압축</span>
+            </nav>
+
+            <!-- Back link -->
+            <a href="../../../index.html"
+               class="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm mb-6 transition-colors no-print">
+                <i class="fas fa-arrow-left"></i>
+                전체 목록으로
+            </a>
+
+            <!-- Title area -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-compress-alt"></i>
+                        <span>02 문자열 압축</span>
+                    </div>
+                    <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-3" style="color: #ffffff !important;">
+                        문자열 압축
+                    </h1>
+                    <p class="text-lg md:text-xl font-light max-w-2xl" style="color: rgba(255,255,255,0.92) !important;">
+                        런-렝스 인코딩과 렘펠-지브 인코딩을 통해 문자열 데이터를 효율적으로 압축하는 원리를 이해합니다.
+                    </p>
+                </div>
+                <div class="flex-shrink-0 hidden md:block">
+                    <div class="w-32 h-32 bg-white/10 rounded-2xl backdrop-blur-sm flex items-center justify-center">
+                        <i class="fas fa-file-zipper text-5xl text-white/80"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-repeat text-sm"></i>
+                    </div>
+                    <span class="text-sm font-medium">런-렝스 인코딩 원리</span>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-link text-sm"></i>
+                    </div>
+                    <span class="text-sm font-medium">렘펠-지브 인코딩 원리</span>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-flask text-sm"></i>
+                    </div>
+                    <span class="text-sm font-medium">압축 시뮬레이터 체험</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative shapes -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3"></div>
+        <div class="absolute bottom-0 left-10 w-40 h-40 bg-white/5 rounded-full translate-y-1/2"></div>
+    </header>
+
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ============================================ -->
+        <!-- SECTION 1: 런-렝스 인코딩 -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
+                    1
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900">
+                    런-렝스<span class="text-primary-600">(Run-Length)</span> 인코딩
+                </h2>
+            </div>
+
+            <!-- Concept explanation card -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover mb-8">
+                <div class="bg-gradient-to-r from-primary-50 to-cyan-50 px-6 py-4 border-b border-primary-100">
+                    <h3 class="font-bold text-primary-800 flex items-center gap-2">
+                        <i class="fas fa-lightbulb text-primary-500"></i>
+                        핵심 개념
+                    </h3>
+                </div>
+                <div class="p-6 space-y-4">
+                    <p class="text-gray-700 leading-relaxed">
+                        <strong class="text-primary-700">런-렝스 인코딩</strong>은 동일한 문자가 연속해서 반복되는 경우,
+                        <span class="tooltip-container">
+                            <span class="underline decoration-primary-300 decoration-2 cursor-help">반복 문자 개수</span>
+                            <span class="tooltip-text">연속으로 등장하는 같은 문자의 수</span>
+                        </span>와
+                        <span class="tooltip-container">
+                            <span class="underline decoration-primary-300 decoration-2 cursor-help">반복 문자</span>
+                            <span class="tooltip-text">반복되는 해당 문자</span>
+                        </span>의 쌍으로 표현하여 데이터를 압축하는 방법입니다.
+                    </p>
+                    <div class="flex items-start gap-3 bg-primary-50 rounded-xl p-4">
+                        <i class="fas fa-star text-primary-500 mt-1"></i>
+                        <p class="text-sm text-primary-800">
+                            알고리즘이 <strong>단순</strong>하고, 반복되는 문자가 <strong>길게 나타날수록</strong> 압축 효율이 높습니다.
+                            팩스 전송, 간단한 이미지 압축 등에 널리 사용됩니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Example: Basic RLE -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover mb-8 fade-in">
+                <div class="bg-gradient-to-r from-primary-50 to-cyan-50 px-6 py-4 border-b border-primary-100">
+                    <h3 class="font-bold text-primary-800 flex items-center gap-2">
+                        <i class="fas fa-eye text-primary-500"></i>
+                        예시: 기본 런-렝스 인코딩
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-500 mb-4">반복 없는 문자는 개수 1을 생략합니다.</p>
+
+                    <!-- Before compression -->
+                    <div class="mb-6">
+                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">원본 문자열</div>
+                        <div class="flex flex-wrap gap-1.5" id="rleOriginal">
+                            <!-- C -->
+                            <span class="compress-char bg-gray-100 text-gray-700">C</span>
+                            <!-- O -->
+                            <span class="compress-char bg-gray-100 text-gray-700">O</span>
+                            <!-- F F -->
+                            <span class="compress-char bg-amber-100 text-amber-700">F</span>
+                            <span class="compress-char bg-amber-100 text-amber-700">F</span>
+                            <!-- E E E E E E -->
+                            <span class="compress-char bg-emerald-100 text-emerald-700">E</span>
+                            <span class="compress-char bg-emerald-100 text-emerald-700">E</span>
+                            <span class="compress-char bg-emerald-100 text-emerald-700">E</span>
+                            <span class="compress-char bg-emerald-100 text-emerald-700">E</span>
+                            <span class="compress-char bg-emerald-100 text-emerald-700">E</span>
+                            <span class="compress-char bg-emerald-100 text-emerald-700">E</span>
+                            <!-- space -->
+                            <span class="compress-char bg-gray-50 text-gray-400 border border-dashed border-gray-300 text-xs">SP</span>
+                            <!-- F -->
+                            <span class="compress-char bg-amber-100 text-amber-700">F</span>
+                            <!-- R -->
+                            <span class="compress-char bg-gray-100 text-gray-700">R</span>
+                            <!-- E E E -->
+                            <span class="compress-char bg-emerald-100 text-emerald-700">E</span>
+                            <span class="compress-char bg-emerald-100 text-emerald-700">E</span>
+                            <span class="compress-char bg-emerald-100 text-emerald-700">E</span>
+                        </div>
+                        <div class="text-xs text-gray-400 mt-2">
+                            총 <strong class="text-gray-600">16</strong>자
+                        </div>
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="flex items-center justify-center my-4">
+                        <div class="flex items-center gap-2 bg-primary-100 text-primary-700 rounded-full px-4 py-2 text-sm font-bold">
+                            <i class="fas fa-arrow-down"></i>
+                            런-렝스 인코딩 적용
+                        </div>
+                    </div>
+
+                    <!-- After compression -->
+                    <div>
+                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">압축 결과</div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="compress-char bg-gray-100 text-gray-700">C</span>
+                            <span class="compress-char bg-gray-100 text-gray-700">O</span>
+                            <span class="compress-char bg-amber-200 text-amber-800 font-black">2</span>
+                            <span class="compress-char bg-amber-100 text-amber-700">F</span>
+                            <span class="compress-char bg-emerald-200 text-emerald-800 font-black">6</span>
+                            <span class="compress-char bg-emerald-100 text-emerald-700">E</span>
+                            <span class="compress-char bg-gray-50 text-gray-400 border border-dashed border-gray-300 text-xs">SP</span>
+                            <span class="compress-char bg-amber-100 text-amber-700">F</span>
+                            <span class="compress-char bg-gray-100 text-gray-700">R</span>
+                            <span class="compress-char bg-emerald-200 text-emerald-800 font-black">3</span>
+                            <span class="compress-char bg-emerald-100 text-emerald-700">E</span>
+                        </div>
+                        <div class="text-xs text-gray-400 mt-2">
+                            총 <strong class="text-gray-600">11</strong>자
+                            <span class="ml-2 inline-flex items-center gap-1 bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">
+                                <i class="fas fa-chart-line text-xs"></i>
+                                31% 압축
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Explanation breakdown -->
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="bg-gray-50 rounded-xl p-3 text-sm">
+                            <span class="font-bold text-amber-700">FF</span>
+                            <i class="fas fa-arrow-right text-gray-400 mx-2 text-xs"></i>
+                            <span class="font-bold text-amber-800">2F</span>
+                            <span class="text-gray-500 ml-2">- F가 2번 반복</span>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-3 text-sm">
+                            <span class="font-bold text-emerald-700">EEEEEE</span>
+                            <i class="fas fa-arrow-right text-gray-400 mx-2 text-xs"></i>
+                            <span class="font-bold text-emerald-800">6E</span>
+                            <span class="text-gray-500 ml-2">- E가 6번 반복</span>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-3 text-sm">
+                            <span class="font-bold text-gray-700">C, O, R</span>
+                            <i class="fas fa-arrow-right text-gray-400 mx-2 text-xs"></i>
+                            <span class="font-bold text-gray-800">C, O, R</span>
+                            <span class="text-gray-500 ml-2">- 반복 없으면 개수 1 생략</span>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-3 text-sm">
+                            <span class="font-bold text-emerald-700">EEE</span>
+                            <i class="fas fa-arrow-right text-gray-400 mx-2 text-xs"></i>
+                            <span class="font-bold text-emerald-800">3E</span>
+                            <span class="text-gray-500 ml-2">- E가 3번 반복</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Escape character section -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover mb-8 fade-in">
+                <div class="bg-gradient-to-r from-orange-50 to-amber-50 px-6 py-4 border-b border-orange-100">
+                    <h3 class="font-bold text-orange-800 flex items-center gap-2">
+                        <i class="fas fa-triangle-exclamation text-orange-500"></i>
+                        숫자가 포함된 문자열의 압축
+                    </h3>
+                </div>
+                <div class="p-6 space-y-4">
+                    <p class="text-gray-700 leading-relaxed">
+                        원본 문자열에 <strong class="text-orange-700">숫자가 포함</strong>된 경우, 압축 결과의 반복 횟수와 원래 숫자를 구분할 수 없게 됩니다.
+                        이 문제를 해결하기 위해 출현 빈도가 적은 문자를
+                        <span class="tooltip-container">
+                            <span class="font-bold text-orange-600 underline decoration-orange-300 decoration-2 cursor-help">탈출 문자(Escape Character)</span>
+                            <span class="tooltip-text">반복 횟수 앞에 붙여 구분하는 특수 문자</span>
+                        </span>로 사용합니다.
+                    </p>
+
+                    <!-- Example with escape character -->
+                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                        <div class="text-sm font-semibold text-orange-600 mb-3">예시: 탈출 문자 '*' 사용</div>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <span class="text-xs font-bold text-gray-400 w-12">원본</span>
+                                <div class="flex gap-1">
+                                    <span class="compress-char bg-white text-gray-700 text-sm border border-gray-200">A</span>
+                                    <span class="compress-char bg-white text-gray-700 text-sm border border-gray-200">B</span>
+                                    <span class="compress-char bg-blue-100 text-blue-700 text-sm border border-blue-200">3</span>
+                                    <span class="compress-char bg-red-100 text-red-700 text-sm border border-red-200">A</span>
+                                    <span class="compress-char bg-red-100 text-red-700 text-sm border border-red-200">A</span>
+                                    <span class="compress-char bg-red-100 text-red-700 text-sm border border-red-200">A</span>
+                                    <span class="compress-char bg-red-100 text-red-700 text-sm border border-red-200">A</span>
+                                </div>
+                                <span class="text-gray-400 text-sm">= "AB3AAAA"</span>
+                            </div>
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-arrow-down text-orange-400"></i>
+                            </div>
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <span class="text-xs font-bold text-gray-400 w-12">압축</span>
+                                <div class="flex gap-1">
+                                    <span class="compress-char bg-white text-gray-700 text-sm border border-gray-200">A</span>
+                                    <span class="compress-char bg-white text-gray-700 text-sm border border-gray-200">B</span>
+                                    <span class="compress-char bg-blue-100 text-blue-700 text-sm border border-blue-200">3</span>
+                                    <span class="compress-char bg-orange-200 text-orange-800 text-sm border border-orange-300 font-black">*</span>
+                                    <span class="compress-char bg-red-200 text-red-800 text-sm border border-red-300 font-black">4</span>
+                                    <span class="compress-char bg-red-100 text-red-700 text-sm border border-red-200">A</span>
+                                </div>
+                                <span class="text-gray-400 text-sm">= "AB3*4A"</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-sm text-orange-700 bg-orange-100 rounded-lg p-3">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            <strong>*</strong>(탈출 문자) 뒤의 <strong>4</strong>는 반복 횟수, <strong>A</strong>는 반복 문자를 의미합니다.
+                            숫자 <strong>3</strong>은 원래 데이터이므로 그대로 유지됩니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive RLE Simulator -->
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-primary-200 overflow-hidden fade-in" id="rleSimulator">
+                <div class="bg-gradient-to-r from-primary-500 to-accent-700 px-6 py-4">
+                    <h3 class="font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-gamepad"></i>
+                        체험하기: 런-렝스 인코딩 시뮬레이터
+                    </h3>
+                    <p class="text-primary-100 text-sm mt-1">문자열을 입력하면 런-렝스 인코딩 과정을 단계별로 확인할 수 있습니다.</p>
+                </div>
+                <div class="p-6">
+                    <!-- Input area -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">
+                            <i class="fas fa-keyboard text-primary-500 mr-1"></i>
+                            문자열을 입력하세요 (영문, 숫자)
+                        </label>
+                        <div class="flex gap-3 flex-col sm:flex-row">
+                            <input type="text" id="rleInput" maxlength="30"
+                                   placeholder="예: AAABBBCCDD"
+                                   value="COFFEEEEEE FREEE"
+                                   class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-400 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-lg font-mono tracking-wider">
+                            <button onclick="runRLE()"
+                                    class="px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold rounded-xl hover:from-primary-600 hover:to-primary-700 transition-all shadow-md hover:shadow-lg pulse-ring no-print">
+                                <i class="fas fa-play mr-2"></i>인코딩 실행
+                            </button>
+                        </div>
+                        <div class="flex gap-2 mt-2 no-print flex-wrap">
+                            <button onclick="setRLEInput('AAABBBCCDD')" class="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition-colors">AAABBBCCDD</button>
+                            <button onclick="setRLEInput('COFFEEEEEE FREEE')" class="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition-colors">COFFEEEEEE FREEE</button>
+                            <button onclick="setRLEInput('AABBBCCCCDDDDD')" class="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition-colors">AABBBCCCCDDDDD</button>
+                            <button onclick="setRLEInput('HELLO WORLD')" class="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition-colors">HELLO WORLD</button>
+                        </div>
+                    </div>
+
+                    <!-- Step-by-step display -->
+                    <div id="rleSteps" class="space-y-4">
+                        <!-- Steps will be rendered here by JS -->
+                    </div>
+
+                    <!-- Result summary -->
+                    <div id="rleSummary" class="hidden mt-6 bg-gradient-to-r from-primary-50 to-cyan-50 rounded-xl p-5 border border-primary-200">
+                        <!-- Summary rendered by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+
+        <!-- ============================================ -->
+        <!-- SECTION 2: 렘펠-지브 인코딩 -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 bg-gradient-to-br from-accent-700 to-accent-900 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
+                    2
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900">
+                    렘펠-지브<span class="text-accent-700">(Lempel-Ziv)</span> 인코딩
+                </h2>
+            </div>
+
+            <!-- Concept explanation card -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover mb-8">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-blue-100">
+                    <h3 class="font-bold text-blue-800 flex items-center gap-2">
+                        <i class="fas fa-lightbulb text-blue-500"></i>
+                        핵심 개념
+                    </h3>
+                </div>
+                <div class="p-6 space-y-4">
+                    <p class="text-gray-700 leading-relaxed">
+                        <strong class="text-blue-700">렘펠-지브 인코딩</strong>은 문자열에 포함된 같은 패턴의
+                        <span class="tooltip-container">
+                            <span class="underline decoration-blue-300 decoration-2 cursor-help">상대적 위치</span>
+                            <span class="tooltip-text">현재 위치에서 이전 패턴까지의 거리</span>
+                        </span>와
+                        <span class="tooltip-container">
+                            <span class="underline decoration-blue-300 decoration-2 cursor-help">패턴의 길이</span>
+                            <span class="tooltip-text">반복되는 문자 패턴의 글자 수</span>
+                        </span>로 문자열을 치환하여 압축하는 방법입니다.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="flex items-start gap-3 bg-blue-50 rounded-xl p-4">
+                            <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
+                            <p class="text-sm text-blue-800">
+                                <strong>떨어져 있는 같은 패턴</strong>도 압축 가능합니다.
+                            </p>
+                        </div>
+                        <div class="flex items-start gap-3 bg-blue-50 rounded-xl p-4">
+                            <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
+                            <p class="text-sm text-blue-800">
+                                반복 패턴이 많이 포함된 <strong>긴 문자열</strong>에서 압축 효율이 높습니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Example: LZ Encoding -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover mb-8 fade-in">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-blue-100">
+                    <h3 class="font-bold text-blue-800 flex items-center gap-2">
+                        <i class="fas fa-eye text-blue-500"></i>
+                        예시: 렘펠-지브 인코딩
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-500 mb-6">같은 패턴을 위치와 길이로 치환합니다.</p>
+
+                    <!-- Original string with position markers -->
+                    <div class="mb-4">
+                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">원본 문자열</div>
+                        <div class="relative">
+                            <!-- Position numbers -->
+                            <div class="flex gap-0 mb-1">
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">1</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">2</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">3</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">4</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">5</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">6</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">7</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">8</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">9</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">10</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">11</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">12</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">13</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">14</div>
+                                <div class="w-9 text-center text-xs text-gray-300 font-mono">15</div>
+                            </div>
+                            <!-- Characters -->
+                            <div class="flex gap-0" id="lzOriginalChars">
+                                <span class="compress-char bg-gray-100 text-gray-700" style="width:2.25rem;height:2.25rem;">W</span>
+                                <span class="compress-char bg-gray-100 text-gray-700" style="width:2.25rem;height:2.25rem;">E</span>
+                                <span class="compress-char bg-gray-100 text-gray-700" style="width:2.25rem;height:2.25rem;">L</span>
+                                <span class="compress-char bg-purple-100 text-purple-700 border-2 border-purple-300" style="width:2.25rem;height:2.25rem;">C</span>
+                                <span class="compress-char bg-purple-100 text-purple-700 border-2 border-purple-300" style="width:2.25rem;height:2.25rem;">O</span>
+                                <span class="compress-char bg-purple-100 text-purple-700 border-2 border-purple-300" style="width:2.25rem;height:2.25rem;">M</span>
+                                <span class="compress-char bg-gray-100 text-gray-700" style="width:2.25rem;height:2.25rem;">E</span>
+                                <span class="compress-char bg-gray-50 text-gray-400 border border-dashed border-gray-300 text-xs" style="width:2.25rem;height:2.25rem;">SP</span>
+                                <span class="compress-char bg-violet-100 text-violet-700 border-2 border-violet-300" style="width:2.25rem;height:2.25rem;">C</span>
+                                <span class="compress-char bg-violet-100 text-violet-700 border-2 border-violet-300" style="width:2.25rem;height:2.25rem;">O</span>
+                                <span class="compress-char bg-violet-100 text-violet-700 border-2 border-violet-300" style="width:2.25rem;height:2.25rem;">M</span>
+                                <span class="compress-char bg-gray-100 text-gray-700" style="width:2.25rem;height:2.25rem;">P</span>
+                                <span class="compress-char bg-gray-100 text-gray-700" style="width:2.25rem;height:2.25rem;">A</span>
+                                <span class="compress-char bg-gray-100 text-gray-700" style="width:2.25rem;height:2.25rem;">N</span>
+                                <span class="compress-char bg-gray-100 text-gray-700" style="width:2.25rem;height:2.25rem;">Y</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SVG Arrow Diagram -->
+                    <div class="my-6 flex justify-center overflow-x-auto">
+                        <svg width="560" height="100" viewBox="0 0 560 100" class="max-w-full">
+                            <!-- Pattern match arrow -->
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#7c3aed"/>
+                                </marker>
+                            </defs>
+                            <!-- "COM" at position 4-6 -->
+                            <rect x="100" y="5" width="100" height="30" rx="8" fill="#f3e8ff" stroke="#c084fc" stroke-width="2"/>
+                            <text x="150" y="25" text-anchor="middle" font-size="13" font-weight="bold" fill="#7c3aed">COM (4~6)</text>
+                            <!-- Arrow curving to "COM" at position 9-11 -->
+                            <path d="M 200,20 Q 290,90 330,20" fill="none" stroke="#7c3aed" stroke-width="2.5" class="lz-arrow" marker-end="url(#arrowhead)"/>
+                            <!-- Label on arrow -->
+                            <rect x="240" y="55" width="80" height="26" rx="6" fill="#7c3aed"/>
+                            <text x="280" y="73" text-anchor="middle" font-size="11" font-weight="bold" fill="white">5칸, 3글자</text>
+                            <!-- "COM" at position 9-11 (to be replaced) -->
+                            <rect x="310" y="5" width="120" height="30" rx="8" fill="#ede9fe" stroke="#a78bfa" stroke-width="2" stroke-dasharray="4 2"/>
+                            <text x="370" y="25" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b5cf6">(5,3) 으로 치환</text>
+                        </svg>
+                    </div>
+
+                    <!-- After compression -->
+                    <div class="flex items-center justify-center my-4">
+                        <div class="flex items-center gap-2 bg-blue-100 text-blue-700 rounded-full px-4 py-2 text-sm font-bold">
+                            <i class="fas fa-arrow-down"></i>
+                            렘펠-지브 인코딩 적용
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">압축 결과</div>
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <span class="compress-char bg-gray-100 text-gray-700">W</span>
+                            <span class="compress-char bg-gray-100 text-gray-700">E</span>
+                            <span class="compress-char bg-gray-100 text-gray-700">L</span>
+                            <span class="compress-char bg-purple-100 text-purple-700">C</span>
+                            <span class="compress-char bg-purple-100 text-purple-700">O</span>
+                            <span class="compress-char bg-purple-100 text-purple-700">M</span>
+                            <span class="compress-char bg-gray-100 text-gray-700">E</span>
+                            <span class="compress-char bg-gray-50 text-gray-400 border border-dashed border-gray-300 text-xs">SP</span>
+                            <!-- Replacement token -->
+                            <span class="inline-flex items-center gap-1 bg-violet-500 text-white rounded-lg px-3 py-1.5 text-sm font-bold shadow-md">
+                                <i class="fas fa-link text-xs"></i> (5,3)
+                            </span>
+                            <span class="compress-char bg-gray-100 text-gray-700">P</span>
+                            <span class="compress-char bg-gray-100 text-gray-700">A</span>
+                            <span class="compress-char bg-gray-100 text-gray-700">N</span>
+                            <span class="compress-char bg-gray-100 text-gray-700">Y</span>
+                        </div>
+                        <div class="text-xs text-gray-400 mt-2">
+                            WELCOME <span class="font-bold text-violet-600">(5,3)</span>PANY
+                        </div>
+                    </div>
+
+                    <!-- Explanation of (5,3) -->
+                    <div class="mt-6 bg-violet-50 rounded-xl p-5 border border-violet-200">
+                        <div class="text-sm font-bold text-violet-700 mb-3">
+                            <i class="fas fa-magnifying-glass mr-1"></i>
+                            (5, 3)의 의미
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-violet-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">5</div>
+                                <div class="text-sm text-violet-800">
+                                    현재 위치에서 <strong>왼쪽으로 5칸</strong> 이동하면 같은 패턴 시작 위치
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-violet-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                                <div class="text-sm text-violet-800">
+                                    패턴의 <strong>길이(반복될 문자 개수)</strong>가 3글자 (C, O, M)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RLE vs LZ Comparison -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover fade-in">
+                <div class="bg-gradient-to-r from-primary-50 to-blue-50 px-6 py-4 border-b border-primary-100">
+                    <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fas fa-scale-balanced text-primary-500"></i>
+                        런-렝스 vs 렘펠-지브 비교
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b-2 border-gray-200">
+                                    <th class="text-left py-3 px-4 font-bold text-gray-500">구분</th>
+                                    <th class="text-left py-3 px-4">
+                                        <span class="inline-flex items-center gap-1.5 text-primary-700 font-bold">
+                                            <i class="fas fa-repeat text-primary-500"></i>
+                                            런-렝스 인코딩
+                                        </span>
+                                    </th>
+                                    <th class="text-left py-3 px-4">
+                                        <span class="inline-flex items-center gap-1.5 text-accent-700 font-bold">
+                                            <i class="fas fa-link text-accent-700"></i>
+                                            렘펠-지브 인코딩
+                                        </span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-3 px-4 font-semibold text-gray-600">압축 방식</td>
+                                    <td class="py-3 px-4 text-gray-700">연속 반복 문자 -> 개수+문자</td>
+                                    <td class="py-3 px-4 text-gray-700">같은 패턴 -> (위치, 길이)</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-3 px-4 font-semibold text-gray-600">효율적인 경우</td>
+                                    <td class="py-3 px-4 text-gray-700">같은 문자가 길게 연속될 때</td>
+                                    <td class="py-3 px-4 text-gray-700">같은 패턴이 떨어져 반복될 때</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-3 px-4 font-semibold text-gray-600">알고리즘 복잡도</td>
+                                    <td class="py-3 px-4">
+                                        <span class="inline-flex items-center gap-1 bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-semibold">
+                                            <i class="fas fa-circle text-xs"></i> 단순
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-xs font-semibold">
+                                            <i class="fas fa-circle text-xs"></i><i class="fas fa-circle text-xs"></i> 보통
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-3 px-4 font-semibold text-gray-600">활용 분야</td>
+                                    <td class="py-3 px-4 text-gray-700">팩스, BMP, PCX 등</td>
+                                    <td class="py-3 px-4 text-gray-700">ZIP, GIF, PNG 등</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+
+        <!-- ============================================ -->
+        <!-- SECTION 3: Key Terms -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl flex items-center justify-center text-white shadow-lg">
+                    <i class="fas fa-bookmark text-sm"></i>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900">핵심 용어 정리</h2>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Term 1 -->
+                <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 card-hover">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-primary-500"></span>
+                        <h4 class="font-bold text-primary-700">문자 집합 (Character Set)</h4>
+                    </div>
+                    <p class="text-sm text-gray-600">컴퓨터에서 사용할 수 있는 문자들의 모음. 각 문자에 고유한 코드가 부여됩니다.</p>
+                </div>
+                <!-- Term 2 -->
+                <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 card-hover">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-primary-500"></span>
+                        <h4 class="font-bold text-primary-700">아스키코드 (ASCII)</h4>
+                    </div>
+                    <p class="text-sm text-gray-600">7비트로 영문자, 숫자, 특수 문자 등 128개의 문자를 표현하는 표준 문자 코드 체계입니다.</p>
+                </div>
+                <!-- Term 3 -->
+                <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 card-hover">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-primary-500"></span>
+                        <h4 class="font-bold text-primary-700">유니코드 (Unicode)</h4>
+                    </div>
+                    <p class="text-sm text-gray-600">전 세계 모든 문자를 통일된 코드로 표현하기 위한 국제 표준 문자 코드입니다.</p>
+                </div>
+                <!-- Term 4 -->
+                <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 card-hover">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-accent-700"></span>
+                        <h4 class="font-bold text-accent-700">런-렝스 인코딩</h4>
+                    </div>
+                    <p class="text-sm text-gray-600">연속 반복 문자를 반복 횟수와 문자의 쌍으로 표현하여 압축하는 방법입니다.</p>
+                </div>
+                <!-- Term 5 -->
+                <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 card-hover">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-accent-700"></span>
+                        <h4 class="font-bold text-accent-700">렘펠-지브 인코딩</h4>
+                    </div>
+                    <p class="text-sm text-gray-600">같은 패턴의 상대적 위치와 길이로 문자열을 치환하여 압축하는 방법입니다.</p>
+                </div>
+                <!-- Term 6 -->
+                <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 card-hover">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                        <h4 class="font-bold text-orange-700">탈출 문자 (Escape Character)</h4>
+                    </div>
+                    <p class="text-sm text-gray-600">숫자 포함 문자열에서 반복 횟수와 원래 숫자를 구분하기 위해 사용하는 특수 문자입니다.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ============================================ -->
+        <!-- NAVIGATION -->
+        <!-- ============================================ -->
+        <section class="fade-in no-print">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Previous -->
+                <a href="../01_디지털 데이터 압축의 이해/index.html"
+                   class="group flex items-center gap-4 bg-white rounded-2xl shadow-md border border-gray-100 p-5 hover:shadow-lg hover:border-primary-200 transition-all">
+                    <div class="w-10 h-10 bg-gray-100 group-hover:bg-primary-100 rounded-xl flex items-center justify-center transition-colors">
+                        <i class="fas fa-arrow-left text-gray-400 group-hover:text-primary-600 transition-colors"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-400 font-medium">이전</div>
+                        <div class="text-sm font-bold text-gray-700 group-hover:text-primary-700 transition-colors">디지털 데이터 압축의 이해</div>
+                    </div>
+                </a>
+
+                <!-- Home -->
+                <a href="../../../index.html"
+                   class="group flex items-center justify-center gap-3 bg-white rounded-2xl shadow-md border border-gray-100 p-5 hover:shadow-lg hover:border-primary-200 transition-all">
+                    <div class="w-10 h-10 bg-gray-100 group-hover:bg-primary-100 rounded-xl flex items-center justify-center transition-colors">
+                        <i class="fas fa-th-large text-gray-400 group-hover:text-primary-600 transition-colors"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-400 font-medium">목록</div>
+                        <div class="text-sm font-bold text-gray-700 group-hover:text-primary-700 transition-colors">전체 단원</div>
+                    </div>
+                </a>
+
+                <!-- Next -->
+                <a href="../03_이미지 압축/index.html"
+                   class="group flex items-center justify-end gap-4 bg-white rounded-2xl shadow-md border border-gray-100 p-5 hover:shadow-lg hover:border-primary-200 transition-all text-right">
+                    <div>
+                        <div class="text-xs text-gray-400 font-medium">다음</div>
+                        <div class="text-sm font-bold text-gray-700 group-hover:text-primary-700 transition-colors">이미지 압축</div>
+                    </div>
+                    <div class="w-10 h-10 bg-gray-100 group-hover:bg-primary-100 rounded-xl flex items-center justify-center transition-colors">
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-primary-600 transition-colors"></i>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../01_디지털 데이터 압축의 이해/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../03_이미지 압축/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">II. 데이터 &gt; 01 디지털 데이터 압축 &gt; 문자열 압축</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // ===== Run-Length Encoding Simulator =====
+        function setRLEInput(val) {
+            document.getElementById('rleInput').value = val;
+            runRLE();
+        }
+
+        function runRLE() {
+            const input = document.getElementById('rleInput').value;
+            if (!input) return;
+
+            const stepsContainer = document.getElementById('rleSteps');
+            const summaryContainer = document.getElementById('rleSummary');
+            stepsContainer.innerHTML = '';
+            summaryContainer.classList.add('hidden');
+
+            // Build RLE groups
+            const groups = [];
+            let i = 0;
+            while (i < input.length) {
+                let ch = input[i];
+                let count = 1;
+                while (i + count < input.length && input[i + count] === ch) {
+                    count++;
+                }
+                groups.push({ char: ch, count: count, startIndex: i });
+                i += count;
+            }
+
+            // Color palette for groups
+            const colors = [
+                { bg: 'bg-cyan-100', text: 'text-cyan-700', border: 'border-cyan-300', bgDark: 'bg-cyan-200', textDark: 'text-cyan-800' },
+                { bg: 'bg-emerald-100', text: 'text-emerald-700', border: 'border-emerald-300', bgDark: 'bg-emerald-200', textDark: 'text-emerald-800' },
+                { bg: 'bg-amber-100', text: 'text-amber-700', border: 'border-amber-300', bgDark: 'bg-amber-200', textDark: 'text-amber-800' },
+                { bg: 'bg-rose-100', text: 'text-rose-700', border: 'border-rose-300', bgDark: 'bg-rose-200', textDark: 'text-rose-800' },
+                { bg: 'bg-violet-100', text: 'text-violet-700', border: 'border-violet-300', bgDark: 'bg-violet-200', textDark: 'text-violet-800' },
+                { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-300', bgDark: 'bg-blue-200', textDark: 'text-blue-800' },
+                { bg: 'bg-orange-100', text: 'text-orange-700', border: 'border-orange-300', bgDark: 'bg-orange-200', textDark: 'text-orange-800' },
+                { bg: 'bg-pink-100', text: 'text-pink-700', border: 'border-pink-300', bgDark: 'bg-pink-200', textDark: 'text-pink-800' },
+            ];
+
+            // Build step-by-step animation
+            // Step 1: Show original with grouping
+            let origHTML = '<div class="bg-gray-50 rounded-xl p-4 border border-gray-200">';
+            origHTML += '<div class="flex items-center gap-2 mb-3"><span class="w-6 h-6 bg-primary-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span><span class="text-sm font-bold text-gray-700">원본 문자열 분석 - 연속된 같은 문자를 그룹으로 묶기</span></div>';
+            origHTML += '<div class="flex flex-wrap gap-1 items-end">';
+
+            groups.forEach((g, idx) => {
+                const c = colors[idx % colors.length];
+                origHTML += '<div class="flex flex-col items-center gap-1">';
+                if (g.count > 1) {
+                    origHTML += `<span class="text-xs font-bold ${c.textDark}">${g.count}번</span>`;
+                }
+                origHTML += '<div class="flex gap-0.5">';
+                for (let j = 0; j < g.count; j++) {
+                    const displayChar = g.char === ' ' ? 'SP' : escapeHTML(g.char);
+                    const extraClass = g.char === ' ' ? 'border border-dashed border-gray-300 !bg-gray-50 !text-gray-400 text-xs' : `border ${c.border}`;
+                    origHTML += `<span class="compress-char ${c.bg} ${c.text} ${extraClass}">${displayChar}</span>`;
+                }
+                origHTML += '</div></div>';
+            });
+
+            origHTML += '</div></div>';
+            stepsContainer.innerHTML += origHTML;
+
+            // Step 2: Show encoding result
+            let encHTML = '<div class="bg-gray-50 rounded-xl p-4 border border-gray-200 mt-3">';
+            encHTML += '<div class="flex items-center gap-2 mb-3"><span class="w-6 h-6 bg-primary-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span><span class="text-sm font-bold text-gray-700">인코딩 결과 - 반복 문자를 개수+문자로 치환</span></div>';
+            encHTML += '<div class="flex flex-wrap gap-1.5">';
+
+            let encoded = '';
+            groups.forEach((g, idx) => {
+                const c = colors[idx % colors.length];
+                if (g.count > 1) {
+                    encHTML += `<span class="compress-char ${c.bgDark} ${c.textDark} font-black border ${c.border}">${g.count}</span>`;
+                    encoded += g.count;
+                }
+                const displayChar = g.char === ' ' ? 'SP' : escapeHTML(g.char);
+                const extraClass = g.char === ' ' ? 'border border-dashed border-gray-300 !bg-gray-50 !text-gray-400 text-xs' : `border ${c.border}`;
+                encHTML += `<span class="compress-char ${c.bg} ${c.text} ${extraClass}">${displayChar}</span>`;
+                encoded += g.char;
+            });
+
+            encHTML += '</div>';
+
+            // Show encoded string as text
+            const encodedDisplay = encoded.replace(/ /g, '(SP)');
+            encHTML += `<div class="mt-2 text-xs text-gray-500">결과: <code class="bg-gray-200 px-2 py-0.5 rounded font-mono">${escapeHTML(encoded)}</code></div>`;
+            encHTML += '</div>';
+            stepsContainer.innerHTML += encHTML;
+
+            // Summary
+            const origLen = input.length;
+            const encLen = encoded.length;
+            const ratio = ((1 - encLen / origLen) * 100).toFixed(1);
+            const isCompressed = encLen < origLen;
+
+            summaryContainer.classList.remove('hidden');
+            summaryContainer.innerHTML = `
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fas fa-chart-pie text-primary-600 text-lg"></i>
+                    <span class="font-bold text-primary-800">압축 결과 요약</span>
+                </div>
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                        <div class="text-2xl font-black text-gray-700">${origLen}</div>
+                        <div class="text-xs text-gray-500">원본 길이</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-black ${isCompressed ? 'text-green-600' : 'text-red-600'}">${encLen}</div>
+                        <div class="text-xs text-gray-500">압축 후 길이</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-black ${isCompressed ? 'text-green-600' : 'text-red-600'}">${isCompressed ? ratio + '%' : '증가'}</div>
+                        <div class="text-xs text-gray-500">${isCompressed ? '압축률' : '비효율적'}</div>
+                    </div>
+                </div>
+                ${!isCompressed ? '<div class="mt-3 text-sm text-amber-700 bg-amber-50 rounded-lg p-3 border border-amber-200"><i class="fas fa-triangle-exclamation mr-1"></i>반복 문자가 적으면 오히려 길이가 늘어날 수 있습니다. 런-렝스 인코딩은 연속 반복이 많을수록 효율적입니다.</div>' : ''}
+            `;
+        }
+
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ===== Fade-in animation on scroll =====
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+
+        // ===== Add fadeSlideIn keyframes dynamically =====
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = `
+            @keyframes fadeSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+
+        // Run initial RLE on load
+        document.addEventListener('DOMContentLoaded', () => {
+            runRLE();
+        });
+    </script>
+
+</body>
+</html>

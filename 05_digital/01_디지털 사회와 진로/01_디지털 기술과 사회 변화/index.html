@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디지털 기술과 사회 변화 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#e7f5ff',
+                            100: '#d0ebff',
+                            200: '#a5d8ff',
+                            300: '#74c0fc',
+                            400: '#339af0',
+                            500: '#228be6',
+                            600: '#1c7ed6',
+                            700: '#1971c2',
+                            800: '#1864ab',
+                            900: '#145591',
+                        },
+                        accent: {
+                            50: '#e3fafc',
+                            100: '#c5f6fa',
+                            200: '#99e9f2',
+                            300: '#66d9e8',
+                            400: '#3bc9db',
+                            500: '#22b8cf',
+                            600: '#15aabf',
+                            700: '#1098ad',
+                            800: '#0c8599',
+                            900: '#0b7285',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #339af0 0%, #1c7ed6 50%, #1971c2 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #339af0, #1c7ed6, #339af0);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Accordion styles */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+        }
+        .accordion-content.open {
+            max-height: 1200px;
+        }
+
+        /* Tab styles */
+        .tab-btn {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-btn.active {
+            border-bottom-color: #1c7ed6;
+            color: #1c7ed6;
+            font-weight: 700;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Domain card icon animation */
+        .domain-icon {
+            transition: transform 0.3s ease;
+        }
+        .card-hover:hover .domain-icon {
+            transform: scale(1.1);
+        }
+
+        /* Quiz styles */
+        .quiz-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .quiz-option:hover {
+            transform: translateX(4px);
+        }
+        .quiz-option.correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+        }
+        .quiz-option.wrong {
+            background-color: #fef2f2 !important;
+            border-color: #ef4444 !important;
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { background: #1c7ed6 !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+            a { text-decoration: underline; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #339af0 0%, #1c7ed6 50%, #1971c2 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">V. 디지털 문화</span>
+                <span class="breadcrumb-item text-white font-medium">01 디지털 사회와 진로</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-globe"></i>
+                        <span>V. 디지털 문화 &gt; 01 디지털 사회와 진로</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        디지털 기술과 사회 변화
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        디지털 기술이 사회에 미치는 영향력을 분석하고 앞으로의 발전 방향을 예측합니다
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-microchip mr-1"></i> 디지털 기술
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-chart-line mr-1"></i> 사회 변화
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-wifi mr-1"></i> IoT
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-robot mr-1"></i> AI
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon - Digital Globe with Circuit Patterns -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Globe circle -->
+                        <circle cx="110" cy="100" r="60" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <!-- Globe latitude lines -->
+                        <ellipse cx="110" cy="100" rx="60" ry="20" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+                        <ellipse cx="110" cy="100" rx="60" ry="40" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <!-- Globe longitude lines -->
+                        <ellipse cx="110" cy="100" rx="20" ry="60" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+                        <ellipse cx="110" cy="100" rx="40" ry="60" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <!-- Center meridian -->
+                        <line x1="110" y1="40" x2="110" y2="160" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <!-- Equator -->
+                        <line x1="50" y1="100" x2="170" y2="100" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <!-- Circuit nodes on globe -->
+                        <circle cx="90" cy="75" r="4" fill="rgba(255,255,255,0.6)"/>
+                        <circle cx="130" cy="80" r="4" fill="rgba(255,255,255,0.5)"/>
+                        <circle cx="110" cy="100" r="5" fill="rgba(255,255,255,0.7)"/>
+                        <circle cx="80" cy="110" r="3.5" fill="rgba(255,255,255,0.45)"/>
+                        <circle cx="140" cy="115" r="3.5" fill="rgba(255,255,255,0.45)"/>
+                        <circle cx="100" cy="130" r="3" fill="rgba(255,255,255,0.4)"/>
+                        <circle cx="125" cy="125" r="3" fill="rgba(255,255,255,0.4)"/>
+                        <!-- Circuit connections -->
+                        <line x1="90" y1="75" x2="110" y2="100" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <line x1="130" y1="80" x2="110" y2="100" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <line x1="80" y1="110" x2="110" y2="100" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+                        <line x1="140" y1="115" x2="110" y2="100" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+                        <line x1="100" y1="130" x2="110" y2="100" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                        <line x1="125" y1="125" x2="110" y2="100" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                        <line x1="90" y1="75" x2="130" y2="80" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="3 3"/>
+                        <line x1="80" y1="110" x2="100" y2="130" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="3 3"/>
+                        <line x1="140" y1="115" x2="125" y2="125" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="3 3"/>
+                        <!-- Wireless signal arcs from globe -->
+                        <path d="M170 70 Q185 65 180 50" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
+                        <path d="M175 75 Q195 68 188 48" stroke="rgba(255,255,255,0.2)" stroke-width="1" fill="none"/>
+                        <path d="M180 80 Q205 72 196 46" stroke="rgba(255,255,255,0.12)" stroke-width="1" fill="none"/>
+                        <!-- Small device icons around globe -->
+                        <!-- Smartphone -->
+                        <rect x="30" y="60" width="16" height="26" rx="3" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <line x1="33" y1="79" x2="43" y2="79" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+                        <circle cx="38" cy="83" r="1.5" fill="rgba(255,255,255,0.3)"/>
+                        <!-- Connection line from phone to globe -->
+                        <line x1="46" y1="73" x2="55" y2="85" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+                        <!-- IoT sensor -->
+                        <rect x="175" y="140" width="20" height="14" rx="3" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <circle cx="180" cy="147" r="2" fill="rgba(255,255,255,0.4)"/>
+                        <circle cx="190" cy="147" r="2" fill="rgba(255,255,255,0.4)"/>
+                        <!-- Connection line from sensor to globe -->
+                        <line x1="175" y1="145" x2="165" y2="125" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+                        <!-- Binary data stream -->
+                        <text x="25" y="165" fill="rgba(255,255,255,0.2)" font-size="7" font-family="monospace">01101</text>
+                        <text x="25" y="175" fill="rgba(255,255,255,0.15)" font-size="7" font-family="monospace">10010</text>
+                        <text x="170" y="175" fill="rgba(255,255,255,0.2)" font-size="7" font-family="monospace">11010</text>
+                        <text x="170" y="185" fill="rgba(255,255,255,0.15)" font-size="7" font-family="monospace">01101</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>디지털 기술이 사회에 미치는 영향력을 분석하고 앞으로의 발전 방향을 예측할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>디지털 기술과 사회 변화에 따른 진로를 설계할 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 디지털 기술</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 사회 변화</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> IoT</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> AI</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 1: 디지털 기술과 사회 변화                                        -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-digital-change">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">디지털 기술과 사회 변화</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Digital Technology and Social Change</p>
+                </div>
+            </div>
+
+            <!-- Main definition callout -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">디지털 기술이란?</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong class="text-primary-700">디지털 기술</strong>은 정보를 디지털 형태로 <strong class="text-primary-700">처리, 저장, 전송</strong>하는 장치를 연구&middot;개발하는 기술로서
+                            <strong class="text-primary-700">사물 인터넷, 인공지능, 블록체인</strong> 등의 기술을 포함하며 사람과 컴퓨터 기기 간의
+                            <strong class="text-primary-700">상호 작용</strong>을 가능하게 한다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intro paragraph -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-10">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-network-wired text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">사회 전반으로 확산되는 디지털 기술</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            디지털 기술은 개인의 삶뿐만 아니라 <strong class="text-primary-700">의료, 제조, 금융, 문화 예술</strong> 등
+                            사회 전반에 활용되어 사회를 변화시키고 있다. 다양한 영역에서 디지털 기술이 어떻게
+                            활용되고 있는지 구체적인 사례를 통해 살펴보자.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section divider -->
+            <div class="section-divider max-w-xs mx-auto mb-10 opacity-50"></div>
+
+            <!-- 8 Domain Cards - 2x4 Grid -->
+            <div class="mb-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <i class="fas fa-th-large text-primary-500"></i>
+                    디지털 기술의 활용 영역
+                </h3>
+                <p class="text-gray-500 text-sm mb-6">다양한 분야에서 활용되는 디지털 기술의 사례를 확인해 보세요.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-10">
+
+                <!-- Card 1: AI 사무 자동화 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg flex-shrink-0 domain-icon">
+                            <i class="fas fa-robot text-white text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="inline-flex items-center justify-center bg-primary-100 text-primary-700 font-bold text-xs rounded-full px-2.5 py-0.5">01</span>
+                                <h4 class="font-bold text-gray-900 text-lg">AI 사무 자동화 영역</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                수천 건의 문서를 <strong class="text-primary-700">분류, 분석, 공유</strong>하고 업무를 자동화한다.
+                                법률 관련 작업에서 <strong class="text-primary-700">판례 추출 및 추천</strong> 등에 활용된다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: 기술·공학 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg flex-shrink-0 domain-icon">
+                            <i class="fas fa-microchip text-white text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="inline-flex items-center justify-center bg-blue-100 text-blue-700 font-bold text-xs rounded-full px-2.5 py-0.5">02</span>
+                                <h4 class="font-bold text-gray-900 text-lg">기술&middot;공학 영역</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                <strong class="text-blue-700">반도체 발전</strong>으로 AI 서비스 및 전자 기기가 발전하고 있으며,
+                                <strong class="text-blue-700">친환경 신소재 개발</strong>에도 디지털 기술이 활용된다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: 생활 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-700 flex items-center justify-center shadow-lg flex-shrink-0 domain-icon">
+                            <i class="fas fa-house text-white text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="inline-flex items-center justify-center bg-cyan-100 text-cyan-700 font-bold text-xs rounded-full px-2.5 py-0.5">03</span>
+                                <h4 class="font-bold text-gray-900 text-lg">생활 영역</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                <strong class="text-cyan-700">외국어 사진 번역</strong>, <strong class="text-cyan-700">무인 매장 자동 결제</strong>,
+                                AI 개인 비서 활용 등 일상생활의 편의성을 크게 높이고 있다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: 농업 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center shadow-lg flex-shrink-0 domain-icon">
+                            <i class="fas fa-seedling text-white text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="inline-flex items-center justify-center bg-green-100 text-green-700 font-bold text-xs rounded-full px-2.5 py-0.5">04</span>
+                                <h4 class="font-bold text-gray-900 text-lg">농업 영역</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                <strong class="text-green-700">IoT와 AI를 활용</strong>한 첨단 농장을 운영하며,
+                                <strong class="text-green-700">원격 환경 모니터링 및 관리</strong>를 통해 효율적인 농업을 실현한다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: 제조와 물류 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center shadow-lg flex-shrink-0 domain-icon">
+                            <i class="fas fa-industry text-white text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="inline-flex items-center justify-center bg-orange-100 text-orange-700 font-bold text-xs rounded-full px-2.5 py-0.5">05</span>
+                                <h4 class="font-bold text-gray-900 text-lg">제조와 물류 영역</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                주문부터 배송까지 <strong class="text-orange-700">자동화</strong>하고, 로봇을 투입하여
+                                <strong class="text-orange-700">24시간 설비 점검</strong>을 수행하며, <strong class="text-orange-700">3D 프린터</strong>를 활용하여 물품을 제조한다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: 의료 및 보건 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg flex-shrink-0 domain-icon">
+                            <i class="fas fa-heartbeat text-white text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="inline-flex items-center justify-center bg-red-100 text-red-700 font-bold text-xs rounded-full px-2.5 py-0.5">06</span>
+                                <h4 class="font-bold text-gray-900 text-lg">의료 및 보건 영역</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                <strong class="text-red-600">스마트 기기로 건강 데이터를 체크</strong>하고,
+                                개인에게 <strong class="text-red-600">맞춤형 헬스케어</strong>를 제공하여 의료 서비스의 질을 높이고 있다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7: 홈 서비스 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center shadow-lg flex-shrink-0 domain-icon">
+                            <i class="fas fa-home text-white text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="inline-flex items-center justify-center bg-violet-100 text-violet-700 font-bold text-xs rounded-full px-2.5 py-0.5">07</span>
+                                <h4 class="font-bold text-gray-900 text-lg">홈 서비스 영역</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                앱으로 <strong class="text-violet-700">가전제품을 제어</strong>하고, <strong class="text-violet-700">음성 인식</strong>을 활용하며,
+                                CCTV를 통한 <strong class="text-violet-700">이상 탐지</strong> 등 스마트홈 서비스를 제공한다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 8: 금융 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg flex-shrink-0 domain-icon">
+                            <i class="fas fa-coins text-white text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="inline-flex items-center justify-center bg-amber-100 text-amber-700 font-bold text-xs rounded-full px-2.5 py-0.5">08</span>
+                                <h4 class="font-bold text-gray-900 text-lg">금융 영역</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                <strong class="text-amber-700">블록체인</strong>으로 개인 정보를 보호하고,
+                                AI를 활용하여 <strong class="text-amber-700">이상 거래를 탐지</strong>하는 등 금융 보안과 효율성을 높이고 있다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Summary info box -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 rounded-2xl p-6 border border-primary-100 shadow-sm">
+                <h3 class="font-bold text-primary-800 text-lg mb-4 flex items-center gap-2">
+                    <i class="fas fa-clipboard-check text-primary-500"></i>
+                    핵심 정리
+                </h3>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-primary-700 mb-2 flex items-center gap-2">
+                            <i class="fas fa-microchip text-sm"></i> 디지털 기술의 핵심
+                        </h4>
+                        <ul class="space-y-1.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                정보를 디지털 형태로 처리, 저장, 전송
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                사물 인터넷, 인공지능, 블록체인 등 포함
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                사람과 컴퓨터 기기 간의 상호 작용
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-accent-700 mb-2 flex items-center gap-2">
+                            <i class="fas fa-chart-line text-sm"></i> 사회 변화의 범위
+                        </h4>
+                        <ul class="space-y-1.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-600 mt-0.5 text-xs"></i>
+                                개인의 삶 ~ 사회 전반으로 확산
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-600 mt-0.5 text-xs"></i>
+                                의료, 제조, 금융, 농업, 생활 등 전 영역
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-600 mt-0.5 text-xs"></i>
+                                자동화, 효율화, 맞춤형 서비스 확대
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 2: 디지털 기술 활용 탐구                                          -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-exploration">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">디지털 기술 활용 탐구</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Exploring Digital Technology Applications</p>
+                </div>
+            </div>
+
+            <!-- Tabs for different tech categories -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                <div class="flex border-b border-gray-200 overflow-x-auto">
+                    <button class="tab-btn active flex-1 min-w-fit px-4 py-3 text-sm font-medium text-gray-600 hover:text-primary-600" onclick="switchTab(event, 'tab-iot')">
+                        <i class="fas fa-wifi mr-1.5"></i> 사물 인터넷 (IoT)
+                    </button>
+                    <button class="tab-btn flex-1 min-w-fit px-4 py-3 text-sm font-medium text-gray-600 hover:text-primary-600" onclick="switchTab(event, 'tab-ai')">
+                        <i class="fas fa-robot mr-1.5"></i> 인공지능 (AI)
+                    </button>
+                    <button class="tab-btn flex-1 min-w-fit px-4 py-3 text-sm font-medium text-gray-600 hover:text-primary-600" onclick="switchTab(event, 'tab-blockchain')">
+                        <i class="fas fa-link mr-1.5"></i> 블록체인
+                    </button>
+                </div>
+
+                <!-- Tab: IoT -->
+                <div class="tab-content active p-6" id="tab-iot">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-300 to-primary-500 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-wifi text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg mb-2">사물 인터넷 (IoT)</h4>
+                            <p class="text-gray-700 text-sm leading-relaxed mb-4">
+                                사물 인터넷은 다양한 기기와 센서가 인터넷으로 연결되어 데이터를 주고받는 기술이다.
+                                농업 분야에서는 토양 습도, 온도, 일조량 등을 실시간으로 모니터링하여 최적의 재배 환경을 유지하고,
+                                홈 서비스 분야에서는 가전제품의 원격 제어와 에너지 관리를 가능하게 한다.
+                            </p>
+                            <div class="grid sm:grid-cols-2 gap-3">
+                                <div class="bg-primary-50 rounded-lg p-3 border border-primary-200">
+                                    <p class="font-bold text-primary-700 text-xs mb-1"><i class="fas fa-seedling mr-1"></i> 스마트 농장</p>
+                                    <p class="text-gray-700 text-xs">센서로 환경을 모니터링하고 자동 관수</p>
+                                </div>
+                                <div class="bg-accent-50 rounded-lg p-3 border border-accent-200">
+                                    <p class="font-bold text-accent-700 text-xs mb-1"><i class="fas fa-home mr-1"></i> 스마트홈</p>
+                                    <p class="text-gray-700 text-xs">앱으로 가전제품 제어 및 에너지 관리</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: AI -->
+                <div class="tab-content p-6" id="tab-ai">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg mb-2">인공지능 (AI)</h4>
+                            <p class="text-gray-700 text-sm leading-relaxed mb-4">
+                                인공지능은 사람의 학습, 추론, 판단 능력을 컴퓨터로 구현하는 기술이다.
+                                사무 자동화에서는 문서를 자동으로 분류하고 분석하며, 의료 분야에서는
+                                환자 데이터를 분석하여 맞춤형 치료를 추천한다.
+                            </p>
+                            <div class="grid sm:grid-cols-2 gap-3">
+                                <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                                    <p class="font-bold text-blue-700 text-xs mb-1"><i class="fas fa-file-alt mr-1"></i> 문서 자동화</p>
+                                    <p class="text-gray-700 text-xs">수천 건의 문서 분류, 분석, 공유</p>
+                                </div>
+                                <div class="bg-red-50 rounded-lg p-3 border border-red-200">
+                                    <p class="font-bold text-red-700 text-xs mb-1"><i class="fas fa-heartbeat mr-1"></i> 맞춤형 헬스케어</p>
+                                    <p class="text-gray-700 text-xs">건강 데이터 분석 및 개인별 치료 추천</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Blockchain -->
+                <div class="tab-content p-6" id="tab-blockchain">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-link text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg mb-2">블록체인</h4>
+                            <p class="text-gray-700 text-sm leading-relaxed mb-4">
+                                블록체인은 데이터를 분산 저장하여 위변조를 방지하는 기술이다.
+                                금융 분야에서는 개인 정보를 안전하게 보호하고, 이상 거래를 빠르게 탐지하는 데 활용된다.
+                                투명한 거래 기록이 가능하여 신뢰성을 높인다.
+                            </p>
+                            <div class="grid sm:grid-cols-2 gap-3">
+                                <div class="bg-amber-50 rounded-lg p-3 border border-amber-200">
+                                    <p class="font-bold text-amber-700 text-xs mb-1"><i class="fas fa-shield-alt mr-1"></i> 개인 정보 보호</p>
+                                    <p class="text-gray-700 text-xs">분산 저장으로 데이터 위변조 방지</p>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-3 border border-green-200">
+                                    <p class="font-bold text-green-700 text-xs mb-1"><i class="fas fa-exclamation-triangle mr-1"></i> 이상 거래 탐지</p>
+                                    <p class="text-gray-700 text-xs">실시간 거래 모니터링 및 이상 패턴 감지</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 3: 디지털 기술의 발전 방향                                        -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-future">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">디지털 기술의 발전 방향</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Future Direction of Digital Technology</p>
+                </div>
+            </div>
+
+            <!-- Accordion: Future Trends -->
+            <div class="space-y-4">
+                <!-- Accordion 1: 초연결 사회 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button class="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors" onclick="toggleAccordion('future-1')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
+                                <i class="fas fa-project-diagram text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">초연결 사회</h4>
+                                <p class="text-gray-500 text-xs mt-0.5">Hyper-Connected Society</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="future-1-icon"></i>
+                    </button>
+                    <div class="accordion-content px-5 pb-0" id="future-1">
+                        <div class="pb-5 pt-2 border-t border-gray-100">
+                            <p class="text-gray-700 text-sm leading-relaxed">
+                                5G, 6G 통신 기술의 발전으로 사람, 기기, 데이터가 더욱 밀접하게 연결되는
+                                <strong class="text-primary-700">초연결 사회</strong>가 도래하고 있다. 사물 인터넷(IoT) 기기의 수가 기하급수적으로
+                                증가하면서 실시간 데이터 교환이 가능해지고, 이를 기반으로 더 정교한 서비스가 제공될 것이다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion 2: AI 고도화 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button class="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors" onclick="toggleAccordion('future-2')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center">
+                                <i class="fas fa-brain text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">인공지능의 고도화</h4>
+                                <p class="text-gray-500 text-xs mt-0.5">Advanced AI</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="future-2-icon"></i>
+                    </button>
+                    <div class="accordion-content px-5 pb-0" id="future-2">
+                        <div class="pb-5 pt-2 border-t border-gray-100">
+                            <p class="text-gray-700 text-sm leading-relaxed">
+                                인공지능 기술이 더욱 발전하여 의료 진단, 자율 주행, 창작 활동 등
+                                다양한 분야에서 <strong class="text-accent-700">사람 수준의 판단과 의사 결정</strong>이 가능해질 것이다.
+                                생성형 AI의 발전으로 콘텐츠 생산과 소비 방식도 크게 변화할 것으로 전망된다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion 3: 데이터 중심 사회 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button class="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors" onclick="toggleAccordion('future-3')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                                <i class="fas fa-database text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">데이터 중심 사회</h4>
+                                <p class="text-gray-500 text-xs mt-0.5">Data-Driven Society</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="future-3-icon"></i>
+                    </button>
+                    <div class="accordion-content px-5 pb-0" id="future-3">
+                        <div class="pb-5 pt-2 border-t border-gray-100">
+                            <p class="text-gray-700 text-sm leading-relaxed">
+                                빅데이터 분석 기술의 발전으로 데이터를 기반으로 한
+                                <strong class="text-blue-700">의사 결정과 예측</strong>이 더욱 정교해진다.
+                                개인 맞춤형 서비스부터 국가 정책 수립까지, 데이터가 핵심 자원으로
+                                활용되는 사회로 전환되고 있다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 4: 확인 문제 (Quiz)                                             -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-quiz">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">확인 문제</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Check Your Understanding</p>
+                </div>
+            </div>
+
+            <!-- Quiz 1 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6" id="quiz1-container">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-primary-100 text-primary-700 font-bold text-sm rounded-full px-3 py-1">Q1</span>
+                    <h3 class="font-bold text-gray-900">다음 중 디지털 기술의 활용 영역과 그 설명이 올바르게 연결된 것은?</h3>
+                </div>
+                <div class="space-y-3">
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz1', this, false)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">A</span>
+                        <span class="text-sm text-gray-700">농업 영역 - 블록체인 기술로 이상 거래를 탐지한다</span>
+                    </div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz1', this, false)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">B</span>
+                        <span class="text-sm text-gray-700">금융 영역 - IoT와 AI를 활용하여 농작물을 원격 관리한다</span>
+                    </div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz1', this, true)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">C</span>
+                        <span class="text-sm text-gray-700">의료 영역 - 스마트 기기로 건강 데이터를 체크하고 맞춤형 헬스케어가 가능해졌다</span>
+                    </div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz1', this, false)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">D</span>
+                        <span class="text-sm text-gray-700">생활 영역 - 3D 프린터로 물품을 직접 제조한다</span>
+                    </div>
+                </div>
+                <div id="quiz1-result" class="hidden mt-4"></div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 5: 학습 정리                                                    -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-summary">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-bookmark"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">학습 정리</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Summary</p>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-primary-50 via-white to-accent-50 rounded-2xl p-6 border border-primary-100 shadow-md">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-primary-700 mb-3 flex items-center gap-2">
+                            <i class="fas fa-lightbulb text-sm"></i> 디지털 기술의 정의
+                        </h4>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                정보를 디지털 형태로 처리, 저장, 전송하는 기술
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                사물 인터넷, 인공지능, 블록체인 등 포함
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                사람과 컴퓨터 기기 간의 상호 작용 실현
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-accent-700 mb-3 flex items-center gap-2">
+                            <i class="fas fa-th-large text-sm"></i> 활용 영역
+                        </h4>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-600 mt-0.5 text-xs"></i>
+                                AI 사무 자동화, 기술&middot;공학, 생활, 농업
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-600 mt-0.5 text-xs"></i>
+                                제조와 물류, 의료 및 보건, 홈 서비스, 금융
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-600 mt-0.5 text-xs"></i>
+                                사회 전반에 걸쳐 혁신적 변화를 주도
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Page navigation -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <!-- 이전 페이지 (disabled - first page) -->
+                <div class="flex-1 flex justify-start">
+                    <span class="inline-flex items-center gap-2 bg-gray-700/50 text-gray-500 font-medium px-5 py-3 rounded-xl cursor-not-allowed">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </span>
+                </div>
+
+                <!-- 목록으로 돌아가기 -->
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex justify-end">
+                    <a href="../02_디지털 사회와 진로 설계/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    V. 디지털 문화 &gt; 01 디지털 사회와 진로 &gt; 디지털 기술과 사회 변화
+                </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // ============================
+        // Accordion Toggle
+        // ============================
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(id + '-icon');
+
+            // Close all other accordions in the same section
+            const parent = content.closest('section');
+            if (parent) {
+                parent.querySelectorAll('.accordion-content').forEach(ac => {
+                    if (ac.id !== id && ac.classList.contains('open')) {
+                        ac.classList.remove('open');
+                        const otherIcon = document.getElementById(ac.id + '-icon');
+                        if (otherIcon) otherIcon.style.transform = 'rotate(-90deg)';
+                    }
+                });
+            }
+
+            content.classList.toggle('open');
+            if (icon) {
+                icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        }
+
+        // ============================
+        // Tab Switching
+        // ============================
+        function switchTab(event, tabId) {
+            // Remove active from all tab buttons in this section
+            const tabContainer = event.target.closest('section');
+            tabContainer.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            tabContainer.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Activate clicked tab
+            event.target.closest('.tab-btn').classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // ============================
+        // Quiz System
+        // ============================
+        const quizAnswered = {};
+
+        function checkQuiz(quizId, element, isCorrect) {
+            if (quizAnswered[quizId]) return;
+            quizAnswered[quizId] = true;
+
+            const container = document.getElementById(quizId + '-container');
+            const resultDiv = document.getElementById(quizId + '-result');
+            const options = container.querySelectorAll('.quiz-option');
+
+            // Disable all options
+            options.forEach(opt => {
+                opt.style.cursor = 'default';
+                opt.style.opacity = '0.7';
+            });
+
+            // Highlight selected
+            element.style.opacity = '1';
+
+            if (isCorrect) {
+                element.classList.add('correct');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-green-50 border border-green-200';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500 text-lg"></i><span class="font-bold text-green-700">정답입니다!</span></div>';
+                resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2"><strong>의료 및 보건 영역</strong>에서는 스마트 기기로 건강 데이터를 체크하고 맞춤형 헬스케어가 가능해졌습니다. 농업 영역은 IoT와 AI를 활용한 원격 관리, 금융 영역은 블록체인과 이상 거래 탐지, 생활 영역은 외국어 번역과 무인 결제 등이 해당합니다.</p>';
+            } else {
+                element.classList.add('wrong');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-red-50 border border-red-200';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-times-circle text-red-500 text-lg"></i><span class="font-bold text-red-700">오답입니다.</span></div>';
+                resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">정답은 <strong>C. 의료 영역 - 스마트 기기로 건강 데이터를 체크하고 맞춤형 헬스케어가 가능해졌다</strong>입니다. 각 영역과 설명이 올바르게 연결되었는지 다시 확인해 보세요.</p>';
+
+                // Highlight correct answer
+                options.forEach(opt => {
+                    if (opt.getAttribute('onclick').includes('true')) {
+                        opt.classList.add('correct');
+                        opt.style.opacity = '1';
+                    }
+                });
+            }
+
+            resultDiv.classList.remove('hidden');
+        }
+
+        // ============================
+        // Fade-in animation on scroll
+        // ============================
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+    </script>
+
+</body>
+</html>

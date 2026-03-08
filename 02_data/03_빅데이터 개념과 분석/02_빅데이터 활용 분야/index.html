@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>빅데이터 활용 분야 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        accent: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #059669 0%, #0d9488 50%, #0891b2 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.3s ease;
+        }
+        .accordion-content.open {
+            max-height: 1200px;
+        }
+
+        .sector-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .sector-card:hover {
+            transform: scale(1.02);
+        }
+        .sector-card.active {
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #059669, #0891b2, #059669);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .data-flow-line {
+            stroke-dasharray: 8 4;
+            animation: flowAnim 2s linear infinite;
+        }
+        @keyframes flowAnim {
+            to { stroke-dashoffset: -24; }
+        }
+
+        .pulse-icon {
+            animation: pulseSubtle 3s ease-in-out infinite;
+        }
+        .pulse-icon:nth-child(2) { animation-delay: 0.5s; }
+        .pulse-icon:nth-child(3) { animation-delay: 1s; }
+
+        @keyframes pulseSubtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { break-after: avoid; }
+            .no-print { display: none !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .accordion-content { max-height: none !important; overflow: visible !important; }
+            body { font-size: 11pt; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { break-before: auto; }
+            section { break-inside: avoid; }
+        }
+
+        @media (max-width: 768px) {
+            .sector-cards-grid { grid-template-columns: 1fr !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #059669 0%, #0d9488 50%, #0891b2 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">II. 데이터</span>
+                <span class="breadcrumb-item text-white font-medium">03 빅데이터 개념과 분석</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>II. 데이터 &gt; 03 빅데이터 개념과 분석</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        빅데이터 활용 분야
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        정치사회, 의료보건, 경제산업 등 다양한 분야에서 빅데이터가 어떻게 활용되는지 알아봅시다
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-landmark mr-1"></i> 정치와 사회
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-heartbeat mr-1"></i> 의료와 보건
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-industry mr-1"></i> 경제와 산업
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Central data hub -->
+                        <circle cx="110" cy="110" r="35" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <circle cx="110" cy="110" r="20" fill="rgba(255,255,255,0.2)"/>
+                        <text x="110" y="106" text-anchor="middle" fill="white" font-size="11" font-weight="bold">BIG</text>
+                        <text x="110" y="120" text-anchor="middle" fill="white" font-size="10" font-weight="bold">DATA</text>
+
+                        <!-- Surrounding sector nodes -->
+                        <g class="pulse-icon">
+                            <circle cx="110" cy="30" r="22" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                            <text x="110" y="35" text-anchor="middle" fill="white" font-size="18">&#x1F3DB;</text>
+                        </g>
+                        <line x1="110" y1="52" x2="110" y2="75" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" class="data-flow-line"/>
+
+                        <g class="pulse-icon">
+                            <circle cx="180" cy="155" r="22" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                            <text x="180" y="160" text-anchor="middle" fill="white" font-size="18">&#x1F3E5;</text>
+                        </g>
+                        <line x1="168" y1="140" x2="138" y2="126" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" class="data-flow-line"/>
+
+                        <g class="pulse-icon">
+                            <circle cx="40" cy="155" r="22" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                            <text x="40" y="160" text-anchor="middle" fill="white" font-size="18">&#x1F4B0;</text>
+                        </g>
+                        <line x1="52" y1="140" x2="82" y2="126" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" class="data-flow-line"/>
+
+                        <!-- Outer ring data points -->
+                        <circle cx="50" cy="60" r="6" fill="rgba(255,255,255,0.15)" class="pulse-icon"/>
+                        <circle cx="170" cy="60" r="6" fill="rgba(255,255,255,0.15)" class="pulse-icon"/>
+                        <circle cx="110" cy="200" r="6" fill="rgba(255,255,255,0.15)" class="pulse-icon"/>
+                        <line x1="56" y1="64" x2="88" y2="92" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="164" y1="64" x2="132" y2="92" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="110" y1="194" x2="110" y2="145" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-3 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>다양한 분야에서 빅데이터가 활용되는 사례를 이해한다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>빅데이터 분석이 사회 문제 해결에 기여하는 방법을 설명할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">3</span>
+                        <span>공공 데이터 포털을 활용하여 빅데이터 활용 사례를 탐색할 수 있다.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- INTRO: 빅데이터 활용 개요                                              -->
+        <!-- ===================================================================== -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 md:p-8">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg flex-shrink-0">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-900">빅데이터, 어디에 활용될까?</h2>
+                        <p class="text-gray-500 text-sm mt-0.5">Where is Big Data Used?</p>
+                    </div>
+                </div>
+                <p class="text-gray-700 leading-relaxed text-lg">
+                    빅데이터는 <strong class="text-primary-700">정치와 사회</strong>, <strong class="text-accent-700">의료와 보건</strong>,
+                    <strong class="text-cyan-700">경제와 산업</strong> 등 우리 생활 전반에 걸쳐 폭넓게 활용되고 있습니다.
+                    방대한 양의 데이터를 수집하고 분석하여 새로운 가치를 창출하고, 더 나은 의사결정을 내리는 데 기여합니다.
+                </p>
+
+                <!-- Overview diagram -->
+                <div class="mt-6 flex justify-center">
+                    <svg width="100%" viewBox="0 0 700 120" class="max-w-2xl">
+                        <!-- Flow: 데이터 수집 → 분석 → 활용 -->
+                        <rect x="20" y="30" width="160" height="60" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="1.5"/>
+                        <text x="100" y="55" text-anchor="middle" fill="#065f46" font-size="13" font-weight="bold">데이터 수집</text>
+                        <text x="100" y="73" text-anchor="middle" fill="#059669" font-size="10">IoT / SNS / 센서 / 공공</text>
+
+                        <path d="M185 60 L240 60" stroke="#059669" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+                        <rect x="245" y="30" width="160" height="60" rx="12" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+                        <text x="325" y="55" text-anchor="middle" fill="#115e59" font-size="13" font-weight="bold">빅데이터 분석</text>
+                        <text x="325" y="73" text-anchor="middle" fill="#0d9488" font-size="10">패턴 / 상관관계 / 예측</text>
+
+                        <path d="M410 60 L465 60" stroke="#0891b2" stroke-width="2" marker-end="url(#arrowTeal)"/>
+
+                        <rect x="470" y="30" width="210" height="60" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="1.5"/>
+                        <text x="575" y="55" text-anchor="middle" fill="#164e63" font-size="13" font-weight="bold">활용 및 가치 창출</text>
+                        <text x="575" y="73" text-anchor="middle" fill="#0891b2" font-size="10">정책 / 의료 / 산업 / 서비스</text>
+
+                        <defs>
+                            <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                <path d="M0,0 L8,3 L0,6" fill="#059669"/>
+                            </marker>
+                            <marker id="arrowTeal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                <path d="M0,0 L8,3 L0,6" fill="#0891b2"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+
+        <!-- ===================================================================== -->
+        <!-- INTERACTIVE SECTOR CARDS                                               -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="sector-cards">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-th-large"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">빅데이터 활용 분야별 사례</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Big Data Use Cases by Sector</p>
+                </div>
+            </div>
+
+            <p class="text-gray-600 mb-6">아래 카드를 클릭하면 각 분야의 상세 사례를 확인할 수 있습니다.</p>
+
+            <!-- 3 Sector Cards Grid -->
+            <div class="grid md:grid-cols-3 gap-6 sector-cards-grid mb-8">
+
+                <!-- Card 1: 정치와 사회 -->
+                <div class="sector-card bg-white rounded-2xl shadow-md border-2 border-primary-200 p-6 card-hover active"
+                     onclick="switchSector(0)" data-index="0">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-2xl shadow-lg mb-4">
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">정치와 사회</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        사회 안정, 복지, 에너지 자원 탐사 등 국가적 과제에 빅데이터를 활용합니다.
+                    </p>
+                    <div class="flex flex-wrap gap-1.5 mt-3">
+                        <span class="bg-primary-50 text-primary-700 text-xs px-2 py-0.5 rounded-full font-medium">침수 예측</span>
+                        <span class="bg-primary-50 text-primary-700 text-xs px-2 py-0.5 rounded-full font-medium">교통 시스템</span>
+                        <span class="bg-primary-50 text-primary-700 text-xs px-2 py-0.5 rounded-full font-medium">도시 관리</span>
+                    </div>
+                    <div class="mt-4 text-primary-600 text-sm font-semibold flex items-center gap-1">
+                        <span>자세히 보기</span>
+                        <i class="fas fa-chevron-right text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Card 2: 의료와 보건 -->
+                <div class="sector-card bg-white rounded-2xl shadow-md border-2 border-gray-100 p-6 card-hover"
+                     onclick="switchSector(1)" data-index="1">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white text-2xl shadow-lg mb-4">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">의료와 보건</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        맞춤형 정밀 의료와 국민 건강 알람 서비스 등에 활용됩니다.
+                    </p>
+                    <div class="flex flex-wrap gap-1.5 mt-3">
+                        <span class="bg-rose-50 text-rose-700 text-xs px-2 py-0.5 rounded-full font-medium">정밀 의료</span>
+                        <span class="bg-rose-50 text-rose-700 text-xs px-2 py-0.5 rounded-full font-medium">건강 알람</span>
+                        <span class="bg-rose-50 text-rose-700 text-xs px-2 py-0.5 rounded-full font-medium">질병 예측</span>
+                    </div>
+                    <div class="mt-4 text-rose-600 text-sm font-semibold flex items-center gap-1">
+                        <span>자세히 보기</span>
+                        <i class="fas fa-chevron-right text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Card 3: 경제와 산업 -->
+                <div class="sector-card bg-white rounded-2xl shadow-md border-2 border-gray-100 p-6 card-hover"
+                     onclick="switchSector(2)" data-index="2">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-2xl shadow-lg mb-4">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">경제와 산업</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        음악 스트리밍 추천, 신용카드 부정 사용 탐지 등에 활용됩니다.
+                    </p>
+                    <div class="flex flex-wrap gap-1.5 mt-3">
+                        <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium">맞춤 추천</span>
+                        <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium">부정 탐지</span>
+                        <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium">소비 분석</span>
+                    </div>
+                    <div class="mt-4 text-blue-600 text-sm font-semibold flex items-center gap-1">
+                        <span>자세히 보기</span>
+                        <i class="fas fa-chevron-right text-xs"></i>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ============ DETAIL PANELS ============ -->
+            <div id="sectorPanels">
+
+                <!-- ===== PANEL 0: 정치와 사회 ===== -->
+                <div class="sector-panel" data-index="0">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-primary-600 to-primary-700 p-5 flex items-center gap-4">
+                            <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-landmark text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-bold text-xl">사례 1: 정치와 사회</h3>
+                                <p class="text-white/80 text-sm">Politics &amp; Society</p>
+                            </div>
+                        </div>
+                        <div class="p-6 md:p-8">
+                            <p class="text-gray-700 leading-relaxed mb-6">
+                                빅데이터는 <strong>사회 안정, 복지, 에너지 자원 탐사</strong> 등 국가적 과제 해결에 폭넓게 활용됩니다.
+                                실시간으로 수집되는 방대한 데이터를 분석하여 시민의 안전과 편의를 증진시킬 수 있습니다.
+                            </p>
+
+                            <!-- Example 1: 부산 침수 예측 -->
+                            <div class="space-y-4">
+                                <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between bg-primary-50 hover:bg-primary-100 rounded-xl p-4 transition-colors duration-200">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-8 h-8 rounded-lg bg-primary-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
+                                        <span class="font-bold text-primary-800 text-left">부산광역시 침수 예측 시스템</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down accordion-icon text-primary-500 transition-transform duration-300"></i>
+                                </button>
+                                <div class="accordion-content open">
+                                    <div class="px-4 pb-4 pt-2">
+                                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                                            <div class="grid sm:grid-cols-2 gap-4 mb-4">
+                                                <div>
+                                                    <h5 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                                        <i class="fas fa-cloud-rain text-primary-500 text-sm"></i> 입력 데이터
+                                                    </h5>
+                                                    <ul class="space-y-1.5 text-sm text-gray-700">
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                                            도시 침수 예상도 (시뮬레이션)
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                                            실시간 강수량 데이터
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                                            하수관 수위 센서 데이터
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div>
+                                                    <h5 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                                        <i class="fas fa-shield-alt text-primary-500 text-sm"></i> 출력 결과
+                                                    </h5>
+                                                    <ul class="space-y-1.5 text-sm text-gray-700">
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-arrow-right text-primary-500 mt-0.5 text-xs"></i>
+                                                            <strong>4단계</strong> 침수 위험 정보 제공
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-arrow-right text-primary-500 mt-0.5 text-xs"></i>
+                                                            지역별 맞춤형 대피 안내
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-arrow-right text-primary-500 mt-0.5 text-xs"></i>
+                                                            사전 예방 조치 알림
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <!-- 4-step diagram -->
+                                            <div class="grid grid-cols-4 gap-2 mt-4">
+                                                <div class="text-center p-2 rounded-lg bg-green-100 border border-green-300">
+                                                    <div class="text-lg font-bold text-green-700">1단계</div>
+                                                    <div class="text-xs text-green-600 mt-1">관심</div>
+                                                </div>
+                                                <div class="text-center p-2 rounded-lg bg-yellow-100 border border-yellow-300">
+                                                    <div class="text-lg font-bold text-yellow-700">2단계</div>
+                                                    <div class="text-xs text-yellow-600 mt-1">주의</div>
+                                                </div>
+                                                <div class="text-center p-2 rounded-lg bg-orange-100 border border-orange-300">
+                                                    <div class="text-lg font-bold text-orange-700">3단계</div>
+                                                    <div class="text-xs text-orange-600 mt-1">경계</div>
+                                                </div>
+                                                <div class="text-center p-2 rounded-lg bg-red-100 border border-red-300">
+                                                    <div class="text-lg font-bold text-red-700">4단계</div>
+                                                    <div class="text-xs text-red-600 mt-1">심각</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between bg-primary-50 hover:bg-primary-100 rounded-xl p-4 transition-colors duration-200">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-8 h-8 rounded-lg bg-primary-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
+                                        <span class="font-bold text-primary-800 text-left">차세대 지능형 교통 시스템 (C-ITS)</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down accordion-icon text-primary-500 transition-transform duration-300"></i>
+                                </button>
+                                <div class="accordion-content">
+                                    <div class="px-4 pb-4 pt-2">
+                                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                                            <p class="text-gray-700 leading-relaxed mb-4">
+                                                <strong>C-ITS(Cooperative Intelligent Transport Systems)</strong>는 차량, 도로, 교통 인프라가 서로 소통하며
+                                                실시간으로 교통 정보를 수집하고 분석하는 차세대 교통 시스템입니다.
+                                            </p>
+                                            <div class="grid sm:grid-cols-3 gap-3">
+                                                <div class="bg-primary-50 rounded-xl p-4 text-center">
+                                                    <div class="text-3xl mb-2"><i class="fas fa-car text-primary-500"></i></div>
+                                                    <p class="font-semibold text-gray-800 text-sm">차량 데이터</p>
+                                                    <p class="text-xs text-gray-500 mt-1">속도, 위치, 차간 거리</p>
+                                                </div>
+                                                <div class="bg-primary-50 rounded-xl p-4 text-center">
+                                                    <div class="text-3xl mb-2"><i class="fas fa-road text-primary-500"></i></div>
+                                                    <p class="font-semibold text-gray-800 text-sm">노면 데이터</p>
+                                                    <p class="text-xs text-gray-500 mt-1">결빙, 파손, 날씨 정보</p>
+                                                </div>
+                                                <div class="bg-primary-50 rounded-xl p-4 text-center">
+                                                    <div class="text-3xl mb-2"><i class="fas fa-exclamation-triangle text-primary-500"></i></div>
+                                                    <p class="font-semibold text-gray-800 text-sm">사고 데이터</p>
+                                                    <p class="text-xs text-gray-500 mt-1">사고 현황, 우회 경로 안내</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 bg-white rounded-lg p-3 border border-primary-200 flex items-start gap-3">
+                                                <i class="fas fa-lightbulb text-primary-500 mt-0.5"></i>
+                                                <p class="text-sm text-gray-700">
+                                                    실시간으로 수집된 차량, 노면, 사고 데이터를 분석하여 운전자에게 <strong>위험 상황 경고</strong>,
+                                                    <strong>최적 경로 안내</strong>, <strong>신호 최적화</strong> 등의 서비스를 제공합니다.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== PANEL 1: 의료와 보건 ===== -->
+                <div class="sector-panel hidden" data-index="1">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-rose-500 to-pink-600 p-5 flex items-center gap-4">
+                            <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-heartbeat text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-bold text-xl">사례 2: 의료와 보건</h3>
+                                <p class="text-white/80 text-sm">Medical &amp; Health Care</p>
+                            </div>
+                        </div>
+                        <div class="p-6 md:p-8">
+                            <p class="text-gray-700 leading-relaxed mb-6">
+                                빅데이터 분석은 개인 맞춤형 의료 서비스와 국민 건강 관리에 혁신적인 변화를 가져오고 있습니다.
+                                다양한 건강 데이터를 통합 분석하여 질병을 예측하고 예방합니다.
+                            </p>
+
+                            <div class="space-y-4">
+                                <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between bg-rose-50 hover:bg-rose-100 rounded-xl p-4 transition-colors duration-200">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
+                                        <span class="font-bold text-rose-800 text-left">맞춤형 정밀 의료 서비스</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down accordion-icon text-rose-500 transition-transform duration-300"></i>
+                                </button>
+                                <div class="accordion-content open">
+                                    <div class="px-4 pb-4 pt-2">
+                                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                                            <p class="text-gray-700 leading-relaxed mb-4">
+                                                환자의 <strong>진단 기록, 의료 영상, 유전체 정보, 생활 패턴</strong> 등 다양한 데이터를
+                                                종합 분석하여 개인에게 최적화된 질병 예측, 진단, 치료 서비스를 제공합니다.
+                                            </p>
+                                            <!-- Data flow diagram -->
+                                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                                                <div class="bg-rose-50 rounded-xl p-3 text-center border border-rose-200">
+                                                    <i class="fas fa-file-medical text-rose-500 text-xl mb-1"></i>
+                                                    <p class="text-xs font-semibold text-gray-800">진단 기록</p>
+                                                </div>
+                                                <div class="bg-rose-50 rounded-xl p-3 text-center border border-rose-200">
+                                                    <i class="fas fa-x-ray text-rose-500 text-xl mb-1"></i>
+                                                    <p class="text-xs font-semibold text-gray-800">의료 영상</p>
+                                                </div>
+                                                <div class="bg-rose-50 rounded-xl p-3 text-center border border-rose-200">
+                                                    <i class="fas fa-dna text-rose-500 text-xl mb-1"></i>
+                                                    <p class="text-xs font-semibold text-gray-800">유전체 정보</p>
+                                                </div>
+                                                <div class="bg-rose-50 rounded-xl p-3 text-center border border-rose-200">
+                                                    <i class="fas fa-running text-rose-500 text-xl mb-1"></i>
+                                                    <p class="text-xs font-semibold text-gray-800">생활 패턴</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-center mb-4">
+                                                <i class="fas fa-arrow-down text-rose-400 text-xl"></i>
+                                            </div>
+                                            <div class="bg-gradient-to-r from-rose-500 to-pink-500 rounded-xl p-4 text-center text-white">
+                                                <i class="fas fa-user-md text-2xl mb-2"></i>
+                                                <p class="font-bold">개인 맞춤형 질병 예측 / 진단 / 치료</p>
+                                                <p class="text-white/80 text-sm mt-1">빅데이터 기반 정밀 의료</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between bg-rose-50 hover:bg-rose-100 rounded-xl p-4 transition-colors duration-200">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
+                                        <span class="font-bold text-rose-800 text-left">국민 건강 알람 서비스</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down accordion-icon text-rose-500 transition-transform duration-300"></i>
+                                </button>
+                                <div class="accordion-content">
+                                    <div class="px-4 pb-4 pt-2">
+                                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                                            <p class="text-gray-700 leading-relaxed mb-4">
+                                                국민의 <strong>건강 정보</strong>에 <strong>기상청, 환경부, SNS</strong> 데이터를 결합하여
+                                                지역별 질병 위험도를 분석하고 알려주는 서비스입니다.
+                                            </p>
+                                            <div class="grid sm:grid-cols-2 gap-4">
+                                                <div>
+                                                    <h5 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                                        <i class="fas fa-database text-rose-500 text-sm"></i> 통합 데이터 소스
+                                                    </h5>
+                                                    <ul class="space-y-1.5 text-sm text-gray-700">
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-check text-rose-500 mt-0.5 text-xs"></i>
+                                                            건강보험 진료 기록
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-check text-rose-500 mt-0.5 text-xs"></i>
+                                                            기상청 날씨 데이터
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-check text-rose-500 mt-0.5 text-xs"></i>
+                                                            환경부 대기질 정보
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-check text-rose-500 mt-0.5 text-xs"></i>
+                                                            SNS 건강 관련 게시글
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div>
+                                                    <h5 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                                        <i class="fas fa-bell text-rose-500 text-sm"></i> 서비스 제공 내용
+                                                    </h5>
+                                                    <ul class="space-y-1.5 text-sm text-gray-700">
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-arrow-right text-rose-500 mt-0.5 text-xs"></i>
+                                                            지역별 질병 위험도 안내
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-arrow-right text-rose-500 mt-0.5 text-xs"></i>
+                                                            감염병 확산 조기 경보
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-arrow-right text-rose-500 mt-0.5 text-xs"></i>
+                                                            계절별 건강 주의 알림
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-arrow-right text-rose-500 mt-0.5 text-xs"></i>
+                                                            맞춤형 건강 관리 팁
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== PANEL 2: 경제와 산업 ===== -->
+                <div class="sector-panel hidden" data-index="2">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-5 flex items-center gap-4">
+                            <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-chart-line text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-bold text-xl">사례 3: 경제와 산업</h3>
+                                <p class="text-white/80 text-sm">Economy &amp; Industry</p>
+                            </div>
+                        </div>
+                        <div class="p-6 md:p-8">
+                            <p class="text-gray-700 leading-relaxed mb-6">
+                                경제와 산업 분야에서는 소비자의 행동 데이터를 분석하여 맞춤형 서비스를 제공하고,
+                                이상 거래를 탐지하여 경제적 손실을 방지합니다.
+                            </p>
+
+                            <div class="space-y-4">
+                                <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between bg-blue-50 hover:bg-blue-100 rounded-xl p-4 transition-colors duration-200">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
+                                        <span class="font-bold text-blue-800 text-left">음악 스트리밍 맞춤 추천</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down accordion-icon text-blue-500 transition-transform duration-300"></i>
+                                </button>
+                                <div class="accordion-content open">
+                                    <div class="px-4 pb-4 pt-2">
+                                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                                            <p class="text-gray-700 leading-relaxed mb-4">
+                                                사용자의 <strong>운동, 수면, 상황, 취향</strong> 등 다양한 데이터를 분석하여
+                                                개인에게 최적화된 음악을 추천합니다.
+                                            </p>
+                                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                                <div class="bg-blue-50 rounded-xl p-3 text-center border border-blue-200">
+                                                    <i class="fas fa-running text-blue-500 text-xl mb-1"></i>
+                                                    <p class="text-xs font-semibold text-gray-800">운동</p>
+                                                    <p class="text-xs text-gray-500">활동적인 음악</p>
+                                                </div>
+                                                <div class="bg-blue-50 rounded-xl p-3 text-center border border-blue-200">
+                                                    <i class="fas fa-moon text-blue-500 text-xl mb-1"></i>
+                                                    <p class="text-xs font-semibold text-gray-800">수면</p>
+                                                    <p class="text-xs text-gray-500">편안한 음악</p>
+                                                </div>
+                                                <div class="bg-blue-50 rounded-xl p-3 text-center border border-blue-200">
+                                                    <i class="fas fa-coffee text-blue-500 text-xl mb-1"></i>
+                                                    <p class="text-xs font-semibold text-gray-800">상황</p>
+                                                    <p class="text-xs text-gray-500">분위기 맞춤</p>
+                                                </div>
+                                                <div class="bg-blue-50 rounded-xl p-3 text-center border border-blue-200">
+                                                    <i class="fas fa-heart text-blue-500 text-xl mb-1"></i>
+                                                    <p class="text-xs font-semibold text-gray-800">취향</p>
+                                                    <p class="text-xs text-gray-500">선호 장르/아티스트</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 bg-white rounded-lg p-3 border border-blue-200 flex items-start gap-3">
+                                                <i class="fas fa-music text-blue-500 mt-0.5"></i>
+                                                <p class="text-sm text-gray-700">
+                                                    이러한 데이터를 종합 분석하여 사용자의 현재 상태와 취향에 딱 맞는
+                                                    <strong>개인화된 플레이리스트</strong>를 자동으로 생성합니다.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between bg-blue-50 hover:bg-blue-100 rounded-xl p-4 transition-colors duration-200">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
+                                        <span class="font-bold text-blue-800 text-left">신용 카드 빅데이터 활용</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down accordion-icon text-blue-500 transition-transform duration-300"></i>
+                                </button>
+                                <div class="accordion-content">
+                                    <div class="px-4 pb-4 pt-2">
+                                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                                            <p class="text-gray-700 leading-relaxed mb-4">
+                                                고객의 <strong>구매 이력</strong>을 분석하여 맞춤 할인 쿠폰을 제공하고,
+                                                이상 패턴을 감지하여 <strong>부정 사용을 차단</strong>합니다.
+                                            </p>
+                                            <div class="grid sm:grid-cols-2 gap-4">
+                                                <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                                                    <h5 class="font-bold text-blue-800 mb-2 flex items-center gap-2">
+                                                        <i class="fas fa-tags text-sm"></i> 맞춤 할인 쿠폰
+                                                    </h5>
+                                                    <ul class="space-y-1 text-sm text-gray-700">
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-check text-blue-500 mt-0.5 text-xs"></i>
+                                                            자주 구매하는 상품 카테고리 분석
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-check text-blue-500 mt-0.5 text-xs"></i>
+                                                            소비 패턴 기반 맞춤 혜택 제공
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-check text-blue-500 mt-0.5 text-xs"></i>
+                                                            시기별 프로모션 최적화
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="bg-red-50 rounded-xl p-4 border border-red-200">
+                                                    <h5 class="font-bold text-red-800 mb-2 flex items-center gap-2">
+                                                        <i class="fas fa-shield-alt text-sm"></i> 부정 사용 차단
+                                                    </h5>
+                                                    <ul class="space-y-1 text-sm text-gray-700">
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-times text-red-500 mt-0.5 text-xs"></i>
+                                                            비정상 거래 패턴 실시간 탐지
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-times text-red-500 mt-0.5 text-xs"></i>
+                                                            해외 이상 결제 자동 차단
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-times text-red-500 mt-0.5 text-xs"></i>
+                                                            도난 카드 사용 즉시 알림
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+
+        <!-- ===================================================================== -->
+        <!-- 활동 3: 공공 데이터 포털                                               -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="activity-section">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-cyan-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동 3: 공공 데이터 포털 탐색</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Activity 3: Exploring Public Data Portal</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-accent-600 to-cyan-600 p-5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-search text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold text-lg">공공 데이터 포털에서 빅데이터 활용 사례 찾기</h3>
+                            <p class="text-white/80 text-sm">data.go.kr 에서 다양한 분야의 데이터를 탐색해 봅시다</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 md:p-8">
+                    <!-- Activity instructions -->
+                    <div class="bg-accent-50 rounded-xl p-5 border border-accent-200 mb-6">
+                        <h4 class="font-bold text-accent-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-tasks text-sm"></i> 활동 안내
+                        </h4>
+                        <ol class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <span class="w-5 h-5 rounded-full bg-accent-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                                <span>공공 데이터 포털(<strong>data.go.kr</strong>)에 접속합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="w-5 h-5 rounded-full bg-accent-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                                <span>관심 분야를 선택하여 빅데이터 활용 사례를 검색합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="w-5 h-5 rounded-full bg-accent-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">3</span>
+                                <span>찾은 사례의 데이터 종류와 활용 방법을 정리합니다.</span>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Data portal link -->
+                    <div class="text-center mb-6">
+                        <a href="https://data.go.kr" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center gap-2 bg-gradient-to-r from-accent-500 to-cyan-600 hover:from-accent-600 hover:to-cyan-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 no-print">
+                            <i class="fas fa-external-link-alt"></i>
+                            공공 데이터 포털 바로가기 (data.go.kr)
+                        </a>
+                    </div>
+
+                    <!-- 16 sectors grid -->
+                    <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-th text-accent-500 text-sm"></i> 공공 데이터 16개 분야
+                    </h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 gap-2">
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-graduation-cap text-accent-500 mr-1"></i> 교육
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-map-marked-alt text-accent-500 mr-1"></i> 국토관리
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-building text-accent-500 mr-1"></i> 공공행정
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-coins text-accent-500 mr-1"></i> 재정금융
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-leaf text-accent-500 mr-1"></i> 농축수산
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-cloud-sun text-accent-500 mr-1"></i> 기상환경
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-medkit text-accent-500 mr-1"></i> 보건의료
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-users text-accent-500 mr-1"></i> 사회복지
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-shield-alt text-accent-500 mr-1"></i> 안전재난
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-industry text-accent-500 mr-1"></i> 산업고용
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-microchip text-accent-500 mr-1"></i> 과학기술
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-palette text-accent-500 mr-1"></i> 문화관광
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-bus text-accent-500 mr-1"></i> 교통물류
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-gavel text-accent-500 mr-1"></i> 법률
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-bolt text-accent-500 mr-1"></i> 에너지
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-2.5 text-center text-sm font-medium text-gray-700 border border-gray-200 hover:bg-accent-50 hover:border-accent-300 hover:text-accent-700 transition-colors duration-200">
+                            <i class="fas fa-broadcast-tower text-accent-500 mr-1"></i> 통신
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+
+        <!-- ===================================================================== -->
+        <!-- 핵심 정리                                                              -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="summary-section">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-bookmark"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">핵심 정리</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Key Summary</p>
+                </div>
+            </div>
+
+            <div class="grid sm:grid-cols-3 gap-4">
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-primary-700 mb-2 flex items-center gap-2">
+                        <i class="fas fa-landmark text-sm"></i> 정치와 사회
+                    </h4>
+                    <ul class="space-y-1.5 text-sm text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                            침수 예측 시스템으로 시민 안전 확보
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                            C-ITS로 실시간 교통 안전 관리
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                            국가적 과제 해결에 빅데이터 활용
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-rose-700 mb-2 flex items-center gap-2">
+                        <i class="fas fa-heartbeat text-sm"></i> 의료와 보건
+                    </h4>
+                    <ul class="space-y-1.5 text-sm text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-rose-500 mt-0.5 text-xs"></i>
+                            개인 맞춤형 정밀 의료 서비스
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-rose-500 mt-0.5 text-xs"></i>
+                            다양한 데이터 통합 분석으로 질병 예측
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-rose-500 mt-0.5 text-xs"></i>
+                            국민 건강 알람으로 질병 위험도 안내
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-blue-700 mb-2 flex items-center gap-2">
+                        <i class="fas fa-chart-line text-sm"></i> 경제와 산업
+                    </h4>
+                    <ul class="space-y-1.5 text-sm text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-blue-500 mt-0.5 text-xs"></i>
+                            사용자 맞춤형 콘텐츠 추천
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-blue-500 mt-0.5 text-xs"></i>
+                            구매 이력 분석 기반 혜택 제공
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-blue-500 mt-0.5 text-xs"></i>
+                            부정 사용 탐지 및 차단
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../01_빅데이터 개념 이해/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../03_빅데이터 분석/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">II. 데이터 &gt; 03 빅데이터 개념과 분석 &gt; 빅데이터 활용 분야</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // Accordion toggle
+        function toggleAccordion(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('.accordion-icon');
+            const isOpen = content.classList.contains('open');
+
+            // Close all accordions in the same parent
+            const parent = button.closest('.space-y-4');
+            if (parent) {
+                parent.querySelectorAll('.accordion-content').forEach(el => el.classList.remove('open'));
+                parent.querySelectorAll('.accordion-icon').forEach(el => el.style.transform = 'rotate(0deg)');
+            }
+
+            if (!isOpen) {
+                content.classList.add('open');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // Sector card switching
+        function switchSector(index) {
+            // Update card states
+            document.querySelectorAll('.sector-card').forEach(card => {
+                card.classList.remove('active');
+                card.style.borderColor = '';
+            });
+            const activeCard = document.querySelector(`.sector-card[data-index="${index}"]`);
+            activeCard.classList.add('active');
+
+            // Color mapping for active borders
+            const colors = ['#059669', '#f43f5e', '#3b82f6'];
+            activeCard.style.borderColor = colors[index];
+
+            // Update panels
+            document.querySelectorAll('.sector-panel').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            const targetPanel = document.querySelector(`.sector-panel[data-index="${index}"]`);
+            targetPanel.classList.remove('hidden');
+            targetPanel.style.animation = 'none';
+            targetPanel.offsetHeight; // trigger reflow
+            targetPanel.style.animation = 'fadeSlideIn 0.4s ease-out forwards';
+
+            // Scroll to panel
+            targetPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Fade-in animation on scroll
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+    </script>
+
+</body>
+</html>

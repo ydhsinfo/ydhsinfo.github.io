@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사물 인터넷의 개념 - 고등학교 정보</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#ecfeff',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            800: '#155e75',
+                            900: '#164e63',
+                        },
+                        accent: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        html { scroll-behavior: smooth; }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .tab-btn {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #0891b2, #1d4ed8);
+            color: white;
+            box-shadow: 0 4px 15px rgba(8, 145, 178, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #0891b2, #1d4ed8, #0891b2);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .data-flow {
+            stroke-dasharray: 8 4;
+            animation: flow 2s linear infinite;
+        }
+        @keyframes flow {
+            to { stroke-dashoffset: -24; }
+        }
+
+        .pulse-node {
+            animation: pulse-subtle 3s ease-in-out infinite;
+        }
+        .pulse-node:nth-child(2) { animation-delay: 0.5s; }
+        .pulse-node:nth-child(3) { animation-delay: 1s; }
+        .pulse-node:nth-child(4) { animation-delay: 1.5s; }
+
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-card {
+            transition: all 0.3s ease;
+        }
+        .step-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .sensor-card {
+            transition: all 0.3s ease;
+        }
+        .sensor-card:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        }
+
+        .smart-card {
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .smart-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+        }
+
+        .info-box {
+            border-left: 4px solid #06b6d4;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .hero-pattern { background: #0e7490 !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== TOP NAVIGATION ===== -->
+    <nav class="bg-white shadow-sm border-b border-cyan-100 sticky top-0 z-50 no-print">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="../../../index.html" class="flex items-center gap-2 text-cyan-700 hover:text-cyan-900 transition-colors text-sm font-medium">
+                <i class="fas fa-arrow-left"></i>
+                <span>전체 단원</span>
+            </a>
+            <div class="flex items-center gap-2 text-sm text-cyan-600">
+                <i class="fas fa-book-open"></i>
+                <span class="hidden sm:inline">I. 컴퓨팅 시스템</span>
+                <span class="sm:hidden">컴퓨팅 시스템</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #0e7490 0%, #1d4ed8 50%, #1e3a8a 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> I. 컴퓨팅 시스템
+                </span>
+                <span class="breadcrumb-item">02 사물 인터넷</span>
+                <span class="breadcrumb-item text-white font-medium">사물 인터넷의 개념</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <span>🌐</span>
+                        <span>핵심 개념</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-2 leading-tight">
+                        사물 인터넷의 개념
+                    </h1>
+                    <p class="text-xl md:text-2xl text-white/80 font-light mb-4">IoT (Internet of Things)</p>
+                    <p class="text-lg text-white/90 leading-relaxed max-w-2xl">
+                        일상생활 속에서 다양한 물건이 인터넷에 연결되어 데이터를 주고받는 시스템
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-microchip mr-1"></i> 사물 인터넷
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-cogs mr-1"></i> 피지컬 컴퓨팅
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Central IoT hub -->
+                        <circle cx="110" cy="110" r="35" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <circle cx="110" cy="110" r="20" fill="rgba(255,255,255,0.2)"/>
+                        <text x="110" y="115" text-anchor="middle" fill="white" font-size="11" font-weight="bold">IoT</text>
+
+                        <!-- Surrounding device nodes -->
+                        <g class="pulse-node">
+                            <circle cx="110" cy="28" r="16" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                            <text x="110" y="33" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="12">📱</text>
+                        </g>
+                        <line x1="110" y1="44" x2="110" y2="75" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" class="data-flow"/>
+
+                        <g class="pulse-node">
+                            <circle cx="185" cy="65" r="16" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                            <text x="185" y="70" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="12">🏠</text>
+                        </g>
+                        <line x1="172" y1="76" x2="140" y2="95" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" class="data-flow"/>
+
+                        <g class="pulse-node">
+                            <circle cx="185" cy="155" r="16" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                            <text x="185" y="160" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="12">🚗</text>
+                        </g>
+                        <line x1="172" y1="144" x2="140" y2="125" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" class="data-flow"/>
+
+                        <g class="pulse-node">
+                            <circle cx="110" cy="192" r="16" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                            <text x="110" y="197" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="12">🌡️</text>
+                        </g>
+                        <line x1="110" y1="176" x2="110" y2="145" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" class="data-flow"/>
+
+                        <g class="pulse-node">
+                            <circle cx="35" cy="155" r="16" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                            <text x="35" y="160" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="12">💡</text>
+                        </g>
+                        <line x1="48" y1="144" x2="80" y2="125" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" class="data-flow"/>
+
+                        <g class="pulse-node">
+                            <circle cx="35" cy="65" r="16" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                            <text x="35" y="70" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="12">🏥</text>
+                        </g>
+                        <line x1="48" y1="76" x2="80" y2="95" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" class="data-flow"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-3 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>사물 인터넷의 개념과 구성 요소를 설명할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>피지컬 컴퓨팅의 개념과 센서의 종류를 이해할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">3</span>
+                        <span>사물 인터넷으로 인한 사회 변화를 설명할 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-white/15 flex flex-wrap gap-4 text-sm text-white/80">
+                    <span><i class="fas fa-puzzle-piece mr-1"></i> 학습 요소: 사물 인터넷, 피지컬 컴퓨팅</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 1: 사물 인터넷이란?                                            -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-iot-definition">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">사물 인터넷이란?</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">What is IoT?</p>
+                </div>
+            </div>
+
+            <!-- Definition callout -->
+            <div class="bg-gradient-to-r from-cyan-50 to-blue-50 border-l-4 border-cyan-500 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-cyan-800 mb-1">사물 인터넷 (IoT: Internet of Things)</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong>사물 인터넷</strong>이란 일상생활 속 <strong>다양한 물건</strong>이 <strong>인터넷에 연결</strong>되어
+                            데이터를 주고받는 시스템입니다. 사람의 직접적인 개입 없이도 사물끼리 정보를 교환하고
+                            상황에 맞게 동작할 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 사물의 정의 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8">
+                <h3 class="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-th-large text-cyan-500"></i> '사물'이란?
+                </h3>
+                <p class="text-gray-600 mb-4">IoT에서 말하는 '사물'은 인터넷에 연결될 수 있는 모든 물건을 의미합니다.</p>
+                <div class="grid grid-cols-3 sm:grid-cols-6 gap-4">
+                    <div class="text-center p-3 bg-gray-50 rounded-xl">
+                        <div class="text-3xl mb-2">💻</div>
+                        <p class="text-xs text-gray-600 font-medium">컴퓨터</p>
+                    </div>
+                    <div class="text-center p-3 bg-gray-50 rounded-xl">
+                        <div class="text-3xl mb-2">📱</div>
+                        <p class="text-xs text-gray-600 font-medium">태블릿</p>
+                    </div>
+                    <div class="text-center p-3 bg-gray-50 rounded-xl">
+                        <div class="text-3xl mb-2">🔊</div>
+                        <p class="text-xs text-gray-600 font-medium">스피커</p>
+                    </div>
+                    <div class="text-center p-3 bg-gray-50 rounded-xl">
+                        <div class="text-3xl mb-2">🧊</div>
+                        <p class="text-xs text-gray-600 font-medium">냉장고</p>
+                    </div>
+                    <div class="text-center p-3 bg-gray-50 rounded-xl">
+                        <div class="text-3xl mb-2">💡</div>
+                        <p class="text-xs text-gray-600 font-medium">전등</p>
+                    </div>
+                    <div class="text-center p-3 bg-gray-50 rounded-xl">
+                        <div class="text-3xl mb-2">📺</div>
+                        <p class="text-xs text-gray-600 font-medium">TV</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IoT Diagram -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <h3 class="font-bold text-lg text-gray-900 mb-6 flex items-center gap-2">
+                    <i class="fas fa-project-diagram text-cyan-500"></i> 사물 인터넷의 구조
+                </h3>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-0">
+                    <!-- 컴퓨팅 시스템 -->
+                    <div class="flex-1 text-center p-5 bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl border-2 border-cyan-200 max-w-xs">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-500 flex items-center justify-center">
+                            <i class="fas fa-desktop text-white text-xl"></i>
+                        </div>
+                        <p class="font-bold text-cyan-800 mb-1">컴퓨팅 시스템</p>
+                        <p class="text-sm text-cyan-600">하드웨어 + 소프트웨어</p>
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="text-cyan-400 text-3xl px-4 hidden md:block">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="text-cyan-400 text-3xl md:hidden">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+
+                    <!-- 인터넷 -->
+                    <div class="flex-1 text-center p-5 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200 max-w-xs">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-blue-500 flex items-center justify-center">
+                            <i class="fas fa-wifi text-white text-xl"></i>
+                        </div>
+                        <p class="font-bold text-blue-800 mb-1">인터넷</p>
+                        <p class="text-sm text-blue-600">네트워크 연결</p>
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="text-blue-400 text-3xl px-4 hidden md:block">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="text-blue-400 text-3xl md:hidden">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+
+                    <!-- 사물 인터넷 -->
+                    <div class="flex-1 text-center p-5 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl border-2 border-indigo-200 max-w-xs">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-indigo-500 flex items-center justify-center">
+                            <i class="fas fa-network-wired text-white text-xl"></i>
+                        </div>
+                        <p class="font-bold text-indigo-800 mb-1">사물 인터넷</p>
+                        <p class="text-sm text-indigo-600">IoT 시스템</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 2: 피지컬 컴퓨팅                                               -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-physical-computing">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">피지컬 컴퓨팅</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Physical Computing</p>
+                </div>
+            </div>
+
+            <!-- Definition -->
+            <div class="bg-gradient-to-r from-teal-50 to-cyan-50 border-l-4 border-teal-500 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-info-circle text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-teal-800 mb-1">피지컬 컴퓨팅이란?</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong>피지컬 컴퓨팅(Physical Computing)</strong>은 컴퓨터와 현실 세계를 연결하는 시스템입니다.
+                            <strong>센서</strong>로 주변 환경 정보를 입력받고, <strong>마이크로컨트롤러</strong>로 처리한 후,
+                            <strong>액추에이터</strong>를 통해 현실 세계에 출력합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 센서 종류 Grid -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-satellite-dish text-teal-500"></i> 센서의 종류
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                <!-- 동작 감지 센서 -->
+                <div class="sensor-card bg-white rounded-xl shadow-md border border-gray-100 p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
+                        <i class="fas fa-walking text-white text-lg"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-sm mb-1">동작 감지 센서</h4>
+                    <p class="text-xs text-gray-500">사람이나 동물 등의 움직임을 감지</p>
+                </div>
+                <!-- 조도 센서 -->
+                <div class="sensor-card bg-white rounded-xl shadow-md border border-gray-100 p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                        <i class="fas fa-sun text-white text-lg"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-sm mb-1">조도 센서</h4>
+                    <p class="text-xs text-gray-500">주변의 밝기를 측정</p>
+                </div>
+                <!-- 거리 센서 -->
+                <div class="sensor-card bg-white rounded-xl shadow-md border border-gray-100 p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                        <i class="fas fa-ruler text-white text-lg"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-sm mb-1">거리 센서</h4>
+                    <p class="text-xs text-gray-500">초음파를 이용하여 거리를 측정</p>
+                </div>
+                <!-- 온습도 센서 -->
+                <div class="sensor-card bg-white rounded-xl shadow-md border border-gray-100 p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                        <i class="fas fa-thermometer-half text-white text-lg"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-sm mb-1">온습도 센서</h4>
+                    <p class="text-xs text-gray-500">주변의 온도와 습도를 측정</p>
+                </div>
+                <!-- 기울기 센서 -->
+                <div class="sensor-card bg-white rounded-xl shadow-md border border-gray-100 p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+                        <i class="fas fa-level-up-alt text-white text-lg" style="transform: rotate(45deg);"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-sm mb-1">기울기 센서</h4>
+                    <p class="text-xs text-gray-500">물체의 기울어짐 정도를 감지</p>
+                </div>
+                <!-- 터치 센서 -->
+                <div class="sensor-card bg-white rounded-xl shadow-md border border-gray-100 p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center">
+                        <i class="fas fa-hand-pointer text-white text-lg"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-sm mb-1">터치 센서</h4>
+                    <p class="text-xs text-gray-500">장치에 접촉 여부를 감지</p>
+                </div>
+                <!-- 버튼 -->
+                <div class="sensor-card bg-white rounded-xl shadow-md border border-gray-100 p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center">
+                        <i class="fas fa-circle text-white text-lg"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-sm mb-1">버튼</h4>
+                    <p class="text-xs text-gray-500">버튼의 눌림을 감지</p>
+                </div>
+                <!-- 레이저 센서 -->
+                <div class="sensor-card bg-white rounded-xl shadow-md border border-gray-100 p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
+                        <i class="fas fa-crosshairs text-white text-lg"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-sm mb-1">레이저 센서</h4>
+                    <p class="text-xs text-gray-500">레이저로 물체의 거리, 위치, 속도 등을 측정</p>
+                </div>
+            </div>
+
+            <!-- 피지컬 컴퓨팅 구성 Diagram -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-sitemap text-teal-500"></i> 피지컬 컴퓨팅의 구성
+            </h3>
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-0">
+                    <!-- 센서 (입력) -->
+                    <div class="flex-1 text-center p-4 bg-teal-50 rounded-2xl border-2 border-teal-200 max-w-[200px]">
+                        <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-teal-500 flex items-center justify-center">
+                            <i class="fas fa-satellite-dish text-white"></i>
+                        </div>
+                        <p class="font-bold text-teal-800">센서</p>
+                        <p class="text-sm text-teal-600">(입력)</p>
+                    </div>
+
+                    <div class="text-teal-400 text-2xl px-4 hidden md:block"><i class="fas fa-arrow-right"></i></div>
+                    <div class="text-teal-400 text-2xl md:hidden"><i class="fas fa-arrow-down"></i></div>
+
+                    <!-- 마이크로컨트롤러 (처리) -->
+                    <div class="flex-1 text-center p-4 bg-cyan-50 rounded-2xl border-2 border-cyan-200 max-w-[200px]">
+                        <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-cyan-500 flex items-center justify-center">
+                            <i class="fas fa-microchip text-white"></i>
+                        </div>
+                        <p class="font-bold text-cyan-800">마이크로컨트롤러</p>
+                        <p class="text-sm text-cyan-600">(처리)</p>
+                    </div>
+
+                    <div class="text-cyan-400 text-2xl px-4 hidden md:block"><i class="fas fa-arrow-right"></i></div>
+                    <div class="text-cyan-400 text-2xl md:hidden"><i class="fas fa-arrow-down"></i></div>
+
+                    <!-- 액추에이터 (출력) -->
+                    <div class="flex-1 text-center p-4 bg-blue-50 rounded-2xl border-2 border-blue-200 max-w-[200px]">
+                        <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-blue-500 flex items-center justify-center">
+                            <i class="fas fa-cog text-white"></i>
+                        </div>
+                        <p class="font-bold text-blue-800">액추에이터</p>
+                        <p class="text-sm text-blue-600">(출력)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 화재 감지기 사례 -->
+            <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl border-2 border-orange-200 p-6 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-fire-extinguisher text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900">사례: 화재 감지기</h4>
+                        <p class="text-sm text-gray-500">피지컬 컴퓨팅의 실생활 적용</p>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-3">
+                    <div class="flex-1 bg-white rounded-xl p-4 text-center border border-orange-100">
+                        <div class="w-10 h-10 mx-auto mb-2 rounded-full bg-orange-100 flex items-center justify-center">
+                            <i class="fas fa-fire text-orange-500"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-gray-800">센서로 화재 감지</p>
+                        <p class="text-xs text-gray-500 mt-1">연기, 온도 감지</p>
+                    </div>
+                    <div class="text-orange-300 text-xl hidden sm:block"><i class="fas fa-arrow-right"></i></div>
+                    <div class="text-orange-300 text-xl sm:hidden"><i class="fas fa-arrow-down"></i></div>
+                    <div class="flex-1 bg-white rounded-xl p-4 text-center border border-orange-100">
+                        <div class="w-10 h-10 mx-auto mb-2 rounded-full bg-orange-100 flex items-center justify-center">
+                            <i class="fas fa-microchip text-orange-500"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-gray-800">컴퓨터가 판단</p>
+                        <p class="text-xs text-gray-500 mt-1">위험 수준 분석</p>
+                    </div>
+                    <div class="text-orange-300 text-xl hidden sm:block"><i class="fas fa-arrow-right"></i></div>
+                    <div class="text-orange-300 text-xl sm:hidden"><i class="fas fa-arrow-down"></i></div>
+                    <div class="flex-1 bg-white rounded-xl p-4 text-center border border-orange-100">
+                        <div class="w-10 h-10 mx-auto mb-2 rounded-full bg-red-100 flex items-center justify-center">
+                            <i class="fas fa-bell text-red-500"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-gray-800">화재 경보 출력</p>
+                        <p class="text-xs text-gray-500 mt-1">알림, 스프링클러</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 3: 사물 인터넷의 구성과 동작 원리                               -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-iot-mechanism">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">사물 인터넷의 구성과 동작 원리</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">IoT Architecture & How it Works</p>
+                </div>
+            </div>
+
+            <!-- 구성 요소 -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-puzzle-piece text-blue-500"></i> 사물 인터넷의 구성 요소
+            </h3>
+            <div class="grid md:grid-cols-2 gap-4 mb-10">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-tablet-alt text-white"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">사물(디바이스)</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">센서와 액추에이터가 포함된 물리적 장치로, 환경 데이터를 수집하고 명령에 따라 동작합니다.</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-broadcast-tower text-white"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">통신 장치</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">사물과 서버 간의 데이터를 전송하기 위한 네트워크 장치입니다. (WiFi, 블루투스, LTE 등)</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-database text-white"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">데이터 처리/저장 장치</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">수집된 데이터를 분석하고 저장하는 서버 또는 클라우드 시스템입니다.</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-code text-white"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">소프트웨어</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">데이터를 분석하여 사용자에게 유의미한 서비스를 제공하는 응용 프로그램입니다.</p>
+                </div>
+            </div>
+
+            <!-- 동작 흐름 Step Diagram -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-stream text-blue-500"></i> 사물 인터넷의 동작 흐름
+            </h3>
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="step-card text-center p-5 bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-xl border border-cyan-200 relative">
+                        <div class="bg-cyan-500 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center mx-auto mb-3">1</div>
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-cyan-500 flex items-center justify-center">
+                            <i class="fas fa-satellite-dish text-white text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-cyan-800 text-sm">데이터 수집</h4>
+                        <p class="text-xs text-cyan-600 mt-1">센서를 통해 정보 수집</p>
+                    </div>
+                    <div class="step-card text-center p-5 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200 relative">
+                        <div class="bg-blue-500 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center mx-auto mb-3">2</div>
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-500 flex items-center justify-center">
+                            <i class="fas fa-wifi text-white text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-blue-800 text-sm">데이터 전송</h4>
+                        <p class="text-xs text-blue-600 mt-1">네트워크를 통해 전송</p>
+                    </div>
+                    <div class="step-card text-center p-5 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl border border-indigo-200 relative">
+                        <div class="bg-indigo-500 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center mx-auto mb-3">3</div>
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-indigo-500 flex items-center justify-center">
+                            <i class="fas fa-brain text-white text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-indigo-800 text-sm">데이터 처리</h4>
+                        <p class="text-xs text-indigo-600 mt-1">데이터 분석 및 판단</p>
+                    </div>
+                    <div class="step-card text-center p-5 bg-gradient-to-br from-violet-50 to-violet-100 rounded-xl border border-violet-200 relative">
+                        <div class="bg-violet-500 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center mx-auto mb-3">4</div>
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-violet-500 flex items-center justify-center">
+                            <i class="fas fa-concierge-bell text-white text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-violet-800 text-sm">서비스 제공</h4>
+                        <p class="text-xs text-violet-600 mt-1">사용자에게 결과 제공</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 스마트 홈 보안 예시 -->
+            <div class="bg-gradient-to-br from-blue-700 to-indigo-900 rounded-2xl p-6 md:p-8 text-white shadow-lg">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold">예시: 스마트 홈 보안 시스템</h3>
+                        <p class="text-blue-200 text-sm">IoT 동작 원리의 실제 적용</p>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-3">
+                    <div class="flex-1 bg-white/10 rounded-xl p-4 text-center backdrop-blur-sm border border-white/10">
+                        <div class="w-10 h-10 mx-auto mb-2 rounded-full bg-white/20 flex items-center justify-center">
+                            <i class="fas fa-door-open"></i>
+                        </div>
+                        <p class="text-sm font-semibold">동작 센서</p>
+                        <p class="text-xs text-blue-200 mt-1">문 열림 감지</p>
+                    </div>
+                    <div class="text-white/40 text-xl hidden sm:block"><i class="fas fa-arrow-right"></i></div>
+                    <div class="text-white/40 text-xl sm:hidden"><i class="fas fa-arrow-down"></i></div>
+                    <div class="flex-1 bg-white/10 rounded-xl p-4 text-center backdrop-blur-sm border border-white/10">
+                        <div class="w-10 h-10 mx-auto mb-2 rounded-full bg-white/20 flex items-center justify-center">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <p class="text-sm font-semibold">보안 모드 분석</p>
+                        <p class="text-xs text-blue-200 mt-1">침입 여부 판단</p>
+                    </div>
+                    <div class="text-white/40 text-xl hidden sm:block"><i class="fas fa-arrow-right"></i></div>
+                    <div class="text-white/40 text-xl sm:hidden"><i class="fas fa-arrow-down"></i></div>
+                    <div class="flex-1 bg-white/10 rounded-xl p-4 text-center backdrop-blur-sm border border-white/10">
+                        <div class="w-10 h-10 mx-auto mb-2 rounded-full bg-red-400/30 flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-red-300"></i>
+                        </div>
+                        <p class="text-sm font-semibold">경찰서 자동 연결</p>
+                        <p class="text-xs text-blue-200 mt-1">침입 시 즉시 알림</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 4: 사물 인터넷에 사용되는 기술                                  -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-iot-tech">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">사물 인터넷에 사용되는 기술</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Technologies used in IoT</p>
+                </div>
+            </div>
+
+            <!-- Tab buttons -->
+            <div class="flex flex-wrap gap-2 mb-6" id="techTabs">
+                <button class="tab-btn active px-5 py-2.5 rounded-full text-sm font-medium border border-gray-200" onclick="switchTechTab(0, this)">
+                    <i class="fas fa-satellite-dish mr-1"></i> 센서 기술
+                </button>
+                <button class="tab-btn px-5 py-2.5 rounded-full text-sm font-medium border border-gray-200 text-gray-600" onclick="switchTechTab(1, this)">
+                    <i class="fas fa-database mr-1"></i> 저장 기술
+                </button>
+                <button class="tab-btn px-5 py-2.5 rounded-full text-sm font-medium border border-gray-200 text-gray-600" onclick="switchTechTab(2, this)">
+                    <i class="fas fa-chart-line mr-1"></i> 분석 기술
+                </button>
+                <button class="tab-btn px-5 py-2.5 rounded-full text-sm font-medium border border-gray-200 text-gray-600" onclick="switchTechTab(3, this)">
+                    <i class="fas fa-shield-alt mr-1"></i> 데이터 보안 기술
+                </button>
+            </div>
+
+            <!-- Tab contents -->
+            <div id="techContent">
+                <!-- 센서 기술 -->
+                <div class="tech-panel" data-index="0">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-cyan-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-satellite-dish text-white"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900">센서 기술</h3>
+                        </div>
+                        <p class="text-gray-600 mb-5 leading-relaxed">현실 세계의 다양한 환경 정보를 수집하여 디지털 데이터로 변환하는 기술입니다.</p>
+                        <div class="grid sm:grid-cols-2 gap-3">
+                            <div class="flex items-center gap-3 bg-cyan-50 rounded-lg p-3">
+                                <i class="fas fa-thermometer-half text-cyan-600"></i>
+                                <div>
+                                    <p class="font-semibold text-sm text-gray-800">온도 센서</p>
+                                    <p class="text-xs text-gray-500">주변 온도 변화 감지</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3 bg-cyan-50 rounded-lg p-3">
+                                <i class="fas fa-compress-arrows-alt text-cyan-600"></i>
+                                <div>
+                                    <p class="font-semibold text-sm text-gray-800">압력 센서</p>
+                                    <p class="text-xs text-gray-500">물리적 압력 측정</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3 bg-cyan-50 rounded-lg p-3">
+                                <i class="fas fa-sun text-cyan-600"></i>
+                                <div>
+                                    <p class="font-semibold text-sm text-gray-800">빛 센서</p>
+                                    <p class="text-xs text-gray-500">조도 및 광량 측정</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3 bg-cyan-50 rounded-lg p-3">
+                                <i class="fas fa-tachometer-alt text-cyan-600"></i>
+                                <div>
+                                    <p class="font-semibold text-sm text-gray-800">가속도 센서</p>
+                                    <p class="text-xs text-gray-500">움직임과 진동 감지</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 저장 기술 -->
+                <div class="tech-panel hidden" data-index="1">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-database text-white"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900">저장 기술</h3>
+                        </div>
+                        <p class="text-gray-600 mb-5 leading-relaxed">센서로 수집된 대량의 데이터를 효율적으로 저장하고 관리하는 기술입니다.</p>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i class="fas fa-hdd text-blue-600"></i>
+                                    <h4 class="font-bold text-sm text-gray-800">데이터베이스 기술</h4>
+                                </div>
+                                <p class="text-xs text-gray-600">체계적으로 데이터를 구조화하여 저장하고, 필요할 때 빠르게 검색할 수 있게 합니다.</p>
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i class="fas fa-cloud text-blue-600"></i>
+                                    <h4 class="font-bold text-sm text-gray-800">클라우드 컴퓨팅 기술</h4>
+                                </div>
+                                <p class="text-xs text-gray-600">인터넷을 통해 언제 어디서나 접근할 수 있는 가상 서버에 데이터를 저장합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 분석 기술 -->
+                <div class="tech-panel hidden" data-index="2">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chart-line text-white"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900">분석 기술</h3>
+                        </div>
+                        <p class="text-gray-600 mb-5 leading-relaxed">수집된 데이터를 소프트웨어 기술로 분석하여 다양한 서비스를 제공하는 기술입니다.</p>
+                        <div class="bg-indigo-50 rounded-xl p-5 border border-indigo-100">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-cog text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-gray-800 mb-2">소프트웨어 기술</h4>
+                                    <ul class="space-y-2 text-sm text-gray-600">
+                                        <li class="flex items-start gap-2">
+                                            <i class="fas fa-check text-indigo-500 mt-0.5 text-xs"></i>
+                                            <span>수집된 데이터의 패턴을 분석하여 유의미한 정보를 추출합니다.</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i class="fas fa-check text-indigo-500 mt-0.5 text-xs"></i>
+                                            <span>분석 결과를 바탕으로 사용자에게 맞춤형 서비스를 제공합니다.</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i class="fas fa-check text-indigo-500 mt-0.5 text-xs"></i>
+                                            <span>인공지능, 빅데이터 기술 등이 활용됩니다.</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 데이터 보안 기술 -->
+                <div class="tech-panel hidden" data-index="3">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-shield-alt text-white"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900">데이터 보안 기술</h3>
+                        </div>
+                        <p class="text-gray-600 mb-5 leading-relaxed">IoT 환경에서 데이터를 안전하게 보호하기 위한 기술입니다.</p>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="bg-red-50 rounded-xl p-4 border border-red-100">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i class="fas fa-lock text-red-600"></i>
+                                    <h4 class="font-bold text-sm text-gray-800">암호화</h4>
+                                </div>
+                                <p class="text-xs text-gray-600">데이터를 암호화하여 인가되지 않은 접근으로부터 정보를 보호합니다.</p>
+                            </div>
+                            <div class="bg-red-50 rounded-xl p-4 border border-red-100">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i class="fas fa-user-shield text-red-600"></i>
+                                    <h4 class="font-bold text-sm text-gray-800">침입 탐지 시스템</h4>
+                                </div>
+                                <p class="text-xs text-gray-600">비정상적인 접근을 실시간으로 감시하고, 위협을 탐지하여 대응합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 5: 사물 인터넷으로 인한 사회 변화                               -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-iot-society">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-city"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">사물 인터넷으로 인한 사회 변화</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Social Changes by IoT</p>
+                </div>
+            </div>
+
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                사물 인터넷 기술은 우리 사회의 다양한 분야에서 <strong class="text-cyan-700">'스마트(Smart)'</strong> 혁신을 이끌고 있습니다.
+            </p>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- 스마트 그리드 -->
+                <div class="smart-card bg-white rounded-2xl shadow-md border border-gray-100 p-5 overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-yellow-100 to-transparent rounded-bl-full"></div>
+                    <div class="relative">
+                        <div class="w-12 h-12 mb-3 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
+                            <i class="fas fa-bolt text-white text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 mb-2">스마트 그리드</h4>
+                        <p class="text-xs text-gray-500 leading-relaxed">ICT + 전력망을 결합하여 효율적인 에너지 생산과 사용을 가능하게 합니다.</p>
+                    </div>
+                </div>
+
+                <!-- 스마트 교육 -->
+                <div class="smart-card bg-white rounded-2xl shadow-md border border-gray-100 p-5 overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue-100 to-transparent rounded-bl-full"></div>
+                    <div class="relative">
+                        <div class="w-12 h-12 mb-3 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-white text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 mb-2">스마트 교육</h4>
+                        <p class="text-xs text-gray-500 leading-relaxed">학습자 수준에 맞는 자료를 제공하고, 장소에 관계없이 학습할 수 있습니다.</p>
+                    </div>
+                </div>
+
+                <!-- 스마트팜 -->
+                <div class="smart-card bg-white rounded-2xl shadow-md border border-gray-100 p-5 overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-green-100 to-transparent rounded-bl-full"></div>
+                    <div class="relative">
+                        <div class="w-12 h-12 mb-3 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                            <i class="fas fa-seedling text-white text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 mb-2">스마트팜</h4>
+                        <p class="text-xs text-gray-500 leading-relaxed">환경을 자동으로 감지하고 자동 제어하여 농작물을 효율적으로 관리합니다.</p>
+                    </div>
+                </div>
+
+                <!-- 스마트 헬스케어 -->
+                <div class="smart-card bg-white rounded-2xl shadow-md border border-gray-100 p-5 overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-rose-100 to-transparent rounded-bl-full"></div>
+                    <div class="relative">
+                        <div class="w-12 h-12 mb-3 rounded-xl bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
+                            <i class="fas fa-heartbeat text-white text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 mb-2">스마트 헬스케어</h4>
+                        <p class="text-xs text-gray-500 leading-relaxed">건강 정보를 실시간으로 모니터링하고, 원격 진료를 가능하게 합니다.</p>
+                    </div>
+                </div>
+
+                <!-- 스마트 공장 -->
+                <div class="smart-card bg-white rounded-2xl shadow-md border border-gray-100 p-5 overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-slate-100 to-transparent rounded-bl-full"></div>
+                    <div class="relative">
+                        <div class="w-12 h-12 mb-3 rounded-xl bg-gradient-to-br from-slate-400 to-slate-600 flex items-center justify-center">
+                            <i class="fas fa-industry text-white text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 mb-2">스마트 공장</h4>
+                        <p class="text-xs text-gray-500 leading-relaxed">생산 라인을 자동화하고, 비용을 절감하며 효율성을 높입니다.</p>
+                    </div>
+                </div>
+
+                <!-- 스마트 교통 -->
+                <div class="smart-card bg-white rounded-2xl shadow-md border border-gray-100 p-5 overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-orange-100 to-transparent rounded-bl-full"></div>
+                    <div class="relative">
+                        <div class="w-12 h-12 mb-3 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                            <i class="fas fa-car text-white text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 mb-2">스마트 교통</h4>
+                        <p class="text-xs text-gray-500 leading-relaxed">자율주행 자동차와 교통 신호 체계 조정으로 안전하고 효율적인 이동을 지원합니다.</p>
+                    </div>
+                </div>
+
+                <!-- 스마트 홈 -->
+                <div class="smart-card bg-white rounded-2xl shadow-md border border-gray-100 p-5 overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-purple-100 to-transparent rounded-bl-full"></div>
+                    <div class="relative">
+                        <div class="w-12 h-12 mb-3 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+                            <i class="fas fa-home text-white text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 mb-2">스마트 홈</h4>
+                        <p class="text-xs text-gray-500 leading-relaxed">스마트폰이나 음성으로 집안 기기를 작동하고, 외출 중에도 원격 제어할 수 있습니다.</p>
+                    </div>
+                </div>
+
+                <!-- 스마트 빌딩 -->
+                <div class="smart-card bg-white rounded-2xl shadow-md border border-gray-100 p-5 overflow-hidden relative">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-cyan-100 to-transparent rounded-bl-full"></div>
+                    <div class="relative">
+                        <div class="w-12 h-12 mb-3 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center">
+                            <i class="fas fa-building text-white text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 mb-2">스마트 빌딩</h4>
+                        <p class="text-xs text-gray-500 leading-relaxed">자동 출입 제어, 효율적 에너지 사용, 스마트 주차 등을 통해 건물을 지능적으로 관리합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 6: 정보로 통하는 세상: IoT + 블록체인                           -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-iot-blockchain">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-link"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">정보로 통하는 세상</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">IoT + Blockchain</p>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl border-2 border-violet-200 overflow-hidden shadow-sm">
+                <!-- Header -->
+                <div class="bg-gradient-to-r from-violet-600 to-indigo-700 p-5 text-white">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-cubes text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">IoT + 블록체인 기술의 만남</h3>
+                            <p class="text-violet-200 text-sm">노후 건축물 관리에 적용된 융합 기술</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <!-- 설명 -->
+                    <p class="text-gray-700 leading-relaxed mb-6">
+                        노후 건축물의 안전 관리를 위해 <strong class="text-violet-700">IoT 센서</strong>와
+                        <strong class="text-violet-700">블록체인 기술</strong>을 결합하여 실시간으로 구조물의 상태를 모니터링할 수 있습니다.
+                    </p>
+
+                    <!-- 프로세스 -->
+                    <div class="flex flex-col sm:flex-row items-center gap-3 mb-6">
+                        <div class="flex-1 bg-white rounded-xl p-4 text-center border border-violet-100 shadow-sm">
+                            <div class="w-10 h-10 mx-auto mb-2 rounded-full bg-violet-100 flex items-center justify-center">
+                                <i class="fas fa-satellite-dish text-violet-600"></i>
+                            </div>
+                            <p class="text-sm font-semibold text-gray-800">IoT 센서</p>
+                            <p class="text-xs text-gray-500 mt-1">기울기/균열 데이터 실시간 측정</p>
+                        </div>
+                        <div class="text-violet-300 text-xl hidden sm:block"><i class="fas fa-arrow-right"></i></div>
+                        <div class="text-violet-300 text-xl sm:hidden"><i class="fas fa-arrow-down"></i></div>
+                        <div class="flex-1 bg-white rounded-xl p-4 text-center border border-violet-100 shadow-sm">
+                            <div class="w-10 h-10 mx-auto mb-2 rounded-full bg-indigo-100 flex items-center justify-center">
+                                <i class="fas fa-cubes text-indigo-600"></i>
+                            </div>
+                            <p class="text-sm font-semibold text-gray-800">블록체인</p>
+                            <p class="text-xs text-gray-500 mt-1">데이터 저장, 분석, 검증</p>
+                        </div>
+                        <div class="text-indigo-300 text-xl hidden sm:block"><i class="fas fa-arrow-right"></i></div>
+                        <div class="text-indigo-300 text-xl sm:hidden"><i class="fas fa-arrow-down"></i></div>
+                        <div class="flex-1 bg-white rounded-xl p-4 text-center border border-violet-100 shadow-sm">
+                            <div class="w-10 h-10 mx-auto mb-2 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-check-circle text-blue-600"></i>
+                            </div>
+                            <p class="text-sm font-semibold text-gray-800">안전 관리</p>
+                            <p class="text-xs text-gray-500 mt-1">위변조 없는 신뢰 데이터</p>
+                        </div>
+                    </div>
+
+                    <!-- 블록체인 기술 설명 -->
+                    <div class="bg-white rounded-xl p-5 border border-violet-100">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-violet-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fas fa-question text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-violet-800 mb-2">블록체인 기술이란?</h4>
+                                <p class="text-gray-600 text-sm leading-relaxed">
+                                    데이터를 <strong>블록(Block)</strong> 단위로 나누어 <strong>체인(Chain)</strong> 형태로 연결하여 저장하는 기술입니다.
+                                    각 블록은 이전 블록의 정보를 포함하고 있어, 한 블록의 데이터가 변경되면 이후 모든 블록에 영향을 미치게 됩니다.
+                                    따라서 데이터의 <strong class="text-violet-700">위변조를 원천적으로 차단</strong>할 수 있습니다.
+                                </p>
+
+                                <!-- Block chain visual -->
+                                <div class="flex items-center justify-center gap-1 mt-4 overflow-x-auto py-2">
+                                    <div class="flex-shrink-0 bg-violet-100 border-2 border-violet-300 rounded-lg px-4 py-2 text-center">
+                                        <p class="text-xs font-bold text-violet-700">Block 1</p>
+                                        <p class="text-[10px] text-violet-500">데이터</p>
+                                    </div>
+                                    <div class="flex-shrink-0 text-violet-300"><i class="fas fa-link text-sm"></i></div>
+                                    <div class="flex-shrink-0 bg-indigo-100 border-2 border-indigo-300 rounded-lg px-4 py-2 text-center">
+                                        <p class="text-xs font-bold text-indigo-700">Block 2</p>
+                                        <p class="text-[10px] text-indigo-500">데이터</p>
+                                    </div>
+                                    <div class="flex-shrink-0 text-indigo-300"><i class="fas fa-link text-sm"></i></div>
+                                    <div class="flex-shrink-0 bg-blue-100 border-2 border-blue-300 rounded-lg px-4 py-2 text-center">
+                                        <p class="text-xs font-bold text-blue-700">Block 3</p>
+                                        <p class="text-[10px] text-blue-500">데이터</p>
+                                    </div>
+                                    <div class="flex-shrink-0 text-blue-300"><i class="fas fa-link text-sm"></i></div>
+                                    <div class="flex-shrink-0 bg-sky-100 border-2 border-sky-300 rounded-lg px-4 py-2 text-center">
+                                        <p class="text-xs font-bold text-sky-700">Block N</p>
+                                        <p class="text-[10px] text-sky-500">데이터</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <!-- 이전 페이지 -->
+                <div class="flex-1 flex justify-start">
+                    <a href="../../01_네트워크의 구성/03_선택활동/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-arrow-left"></i> 이전 페이지
+                    </a>
+                </div>
+                <!-- 목록으로 돌아가기 -->
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex justify-end">
+                    <a href="../02_사물 인터넷 설계 및 구성/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        다음 페이지 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    I. 컴퓨팅 시스템 &gt; 02 사물 인터넷 &gt; 사물 인터넷의 개념
+                </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // Technology Tab Switching
+        function switchTechTab(index, btn) {
+            // Update tab buttons
+            document.querySelectorAll('#techTabs .tab-btn').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('text-gray-600');
+            });
+            btn.classList.add('active');
+            btn.classList.remove('text-gray-600');
+
+            // Update panels
+            document.querySelectorAll('.tech-panel').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            const targetPanel = document.querySelector(`.tech-panel[data-index="${index}"]`);
+            targetPanel.classList.remove('hidden');
+            targetPanel.style.animation = 'none';
+            targetPanel.offsetHeight; // trigger reflow
+            targetPanel.style.animation = 'fadeSlideIn 0.4s ease-out forwards';
+        }
+
+        // Fade-in animation on scroll
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>네트워크의 이해 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                        },
+                        accent: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f766e 0%, #1e40af 50%, #1d4ed8 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.3s ease;
+        }
+        .accordion-content.open {
+            max-height: 800px;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #0d9488, #2563eb);
+            color: white;
+            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.3);
+        }
+
+        .tech-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .tech-card:hover {
+            transform: scale(1.02);
+        }
+        .tech-card.active {
+            ring: 2px;
+            border-color: #0d9488;
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
+        }
+
+        .network-node {
+            animation: pulse-subtle 3s ease-in-out infinite;
+        }
+        .network-node:nth-child(2) { animation-delay: 0.5s; }
+        .network-node:nth-child(3) { animation-delay: 1s; }
+        .network-node:nth-child(4) { animation-delay: 1.5s; }
+
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .data-flow {
+            stroke-dasharray: 8 4;
+            animation: flow 2s linear infinite;
+        }
+        @keyframes flow {
+            to { stroke-dashoffset: -24; }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #0d9488, #2563eb, #0d9488);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .tooltip-container {
+            position: relative;
+        }
+        .tooltip-container .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s;
+            position: absolute;
+            z-index: 20;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            margin-bottom: 6px;
+        }
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .network-diagram-container { overflow-x: auto; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #0f766e 0%, #1e40af 50%, #1d4ed8 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">I. 컴퓨팅 시스템</span>
+                <span class="breadcrumb-item text-white font-medium">01 네트워크의 구성</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-network-wired"></i>
+                        <span>I. 컴퓨팅 시스템 &gt; 01 네트워크의 구성</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        네트워크의 이해
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        유무선 네트워크의 특성을 이해하고, 네트워크를 통한 공유와 소통을 배워봅시다
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-ethernet mr-1"></i> 유선 네트워크
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-wifi mr-1"></i> 무선 네트워크
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-broadcast-tower mr-1"></i> 무선 통신 기술
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Central hub -->
+                        <circle cx="110" cy="110" r="30" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+                        <circle cx="110" cy="110" r="16" fill="rgba(255,255,255,0.25)"/>
+                        <text x="110" y="115" text-anchor="middle" fill="white" font-size="12" font-weight="bold">NET</text>
+
+                        <!-- Surrounding nodes -->
+                        <g class="network-node">
+                            <circle cx="110" cy="30" r="18" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                            <text x="110" y="34" text-anchor="middle" fill="white" font-size="10"><tspan x="110" dy="0">&#xf108;</tspan></text>
+                        </g>
+                        <line x1="110" y1="48" x2="110" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" class="data-flow"/>
+
+                        <g class="network-node">
+                            <circle cx="190" cy="70" r="18" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        </g>
+                        <line x1="176" y1="80" x2="136" y2="96" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" class="data-flow"/>
+
+                        <g class="network-node">
+                            <circle cx="190" cy="150" r="18" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        </g>
+                        <line x1="176" y1="140" x2="136" y2="124" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" class="data-flow"/>
+
+                        <g class="network-node">
+                            <circle cx="110" cy="190" r="18" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        </g>
+                        <line x1="110" y1="172" x2="110" y2="140" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" class="data-flow"/>
+
+                        <g class="network-node">
+                            <circle cx="30" cy="150" r="18" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        </g>
+                        <line x1="44" y1="140" x2="84" y2="124" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" class="data-flow"/>
+
+                        <g class="network-node">
+                            <circle cx="30" cy="70" r="18" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        </g>
+                        <line x1="44" y1="80" x2="84" y2="96" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" class="data-flow"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-3 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>유선 네트워크의 구성 요소와 특성을 이해한다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>무선 네트워크의 구성 요소와 특성을 이해한다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">3</span>
+                        <span>다양한 무선 네트워크 기술의 종류와 특징을 비교한다.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 1: 유선 네트워크의 특성                                        -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-wired">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-ethernet"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">유선 네트워크의 특성</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Wired Network Characteristics</p>
+                </div>
+            </div>
+
+            <!-- Definition callout -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-500 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">네트워크란?</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong>네트워크(Network)</strong>는 서로 다른 기기들이 연결된 <strong>통신망</strong>입니다.
+                            유선 또는 무선 통신망으로 연결된 것을 <strong>컴퓨터 네트워크</strong>라고 합니다.
+                            유선 네트워크는 물리적인 케이블을 사용하여 기기들을 연결합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cable types -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-plug text-primary-500"></i> 케이블의 종류
+            </h3>
+            <div class="grid md:grid-cols-2 gap-6 mb-10">
+                <!-- Fiber optic -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-primary-500 to-primary-600 p-4 flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                                <path d="M4 14 C8 8, 12 20, 16 10 C20 0, 24 18, 28 14" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                                <circle cx="4" cy="14" r="3" fill="rgba(255,255,255,0.6)"/>
+                                <circle cx="24" cy="14" r="3" fill="rgba(255,255,255,0.6)"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-lg">광 케이블</h4>
+                            <p class="text-white/80 text-sm">Fiber Optic Cable</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-bolt text-xs"></i>
+                                </span>
+                                <span class="text-gray-700"><strong>고속 데이터 전송</strong>이 가능하며, 대용량 정보를 빠르게 전달합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-globe text-xs"></i>
+                                </span>
+                                <span class="text-gray-700"><strong>원거리 전송</strong>이 가능하여 해저 케이블 등에 활용됩니다.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-th-large text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">통신, 의료, 산업 등 <strong>다양한 분야</strong>에서 활용됩니다.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Ethernet cable -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-accent-500 to-accent-600 p-4 flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                                <rect x="2" y="8" width="24" height="12" rx="3" stroke="white" stroke-width="2" fill="none"/>
+                                <line x1="8" y1="12" x2="8" y2="16" stroke="white" stroke-width="1.5"/>
+                                <line x1="12" y1="12" x2="12" y2="16" stroke="white" stroke-width="1.5"/>
+                                <line x1="16" y1="12" x2="16" y2="16" stroke="white" stroke-width="1.5"/>
+                                <line x1="20" y1="12" x2="20" y2="16" stroke="white" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-lg">이더넷 케이블</h4>
+                            <p class="text-white/80 text-sm">Ethernet Cable (UTP/STP)</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-won-sign text-xs"></i>
+                                </span>
+                                <span class="text-gray-700"><strong>저렴한 구축 비용</strong>과 높은 유연성이 장점입니다.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-building text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">주로 <strong>LAN(근거리 통신망)</strong> 구축에 사용됩니다.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-tools text-xs"></i>
+                                </span>
+                                <span class="text-gray-700">설치와 유지보수가 비교적 <strong>간편</strong>합니다.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Network Equipment -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-server text-primary-500"></i> 유선 네트워크 장비
+            </h3>
+            <div class="grid md:grid-cols-2 gap-6 mb-10">
+                <!-- Hub & Switch -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <rect x="3" y="8" width="18" height="8" rx="2" stroke="white" stroke-width="1.5"/>
+                                <circle cx="7" cy="12" r="1.5" fill="white"/>
+                                <circle cx="11" cy="12" r="1.5" fill="white"/>
+                                <circle cx="15" cy="12" r="1.5" fill="white"/>
+                                <circle cx="19" cy="12" r="1.5" fill="white"/>
+                                <line x1="7" y1="8" x2="7" y2="5" stroke="white" stroke-width="1.5"/>
+                                <line x1="12" y1="8" x2="12" y2="5" stroke="white" stroke-width="1.5"/>
+                                <line x1="17" y1="8" x2="17" y2="5" stroke="white" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg">허브 및 스위치</h4>
+                            <p class="text-sm text-gray-500">Hub &amp; Switch</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">
+                        여러 대의 컴퓨팅 시스템과 주변 장치를 <strong>연결</strong>하여 <strong>하나의 네트워크</strong>를 만들고,
+                        데이터를 전송할 수 있게 하는 장비입니다.
+                    </p>
+                    <div class="mt-4 bg-teal-50 rounded-lg p-3 text-sm text-teal-800">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        <strong>허브</strong>는 모든 포트에 데이터를 전송하고, <strong>스위치</strong>는 목적지 포트에만 전송하여 더 효율적입니다.
+                    </div>
+                </div>
+
+                <!-- Router -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <rect x="3" y="6" width="18" height="12" rx="2" stroke="white" stroke-width="1.5"/>
+                                <line x1="3" y1="12" x2="21" y2="12" stroke="white" stroke-width="1"/>
+                                <circle cx="7" cy="9" r="1" fill="white"/>
+                                <circle cx="10" cy="9" r="1" fill="white"/>
+                                <circle cx="7" cy="15" r="1" fill="white"/>
+                                <circle cx="10" cy="15" r="1" fill="white"/>
+                                <path d="M15 8 L19 12 L15 16" stroke="white" stroke-width="1.5" fill="none"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg">라우터</h4>
+                            <p class="text-sm text-gray-500">Router</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">
+                        네트워크와 네트워크(<strong>내부 &#8596; 외부</strong>)를 연결해 주는 장비로,
+                        데이터의 <strong>전송 경로를 지정</strong>하는 역할을 합니다.
+                    </p>
+                    <div class="mt-4 bg-blue-50 rounded-lg p-3 text-sm text-blue-800">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        라우터는 최적의 경로를 찾아 데이터 패킷을 목적지까지 전달합니다.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key characteristics summary -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <h3 class="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-star text-yellow-500"></i> 유선 네트워크의 핵심 특징
+                </h3>
+                <div class="flex flex-col md:flex-row items-center gap-4">
+                    <div class="flex-1 text-center p-4 bg-primary-50 rounded-xl">
+                        <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-primary-500 flex items-center justify-center">
+                            <i class="fas fa-link text-white"></i>
+                        </div>
+                        <p class="font-semibold text-primary-800">물리적 연결 필요</p>
+                        <p class="text-sm text-gray-600 mt-1">케이블로 직접 연결</p>
+                    </div>
+                    <div class="text-primary-400 text-2xl hidden md:block">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="text-primary-400 text-2xl md:hidden">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div class="flex-1 text-center p-4 bg-primary-50 rounded-xl">
+                        <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-primary-500 flex items-center justify-center">
+                            <i class="fas fa-tachometer-alt text-white"></i>
+                        </div>
+                        <p class="font-semibold text-primary-800">안정적 &amp; 고속</p>
+                        <p class="text-sm text-gray-600 mt-1">빠르고 안정적인 데이터 전송</p>
+                    </div>
+                    <div class="text-primary-400 text-2xl hidden md:block">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="text-primary-400 text-2xl md:hidden">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div class="flex-1 text-center p-4 bg-primary-50 rounded-xl">
+                        <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-primary-500 flex items-center justify-center">
+                            <i class="fas fa-building text-white"></i>
+                        </div>
+                        <p class="font-semibold text-primary-800">고정 공간 사용</p>
+                        <p class="text-sm text-gray-600 mt-1">회사, 학교 등에서 주로 사용</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 2: 무선 네트워크의 특성                                        -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-wireless">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-wifi"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">무선 네트워크의 특성</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Wireless Network Characteristics</p>
+                </div>
+            </div>
+
+            <!-- Definition -->
+            <div class="bg-gradient-to-r from-accent-50 to-primary-50 border-l-4 border-accent-500 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-accent-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-broadcast-tower text-white text-sm"></i>
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">
+                        <strong>무선 네트워크</strong>는 <strong>무선 주파수</strong>를 사용하여 컴퓨팅 시스템과 주변 장치들을 연결합니다.
+                        케이블 없이 전파를 이용하여 데이터를 주고받을 수 있습니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Wireless equipment - accordion style -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-satellite-dish text-accent-500"></i> 무선 네트워크 주요 장비
+            </h3>
+            <div class="space-y-3 mb-10">
+                <!-- AP accordion -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-wifi text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">무선 AP (액세스 포인트)</h4>
+                                <p class="text-sm text-gray-500">Wireless Access Point</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300 accordion-icon"></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="px-5 pb-5 pt-0">
+                            <div class="bg-indigo-50 rounded-xl p-4">
+                                <p class="text-gray-700 leading-relaxed mb-3">
+                                    <strong>유선 랜(LAN)</strong>과 <strong>무선 랜</strong>을 연결하는 장치입니다.
+                                    무선 AP를 통해 <strong>와이파이(WiFi)</strong>로 인터넷을 사용할 수 있게 됩니다.
+                                </p>
+                                <div class="flex items-center gap-2 text-sm text-indigo-700">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>가정, 카페, 학교 등에서 흔히 볼 수 있는 와이파이 공유기가 무선 AP의 대표적인 예입니다.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Firewall accordion -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-shield-alt text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">방화벽</h4>
+                                <p class="text-sm text-gray-500">Firewall</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300 accordion-icon"></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="px-5 pb-5 pt-0">
+                            <div class="bg-red-50 rounded-xl p-4">
+                                <p class="text-gray-700 leading-relaxed mb-3">
+                                    외부의 <strong>불법 접근</strong>과 <strong>악의적 공격</strong>을 막아 네트워크의 <strong>보안을 유지</strong>하는 장비입니다.
+                                </p>
+                                <div class="flex items-center gap-2 text-sm text-red-700">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>허가되지 않은 접근을 차단하고, 내부 네트워크를 안전하게 보호합니다.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advantages -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-thumbs-up text-accent-500"></i> 무선 네트워크의 장점
+            </h3>
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-10">
+                <div class="grid sm:grid-cols-3 gap-4">
+                    <div class="text-center p-4 bg-gradient-to-b from-accent-50 to-white rounded-xl border border-accent-100">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-map-marker-alt text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 mb-1">장소 제약 없음</h4>
+                        <p class="text-sm text-gray-600">케이블 대신 주파수를 이용하여 어디서든 접속 가능</p>
+                    </div>
+                    <div class="text-center p-4 bg-gradient-to-b from-accent-50 to-white rounded-xl border border-accent-100">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-mobile-alt text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 mb-1">자유로운 기기 사용</h4>
+                        <p class="text-sm text-gray-600">스마트폰, 태블릿, 노트북 등 다양한 기기 연결</p>
+                    </div>
+                    <div class="text-center p-4 bg-gradient-to-b from-accent-50 to-white rounded-xl border border-accent-100">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow-lg">
+                            <svg class="text-white" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="4" stroke="white" stroke-width="1.5"/>
+                                <path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="white" stroke-width="1.5"/>
+                                <path d="M5 5l3 3M16 16l3 3M5 19l3-3M16 8l3-3" stroke="white" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-bold text-gray-900 mb-1">사물 인터넷(IoT)</h4>
+                        <p class="text-sm text-gray-600">다양한 사물을 인터넷으로 연결하는 IoT의 핵심 기술</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LAN concept -->
+            <div class="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-2xl p-6 mb-10 border border-cyan-100">
+                <h3 class="font-bold text-lg text-gray-900 mb-3 flex items-center gap-2">
+                    <i class="fas fa-sitemap text-cyan-600"></i> LAN (근거리 통신망) 이란?
+                </h3>
+                <p class="text-gray-700 leading-relaxed mb-2">
+                    <strong>LAN(Local Area Network, 근거리 통신망)</strong>은 사무실, 주택, 학교 등
+                    <strong>일정 범위 안</strong>에서 컴퓨터와 장치들을 연결하는 네트워크입니다.
+                </p>
+                <p class="text-gray-600 text-sm">
+                    <i class="fas fa-info-circle text-cyan-500 mr-1"></i>
+                    유선과 무선 LAN을 결합하여 사용하는 것이 일반적입니다.
+                </p>
+            </div>
+
+            <!-- Network Topology Diagram -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-project-diagram text-accent-500"></i> 네트워크 구성도
+            </h3>
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-4 md:p-8 network-diagram-container">
+                <div class="min-w-[600px]">
+                    <svg width="100%" viewBox="0 0 800 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Background areas -->
+                        <!-- Internal network area -->
+                        <rect x="20" y="20" width="520" height="380" rx="16" fill="#f0fdfa" stroke="#99f6e4" stroke-width="1.5" stroke-dasharray="6 3"/>
+                        <text x="40" y="50" fill="#0d9488" font-size="14" font-weight="bold">내부 네트워크 (LAN)</text>
+
+                        <!-- External network area -->
+                        <rect x="620" y="20" width="160" height="380" rx="16" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5" stroke-dasharray="6 3"/>
+                        <text x="640" y="50" fill="#2563eb" font-size="14" font-weight="bold">외부 네트워크</text>
+
+                        <!-- === WIRELESS SECTION (top-left) === -->
+                        <!-- Wireless AP -->
+                        <g transform="translate(120, 100)">
+                            <rect x="-40" y="-25" width="80" height="50" rx="10" fill="#6366f1" opacity="0.9"/>
+                            <text x="0" y="-5" text-anchor="middle" fill="white" font-size="11" font-weight="bold">무선 AP</text>
+                            <text x="0" y="10" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9">(Access Point)</text>
+                            <!-- Wifi waves -->
+                            <path d="M -15 -35 C -15 -50, 15 -50, 15 -35" stroke="#6366f1" stroke-width="1.5" fill="none" opacity="0.5"/>
+                            <path d="M -22 -42 C -22 -62, 22 -62, 22 -42" stroke="#6366f1" stroke-width="1.5" fill="none" opacity="0.3"/>
+                        </g>
+
+                        <!-- Wireless devices -->
+                        <g transform="translate(60, 200)">
+                            <rect x="-30" y="-18" width="60" height="36" rx="8" fill="#818cf8" opacity="0.8"/>
+                            <text x="0" y="-2" text-anchor="middle" fill="white" font-size="9" font-weight="bold">스마트폰</text>
+                            <text x="0" y="10" text-anchor="middle" fill="white" font-size="16">&#x1F4F1;</text>
+                        </g>
+                        <line x1="80" y1="182" x2="104" y2="135" stroke="#818cf8" stroke-width="1.5" stroke-dasharray="4 3" class="data-flow"/>
+
+                        <g transform="translate(180, 200)">
+                            <rect x="-30" y="-18" width="60" height="36" rx="8" fill="#818cf8" opacity="0.8"/>
+                            <text x="0" y="-2" text-anchor="middle" fill="white" font-size="9" font-weight="bold">노트북</text>
+                            <text x="0" y="10" text-anchor="middle" fill="white" font-size="16">&#x1F4BB;</text>
+                        </g>
+                        <line x1="164" y1="182" x2="136" y2="135" stroke="#818cf8" stroke-width="1.5" stroke-dasharray="4 3" class="data-flow"/>
+
+                        <!-- === HUB/SWITCH (center) === -->
+                        <g transform="translate(320, 100)">
+                            <rect x="-55" y="-25" width="110" height="50" rx="10" fill="#0d9488"/>
+                            <text x="0" y="-5" text-anchor="middle" fill="white" font-size="11" font-weight="bold">허브 / 스위치</text>
+                            <text x="0" y="10" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9">(Hub / Switch)</text>
+                        </g>
+
+                        <!-- Connection: AP to Switch -->
+                        <line x1="160" y1="100" x2="265" y2="100" stroke="#0d9488" stroke-width="2"/>
+                        <circle cx="212" cy="100" r="3" fill="#0d9488"/>
+
+                        <!-- Server -->
+                        <g transform="translate(320, 220)">
+                            <rect x="-35" y="-22" width="70" height="44" rx="8" fill="#0f766e"/>
+                            <text x="0" y="-4" text-anchor="middle" fill="white" font-size="10" font-weight="bold">서버</text>
+                            <text x="0" y="10" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9">(Server)</text>
+                        </g>
+                        <line x1="320" y1="125" x2="320" y2="198" stroke="#0f766e" stroke-width="2"/>
+
+                        <!-- Printer -->
+                        <g transform="translate(320, 320)">
+                            <rect x="-35" y="-22" width="70" height="44" rx="8" fill="#14b8a6"/>
+                            <text x="0" y="-4" text-anchor="middle" fill="white" font-size="10" font-weight="bold">프린터</text>
+                            <text x="0" y="10" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9">(Printer)</text>
+                        </g>
+                        <line x1="320" y1="264" x2="320" y2="298" stroke="#14b8a6" stroke-width="1.5"/>
+
+                        <!-- Desktop computers -->
+                        <g transform="translate(200, 320)">
+                            <rect x="-35" y="-22" width="70" height="44" rx="8" fill="#0d9488" opacity="0.7"/>
+                            <text x="0" y="-4" text-anchor="middle" fill="white" font-size="10" font-weight="bold">PC 1</text>
+                            <text x="0" y="10" text-anchor="middle" fill="white" font-size="14">&#x1F5A5;</text>
+                        </g>
+                        <line x1="220" y1="298" x2="300" y2="135" stroke="#0d9488" stroke-width="1.5" opacity="0.6"/>
+
+                        <g transform="translate(440, 320)">
+                            <rect x="-35" y="-22" width="70" height="44" rx="8" fill="#0d9488" opacity="0.7"/>
+                            <text x="0" y="-4" text-anchor="middle" fill="white" font-size="10" font-weight="bold">PC 2</text>
+                            <text x="0" y="10" text-anchor="middle" fill="white" font-size="14">&#x1F5A5;</text>
+                        </g>
+                        <line x1="420" y1="298" x2="340" y2="135" stroke="#0d9488" stroke-width="1.5" opacity="0.6"/>
+
+                        <!-- === FIREWALL === -->
+                        <g transform="translate(490, 100)">
+                            <rect x="-35" y="-25" width="70" height="50" rx="10" fill="#ef4444"/>
+                            <text x="0" y="-5" text-anchor="middle" fill="white" font-size="11" font-weight="bold">방화벽</text>
+                            <text x="0" y="10" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9">(Firewall)</text>
+                        </g>
+                        <line x1="375" y1="100" x2="455" y2="100" stroke="#ef4444" stroke-width="2"/>
+
+                        <!-- === ROUTER === -->
+                        <g transform="translate(590, 100)">
+                            <rect x="-40" y="-25" width="80" height="50" rx="10" fill="#2563eb"/>
+                            <text x="0" y="-5" text-anchor="middle" fill="white" font-size="11" font-weight="bold">라우터</text>
+                            <text x="0" y="10" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9">(Router)</text>
+                        </g>
+                        <line x1="525" y1="100" x2="550" y2="100" stroke="#2563eb" stroke-width="2"/>
+
+                        <!-- External network icons -->
+                        <!-- Internet cloud -->
+                        <g transform="translate(700, 140)">
+                            <ellipse cx="0" cy="0" rx="50" ry="30" fill="#3b82f6" opacity="0.15"/>
+                            <ellipse cx="0" cy="0" rx="40" ry="22" fill="#3b82f6" opacity="0.2"/>
+                            <text x="0" y="-5" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="bold">인터넷</text>
+                            <text x="0" y="10" text-anchor="middle" fill="#2563eb" font-size="9">(Internet)</text>
+                        </g>
+                        <line x1="630" y1="100" x2="680" y2="125" stroke="#3b82f6" stroke-width="2" class="data-flow"/>
+
+                        <!-- External server -->
+                        <g transform="translate(700, 250)">
+                            <rect x="-40" y="-22" width="80" height="44" rx="8" fill="#3b82f6" opacity="0.2" stroke="#3b82f6" stroke-width="1"/>
+                            <text x="0" y="-4" text-anchor="middle" fill="#2563eb" font-size="10" font-weight="bold">외부 서버</text>
+                            <text x="0" y="10" text-anchor="middle" fill="#2563eb" font-size="9">(Web Server)</text>
+                        </g>
+                        <line x1="700" y1="170" x2="700" y2="228" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
+
+                        <!-- Other networks -->
+                        <g transform="translate(700, 340)">
+                            <rect x="-40" y="-22" width="80" height="44" rx="8" fill="#3b82f6" opacity="0.2" stroke="#3b82f6" stroke-width="1"/>
+                            <text x="0" y="-4" text-anchor="middle" fill="#2563eb" font-size="10" font-weight="bold">다른</text>
+                            <text x="0" y="10" text-anchor="middle" fill="#2563eb" font-size="9">네트워크</text>
+                        </g>
+                        <line x1="700" y1="294" x2="700" y2="318" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
+
+                        <!-- Legend -->
+                        <g transform="translate(30, 376)">
+                            <line x1="0" y1="0" x2="20" y2="0" stroke="#0d9488" stroke-width="2"/>
+                            <text x="25" y="4" fill="#555" font-size="10">유선 연결</text>
+                            <line x1="100" y1="0" x2="120" y2="0" stroke="#818cf8" stroke-width="1.5" stroke-dasharray="4 3"/>
+                            <text x="125" y="4" fill="#555" font-size="10">무선 연결</text>
+                        </g>
+                    </svg>
+                </div>
+                <p class="text-center text-sm text-gray-500 mt-3">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    일반적인 LAN 네트워크 구성도: 내부 네트워크의 장비들이 서로 연결되어 있고, 방화벽과 라우터를 통해 외부 네트워크와 통신합니다.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 3: 무선 네트워크 기술의 종류와 특징                             -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-wireless-tech">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-broadcast-tower"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">무선 네트워크 기술의 종류와 특징</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Types &amp; Features of Wireless Network Technologies</p>
+                </div>
+            </div>
+
+            <!-- Interactive tab buttons -->
+            <div class="flex flex-wrap gap-2 mb-6" id="techTabs">
+                <button onclick="switchTech(0)" class="tab-btn active px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 border border-gray-200 bg-white text-gray-600" data-index="0">
+                    <i class="fas fa-tag mr-1"></i> RFID
+                </button>
+                <button onclick="switchTech(1)" class="tab-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 border border-gray-200 bg-white text-gray-600" data-index="1">
+                    <i class="fas fa-wifi mr-1"></i> 와이파이
+                </button>
+                <button onclick="switchTech(2)" class="tab-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 border border-gray-200 bg-white text-gray-600" data-index="2">
+                    <i class="fab fa-bluetooth-b mr-1"></i> 블루투스
+                </button>
+                <button onclick="switchTech(3)" class="tab-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 border border-gray-200 bg-white text-gray-600" data-index="3">
+                    <i class="fas fa-mobile-alt mr-1"></i> NFC
+                </button>
+                <button onclick="switchTech(4)" class="tab-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 border border-gray-200 bg-white text-gray-600" data-index="4">
+                    <i class="fas fa-tv mr-1"></i> 디스플레이 공유
+                </button>
+            </div>
+
+            <!-- Tech content panels -->
+            <div id="techPanels">
+                <!-- RFID -->
+                <div class="tech-panel" data-index="0">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-orange-500 to-amber-500 p-5 flex items-center gap-4">
+                            <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                                <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                                    <rect x="8" y="10" width="20" height="16" rx="3" stroke="white" stroke-width="2"/>
+                                    <circle cx="18" cy="18" r="4" stroke="white" stroke-width="1.5"/>
+                                    <path d="M10 14h6M10 22h4" stroke="white" stroke-width="1" opacity="0.6"/>
+                                    <path d="M26 14 C30 14, 32 18, 28 18" stroke="white" stroke-width="1.5" fill="none"/>
+                                    <path d="M28 11 C34 12, 36 18, 30 20" stroke="white" stroke-width="1.5" fill="none" opacity="0.6"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-bold text-xl">전자 태그 (RFID)</h3>
+                                <p class="text-white/80 text-sm">Radio Frequency Identification</p>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-700 leading-relaxed mb-4">
+                                소형 반도체 칩이 내장된 <strong>태그, 라벨, 카드</strong>에 저장된 데이터를
+                                <strong>무선 주파수</strong>로 읽어내는 <strong>인식 시스템</strong>입니다.
+                                리더기가 태그의 정보를 비접촉 방식으로 읽어들입니다.
+                            </p>
+                            <div class="grid sm:grid-cols-3 gap-3">
+                                <div class="bg-orange-50 rounded-xl p-4 text-center">
+                                    <div class="text-3xl mb-2">&#x1F68C;</div>
+                                    <p class="font-semibold text-gray-800 text-sm">교통카드</p>
+                                    <p class="text-xs text-gray-500 mt-1">버스, 지하철 요금 결제</p>
+                                </div>
+                                <div class="bg-orange-50 rounded-xl p-4 text-center">
+                                    <div class="text-3xl mb-2">&#x1F697;</div>
+                                    <p class="font-semibold text-gray-800 text-sm">하이패스</p>
+                                    <p class="text-xs text-gray-500 mt-1">고속도로 통행료 자동 결제</p>
+                                </div>
+                                <div class="bg-orange-50 rounded-xl p-4 text-center">
+                                    <div class="text-3xl mb-2">&#x1F4E6;</div>
+                                    <p class="font-semibold text-gray-800 text-sm">상품 정보 인식</p>
+                                    <p class="text-xs text-gray-500 mt-1">물류 관리, 재고 추적</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WiFi -->
+                <div class="tech-panel hidden" data-index="1">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-500 to-cyan-500 p-5 flex items-center gap-4">
+                            <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-wifi text-white text-3xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-bold text-xl">와이파이 (WiFi)</h3>
+                                <p class="text-white/80 text-sm">Wireless Fidelity</p>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-700 leading-relaxed mb-4">
+                                <strong>랜(LAN)을 무선화</strong>한 기술입니다.
+                                거리 제한이 있지만, 이동 통신보다 <strong>저렴</strong>하고 <strong>빠른 속도</strong>를 제공합니다.
+                                무선 AP를 통해 인터넷에 접속할 수 있습니다.
+                            </p>
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 rounded-xl p-4">
+                                    <h4 class="font-bold text-blue-800 mb-2 flex items-center gap-2">
+                                        <i class="fas fa-plus-circle text-sm"></i> 장점
+                                    </h4>
+                                    <ul class="space-y-1 text-sm text-gray-700">
+                                        <li class="flex items-start gap-2"><i class="fas fa-check text-blue-500 mt-1 text-xs"></i> 이동 통신보다 빠른 속도</li>
+                                        <li class="flex items-start gap-2"><i class="fas fa-check text-blue-500 mt-1 text-xs"></i> 비교적 저렴한 비용</li>
+                                        <li class="flex items-start gap-2"><i class="fas fa-check text-blue-500 mt-1 text-xs"></i> 여러 기기 동시 접속 가능</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-50 rounded-xl p-4">
+                                    <h4 class="font-bold text-gray-700 mb-2 flex items-center gap-2">
+                                        <i class="fas fa-minus-circle text-sm"></i> 한계
+                                    </h4>
+                                    <ul class="space-y-1 text-sm text-gray-700">
+                                        <li class="flex items-start gap-2"><i class="fas fa-times text-gray-400 mt-1 text-xs"></i> AP와의 거리 제한 있음</li>
+                                        <li class="flex items-start gap-2"><i class="fas fa-times text-gray-400 mt-1 text-xs"></i> 장애물에 의한 신호 감쇠</li>
+                                        <li class="flex items-start gap-2"><i class="fas fa-times text-gray-400 mt-1 text-xs"></i> 보안에 취약할 수 있음</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bluetooth -->
+                <div class="tech-panel hidden" data-index="2">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-5 flex items-center gap-4">
+                            <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                                <i class="fab fa-bluetooth-b text-white text-3xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-bold text-xl">블루투스 (Bluetooth)</h3>
+                                <p class="text-white/80 text-sm">근거리 무선 데이터 전송 기술</p>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-700 leading-relaxed mb-4">
+                                약 <strong>10m 이내</strong>의 가까운 거리에서 <strong>무선 데이터 전송</strong>이 가능한 기술입니다.
+                                와이파이보다 느리지만, 전력 소비가 적고 <strong>페어링(pairing)</strong>으로 쉽게 연결할 수 있습니다.
+                            </p>
+                            <div class="grid sm:grid-cols-3 gap-3">
+                                <div class="bg-indigo-50 rounded-xl p-4 text-center">
+                                    <div class="text-3xl mb-2">&#x1F3A7;</div>
+                                    <p class="font-semibold text-gray-800 text-sm">무선 이어폰</p>
+                                    <p class="text-xs text-gray-500 mt-1">에어팟, 갤럭시 버즈 등</p>
+                                </div>
+                                <div class="bg-indigo-50 rounded-xl p-4 text-center">
+                                    <div class="text-3xl mb-2">&#x1F50A;</div>
+                                    <p class="font-semibold text-gray-800 text-sm">AI 스피커</p>
+                                    <p class="text-xs text-gray-500 mt-1">블루투스 스피커 연결</p>
+                                </div>
+                                <div class="bg-indigo-50 rounded-xl p-4 text-center">
+                                    <div class="text-3xl mb-2">&#x2328;</div>
+                                    <p class="font-semibold text-gray-800 text-sm">무선 키보드/마우스</p>
+                                    <p class="text-xs text-gray-500 mt-1">페어링으로 손쉬운 연결</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 bg-indigo-50 rounded-lg p-3 text-sm text-indigo-800">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                <strong>페어링(Pairing)</strong>이란 블루투스 기기 간에 서로를 인식하고 연결하는 과정을 말합니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NFC -->
+                <div class="tech-panel hidden" data-index="3">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-green-500 to-emerald-500 p-5 flex items-center gap-4">
+                            <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                                <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                                    <rect x="6" y="8" width="24" height="20" rx="4" stroke="white" stroke-width="2"/>
+                                    <path d="M14 18 C14 14, 22 14, 22 18 C22 22, 14 22, 14 18Z" stroke="white" stroke-width="1.5" fill="none"/>
+                                    <circle cx="18" cy="18" r="2" fill="white"/>
+                                    <path d="M11 14 C8 14, 6 18, 11 22" stroke="white" stroke-width="1.5" fill="none" opacity="0.5"/>
+                                    <path d="M25 14 C28 14, 30 18, 25 22" stroke="white" stroke-width="1.5" fill="none" opacity="0.5"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-bold text-xl">근거리 무선 통신 (NFC)</h3>
+                                <p class="text-white/80 text-sm">Near Field Communication</p>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-700 leading-relaxed mb-4">
+                                <strong>RFID 기술 중 하나</strong>로, 약 <strong>10cm 이내</strong>의 매우 가까운 거리에서
+                                <strong>비접촉 데이터 통신</strong>을 가능하게 합니다. 간단히 태그하거나 가까이 대면 통신이 이루어집니다.
+                            </p>
+                            <div class="grid sm:grid-cols-2 gap-3">
+                                <div class="bg-green-50 rounded-xl p-4 flex items-center gap-3">
+                                    <div class="text-2xl">&#x1F4B3;</div>
+                                    <div>
+                                        <p class="font-semibold text-gray-800 text-sm">스마트폰 결제</p>
+                                        <p class="text-xs text-gray-500">삼성페이, 애플페이 등</p>
+                                    </div>
+                                </div>
+                                <div class="bg-green-50 rounded-xl p-4 flex items-center gap-3">
+                                    <div class="text-2xl">&#x1F4B0;</div>
+                                    <div>
+                                        <p class="font-semibold text-gray-800 text-sm">비접촉식 결제</p>
+                                        <p class="text-xs text-gray-500">카드를 단말기에 터치</p>
+                                    </div>
+                                </div>
+                                <div class="bg-green-50 rounded-xl p-4 flex items-center gap-3">
+                                    <div class="text-2xl">&#x1F3AB;</div>
+                                    <div>
+                                        <p class="font-semibold text-gray-800 text-sm">전자 티켓</p>
+                                        <p class="text-xs text-gray-500">공연, 교통 등 티켓 확인</p>
+                                    </div>
+                                </div>
+                                <div class="bg-green-50 rounded-xl p-4 flex items-center gap-3">
+                                    <div class="text-2xl">&#x1F6AA;</div>
+                                    <div>
+                                        <p class="font-semibold text-gray-800 text-sm">출입 통제</p>
+                                        <p class="text-xs text-gray-500">사원증, 학생증으로 출입</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Display sharing -->
+                <div class="tech-panel hidden" data-index="4">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-5 flex items-center gap-4">
+                            <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-desktop text-white text-3xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-bold text-xl">디스플레이 공유 기술</h3>
+                                <p class="text-white/80 text-sm">Display Sharing Technology</p>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-700 leading-relaxed mb-4">
+                                기기 간에 <strong>화면을 공유</strong>하는 기술입니다.
+                                <strong>미러링(Mirroring)</strong>을 통해 스마트폰이나 노트북의 화면을 TV나 모니터에 그대로 보여줄 수 있습니다.
+                            </p>
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <div class="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                                    <h4 class="font-bold text-purple-800 mb-2">미라캐스트 (Miracast)</h4>
+                                    <p class="text-sm text-gray-700">
+                                        WiFi Direct를 기반으로 한 무선 디스플레이 표준 기술입니다.
+                                        별도의 AP 없이 기기 간 직접 화면을 전송합니다.
+                                    </p>
+                                </div>
+                                <div class="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                                    <h4 class="font-bold text-purple-800 mb-2">DLNA</h4>
+                                    <p class="text-sm text-gray-700">
+                                        Digital Living Network Alliance의 약자로, 같은 네트워크 내에서
+                                        미디어 콘텐츠를 공유하는 표준 기술입니다.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3 bg-purple-50 rounded-lg p-3">
+                                <div class="flex items-center gap-1 text-sm text-gray-600">
+                                    <i class="fas fa-mobile-alt text-purple-500"></i>
+                                    <span>스마트폰</span>
+                                </div>
+                                <i class="fas fa-long-arrow-alt-right text-purple-400"></i>
+                                <div class="flex items-center gap-1 text-sm text-purple-600 font-semibold">
+                                    <i class="fas fa-wifi"></i>
+                                    <span>미러링</span>
+                                </div>
+                                <i class="fas fa-long-arrow-alt-right text-purple-400"></i>
+                                <div class="flex items-center gap-1 text-sm text-gray-600">
+                                    <i class="fas fa-tv text-purple-500"></i>
+                                    <span>TV / 모니터</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <h3 class="text-xl font-bold text-gray-800 mt-10 mb-4 flex items-center gap-2">
+                <i class="fas fa-table text-purple-500"></i> 무선 네트워크 기술 비교표
+            </h3>
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-primary-600 to-accent-600 text-white">
+                                <th class="px-4 py-3 text-left font-bold whitespace-nowrap">기술명</th>
+                                <th class="px-4 py-3 text-left font-bold whitespace-nowrap">통신 범위</th>
+                                <th class="px-4 py-3 text-left font-bold whitespace-nowrap">속도</th>
+                                <th class="px-4 py-3 text-left font-bold whitespace-nowrap">주요 활용</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-orange-400"></span>
+                                        RFID (전자 태그)
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-gray-700">수 cm ~ 수 m</td>
+                                <td class="px-4 py-3 text-gray-700">저속</td>
+                                <td class="px-4 py-3 text-gray-700">교통카드, 하이패스, 물류 관리</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors bg-gray-50/50">
+                                <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
+                                        와이파이 (WiFi)
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-gray-700">수십 m ~ 100m</td>
+                                <td class="px-4 py-3 text-gray-700">고속</td>
+                                <td class="px-4 py-3 text-gray-700">무선 인터넷 접속, LAN 무선화</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-400"></span>
+                                        블루투스 (Bluetooth)
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-gray-700">약 10m 이내</td>
+                                <td class="px-4 py-3 text-gray-700">중속</td>
+                                <td class="px-4 py-3 text-gray-700">무선 이어폰, AI 스피커, 키보드</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors bg-gray-50/50">
+                                <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-green-400"></span>
+                                        NFC (근거리 무선 통신)
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-gray-700">약 10cm 이내</td>
+                                <td class="px-4 py-3 text-gray-700">저속</td>
+                                <td class="px-4 py-3 text-gray-700">스마트폰 결제, 출입 통제, 티켓</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span>
+                                        디스플레이 공유
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-gray-700">같은 네트워크 내</td>
+                                <td class="px-4 py-3 text-gray-700">고속 (영상 전송)</td>
+                                <td class="px-4 py-3 text-gray-700">화면 미러링, 미디어 공유</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- Quick Review / Quiz Section                                            -->
+        <!-- ===================================================================== -->
+        <section class="fade-in">
+            <div class="bg-gradient-to-br from-primary-50 via-white to-accent-50 rounded-2xl shadow-md border border-gray-100 p-6 md:p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <i class="fas fa-clipboard-check text-primary-500"></i> 핵심 정리
+                </h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-primary-700 mb-2 flex items-center gap-2">
+                            <i class="fas fa-ethernet text-sm"></i> 유선 네트워크
+                        </h4>
+                        <ul class="space-y-1.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                물리적 케이블(광 케이블, 이더넷 케이블)로 연결
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                허브/스위치로 내부 네트워크 구성, 라우터로 외부 연결
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                안정적이고 빠르지만 장소 제약이 있음
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-accent-700 mb-2 flex items-center gap-2">
+                            <i class="fas fa-wifi text-sm"></i> 무선 네트워크
+                        </h4>
+                        <ul class="space-y-1.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-500 mt-0.5 text-xs"></i>
+                                무선 주파수로 연결, 무선 AP로 인터넷 접속
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-500 mt-0.5 text-xs"></i>
+                                방화벽으로 보안 유지
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-500 mt-0.5 text-xs"></i>
+                                RFID, WiFi, 블루투스, NFC, 디스플레이 공유 등 다양한 기술
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <!-- 이전 페이지 -->
+                <div class="flex-1 flex justify-start">
+                    <span class="inline-flex items-center gap-2 bg-gray-700/50 text-gray-500 font-medium px-5 py-3 rounded-xl cursor-not-allowed">
+                        <i class="fas fa-arrow-left"></i> 이전 페이지
+                    </span>
+                </div>
+                <!-- 목록으로 돌아가기 -->
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex justify-end">
+                    <a href="../02_네트워크 환경/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        다음 페이지 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    I. 컴퓨팅 시스템 &gt; 01 네트워크의 구성 &gt; 네트워크의 이해
+                </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // Accordion toggle
+        function toggleAccordion(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('.accordion-icon');
+            const isOpen = content.classList.contains('open');
+
+            // Close all accordions in the same parent
+            const parent = button.closest('.space-y-3');
+            if (parent) {
+                parent.querySelectorAll('.accordion-content').forEach(el => el.classList.remove('open'));
+                parent.querySelectorAll('.accordion-icon').forEach(el => el.style.transform = 'rotate(0deg)');
+            }
+
+            if (!isOpen) {
+                content.classList.add('open');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // Technology tabs
+        function switchTech(index) {
+            // Update tab buttons
+            document.querySelectorAll('#techTabs .tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`#techTabs .tab-btn[data-index="${index}"]`).classList.add('active');
+
+            // Update panels
+            document.querySelectorAll('.tech-panel').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            const targetPanel = document.querySelector(`.tech-panel[data-index="${index}"]`);
+            targetPanel.classList.remove('hidden');
+            targetPanel.style.animation = 'none';
+            targetPanel.offsetHeight; // trigger reflow
+            targetPanel.style.animation = 'fadeSlideIn 0.4s ease-out forwards';
+        }
+
+        // Fade-in animation on scroll
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+
+        // Add fadeSlideIn keyframes dynamically
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = `
+            @keyframes fadeSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    </script>
+
+</body>
+</html>

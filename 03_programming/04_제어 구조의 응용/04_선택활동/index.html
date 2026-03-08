@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>선택활동 - 정렬 알고리즘 구현하기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'sans': ['Noto Sans KR', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%);
+        }
+
+        /* Sort bar styles */
+        .sort-bar {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 6px 6px 0 0;
+            position: relative;
+        }
+        .sort-bar.comparing {
+            background: #f59e0b !important;
+            box-shadow: 0 0 16px rgba(245, 158, 11, 0.5);
+        }
+        .sort-bar.swapping {
+            background: #ef4444 !important;
+            box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
+        }
+        .sort-bar.sorted {
+            background: #22c55e !important;
+        }
+        .sort-bar.minimum {
+            background: #8b5cf6 !important;
+            box-shadow: 0 0 16px rgba(139, 92, 246, 0.5);
+        }
+        .sort-bar.search-range {
+            opacity: 0.6;
+        }
+        .sort-bar .bar-value {
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 13px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        /* Code highlighting */
+        .code-block {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+        .code-block .keyword { color: #cba6f7; }
+        .code-block .function { color: #89b4fa; }
+        .code-block .string { color: #a6e3a1; }
+        .code-block .number { color: #fab387; }
+        .code-block .comment { color: #6c7086; font-style: italic; }
+        .code-block .operator { color: #89dceb; }
+        .code-block .builtin { color: #f9e2af; }
+        .code-line.active-line {
+            background: rgba(245, 158, 11, 0.15);
+            border-left: 3px solid #f59e0b;
+        }
+
+        /* Animations */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 8px rgba(245, 158, 11, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.6); }
+        }
+        .pulse-glow { animation: pulse-glow 1.5s ease-in-out infinite; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-up { animation: slideUp 0.6s ease-out forwards; }
+
+        @keyframes countUp {
+            from { transform: scale(1.3); color: #ef4444; }
+            to { transform: scale(1); color: inherit; }
+        }
+        .count-bump { animation: countUp 0.3s ease-out; }
+
+        /* Visualization container */
+        .viz-container {
+            min-height: 280px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 8px;
+            padding: 40px 20px 20px;
+            background: linear-gradient(to bottom, #fefce8, #fff7ed);
+            border-radius: 12px;
+            border: 2px solid #fed7aa;
+        }
+
+        /* Tab styles */
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            background: #c2410c;
+            color: white;
+            box-shadow: 0 4px 12px rgba(194, 65, 12, 0.3);
+        }
+
+        /* Control button */
+        .ctrl-btn {
+            transition: all 0.2s ease;
+        }
+        .ctrl-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .ctrl-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Step info */
+        .step-info {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border: 1px solid #fbbf24;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+        }
+
+        /* Self eval checkbox */
+        .eval-check {
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #d97706;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .eval-check:checked {
+            background: #c2410c;
+            border-color: #c2410c;
+        }
+        .eval-check:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* Speed slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #fed7aa;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #c2410c;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        /* Result trace */
+        .trace-step {
+            font-family: 'Courier New', monospace;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .trace-step:nth-child(odd) { background: #fff7ed; }
+        .trace-step:nth-child(even) { background: #fefce8; }
+    </style>
+</head>
+<body class="bg-stone-50 min-h-screen">
+
+    <!-- Hero -->
+    <header class="hero-gradient text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 text-6xl font-black opacity-20 rotate-12">[ ]</div>
+            <div class="absolute top-20 right-20 text-5xl font-black opacity-20 -rotate-6">↕</div>
+            <div class="absolute bottom-10 left-1/3 text-4xl font-black opacity-20 rotate-3">≤</div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+            <!-- Back link -->
+            <a href="../../../index.html" class="inline-flex items-center gap-2 text-orange-100 hover:text-white transition-colors mb-4 text-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>목차로 돌아가기</span>
+            </a>
+            <!-- Breadcrumb -->
+            <nav class="flex items-center gap-2 text-orange-200 text-sm mb-6 flex-wrap">
+                <span>정보</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span>III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span>04 제어 구조의 응용</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span class="text-white font-semibold">선택활동</span>
+            </nav>
+            <!-- Title -->
+            <div class="flex items-start gap-4">
+                <div class="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-sort-amount-down text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-2">정렬 알고리즘 구현하기</h1>
+                    <div class="flex flex-wrap gap-3 mt-3">
+                        <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm font-medium">
+                            <i class="fas fa-users mr-1"></i> 협력
+                        </span>
+                        <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm font-medium">
+                            <i class="fas fa-code mr-1"></i> 개발
+                        </span>
+                        <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm font-medium">
+                            <i class="fas fa-star mr-1"></i> 선택활동
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+
+        <!-- ===================== TABS ===================== -->
+        <div class="flex flex-wrap gap-2 justify-center">
+            <button onclick="switchTab('bubble')" id="tab-bubble" class="tab-btn active px-5 py-2.5 rounded-full font-semibold text-sm border border-orange-200 bg-white">
+                <i class="fas fa-water mr-1"></i> 버블 정렬
+            </button>
+            <button onclick="switchTab('selection')" id="tab-selection" class="tab-btn px-5 py-2.5 rounded-full font-semibold text-sm border border-orange-200 bg-white">
+                <i class="fas fa-hand-pointer mr-1"></i> 선택 정렬
+            </button>
+            <button onclick="switchTab('compare')" id="tab-compare" class="tab-btn px-5 py-2.5 rounded-full font-semibold text-sm border border-orange-200 bg-white">
+                <i class="fas fa-columns mr-1"></i> 나란히 비교
+            </button>
+        </div>
+
+        <!-- ===================== CUSTOM INPUT ===================== -->
+        <div class="bg-white rounded-2xl shadow-md border border-orange-100 p-5">
+            <div class="flex flex-wrap items-center gap-3">
+                <label class="text-sm font-semibold text-gray-700">
+                    <i class="fas fa-keyboard mr-1 text-orange-600"></i> 데이터 입력:
+                </label>
+                <input type="text" id="customInput" value="8, 4, 2, 1"
+                    class="flex-1 min-w-[200px] border-2 border-orange-200 rounded-lg px-4 py-2 text-sm focus:border-orange-500 focus:outline-none transition"
+                    placeholder="쉼표로 구분된 숫자 입력 (예: 8, 4, 2, 1)">
+                <button onclick="applyCustomInput()" class="ctrl-btn bg-orange-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-orange-700">
+                    <i class="fas fa-check mr-1"></i> 적용
+                </button>
+                <button onclick="randomizeInput()" class="ctrl-btn bg-amber-500 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-amber-600">
+                    <i class="fas fa-random mr-1"></i> 랜덤
+                </button>
+                <div class="flex items-center gap-2 ml-2">
+                    <label class="text-sm text-gray-500">속도:</label>
+                    <input type="range" id="speedSlider" min="100" max="1500" value="600" class="w-24">
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== BUBBLE SORT TAB ===================== -->
+        <div id="panel-bubble" class="tab-panel space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Visualization -->
+                <div class="bg-white rounded-2xl shadow-md border border-orange-100 p-5 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-lg text-gray-800"><i class="fas fa-water text-orange-600 mr-2"></i>버블 정렬 시각화</h3>
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded font-semibold" id="bubbleSwapCount">교환: 0</span>
+                            <span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded font-semibold" id="bubbleCompCount">비교: 0</span>
+                        </div>
+                    </div>
+                    <div id="bubbleViz" class="viz-container"></div>
+                    <div id="bubbleStepInfo" class="step-info text-gray-700">
+                        <i class="fas fa-info-circle text-amber-500 mr-1"></i>
+                        <span>재생 버튼을 눌러 버블 정렬을 시작하세요.</span>
+                    </div>
+                    <!-- Controls -->
+                    <div class="flex items-center justify-center gap-3 flex-wrap">
+                        <button onclick="bubbleReset()" class="ctrl-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300">
+                            <i class="fas fa-redo"></i> 초기화
+                        </button>
+                        <button onclick="bubbleStepBack()" class="ctrl-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button onclick="bubblePlayPause()" id="bubblePlayBtn" class="ctrl-btn bg-orange-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-orange-700">
+                            <i class="fas fa-play"></i> 재생
+                        </button>
+                        <button onclick="bubbleStep()" class="ctrl-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                    </div>
+                    <!-- Trace -->
+                    <div id="bubbleTrace" class="space-y-1 max-h-40 overflow-y-auto"></div>
+                </div>
+
+                <!-- Code -->
+                <div class="bg-white rounded-2xl shadow-md border border-orange-100 p-5 space-y-4">
+                    <h3 class="font-bold text-lg text-gray-800"><i class="fas fa-code text-orange-600 mr-2"></i>버블 정렬 코드</h3>
+                    <div class="code-block p-5" id="bubbleCode"></div>
+                    <div class="bg-orange-50 border border-orange-200 rounded-xl p-4">
+                        <h4 class="font-semibold text-orange-800 text-sm mb-2"><i class="fas fa-chart-line mr-1"></i> 실행 결과</h4>
+                        <div class="text-sm font-mono text-gray-700 space-y-1" id="bubbleResult">
+                            <div>초기: [8, 4, 2, 1]</div>
+                            <div>[4, 2, 1, 8]</div>
+                            <div>[2, 1, 4, 8]</div>
+                            <div>[1, 2, 4, 8]</div>
+                            <div class="font-bold text-orange-700">교환 횟수: 6</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SELECTION SORT TAB ===================== -->
+        <div id="panel-selection" class="tab-panel hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Visualization -->
+                <div class="bg-white rounded-2xl shadow-md border border-orange-100 p-5 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-lg text-gray-800"><i class="fas fa-hand-pointer text-orange-600 mr-2"></i>선택 정렬 시각화</h3>
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded font-semibold" id="selSwapCount">교환: 0</span>
+                            <span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded font-semibold" id="selCompCount">비교: 0</span>
+                        </div>
+                    </div>
+                    <div id="selViz" class="viz-container"></div>
+                    <div id="selStepInfo" class="step-info text-gray-700">
+                        <i class="fas fa-info-circle text-amber-500 mr-1"></i>
+                        <span>재생 버튼을 눌러 선택 정렬을 시작하세요.</span>
+                    </div>
+                    <div class="flex items-center justify-center gap-3 flex-wrap">
+                        <button onclick="selReset()" class="ctrl-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300">
+                            <i class="fas fa-redo"></i> 초기화
+                        </button>
+                        <button onclick="selStepBack()" class="ctrl-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button onclick="selPlayPause()" id="selPlayBtn" class="ctrl-btn bg-orange-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-orange-700">
+                            <i class="fas fa-play"></i> 재생
+                        </button>
+                        <button onclick="selStep()" class="ctrl-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                    </div>
+                    <div id="selTrace" class="space-y-1 max-h-40 overflow-y-auto"></div>
+                </div>
+
+                <!-- Code -->
+                <div class="bg-white rounded-2xl shadow-md border border-orange-100 p-5 space-y-4">
+                    <h3 class="font-bold text-lg text-gray-800"><i class="fas fa-code text-orange-600 mr-2"></i>선택 정렬 코드</h3>
+                    <div class="code-block p-5" id="selCode"></div>
+                    <div class="bg-orange-50 border border-orange-200 rounded-xl p-4">
+                        <h4 class="font-semibold text-orange-800 text-sm mb-2"><i class="fas fa-chart-line mr-1"></i> 실행 결과</h4>
+                        <div class="text-sm font-mono text-gray-700 space-y-1" id="selResult">
+                            <div>초기: [8, 4, 2, 1]</div>
+                            <div>[1, 4, 2, 8]</div>
+                            <div>[1, 2, 4, 8]</div>
+                            <div>[1, 2, 4, 8]</div>
+                            <div class="font-bold text-orange-700">교환 횟수: 2</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== COMPARE TAB ===================== -->
+        <div id="panel-compare" class="tab-panel hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Bubble side -->
+                <div class="bg-white rounded-2xl shadow-md border border-orange-100 p-5 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-lg text-gray-800"><i class="fas fa-water text-orange-600 mr-2"></i>버블 정렬</h3>
+                        <span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded font-semibold text-sm" id="cmpBubbleSwap">교환: 0</span>
+                    </div>
+                    <div id="cmpBubbleViz" class="viz-container"></div>
+                    <div id="cmpBubbleInfo" class="step-info text-gray-700 text-sm">대기 중</div>
+                </div>
+                <!-- Selection side -->
+                <div class="bg-white rounded-2xl shadow-md border border-orange-100 p-5 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-lg text-gray-800"><i class="fas fa-hand-pointer text-orange-600 mr-2"></i>선택 정렬</h3>
+                        <span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded font-semibold text-sm" id="cmpSelSwap">교환: 0</span>
+                    </div>
+                    <div id="cmpSelViz" class="viz-container"></div>
+                    <div id="cmpSelInfo" class="step-info text-gray-700 text-sm">대기 중</div>
+                </div>
+            </div>
+            <!-- Compare controls -->
+            <div class="flex items-center justify-center gap-3 flex-wrap">
+                <button onclick="cmpReset()" class="ctrl-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300">
+                    <i class="fas fa-redo"></i> 초기화
+                </button>
+                <button onclick="cmpPlayPause()" id="cmpPlayBtn" class="ctrl-btn bg-orange-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-orange-700">
+                    <i class="fas fa-play"></i> 동시 실행
+                </button>
+            </div>
+            <!-- Swap count comparison -->
+            <div id="cmpSummary" class="hidden bg-white rounded-2xl shadow-md border border-orange-100 p-6">
+                <h3 class="font-bold text-lg text-gray-800 mb-4 text-center"><i class="fas fa-balance-scale text-orange-600 mr-2"></i>교환 횟수 비교</h3>
+                <div class="flex items-end justify-center gap-10">
+                    <div class="text-center">
+                        <div id="cmpBarBubble" class="mx-auto w-20 bg-orange-400 rounded-t-lg transition-all duration-700" style="height:0px"></div>
+                        <div class="mt-2 font-semibold text-gray-700">버블 정렬</div>
+                        <div id="cmpBarBubbleLabel" class="text-2xl font-black text-orange-600">0</div>
+                    </div>
+                    <div class="text-center">
+                        <div id="cmpBarSel" class="mx-auto w-20 bg-emerald-400 rounded-t-lg transition-all duration-700" style="height:0px"></div>
+                        <div class="mt-2 font-semibold text-gray-700">선택 정렬</div>
+                        <div id="cmpBarSelLabel" class="text-2xl font-black text-emerald-600">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SELF EVALUATION ===================== -->
+        <div class="bg-white rounded-2xl shadow-md border border-orange-100 p-6 space-y-4 slide-up">
+            <h3 class="font-bold text-lg text-gray-800 flex items-center gap-2">
+                <span class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-clipboard-check text-orange-600"></i>
+                </span>
+                스스로 평가하기
+            </h3>
+            <div class="space-y-3">
+                <label class="flex items-start gap-3 p-3 rounded-xl hover:bg-orange-50 transition cursor-pointer">
+                    <input type="checkbox" class="eval-check mt-0.5">
+                    <span class="text-gray-700">제어 구조를 활용하여 다양한 정렬 알고리즘을 프로그램으로 구현할 수 있는가?</span>
+                </label>
+                <label class="flex items-start gap-3 p-3 rounded-xl hover:bg-orange-50 transition cursor-pointer">
+                    <input type="checkbox" class="eval-check mt-0.5">
+                    <span class="text-gray-700">다양한 정렬 알고리즘의 수행 과정을 분석하고 효율성을 비교할 수 있는가?</span>
+                </label>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 text-center py-6 text-sm mt-10">
+        <p>정보 교과서 &copy; 2025. 본 페이지는 학습 목적으로 제작되었습니다.</p>
+    </footer>
+
+    <script>
+    // ======================================================================
+    //  GLOBAL STATE
+    // ======================================================================
+    let baseData = [8, 4, 2, 1];
+
+    function getSpeed() { return parseInt(document.getElementById('speedSlider').value); }
+
+    // ======================================================================
+    //  TAB SWITCHING
+    // ======================================================================
+    function switchTab(name) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('panel-' + name).classList.remove('hidden');
+        document.getElementById('tab-' + name).classList.add('active');
+    }
+
+    // ======================================================================
+    //  CUSTOM INPUT
+    // ======================================================================
+    function applyCustomInput() {
+        const raw = document.getElementById('customInput').value;
+        const nums = raw.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n > 0 && n <= 99);
+        if (nums.length < 2 || nums.length > 12) { alert('2~12개의 양수를 입력하세요 (1~99).'); return; }
+        baseData = nums;
+        bubbleReset(); selReset(); cmpReset();
+        updateResults();
+    }
+    function randomizeInput() {
+        const len = Math.floor(Math.random() * 6) + 4;
+        const arr = [];
+        for (let i = 0; i < len; i++) arr.push(Math.floor(Math.random() * 40) + 1);
+        document.getElementById('customInput').value = arr.join(', ');
+        baseData = arr;
+        bubbleReset(); selReset(); cmpReset();
+        updateResults();
+    }
+
+    // ======================================================================
+    //  UPDATE RESULT PANELS (static code output)
+    // ======================================================================
+    function updateResults() {
+        // Bubble result
+        {
+            const a = [...baseData];
+            const lines = [`초기: [${a.join(', ')}]`];
+            let count = 0, n = a.length;
+            for (let i = 0; i < n - 1; i++) {
+                for (let j = 0; j < n - i - 1; j++) {
+                    if (a[j] > a[j+1]) { [a[j], a[j+1]] = [a[j+1], a[j]]; count++; }
+                }
+                lines.push(`[${a.join(', ')}]`);
+            }
+            lines.push(`<span class="font-bold text-orange-700">교환 횟수: ${count}</span>`);
+            document.getElementById('bubbleResult').innerHTML = lines.map(l => `<div>${l}</div>`).join('');
+        }
+        // Selection result
+        {
+            const a = [...baseData];
+            const lines = [`초기: [${a.join(', ')}]`];
+            let count = 0, n = a.length;
+            for (let i = 0; i < n - 1; i++) {
+                let mi = i;
+                for (let j = i+1; j < n; j++) { if (a[mi] > a[j]) mi = j; }
+                if (mi !== i) { [a[i], a[mi]] = [a[mi], a[i]]; count++; }
+                lines.push(`[${a.join(', ')}]`);
+            }
+            lines.push(`<span class="font-bold text-orange-700">교환 횟수: ${count}</span>`);
+            document.getElementById('selResult').innerHTML = lines.map(l => `<div>${l}</div>`).join('');
+        }
+    }
+
+    // ======================================================================
+    //  RENDER BARS
+    // ======================================================================
+    function renderBars(containerId, arr, highlights = {}) {
+        const container = document.getElementById(containerId);
+        const maxVal = Math.max(...arr, 1);
+        const maxH = 200;
+        container.innerHTML = '';
+        const barWidth = Math.max(30, Math.min(60, (container.clientWidth - arr.length * 8) / arr.length));
+        arr.forEach((val, idx) => {
+            const bar = document.createElement('div');
+            bar.className = 'sort-bar';
+            const h = Math.max(20, (val / maxVal) * maxH);
+            bar.style.height = h + 'px';
+            bar.style.width = barWidth + 'px';
+            bar.style.background = '#fb923c';
+
+            if (highlights.sorted && highlights.sorted.includes(idx)) bar.classList.add('sorted');
+            if (highlights.comparing && highlights.comparing.includes(idx)) bar.classList.add('comparing');
+            if (highlights.swapping && highlights.swapping.includes(idx)) bar.classList.add('swapping');
+            if (highlights.minimum === idx) bar.classList.add('minimum');
+            if (highlights.searchRange && idx >= highlights.searchRange[0] && idx <= highlights.searchRange[1] && !bar.classList.contains('minimum') && !bar.classList.contains('comparing')) {
+                bar.style.background = '#fdba74';
+            }
+
+            const label = document.createElement('span');
+            label.className = 'bar-value';
+            label.textContent = val;
+            bar.appendChild(label);
+            container.appendChild(bar);
+        });
+    }
+
+    // ======================================================================
+    //  BUBBLE SORT ENGINE
+    // ======================================================================
+    let bubbleSteps = [];
+    let bubbleIdx = -1;
+    let bubblePlaying = false;
+    let bubbleTimer = null;
+
+    function generateBubbleSteps(data) {
+        const a = [...data];
+        const steps = [];
+        const n = a.length;
+        const sorted = [];
+        let swaps = 0, comps = 0;
+        steps.push({ arr: [...a], highlights: {}, swaps: 0, comps: 0, msg: `초기 배열: [${a.join(', ')}]`, line: -1 });
+        for (let i = 0; i < n - 1; i++) {
+            for (let j = 0; j < n - i - 1; j++) {
+                comps++;
+                steps.push({ arr: [...a], highlights: { comparing: [j, j+1], sorted: [...sorted] }, swaps, comps, msg: `비교: a[${j}]=${a[j]}  vs  a[${j+1}]=${a[j+1]}`, line: 6 });
+                if (a[j] > a[j+1]) {
+                    [a[j], a[j+1]] = [a[j+1], a[j]];
+                    swaps++;
+                    steps.push({ arr: [...a], highlights: { swapping: [j, j+1], sorted: [...sorted] }, swaps, comps, msg: `교환! a[${j}]↔a[${j+1}]  →  [${a.join(', ')}]`, line: 7 });
+                } else {
+                    steps.push({ arr: [...a], highlights: { sorted: [...sorted] }, swaps, comps, msg: `교환 없음 (${a[j]} ≤ ${a[j+1]})`, line: 6 });
+                }
+            }
+            sorted.push(n - 1 - i);
+            steps.push({ arr: [...a], highlights: { sorted: [...sorted] }, swaps, comps, msg: `${i+1}회전 완료: [${a.join(', ')}]`, line: 9 });
+        }
+        sorted.push(0);
+        steps.push({ arr: [...a], highlights: { sorted: [...sorted] }, swaps, comps, msg: `정렬 완료! 총 교환 횟수: ${swaps}`, line: 10 });
+        return steps;
+    }
+
+    function bubbleRender() {
+        if (bubbleIdx < 0) bubbleIdx = 0;
+        const step = bubbleSteps[bubbleIdx];
+        renderBars('bubbleViz', step.arr, step.highlights);
+        document.getElementById('bubbleSwapCount').textContent = `교환: ${step.swaps}`;
+        document.getElementById('bubbleCompCount').textContent = `비교: ${step.comps}`;
+        document.getElementById('bubbleStepInfo').innerHTML = `<i class="fas fa-info-circle text-amber-500 mr-1"></i> <span>단계 ${bubbleIdx}/${bubbleSteps.length-1}: ${step.msg}</span>`;
+        highlightBubbleCode(step.line);
+    }
+
+    function bubbleReset() {
+        bubblePlaying = false;
+        clearInterval(bubbleTimer);
+        bubbleSteps = generateBubbleSteps(baseData);
+        bubbleIdx = 0;
+        bubbleRender();
+        document.getElementById('bubblePlayBtn').innerHTML = '<i class="fas fa-play"></i> 재생';
+        document.getElementById('bubbleTrace').innerHTML = '';
+    }
+
+    function bubbleStep() {
+        if (bubbleIdx >= bubbleSteps.length - 1) return;
+        bubbleIdx++;
+        bubbleRender();
+        addTrace('bubbleTrace', bubbleSteps[bubbleIdx].msg);
+    }
+
+    function bubbleStepBack() {
+        if (bubbleIdx <= 0) return;
+        bubbleIdx--;
+        bubbleRender();
+    }
+
+    function bubblePlayPause() {
+        if (bubblePlaying) {
+            bubblePlaying = false;
+            clearInterval(bubbleTimer);
+            document.getElementById('bubblePlayBtn').innerHTML = '<i class="fas fa-play"></i> 재생';
+        } else {
+            if (bubbleIdx >= bubbleSteps.length - 1) bubbleReset();
+            bubblePlaying = true;
+            document.getElementById('bubblePlayBtn').innerHTML = '<i class="fas fa-pause"></i> 일시정지';
+            bubbleTimer = setInterval(() => {
+                if (bubbleIdx >= bubbleSteps.length - 1) {
+                    bubblePlaying = false;
+                    clearInterval(bubbleTimer);
+                    document.getElementById('bubblePlayBtn').innerHTML = '<i class="fas fa-play"></i> 재생';
+                    return;
+                }
+                bubbleStep();
+            }, getSpeed());
+        }
+    }
+
+    // ======================================================================
+    //  SELECTION SORT ENGINE
+    // ======================================================================
+    let selSteps = [];
+    let selIdx = -1;
+    let selPlaying = false;
+    let selTimer = null;
+
+    function generateSelSteps(data) {
+        const a = [...data];
+        const steps = [];
+        const n = a.length;
+        const sorted = [];
+        let swaps = 0, comps = 0;
+        steps.push({ arr: [...a], highlights: {}, swaps: 0, comps: 0, msg: `초기 배열: [${a.join(', ')}]`, line: -1 });
+        for (let i = 0; i < n - 1; i++) {
+            let mi = i;
+            steps.push({ arr: [...a], highlights: { minimum: i, searchRange: [i, n-1], sorted: [...sorted] }, swaps, comps, msg: `${i+1}회전: 최솟값 탐색 시작 (인덱스 ${i}부터)`, line: 5 });
+            for (let j = i + 1; j < n; j++) {
+                comps++;
+                steps.push({ arr: [...a], highlights: { comparing: [j], minimum: mi, searchRange: [i, n-1], sorted: [...sorted] }, swaps, comps, msg: `비교: a[${mi}]=${a[mi]}  vs  a[${j}]=${a[j]}`, line: 7 });
+                if (a[mi] > a[j]) {
+                    mi = j;
+                    steps.push({ arr: [...a], highlights: { minimum: mi, searchRange: [i, n-1], sorted: [...sorted] }, swaps, comps, msg: `새 최솟값 발견: a[${mi}]=${a[mi]}`, line: 8 });
+                }
+            }
+            if (mi !== i) {
+                [a[i], a[mi]] = [a[mi], a[i]];
+                swaps++;
+                steps.push({ arr: [...a], highlights: { swapping: [i, mi], sorted: [...sorted] }, swaps, comps, msg: `교환! a[${i}]↔a[${mi}]  →  [${a.join(', ')}]`, line: 10 });
+            } else {
+                steps.push({ arr: [...a], highlights: { sorted: [...sorted] }, swaps, comps, msg: `이미 제자리 (교환 없음)`, line: 9 });
+            }
+            sorted.push(i);
+            steps.push({ arr: [...a], highlights: { sorted: [...sorted] }, swaps, comps, msg: `${i+1}회전 완료: [${a.join(', ')}]`, line: 11 });
+        }
+        sorted.push(n - 1);
+        steps.push({ arr: [...a], highlights: { sorted: [...sorted] }, swaps, comps, msg: `정렬 완료! 총 교환 횟수: ${swaps}`, line: 12 });
+        return steps;
+    }
+
+    function selRender() {
+        if (selIdx < 0) selIdx = 0;
+        const step = selSteps[selIdx];
+        renderBars('selViz', step.arr, step.highlights);
+        document.getElementById('selSwapCount').textContent = `교환: ${step.swaps}`;
+        document.getElementById('selCompCount').textContent = `비교: ${step.comps}`;
+        document.getElementById('selStepInfo').innerHTML = `<i class="fas fa-info-circle text-amber-500 mr-1"></i> <span>단계 ${selIdx}/${selSteps.length-1}: ${step.msg}</span>`;
+        highlightSelCode(step.line);
+    }
+
+    function selReset() {
+        selPlaying = false;
+        clearInterval(selTimer);
+        selSteps = generateSelSteps(baseData);
+        selIdx = 0;
+        selRender();
+        document.getElementById('selPlayBtn').innerHTML = '<i class="fas fa-play"></i> 재생';
+        document.getElementById('selTrace').innerHTML = '';
+    }
+
+    function selStep() {
+        if (selIdx >= selSteps.length - 1) return;
+        selIdx++;
+        selRender();
+        addTrace('selTrace', selSteps[selIdx].msg);
+    }
+
+    function selStepBack() {
+        if (selIdx <= 0) return;
+        selIdx--;
+        selRender();
+    }
+
+    function selPlayPause() {
+        if (selPlaying) {
+            selPlaying = false;
+            clearInterval(selTimer);
+            document.getElementById('selPlayBtn').innerHTML = '<i class="fas fa-play"></i> 재생';
+        } else {
+            if (selIdx >= selSteps.length - 1) selReset();
+            selPlaying = true;
+            document.getElementById('selPlayBtn').innerHTML = '<i class="fas fa-pause"></i> 일시정지';
+            selTimer = setInterval(() => {
+                if (selIdx >= selSteps.length - 1) {
+                    selPlaying = false;
+                    clearInterval(selTimer);
+                    document.getElementById('selPlayBtn').innerHTML = '<i class="fas fa-play"></i> 재생';
+                    return;
+                }
+                selStep();
+            }, getSpeed());
+        }
+    }
+
+    // ======================================================================
+    //  COMPARISON ENGINE
+    // ======================================================================
+    let cmpBubbleSteps = [], cmpSelSteps = [];
+    let cmpIdx = 0;
+    let cmpPlaying = false;
+    let cmpTimer = null;
+
+    function cmpReset() {
+        cmpPlaying = false;
+        clearInterval(cmpTimer);
+        cmpBubbleSteps = generateBubbleSteps(baseData);
+        cmpSelSteps = generateSelSteps(baseData);
+        cmpIdx = 0;
+        cmpRender();
+        document.getElementById('cmpPlayBtn').innerHTML = '<i class="fas fa-play"></i> 동시 실행';
+        document.getElementById('cmpSummary').classList.add('hidden');
+    }
+
+    function cmpRender() {
+        const bStep = cmpBubbleSteps[Math.min(cmpIdx, cmpBubbleSteps.length - 1)];
+        const sStep = cmpSelSteps[Math.min(cmpIdx, cmpSelSteps.length - 1)];
+        renderBars('cmpBubbleViz', bStep.arr, bStep.highlights);
+        renderBars('cmpSelViz', sStep.arr, sStep.highlights);
+        document.getElementById('cmpBubbleSwap').textContent = `교환: ${bStep.swaps}`;
+        document.getElementById('cmpSelSwap').textContent = `교환: ${sStep.swaps}`;
+        document.getElementById('cmpBubbleInfo').innerHTML = `<i class="fas fa-info-circle text-amber-500 mr-1"></i> ${bStep.msg}`;
+        document.getElementById('cmpSelInfo').innerHTML = `<i class="fas fa-info-circle text-amber-500 mr-1"></i> ${sStep.msg}`;
+    }
+
+    function cmpPlayPause() {
+        if (cmpPlaying) {
+            cmpPlaying = false;
+            clearInterval(cmpTimer);
+            document.getElementById('cmpPlayBtn').innerHTML = '<i class="fas fa-play"></i> 동시 실행';
+        } else {
+            const maxLen = Math.max(cmpBubbleSteps.length, cmpSelSteps.length);
+            if (cmpIdx >= maxLen - 1) cmpReset();
+            cmpPlaying = true;
+            document.getElementById('cmpPlayBtn').innerHTML = '<i class="fas fa-pause"></i> 일시정지';
+            cmpTimer = setInterval(() => {
+                const maxLen = Math.max(cmpBubbleSteps.length, cmpSelSteps.length);
+                if (cmpIdx >= maxLen - 1) {
+                    cmpPlaying = false;
+                    clearInterval(cmpTimer);
+                    document.getElementById('cmpPlayBtn').innerHTML = '<i class="fas fa-play"></i> 동시 실행';
+                    showCmpSummary();
+                    return;
+                }
+                cmpIdx++;
+                cmpRender();
+            }, getSpeed());
+        }
+    }
+
+    function showCmpSummary() {
+        const bSwaps = cmpBubbleSteps[cmpBubbleSteps.length - 1].swaps;
+        const sSwaps = cmpSelSteps[cmpSelSteps.length - 1].swaps;
+        const maxSwap = Math.max(bSwaps, sSwaps, 1);
+        document.getElementById('cmpSummary').classList.remove('hidden');
+        setTimeout(() => {
+            document.getElementById('cmpBarBubble').style.height = (bSwaps / maxSwap * 150) + 'px';
+            document.getElementById('cmpBarSel').style.height = (sSwaps / maxSwap * 150) + 'px';
+            document.getElementById('cmpBarBubbleLabel').textContent = bSwaps;
+            document.getElementById('cmpBarSelLabel').textContent = sSwaps;
+        }, 100);
+    }
+
+    // ======================================================================
+    //  TRACE LOG
+    // ======================================================================
+    function addTrace(containerId, msg) {
+        const container = document.getElementById(containerId);
+        const div = document.createElement('div');
+        div.className = 'trace-step';
+        div.textContent = msg;
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // ======================================================================
+    //  CODE HIGHLIGHTING
+    // ======================================================================
+    const bubbleCodeLines = [
+        { text: 'a = [8, 4, 2, 1]', hl: '<span class="builtin">a</span> = [<span class="number">8</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">1</span>]' },
+        { text: 'print("초기: ", a)', hl: '<span class="function">print</span>(<span class="string">"초기: "</span>, a)' },
+        { text: 'n = len(a)', hl: '<span class="builtin">n</span> = <span class="function">len</span>(a)' },
+        { text: 'count = 0', hl: '<span class="builtin">count</span> = <span class="number">0</span>' },
+        { text: 'for i in range(0, n - 1):', hl: '<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">0</span>, n - <span class="number">1</span>):' },
+        { text: '    for j in range(0, n - i - 1):', hl: '    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="function">range</span>(<span class="number">0</span>, n - i - <span class="number">1</span>):' },
+        { text: '        if a[j] > a[j + 1]:', hl: '        <span class="keyword">if</span> a[j] <span class="operator">></span> a[j + <span class="number">1</span>]:' },
+        { text: '            a[j], a[j+1] = a[j+1], a[j]', hl: '            a[j], a[j+<span class="number">1</span>] = a[j+<span class="number">1</span>], a[j]' },
+        { text: '            count += 1', hl: '            <span class="builtin">count</span> += <span class="number">1</span>' },
+        { text: '    print(a)', hl: '    <span class="function">print</span>(a)' },
+        { text: 'print("교환 횟수: ", count)', hl: '<span class="function">print</span>(<span class="string">"교환 횟수: "</span>, count)' },
+    ];
+
+    const selCodeLines = [
+        { text: 'a = [8, 4, 2, 1]', hl: '<span class="builtin">a</span> = [<span class="number">8</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">1</span>]' },
+        { text: 'print("초기: ", a)', hl: '<span class="function">print</span>(<span class="string">"초기: "</span>, a)' },
+        { text: 'n = len(a)', hl: '<span class="builtin">n</span> = <span class="function">len</span>(a)' },
+        { text: 'count = 0', hl: '<span class="builtin">count</span> = <span class="number">0</span>' },
+        { text: 'for i in range(0, n - 1):', hl: '<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">0</span>, n - <span class="number">1</span>):' },
+        { text: '    min_index = i', hl: '    <span class="builtin">min_index</span> = i' },
+        { text: '    for j in range(i + 1, n):', hl: '    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="function">range</span>(i + <span class="number">1</span>, n):' },
+        { text: '        if a[min_index] > a[j]:', hl: '        <span class="keyword">if</span> a[min_index] <span class="operator">></span> a[j]:' },
+        { text: '            min_index = j', hl: '            <span class="builtin">min_index</span> = j' },
+        { text: '    if min_index != i:', hl: '    <span class="keyword">if</span> min_index <span class="operator">!=</span> i:' },
+        { text: '        a[i], a[min_index] = a[min_index], a[i]', hl: '        a[i], a[min_index] = a[min_index], a[i]' },
+        { text: '        count += 1', hl: '        <span class="builtin">count</span> += <span class="number">1</span>' },
+        { text: '    print(a)', hl: '    <span class="function">print</span>(a)' },
+        { text: 'print("교환 횟수: ", count)', hl: '<span class="function">print</span>(<span class="string">"교환 횟수: "</span>, count)' },
+    ];
+
+    function renderCode(containerId, lines) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = lines.map((l, i) =>
+            `<div class="code-line px-3 py-0.5" data-line="${i}"><span class="text-gray-500 mr-3 select-none inline-block w-5 text-right">${i+1}</span>${l.hl}</div>`
+        ).join('');
+    }
+
+    function highlightBubbleCode(line) {
+        document.querySelectorAll('#bubbleCode .code-line').forEach(el => el.classList.remove('active-line'));
+        if (line >= 0 && line < bubbleCodeLines.length) {
+            const el = document.querySelector(`#bubbleCode .code-line[data-line="${line}"]`);
+            if (el) el.classList.add('active-line');
+        }
+    }
+
+    function highlightSelCode(line) {
+        document.querySelectorAll('#selCode .code-line').forEach(el => el.classList.remove('active-line'));
+        if (line >= 0 && line < selCodeLines.length) {
+            const el = document.querySelector(`#selCode .code-line[data-line="${line}"]`);
+            if (el) el.classList.add('active-line');
+        }
+    }
+
+    // ======================================================================
+    //  LEGEND
+    // ======================================================================
+
+    // ======================================================================
+    //  INITIALIZATION
+    // ======================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+        renderCode('bubbleCode', bubbleCodeLines);
+        renderCode('selCode', selCodeLines);
+        bubbleReset();
+        selReset();
+        cmpReset();
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지속가능발전목표의 문제 해결 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'sans': ['Noto Sans KR', 'sans-serif'] },
+                    colors: {
+                        primary: { 50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12' },
+                        amber: { 50:'#fffbeb',100:'#fef3c7',200:'#fde68a',300:'#fcd34d',400:'#fbbf24',500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e',900:'#78350f' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        .hero-gradient { background: linear-gradient(135deg, #f97316 0%, #ea580c 25%, #d97706 50%, #f59e0b 75%, #fb923c 100%); }
+        .page-dot { transition: all 0.3s ease; }
+        .page-dot.active { background-color: #f97316; transform: scale(1.3); }
+        .page-content { animation: fadeInUp 0.5s ease-out; }
+        @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        .nav-btn:disabled { opacity:0.4; cursor:not-allowed; }
+        .code-block { background: #1e1e2e; color: #cdd6f4; border-radius: 12px; overflow: hidden; }
+        .code-block .keyword { color: #cba6f7; }
+        .code-block .string { color: #a6e3a1; }
+        .code-block .function { color: #89b4fa; }
+        .code-block .comment { color: #6c7086; }
+        .code-block .number { color: #fab387; }
+        pre code { font-family: 'Consolas', 'Monaco', 'Courier New', monospace; }
+        .sdg-card { transition: all 0.3s; cursor: pointer; }
+        .sdg-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .sdg-card.selected { ring: 3px solid #f97316; }
+        .bar-fill { transition: width 1s cubic-bezier(0.34,1.56,0.64,1); }
+        .step-num { background: linear-gradient(135deg,#f97316,#d97706); }
+        .quiz-opt { cursor: pointer; transition: all 0.2s; }
+        .quiz-opt:hover { transform: translateX(4px); }
+        .quiz-opt.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-opt.wrong { background: #fee2e2; border-color: #ef4444; }
+        .carbon-dial { transition: stroke-dashoffset 1s ease; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <header class="hero-gradient text-white shadow-lg relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <svg class="w-full h-full" viewBox="0 0 800 200" preserveAspectRatio="none">
+                <circle cx="100" cy="50" r="80" fill="white" opacity="0.1"/>
+                <circle cx="700" cy="150" r="120" fill="white" opacity="0.08"/>
+            </svg>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 relative z-10">
+            <nav class="flex items-center space-x-2 text-sm text-orange-100 mb-4 flex-wrap">
+                <a href="../../../index.html" class="hover:text-white transition-colors flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </a>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span>III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span>07 창의 융합 프로그래밍</span>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span class="text-white font-medium">지속가능발전목표의 문제 해결</span>
+            </nav>
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/30">
+                            <i class="fas fa-leaf mr-1"></i> SDGs
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/30">
+                            <i class="fas fa-globe mr-1"></i> 지속가능성
+                        </span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
+                        <i class="fas fa-seedling mr-2 opacity-90"></i>지속가능발전목표의 문제 해결
+                    </h1>
+                    <p class="mt-2 text-orange-100 text-sm sm:text-base max-w-2xl">
+                        UN의 지속가능발전목표(SDGs)와 관련된 문제를 프로그래밍으로 분석하고 해결 방안을 탐구합니다.
+                    </p>
+                </div>
+                <a href="../../../index.html" class="hidden sm:flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-xl transition-all text-sm border border-white/30">
+                    <i class="fas fa-arrow-left"></i> 목록으로
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-orange-100 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <button onclick="changePage(-1)" id="prevBtn" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-700 font-medium text-sm transition-all" disabled>
+                <i class="fas fa-chevron-left text-xs"></i> 이전
+            </button>
+            <div class="flex items-center gap-2">
+                <button onclick="goToPage(0)" class="page-dot w-3 h-3 rounded-full bg-orange-300 cursor-pointer active" data-page="0" title="1. SDGs 소개"></button>
+                <button onclick="goToPage(1)" class="page-dot w-3 h-3 rounded-full bg-orange-300 cursor-pointer" data-page="1" title="2. 기후 행동 (SDG 13)"></button>
+                <button onclick="goToPage(2)" class="page-dot w-3 h-3 rounded-full bg-orange-300 cursor-pointer" data-page="2" title="3. 기아 종식 (SDG 2)"></button>
+            </div>
+            <button onclick="changePage(1)" id="nextBtn" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-700 font-medium text-sm transition-all">
+                다음 <i class="fas fa-chevron-right text-xs"></i>
+            </button>
+        </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+
+        <!-- ==================== PAGE 1: SDGs 소개 ==================== -->
+        <div id="page-0" class="page-content space-y-8">
+
+            <section class="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center text-sm">1</span>
+                        지속가능발전목표(SDGs)란?
+                    </h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-5 rounded-r-xl">
+                        <p class="text-gray-700 leading-relaxed text-[15px]">
+                            <strong class="text-orange-700">지속가능발전목표(SDGs, Sustainable Development Goals)</strong>는
+                            2015년 UN이 채택한 2030년까지의 국제 사회 공동 목표로,
+                            <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-medium">17개의 목표</span>와
+                            <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-medium">169개의 세부 목표</span>로 구성됩니다.
+                            프로그래밍은 이러한 전 지구적 문제 해결에 강력한 도구가 됩니다.
+                        </p>
+                    </div>
+
+                    <!-- SDGs 카드 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-globe text-orange-500"></i> 주요 SDGs와 프로그래밍 연계
+                        </h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                            <div onclick="showSdg('sdg1')" class="sdg-card bg-red-500 text-white rounded-xl p-3 text-center" id="sdgBtn1">
+                                <div class="text-2xl mb-1">🍽️</div>
+                                <div class="text-xs font-bold">SDG 2</div>
+                                <div class="text-xs opacity-90">기아 종식</div>
+                            </div>
+                            <div onclick="showSdg('sdg2')" class="sdg-card bg-green-600 text-white rounded-xl p-3 text-center" id="sdgBtn2">
+                                <div class="text-2xl mb-1">💪</div>
+                                <div class="text-xs font-bold">SDG 3</div>
+                                <div class="text-xs opacity-90">건강과 웰빙</div>
+                            </div>
+                            <div onclick="showSdg('sdg3')" class="sdg-card bg-red-600 text-white rounded-xl p-3 text-center" id="sdgBtn3">
+                                <div class="text-2xl mb-1">📚</div>
+                                <div class="text-xs font-bold">SDG 4</div>
+                                <div class="text-xs opacity-90">양질의 교육</div>
+                            </div>
+                            <div onclick="showSdg('sdg4')" class="sdg-card bg-yellow-500 text-white rounded-xl p-3 text-center" id="sdgBtn4">
+                                <div class="text-2xl mb-1">☀️</div>
+                                <div class="text-xs font-bold">SDG 7</div>
+                                <div class="text-xs opacity-90">클린 에너지</div>
+                            </div>
+                            <div onclick="showSdg('sdg5')" class="sdg-card bg-orange-700 text-white rounded-xl p-3 text-center" id="sdgBtn5">
+                                <div class="text-2xl mb-1">🌡️</div>
+                                <div class="text-xs font-bold">SDG 13</div>
+                                <div class="text-xs opacity-90">기후 행동</div>
+                            </div>
+                            <div onclick="showSdg('sdg6')" class="sdg-card bg-blue-600 text-white rounded-xl p-3 text-center" id="sdgBtn6">
+                                <div class="text-2xl mb-1">🌊</div>
+                                <div class="text-xs font-bold">SDG 14</div>
+                                <div class="text-xs opacity-90">해양 생태계</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SDG 상세 -->
+                    <div id="sdgDetail" class="bg-orange-50 rounded-xl border border-orange-200 p-5">
+                        <p class="text-gray-400 text-sm text-center py-4">위의 SDG 카드를 클릭하면 프로그래밍과의 연계 내용이 표시됩니다.</p>
+                    </div>
+
+                    <!-- 프로그래밍의 역할 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-code text-orange-500"></i> 프로그래밍이 SDGs에 기여하는 방법
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-green-50 border border-green-200 rounded-xl p-4 flex gap-3">
+                                <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-chart-line text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-green-700 text-sm mb-1">데이터 분석</h4>
+                                    <p class="text-xs text-gray-600">기후변화 데이터, 빈곤율 등 사회 문제 데이터를 분석하여 패턴을 발견</p>
+                                </div>
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex gap-3">
+                                <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-robot text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-blue-700 text-sm mb-1">시뮬레이션</h4>
+                                    <p class="text-xs text-gray-600">정책 효과를 시뮬레이션하여 최적의 해결책을 사전에 검토</p>
+                                </div>
+                            </div>
+                            <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 flex gap-3">
+                                <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-eye text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-purple-700 text-sm mb-1">시각화</h4>
+                                    <p class="text-xs text-gray-600">복잡한 사회 문제를 그래프와 시각 자료로 표현하여 이해도 향상</p>
+                                </div>
+                            </div>
+                            <div class="bg-orange-50 border border-orange-200 rounded-xl p-4 flex gap-3">
+                                <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-cog text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-orange-700 text-sm mb-1">자동화</h4>
+                                    <p class="text-xs text-gray-600">반복적인 데이터 처리를 자동화하여 효율적인 모니터링 체계 구축</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== PAGE 2: SDG 13 기후행동 ==================== -->
+        <div id="page-1" class="page-content space-y-8 hidden">
+
+            <section class="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center text-sm">2</span>
+                        SDG 13: 기후 행동 — 탄소 발자국 계산기
+                    </h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="bg-green-50 border-l-4 border-green-500 p-5 rounded-r-xl">
+                        <p class="text-gray-700 leading-relaxed text-[15px]">
+                            <strong class="text-green-700">SDG 13 기후 행동</strong>은 기후변화에 대응하기 위한 긴급 조치를 촉구합니다.
+                            개인의 <span class="bg-green-100 text-green-800 px-1.5 py-0.5 rounded font-medium">탄소 발자국</span>을 계산하는
+                            프로그램을 만들어 기후 문제를 인식하고 생활 속 실천 방안을 탐구합니다.
+                        </p>
+                    </div>
+
+                    <!-- 코드 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-code text-orange-500"></i> 탄소 발자국 계산 프로그램
+                        </h3>
+                        <div class="code-block">
+                            <div class="bg-gray-800 px-4 py-2 flex justify-between">
+                                <span class="text-gray-400 text-xs font-mono">Python</span>
+                                <span class="text-xs text-gray-500">SDG 13 기후행동</span>
+                            </div>
+                            <pre class="p-4 text-sm overflow-x-auto"><code><span class="comment"># 탄소 배출량 계산 (단위: kg CO₂)</span>
+<span class="keyword">def</span> <span class="function">calc_carbon_footprint</span>(transport_km, electricity_kwh, meat_days):
+    <span class="comment"># 배출 계수 (출처: IPCC 기준)</span>
+    CAR_FACTOR = <span class="number">0.21</span>          <span class="comment"># 자동차 1km당 0.21 kg CO₂</span>
+    ELEC_FACTOR = <span class="number">0.459</span>         <span class="comment"># 전기 1kWh당 0.459 kg CO₂</span>
+    MEAT_FACTOR = <span class="number">3.3</span>           <span class="comment"># 육류 1일당 3.3 kg CO₂</span>
+
+    transport_carbon = transport_km * CAR_FACTOR
+    electricity_carbon = electricity_kwh * ELEC_FACTOR
+    meat_carbon = meat_days * MEAT_FACTOR
+
+    total = transport_carbon + electricity_carbon + meat_carbon
+
+    <span class="function">print</span>(<span class="string">"=== 월간 탄소 발자국 분석 ==="</span>)
+    <span class="function">print</span>(f<span class="string">"교통:    {transport_carbon:.1f} kg CO₂"</span>)
+    <span class="function">print</span>(f<span class="string">"전기:    {electricity_carbon:.1f} kg CO₂"</span>)
+    <span class="function">print</span>(f<span class="string">"식단:    {meat_carbon:.1f} kg CO₂"</span>)
+    <span class="function">print</span>(f<span class="string">"합계:    {total:.1f} kg CO₂"</span>)
+
+    <span class="comment"># 한국인 평균 월 탄소 배출량: 약 500 kg</span>
+    <span class="keyword">if</span> total < <span class="number">300</span>:
+        <span class="function">print</span>(<span class="string">"🟢 우수! 평균보다 훨씬 낮습니다."</span>)
+    <span class="keyword">elif</span> total < <span class="number">500</span>:
+        <span class="function">print</span>(<span class="string">"🟡 보통. 조금 더 노력해 보세요."</span>)
+    <span class="keyword">else</span>:
+        <span class="function">print</span>(<span class="string">"🔴 개선 필요. 생활 습관을 바꿔봐요."</span>)
+
+    <span class="keyword">return</span> total
+
+<span class="comment"># 실행 예시</span>
+calc_carbon_footprint(
+    transport_km=<span class="number">300</span>,   <span class="comment"># 월 300km 운전</span>
+    electricity_kwh=<span class="number">280</span>, <span class="comment"># 월 280kWh 사용</span>
+    meat_days=<span class="number">20</span>        <span class="comment"># 월 20일 육류 섭취</span>
+)</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- 탄소 발자국 계산기 -->
+                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                        <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-leaf text-green-500"></i> 나의 탄소 발자국 계산기
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                            <div>
+                                <label class="text-xs font-semibold text-gray-600 block mb-1">🚗 월 이동 거리 (km)</label>
+                                <input type="number" id="carbTransport" value="300" min="0" max="3000" class="w-full border border-orange-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-gray-600 block mb-1">⚡ 월 전기 사용량 (kWh)</label>
+                                <input type="number" id="carbElec" value="280" min="0" max="2000" class="w-full border border-orange-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-gray-600 block mb-1">🥩 월 육류 섭취 일수</label>
+                                <input type="number" id="carbMeat" value="20" min="0" max="31" class="w-full border border-orange-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                            </div>
+                        </div>
+                        <button onclick="calcCarbon()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all mb-4">
+                            <i class="fas fa-calculator mr-1"></i> 탄소 발자국 계산
+                        </button>
+                        <div id="carbonResult" class="hidden">
+                            <div class="grid grid-cols-3 gap-3 mb-4">
+                                <div class="bg-white rounded-lg p-3 text-center border">
+                                    <p class="text-xs text-gray-500">🚗 교통</p>
+                                    <p class="font-bold text-gray-700 text-lg" id="cTransport">-</p>
+                                    <p class="text-xs text-gray-400">kg CO₂</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 text-center border">
+                                    <p class="text-xs text-gray-500">⚡ 전기</p>
+                                    <p class="font-bold text-gray-700 text-lg" id="cElec">-</p>
+                                    <p class="text-xs text-gray-400">kg CO₂</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 text-center border">
+                                    <p class="text-xs text-gray-500">🥩 식단</p>
+                                    <p class="font-bold text-gray-700 text-lg" id="cMeat">-</p>
+                                    <p class="text-xs text-gray-400">kg CO₂</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl p-5 text-center border border-orange-200">
+                                <p class="text-sm text-gray-600 mb-1">월 총 탄소 배출량</p>
+                                <p class="text-4xl font-extrabold text-orange-600 mb-2" id="cTotal">-</p>
+                                <p class="text-sm text-gray-500 mb-3">kg CO₂</p>
+                                <div class="bg-gray-200 rounded-full h-4 overflow-hidden mb-2">
+                                    <div id="carbonBar" class="bar-fill bg-green-500 h-full rounded-full" style="width:0%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500">한국인 월 평균 (500 kg) 대비</p>
+                                <p id="carbonMsg" class="mt-3 font-bold text-base"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== PAGE 3: SDG 2 기아 종식 ==================== -->
+        <div id="page-2" class="page-content space-y-8 hidden">
+
+            <section class="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center text-sm">3</span>
+                        SDG 2: 기아 종식 — 식량 분배 최적화
+                    </h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="bg-red-50 border-l-4 border-red-500 p-5 rounded-r-xl">
+                        <p class="text-gray-700 leading-relaxed text-[15px]">
+                            <strong class="text-red-700">SDG 2 기아 종식</strong>은 2030년까지 모든 형태의 기아와 영양 부족을 종식시키는 것이 목표입니다.
+                            프로그래밍을 통해 <span class="bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-medium">식량 필요량 계산</span>과
+                            <span class="bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-medium">분배 최적화</span> 알고리즘을 구현합니다.
+                        </p>
+                    </div>
+
+                    <!-- 코드 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-code text-orange-500"></i> 지역별 식량 필요량 분석 프로그램
+                        </h3>
+                        <div class="code-block">
+                            <div class="bg-gray-800 px-4 py-2"><span class="text-gray-400 text-xs font-mono">Python - SDG 2 기아 종식</span></div>
+                            <pre class="p-4 text-sm overflow-x-auto"><code><span class="comment"># 지역별 식량 현황 분석</span>
+regions = {
+    <span class="string">"아시아"</span>:    {<span class="string">"population"</span>: <span class="number">4700</span>, <span class="string">"food_supply"</span>: <span class="number">2800</span>, <span class="string">"need"</span>: <span class="number">2100</span>},
+    <span class="string">"아프리카"</span>:  {<span class="string">"population"</span>: <span class="number">1400</span>, <span class="string">"food_supply"</span>: <span class="number">2300</span>, <span class="string">"need"</span>: <span class="number">2100</span>},
+    <span class="string">"유럽"</span>:     {<span class="string">"population"</span>: <span class="number">748</span>,  <span class="string">"food_supply"</span>: <span class="number">3400</span>, <span class="string">"need"</span>: <span class="number">2100</span>},
+    <span class="string">"아메리카"</span>: {<span class="string">"population"</span>: <span class="number">1000</span>, <span class="string">"food_supply"</span>: <span class="number">3200</span>, <span class="string">"need"</span>: <span class="number">2100</span>}
+}
+
+<span class="comment"># 식량 불안 지역 파악</span>
+<span class="function">print</span>(<span class="string">"=== 식량 불안 현황 분석 ==="</span>)
+food_insecure = []
+<span class="keyword">for</span> region, data <span class="keyword">in</span> regions.<span class="function">items</span>():
+    surplus = data[<span class="string">"food_supply"</span>] - data[<span class="string">"need"</span>]
+    <span class="keyword">if</span> surplus < <span class="number">0</span>:
+        food_insecure.<span class="function">append</span>(region)
+    status = <span class="string">"⚠️ 부족"</span> <span class="keyword">if</span> surplus < <span class="number">0</span> <span class="keyword">else</span> <span class="string">"✅ 충분"</span>
+    <span class="function">print</span>(f<span class="string">"{region}: {data['food_supply']} kcal/일 {status} ({surplus:+d} kcal)"</span>)
+
+<span class="comment"># 잉여 식량 재분배 시뮬레이션</span>
+total_surplus = <span class="function">sum</span>(
+    data[<span class="string">"food_supply"</span>] - data[<span class="string">"need"</span>]
+    <span class="keyword">for</span> data <span class="keyword">in</span> regions.<span class="function">values</span>()
+    <span class="keyword">if</span> data[<span class="string">"food_supply"</span>] > data[<span class="string">"need"</span>]
+)
+<span class="function">print</span>(f<span class="string">"\n재분배 가능 식량: {total_surplus} kcal/일"</span>)</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- 식량 분배 시뮬레이터 -->
+                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                        <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-balance-scale text-orange-500"></i> 지역별 식량 현황 시각화
+                        </h3>
+                        <div class="space-y-3" id="foodChart">
+                            <!-- 동적 생성 -->
+                        </div>
+                    </div>
+
+                    <!-- 정리 퀴즈 -->
+                    <div class="bg-white border border-orange-200 rounded-xl p-5">
+                        <h4 class="font-bold text-gray-800 flex items-center gap-2 mb-3">
+                            <i class="fas fa-question-circle text-orange-500"></i> 확인 문제
+                        </h4>
+                        <p class="text-sm font-semibold text-gray-700 mb-3">SDGs와 프로그래밍의 연계에 대한 설명으로 <strong>가장 적절한</strong> 것은?</p>
+                        <div class="space-y-2" id="sdgQuiz">
+                            <div onclick="checkSdgQuiz(this, false)" class="quiz-opt border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
+                                ① 프로그래밍은 SDG 중 IT 분야 목표에만 활용될 수 있다.
+                            </div>
+                            <div onclick="checkSdgQuiz(this, true)" class="quiz-opt border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
+                                ② 데이터 분석, 시뮬레이션 등 프로그래밍은 다양한 SDG 문제 해결에 활용된다.
+                            </div>
+                            <div onclick="checkSdgQuiz(this, false)" class="quiz-opt border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
+                                ③ SDGs는 선진국만의 목표이므로 개발도상국과는 관계없다.
+                            </div>
+                            <div onclick="checkSdgQuiz(this, false)" class="quiz-opt border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
+                                ④ 탄소 발자국 계산기는 SDG 7(클린 에너지)과만 관련이 있다.
+                            </div>
+                        </div>
+                        <div id="sdgQuizResult" class="mt-3 hidden p-3 rounded-lg text-sm font-semibold"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 border-t border-orange-100 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center">
+                    <i class="fas fa-seedling text-white text-sm"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-gray-800">지속가능발전목표의 문제 해결</p>
+                    <p class="text-xs text-gray-400">III. 알고리즘과 프로그래밍 · 07단원</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <a href="../01_다양한 학문 분야의 문제 해결/index.html" class="flex items-center gap-2 px-4 py-2 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-lg text-sm font-medium transition-all">
+                    <i class="fas fa-arrow-left text-xs"></i> 이전 소단원
+                </a>
+                <a href="../03_프로젝트활동/index.html" class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium transition-all">
+                    다음 소단원 <i class="fas fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentPage = 0;
+        const totalPages = 3;
+
+        function changePage(dir) { goToPage(currentPage + dir); }
+        function goToPage(n) {
+            if (n < 0 || n >= totalPages) return;
+            document.getElementById('page-' + currentPage).classList.add('hidden');
+            currentPage = n;
+            const el = document.getElementById('page-' + currentPage);
+            el.classList.remove('hidden');
+            el.classList.remove('page-content');
+            void el.offsetWidth;
+            el.classList.add('page-content');
+            document.querySelectorAll('.page-dot').forEach((d, i) => d.classList.toggle('active', i === currentPage));
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages - 1;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (currentPage === 2) renderFoodChart();
+        }
+
+        const sdgInfo = {
+            sdg1: { title: 'SDG 2: 기아 종식', desc: '식량 생산량 데이터 분석, 영양 부족 인구 예측 모델, 식량 분배 최적화 알고리즘 구현' },
+            sdg2: { title: 'SDG 3: 건강과 웰빙', desc: '질병 발생 패턴 분석, 감염병 확산 시뮬레이션, 병원 자원 배분 최적화' },
+            sdg3: { title: 'SDG 4: 양질의 교육', desc: '학습 격차 데이터 분석, AI 기반 맞춤형 학습 시스템, 교육 접근성 지도 시각화' },
+            sdg4: { title: 'SDG 7: 클린 에너지', desc: '태양광 발전량 예측, 에너지 소비 패턴 분석, 재생 에너지 최적 위치 선정' },
+            sdg5: { title: 'SDG 13: 기후 행동', desc: '탄소 발자국 계산기, 온도 상승 시뮬레이션, 기상 데이터 분석 및 예측' },
+            sdg6: { title: 'SDG 14: 해양 생태계', desc: '해양 오염 확산 시뮬레이션, 어획량 데이터 분석, 해양 온도 변화 모니터링' }
+        };
+
+        function showSdg(key) {
+            const d = sdgInfo[key];
+            document.getElementById('sdgDetail').innerHTML = `
+                <h4 class="font-bold text-orange-700 mb-2 flex items-center gap-2">
+                    <i class="fas fa-code text-orange-500"></i> ${d.title} - 프로그래밍 활용
+                </h4>
+                <p class="text-sm text-gray-700">${d.desc}</p>
+            `;
+        }
+
+        function calcCarbon() {
+            const km = parseFloat(document.getElementById('carbTransport').value) || 0;
+            const kwh = parseFloat(document.getElementById('carbElec').value) || 0;
+            const meat = parseFloat(document.getElementById('carbMeat').value) || 0;
+            const t = km * 0.21;
+            const e = kwh * 0.459;
+            const m = meat * 3.3;
+            const total = t + e + m;
+            document.getElementById('cTransport').textContent = t.toFixed(1);
+            document.getElementById('cElec').textContent = e.toFixed(1);
+            document.getElementById('cMeat').textContent = m.toFixed(1);
+            document.getElementById('cTotal').textContent = total.toFixed(1);
+            const pct = Math.min(total / 500 * 100, 150);
+            const bar = document.getElementById('carbonBar');
+            bar.style.width = pct + '%';
+            bar.className = 'bar-fill h-full rounded-full ' + (total < 300 ? 'bg-green-500' : total < 500 ? 'bg-yellow-500' : 'bg-red-500');
+            const msg = total < 300 ? '🟢 우수! 평균보다 훨씬 낮습니다.' : total < 500 ? '🟡 보통. 조금 더 노력해 보세요.' : '🔴 개선 필요. 생활 습관을 바꿔봐요.';
+            document.getElementById('carbonMsg').textContent = msg;
+            document.getElementById('carbonResult').classList.remove('hidden');
+        }
+
+        function renderFoodChart() {
+            const data = [
+                { region: '아시아', supply: 2800, need: 2100, color: 'bg-orange-500' },
+                { region: '아프리카', supply: 2300, need: 2100, color: 'bg-red-500' },
+                { region: '유럽', supply: 3400, need: 2100, color: 'bg-blue-500' },
+                { region: '아메리카', supply: 3200, need: 2100, color: 'bg-green-500' }
+            ];
+            const chart = document.getElementById('foodChart');
+            chart.innerHTML = data.map(d => {
+                const pct = Math.min(d.supply / 4000 * 100, 100).toFixed(0);
+                const surplus = d.supply - d.need;
+                const statusText = surplus >= 0 ? `+${surplus} kcal 잉여` : `${surplus} kcal 부족`;
+                const statusColor = surplus >= 0 ? 'text-green-600' : 'text-red-600';
+                return `
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-sm font-semibold text-gray-700">${d.region}</span>
+                            <span class="text-xs ${statusColor} font-semibold">${statusText}</span>
+                        </div>
+                        <div class="bg-gray-200 rounded-full h-6 overflow-hidden relative">
+                            <div class="bar-fill ${d.color} h-full rounded-full flex items-center pl-3" style="width:${pct}%">
+                                <span class="text-white text-xs font-bold">${d.supply} kcal/일</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-400 mt-0.5">
+                            <span>0</span>
+                            <span>필요량: 2,100 kcal</span>
+                            <span>4,000</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function checkSdgQuiz(el, correct) {
+            if (document.querySelector('.quiz-opt.correct, .quiz-opt.wrong')) return;
+            const res = document.getElementById('sdgQuizResult');
+            if (correct) {
+                el.classList.add('correct');
+                res.textContent = '✅ 정답! 프로그래밍은 기후 행동, 기아 종식, 건강 등 모든 SDG 분야에 활용될 수 있습니다.';
+                res.className = 'mt-3 p-3 rounded-lg text-sm font-semibold bg-green-100 text-green-800';
+            } else {
+                el.classList.add('wrong');
+                document.querySelectorAll('.quiz-opt')[1].classList.add('correct');
+                res.textContent = '❌ 틀렸습니다. ②번이 정답입니다.';
+                res.className = 'mt-3 p-3 rounded-lg text-sm font-semibold bg-red-100 text-red-800';
+            }
+            res.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

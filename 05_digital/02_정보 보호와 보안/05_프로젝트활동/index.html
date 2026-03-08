@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로젝트활동 - 직업 탐구 인포그래픽 만들기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#e7f5ff',
+                            100: '#d0ebff',
+                            200: '#a5d8ff',
+                            300: '#74c0fc',
+                            400: '#339af0',
+                            500: '#228be6',
+                            600: '#1c7ed6',
+                            700: '#1971c2',
+                            800: '#1864ab',
+                            900: '#145591',
+                        },
+                        accent: {
+                            50: '#e3fafc',
+                            100: '#c5f6fa',
+                            200: '#99e9f2',
+                            300: '#66d9e8',
+                            400: '#3bc9db',
+                            500: '#22b8cf',
+                            600: '#15aabf',
+                            700: '#1098ad',
+                            800: '#0c8599',
+                            900: '#0b7285',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #339af0 0%, #1c7ed6 50%, #1971c2 100%) !important;
+            color: #ffffff !important;
+        }
+        .hero-gradient * { color: inherit; }
+        .hero-gradient h1 { color: #ffffff !important; }
+        .hero-gradient p { color: rgba(255,255,255,0.92) !important; }
+        .hero-gradient .breadcrumb-item { color: rgba(255,255,255,0.7) !important; }
+        .hero-gradient .breadcrumb-item:last-child { color: #ffffff !important; }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #339af0, #1c7ed6, #339af0);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .step-card {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .step-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px -8px rgba(0,0,0,0.12);
+        }
+
+        .tool-card {
+            transition: all 0.3s ease;
+        }
+        .tool-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .fusion-badge {
+            background: linear-gradient(135deg, #339af0, #22b8cf);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+
+        @media print {
+            .hero-pattern { background: #1c7ed6 !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #339af0 0%, #1c7ed6 50%, #1971c2 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">V. 디지털 문화</span>
+                <span class="breadcrumb-item text-white font-medium">02 정보 보호와 보안</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>프로젝트활동</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">직업 탐구 인포그래픽 만들기</h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">직업에 디지털 기술이 접목되면서 변화하는 직업의 모습을 인포그래픽으로 표현합니다</p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-tag mr-1"></i> 프로젝트</span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-tag mr-1"></i> 인포그래픽</span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-tag mr-1"></i> 직업 탐구</span>
+                    </div>
+                </div>
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Infographic representation -->
+                        <rect x="40" y="30" width="140" height="170" rx="12" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <!-- Chart bars -->
+                        <rect x="60" y="130" width="18" height="40" rx="3" fill="rgba(255,255,255,0.25)"/>
+                        <rect x="85" y="110" width="18" height="60" rx="3" fill="rgba(255,255,255,0.3)"/>
+                        <rect x="110" y="90" width="18" height="80" rx="3" fill="rgba(255,255,255,0.35)"/>
+                        <rect x="135" y="70" width="18" height="100" rx="3" fill="rgba(255,255,255,0.4)"/>
+                        <!-- Title area -->
+                        <rect x="55" y="42" width="70" height="8" rx="4" fill="rgba(255,255,255,0.3)"/>
+                        <rect x="55" y="56" width="50" height="6" rx="3" fill="rgba(255,255,255,0.2)"/>
+                        <!-- Person icon -->
+                        <circle cx="180" cy="50" r="14" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                        <circle cx="180" cy="46" r="5" fill="rgba(255,255,255,0.3)"/>
+                        <path d="M172 57 C172 53 188 53 188 57" fill="rgba(255,255,255,0.25)"/>
+                        <!-- Decorative -->
+                        <circle cx="30" cy="100" r="6" fill="rgba(255,255,255,0.06)"/>
+                        <polygon points="190,140 194,150 204,150 196,156 198,166 190,160 182,166 184,156 176,150 186,150" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-bullseye"></i> 학습 목표</h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>희망하는 직업과 디지털 기술의 접목을 탐구할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>디지털 도구를 활용하여 인포그래픽을 만들 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 프로젝트</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 인포그래픽</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 직업 탐구</span>
+                </div>
+            </div>
+        </div>
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===== FUSION BADGE & INTRO ===== -->
+        <section class="fade-in" id="intro">
+            <!-- Fusion badge -->
+            <div class="mb-6">
+                <span class="fusion-badge inline-flex items-center gap-2 text-white font-bold px-4 py-2 rounded-full text-sm shadow-lg">
+                    <i class="fas fa-link"></i> 교과 융합: 통합 사회
+                </span>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow">
+                        <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-900">프로젝트 소개</h3>
+                </div>
+
+                <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-100 mb-6">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-primary-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-robot text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-primary-800 mb-2">디지털 기술과 직업의 변화</h4>
+                            <p class="text-gray-700 text-sm leading-relaxed">
+                                직업상 많은 부분이 디지털 기술로 대체되고 있습니다. <strong class="text-primary-700">단순하거나 위험한 일은 AI 등의 기술로 대체</strong>되고,
+                                <strong class="text-primary-700">의사 결정이나 창의적 기획은 사람</strong>이 담당하는 방향으로 변화하고 있습니다.
+                                이런 변화 속에서 나의 희망 직업은 어떻게 변화하고 있는지 탐구해 봅시다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Example Card: 번역가 -->
+                <div class="bg-white rounded-xl border-2 border-primary-200 overflow-hidden">
+                    <div class="bg-gradient-to-r from-primary-500 to-accent-500 px-5 py-3">
+                        <div class="flex items-center gap-2 text-white">
+                            <i class="fas fa-star"></i>
+                            <h4 class="font-bold">예시: 번역가</h4>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
+                                        <i class="fas fa-briefcase text-white text-xs"></i>
+                                    </div>
+                                    <h5 class="font-bold text-blue-800 text-sm">하는 일</h5>
+                                </div>
+                                <ul class="text-sm text-gray-700 space-y-1.5">
+                                    <li class="flex items-start gap-1.5">
+                                        <i class="fas fa-check text-blue-400 text-xs mt-1 flex-shrink-0"></i>
+                                        <span>출판 번역</span>
+                                    </li>
+                                    <li class="flex items-start gap-1.5">
+                                        <i class="fas fa-check text-blue-400 text-xs mt-1 flex-shrink-0"></i>
+                                        <span>영상 번역</span>
+                                    </li>
+                                    <li class="flex items-start gap-1.5">
+                                        <i class="fas fa-check text-blue-400 text-xs mt-1 flex-shrink-0"></i>
+                                        <span>게임 번역</span>
+                                    </li>
+                                    <li class="flex items-start gap-1.5">
+                                        <i class="fas fa-check text-blue-400 text-xs mt-1 flex-shrink-0"></i>
+                                        <span>특허 번역</span>
+                                    </li>
+                                    <li class="flex items-start gap-1.5">
+                                        <i class="fas fa-check text-blue-400 text-xs mt-1 flex-shrink-0"></i>
+                                        <span>여행/관광 번역 등</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-4 border border-teal-200">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <div class="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center">
+                                        <i class="fas fa-user-graduate text-white text-xs"></i>
+                                    </div>
+                                    <h5 class="font-bold text-teal-800 text-sm">필요한 역량</h5>
+                                </div>
+                                <ul class="text-sm text-gray-700 space-y-1.5">
+                                    <li class="flex items-start gap-1.5">
+                                        <i class="fas fa-check text-teal-400 text-xs mt-1 flex-shrink-0"></i>
+                                        <span>높은 어학 수준과 문장력</span>
+                                    </li>
+                                    <li class="flex items-start gap-1.5">
+                                        <i class="fas fa-check text-teal-400 text-xs mt-1 flex-shrink-0"></i>
+                                        <span>해당 분야에 대한 이해력</span>
+                                    </li>
+                                    <li class="flex items-start gap-1.5">
+                                        <i class="fas fa-check text-teal-400 text-xs mt-1 flex-shrink-0"></i>
+                                        <span>자신만의 문체를 만들 수 있는 창의력</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="bg-gradient-to-br from-violet-50 to-violet-100 rounded-xl p-4 border border-violet-200">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <div class="w-8 h-8 rounded-lg bg-violet-500 flex items-center justify-center">
+                                        <i class="fas fa-microchip text-white text-xs"></i>
+                                    </div>
+                                    <h5 class="font-bold text-violet-800 text-sm">도움을 주는 디지털 기술</h5>
+                                </div>
+                                <div class="bg-white/80 rounded-lg p-3 border border-violet-200">
+                                    <p class="text-sm text-gray-700 leading-relaxed">
+                                        <strong class="text-violet-700">자동 번역 기술</strong>로 초벌 번역을 수행하고, 번역가는 이를 바탕으로 정확하고 자연스러운 번역물을 완성합니다.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== STEP 1: 희망 직업 정리 ===== -->
+        <section class="fade-in" id="step1">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <span class="font-extrabold">1</span>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">STEP 1: 희망 직업 정리하기</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">나의 희망 직업과 디지털 기술의 관계를 정리합니다</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <p class="text-sm text-gray-600 mb-6">아래 표에 나의 희망 직업에 대해 정리해 봅시다. 위의 번역가 예시를 참고하여 작성합니다.</p>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-primary-50 to-accent-50">
+                                <th class="border border-blue-200 px-4 py-3 text-primary-800 text-center w-1/3">하는 일</th>
+                                <th class="border border-blue-200 px-4 py-3 text-primary-800 text-center w-1/3">필요한 역량</th>
+                                <th class="border border-blue-200 px-4 py-3 text-primary-800 text-center w-1/3">도움을 주는 디지털 기술</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-gray-200 px-2 py-2">
+                                    <div class="mb-2">
+                                        <input type="text" class="w-full border-b border-dashed border-gray-300 px-2 py-1.5 text-sm focus:outline-none focus:border-primary-400 bg-transparent" placeholder="나의 희망 직업:">
+                                    </div>
+                                    <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-300 bg-gray-50" rows="5" placeholder="구체적인 업무 내용을 작성하세요..."></textarea>
+                                </td>
+                                <td class="border border-gray-200 px-2 py-2">
+                                    <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-300 bg-gray-50" rows="6" placeholder="어떤 역량이 필요한지 작성하세요..."></textarea>
+                                </td>
+                                <td class="border border-gray-200 px-2 py-2">
+                                    <textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-300 bg-gray-50" rows="6" placeholder="디지털 기술이 어떤 도움을 주는지 작성하세요..."></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 bg-blue-50 rounded-xl p-4 border border-blue-200">
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-lightbulb text-blue-500 mt-0.5"></i>
+                        <p class="text-sm text-blue-800">
+                            <strong>TIP:</strong> 직업 정보는 워크넷(www.work.go.kr), 커리어넷(www.career.go.kr) 등에서 검색할 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== STEP 2: 인포그래픽 만들기 ===== -->
+        <section class="fade-in" id="step2">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <span class="font-extrabold">2</span>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">STEP 2: 인포그래픽 만들기</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">디지털 도구를 활용하여 인포그래픽을 제작합니다</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow">
+                        <i class="fas fa-tools text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-gray-900">추천 디지털 도구</h3>
+                        <p class="text-sm text-gray-500 mt-0.5">인포그래픽 제작에 활용할 수 있는 사이트</p>
+                    </div>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="tool-card bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-200 text-center">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-pencil-alt text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold text-blue-800 text-sm mb-1">오토드로우</h4>
+                        <p class="text-gray-500 text-xs mb-2">AutoDraw</p>
+                        <p class="text-gray-600 text-xs leading-relaxed">AI가 손그림을 인식하여 깔끔한 그림으로 변환해 주는 도구</p>
+                    </div>
+                    <div class="tool-card bg-gradient-to-br from-violet-50 to-violet-100 rounded-xl p-5 border border-violet-200 text-center">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-palette text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold text-violet-800 text-sm mb-1">캔바</h4>
+                        <p class="text-gray-500 text-xs mb-2">Canva</p>
+                        <p class="text-gray-600 text-xs leading-relaxed">다양한 템플릿으로 쉽게 인포그래픽을 디자인할 수 있는 도구</p>
+                    </div>
+                    <div class="tool-card bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-5 border border-teal-200 text-center">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-brain text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold text-teal-800 text-sm mb-1">deepai</h4>
+                        <p class="text-gray-500 text-xs mb-2">DeepAI</p>
+                        <p class="text-gray-600 text-xs leading-relaxed">AI 기반 이미지 생성 및 편집이 가능한 도구</p>
+                    </div>
+                    <div class="tool-card bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-5 border border-amber-200 text-center">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-wand-magic-sparkles text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold text-amber-800 text-sm mb-1">뤼튼</h4>
+                        <p class="text-gray-500 text-xs mb-2">Wrtn</p>
+                        <p class="text-gray-600 text-xs leading-relaxed">생성형 AI로 텍스트와 이미지를 만들 수 있는 도구</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Infographic Planning Area -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center shadow">
+                        <i class="fas fa-drafting-compass text-white text-sm"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-900">인포그래픽 구상하기</h3>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-5 border border-gray-200">
+                        <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
+                            <i class="fas fa-th-large text-primary-500"></i> 포함할 내용
+                        </h4>
+                        <ul class="space-y-2.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <div class="w-5 h-5 rounded bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-check text-primary-600 text-[10px]"></i>
+                                </div>
+                                <span>직업 이름과 간단한 소개</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <div class="w-5 h-5 rounded bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-check text-primary-600 text-[10px]"></i>
+                                </div>
+                                <span>주요 업무 내용</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <div class="w-5 h-5 rounded bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-check text-primary-600 text-[10px]"></i>
+                                </div>
+                                <span>필요한 역량과 자질</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <div class="w-5 h-5 rounded bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-check text-primary-600 text-[10px]"></i>
+                                </div>
+                                <span>접목되는 디지털 기술</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <div class="w-5 h-5 rounded bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-check text-primary-600 text-[10px]"></i>
+                                </div>
+                                <span>미래 전망과 발전 방향</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-gradient-to-br from-gray-50 to-cyan-50 rounded-xl p-5 border border-gray-200">
+                        <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
+                            <i class="fas fa-paint-brush text-accent-500"></i> 디자인 팁
+                        </h4>
+                        <ul class="space-y-2.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <div class="w-5 h-5 rounded bg-accent-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-star text-accent-600 text-[10px]"></i>
+                                </div>
+                                <span>2~3가지 색상만 사용하여 통일감 부여</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <div class="w-5 h-5 rounded bg-accent-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-star text-accent-600 text-[10px]"></i>
+                                </div>
+                                <span>아이콘과 그래프로 시각적 효과 극대화</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <div class="w-5 h-5 rounded bg-accent-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-star text-accent-600 text-[10px]"></i>
+                                </div>
+                                <span>핵심 정보를 강조하고 간결하게 표현</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <div class="w-5 h-5 rounded bg-accent-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-star text-accent-600 text-[10px]"></i>
+                                </div>
+                                <span>정보의 흐름이 자연스럽게 연결되도록 배치</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <div class="w-5 h-5 rounded bg-accent-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fas fa-star text-accent-600 text-[10px]"></i>
+                                </div>
+                                <span>출처와 참고 자료를 하단에 표기</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Sketch area -->
+                <div class="mt-6 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-5 border border-gray-200">
+                    <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
+                        <i class="fas fa-pen-fancy text-primary-500"></i> 인포그래픽 스케치
+                    </h4>
+                    <div class="bg-white rounded-lg border-2 border-dashed border-gray-300 p-4 min-h-[200px] flex items-center justify-center">
+                        <div class="text-center text-gray-400">
+                            <i class="fas fa-image text-4xl mb-3"></i>
+                            <p class="text-sm">여기에 인포그래픽 아이디어를 스케치해 봅시다</p>
+                            <p class="text-xs mt-1">종이에 먼저 구상한 후 디지털 도구로 제작합니다</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== STEP 3: 발표 및 의견 공유 ===== -->
+        <section class="fade-in" id="step3">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-xl shadow-lg">
+                    <span class="font-extrabold">3</span>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">STEP 3: 모둠별 발표 및 의견 공유</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">완성한 인포그래픽을 발표하고 의견을 나눕니다</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-100">
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-primary-500 flex items-center justify-center shadow">
+                                <i class="fas fa-presentation-screen text-white text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-primary-800">발표 방법</h4>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-chevron-right text-primary-400 text-xs mt-1 flex-shrink-0"></i>
+                                <span>모둠별로 완성한 인포그래픽을 학급에 발표합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-chevron-right text-primary-400 text-xs mt-1 flex-shrink-0"></i>
+                                <span>희망 직업, 디지털 기술의 역할, 미래 전망을 설명합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-chevron-right text-primary-400 text-xs mt-1 flex-shrink-0"></i>
+                                <span>인포그래픽의 디자인 의도와 제작 과정을 공유합니다.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl p-5 border border-teal-100">
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-accent-500 flex items-center justify-center shadow">
+                                <i class="fas fa-comments text-white text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-accent-800">의견 공유</h4>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-chevron-right text-accent-400 text-xs mt-1 flex-shrink-0"></i>
+                                <span>다른 모둠의 인포그래픽에서 인상적인 점을 이야기합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-chevron-right text-accent-400 text-xs mt-1 flex-shrink-0"></i>
+                                <span>새로 알게 된 직업과 디지털 기술에 대해 토론합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-chevron-right text-accent-400 text-xs mt-1 flex-shrink-0"></i>
+                                <span>건설적인 피드백을 주고받으며 서로의 발표를 평가합니다.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Peer Feedback Area -->
+                <div class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-5 border border-gray-200">
+                    <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm">
+                        <i class="fas fa-clipboard text-primary-500"></i> 모둠 발표 평가
+                    </h4>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-12 gap-2 items-center">
+                            <div class="col-span-3 sm:col-span-2">
+                                <input type="text" class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-center" placeholder="모둠명">
+                            </div>
+                            <div class="col-span-9 sm:col-span-10">
+                                <input type="text" class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white" placeholder="인상적인 점과 개선 의견을 작성하세요...">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-12 gap-2 items-center">
+                            <div class="col-span-3 sm:col-span-2">
+                                <input type="text" class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-center" placeholder="모둠명">
+                            </div>
+                            <div class="col-span-9 sm:col-span-10">
+                                <input type="text" class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white" placeholder="인상적인 점과 개선 의견을 작성하세요...">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-12 gap-2 items-center">
+                            <div class="col-span-3 sm:col-span-2">
+                                <input type="text" class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-center" placeholder="모둠명">
+                            </div>
+                            <div class="col-span-9 sm:col-span-10">
+                                <input type="text" class="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white" placeholder="인상적인 점과 개선 의견을 작성하세요...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reflection -->
+                <div class="mt-6 bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl p-5 border border-primary-100">
+                    <h4 class="font-bold text-primary-800 mb-3 flex items-center gap-2 text-sm">
+                        <i class="fas fa-pen-to-square text-primary-500"></i> 활동 소감
+                    </h4>
+                    <textarea class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white" rows="4" placeholder="프로젝트 활동을 하면서 새롭게 알게 된 점, 느낀 점, 앞으로의 진로 계획 등을 자유롭게 작성하세요..."></textarea>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../04_선택활동/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-arrow-left"></i> 이전 페이지
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i> 목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../../03_대단원 마무리/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        다음 페이지 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">V. 디지털 문화 > 02 정보 보호와 보안 > 프로젝트활동</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // Fade-in animation on scroll
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.fade-in').forEach(el => fadeInObserver.observe(el));
+    </script>
+</body>
+</html>

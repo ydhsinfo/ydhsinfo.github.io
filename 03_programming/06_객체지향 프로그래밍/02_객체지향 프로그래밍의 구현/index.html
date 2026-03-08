@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>객체지향 프로그래밍의 구현 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'sans': ['Noto Sans KR', 'sans-serif'] },
+                    colors: {
+                        primary: { 50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12' },
+                        amber: { 50:'#fffbeb',100:'#fef3c7',200:'#fde68a',300:'#fcd34d',400:'#fbbf24',500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e',900:'#78350f' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        .hero-gradient {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 25%, #d97706 50%, #f59e0b 75%, #fb923c 100%);
+        }
+        .page-dot { transition: all 0.3s ease; }
+        .page-dot.active { background-color: #f97316; transform: scale(1.3); }
+        .page-content { animation: fadeInUp 0.5s ease-out; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .concept-card { transition: all 0.3s ease; }
+        .concept-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(249,115,22,0.15); }
+        .code-block {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .code-block .keyword { color: #cba6f7; }
+        .code-block .string { color: #a6e3a1; }
+        .code-block .function { color: #89b4fa; }
+        .code-block .comment { color: #6c7086; }
+        .code-block .number { color: #fab387; }
+        .code-block .class-name { color: #f9e2af; }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        pre code { font-family: 'Consolas', 'Monaco', 'Courier New', monospace; }
+        .tab-btn { transition: all 0.2s; }
+        .tab-btn.active { background: #f97316; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeInUp 0.4s ease; }
+        .pillar-card { transition: all 0.3s ease; }
+        .pillar-card:hover { transform: translateY(-3px); }
+        .quiz-option { transition: all 0.2s; cursor: pointer; }
+        .quiz-option:hover { transform: translateX(4px); }
+        .quiz-option.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-option.wrong { background: #fee2e2; border-color: #ef4444; }
+        .tree-line { border-left: 2px dashed #f97316; }
+        .inherit-arrow { border-top: 2px solid #f97316; position: relative; }
+        .inherit-arrow::after { content:'▼'; color:#f97316; position:absolute; right:-6px; top:-12px; font-size:12px; }
+        @keyframes slideIn { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:translateX(0); } }
+        .slide-in { animation: slideIn 0.4s ease; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Header -->
+    <header class="hero-gradient text-white shadow-lg relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <svg class="w-full h-full" viewBox="0 0 800 200" preserveAspectRatio="none">
+                <circle cx="100" cy="50" r="80" fill="white" opacity="0.1"/>
+                <circle cx="700" cy="150" r="120" fill="white" opacity="0.08"/>
+                <circle cx="400" cy="30" r="60" fill="white" opacity="0.06"/>
+                <rect x="200" y="80" width="40" height="40" rx="8" fill="white" opacity="0.05" transform="rotate(15 220 100)"/>
+                <rect x="550" y="40" width="30" height="30" rx="6" fill="white" opacity="0.07" transform="rotate(-20 565 55)"/>
+            </svg>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 relative z-10">
+            <nav class="flex items-center space-x-2 text-sm text-orange-100 mb-4 flex-wrap">
+                <a href="../../../index.html" class="hover:text-white transition-colors flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </a>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span>III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span>06 객체지향 프로그래밍</span>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span class="text-white font-medium">객체지향 프로그래밍의 구현</span>
+            </nav>
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/30">
+                            <i class="fas fa-code mr-1"></i> 구현
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/30">
+                            <i class="fas fa-sitemap mr-1"></i> 상속·다형성
+                        </span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
+                        <i class="fas fa-layer-group mr-2 opacity-90"></i>객체지향 프로그래밍의 구현
+                    </h1>
+                    <p class="mt-2 text-orange-100 text-sm sm:text-base max-w-2xl">
+                        캡슐화, 상속, 다형성을 파이썬으로 직접 구현하며 객체지향 프로그래밍의 핵심 특성을 익힙니다.
+                    </p>
+                </div>
+                <a href="../../../index.html" class="hidden sm:flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-xl transition-all text-sm border border-white/30">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>목록으로</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Navigation -->
+    <div class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-orange-100 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <button onclick="changePage(-1)" id="prevBtn" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-700 font-medium text-sm transition-all disabled:hover:bg-orange-50" disabled>
+                <i class="fas fa-chevron-left text-xs"></i> 이전
+            </button>
+            <div class="flex items-center gap-2">
+                <button onclick="goToPage(0)" class="page-dot w-3 h-3 rounded-full bg-orange-300 cursor-pointer active" data-page="0" title="1. 캡슐화"></button>
+                <button onclick="goToPage(1)" class="page-dot w-3 h-3 rounded-full bg-orange-300 cursor-pointer" data-page="1" title="2. 상속"></button>
+                <button onclick="goToPage(2)" class="page-dot w-3 h-3 rounded-full bg-orange-300 cursor-pointer" data-page="2" title="3. 다형성과 오버라이딩"></button>
+                <button onclick="goToPage(3)" class="page-dot w-3 h-3 rounded-full bg-orange-300 cursor-pointer" data-page="3" title="4. 실습: 동물원 관리 시스템"></button>
+            </div>
+            <button onclick="changePage(1)" id="nextBtn" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-700 font-medium text-sm transition-all disabled:hover:bg-orange-50">
+                다음 <i class="fas fa-chevron-right text-xs"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+
+        <!-- ==================== PAGE 1: 캡슐화 ==================== -->
+        <div id="page-0" class="page-content space-y-8">
+
+            <section class="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center text-sm">1</span>
+                        캡슐화 (Encapsulation)
+                    </h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-5 rounded-r-xl">
+                        <p class="text-gray-700 leading-relaxed text-[15px]">
+                            <strong class="text-orange-700">캡슐화</strong>란 객체의 <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-medium">속성(데이터)</span>과
+                            <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-medium">메서드(기능)</span>를 하나로 묶고,
+                            외부에서 직접 접근하지 못하도록 <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-medium">은닉(hiding)</span>하는 것입니다.
+                            이를 통해 데이터의 무결성을 보호하고, 내부 구현을 숨겨 복잡성을 줄입니다.
+                        </p>
+                    </div>
+
+                    <!-- 접근 제어 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-lock text-orange-500"></i> 파이썬의 접근 제어
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="concept-card bg-green-50 border border-green-200 rounded-xl p-5">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-unlock text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800">public</h4>
+                                        <p class="text-xs text-green-600 font-mono">name</p>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600">어디서든 접근 가능한 속성·메서드</p>
+                            </div>
+                            <div class="concept-card bg-yellow-50 border border-yellow-200 rounded-xl p-5">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-lock-open text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800">protected</h4>
+                                        <p class="text-xs text-yellow-600 font-mono">_name</p>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600">클래스 내부와 자식 클래스에서만 접근 권장</p>
+                            </div>
+                            <div class="concept-card bg-red-50 border border-red-200 rounded-xl p-5">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-lock text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800">private</h4>
+                                        <p class="text-xs text-red-600 font-mono">__name</p>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600">클래스 내부에서만 접근 가능 (이름 맹글링)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 코드 예시 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-code text-orange-500"></i> 캡슐화 구현 예시
+                        </h3>
+                        <div class="code-block">
+                            <div class="bg-gray-800 px-4 py-2 flex items-center justify-between">
+                                <span class="text-gray-400 text-xs font-mono">Python</span>
+                                <span class="text-xs text-gray-500">은행 계좌 클래스</span>
+                            </div>
+                            <pre class="p-4 text-sm overflow-x-auto"><code><span class="keyword">class</span> <span class="class-name">BankAccount</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, owner, balance):
+        self.owner = owner          <span class="comment"># public</span>
+        self._bank = <span class="string">"한국은행"</span>    <span class="comment"># protected</span>
+        self.__balance = balance    <span class="comment"># private</span>
+
+    <span class="keyword">def</span> <span class="function">deposit</span>(self, amount):     <span class="comment"># public 메서드</span>
+        <span class="keyword">if</span> amount > <span class="number">0</span>:
+            self.__balance += amount
+            <span class="function">print</span>(f<span class="string">"{amount}원 입금 완료"</span>)
+
+    <span class="keyword">def</span> <span class="function">get_balance</span>(self):         <span class="comment"># getter 메서드</span>
+        <span class="keyword">return</span> self.__balance
+
+<span class="comment"># 사용</span>
+account = <span class="class-name">BankAccount</span>(<span class="string">"홍길동"</span>, <span class="number">10000</span>)
+account.deposit(<span class="number">5000</span>)
+<span class="function">print</span>(account.get_balance())   <span class="comment"># 15000</span>
+<span class="comment"># print(account.__balance)    # 오류: private 접근 불가</span></code></pre>
+                        </div>
+                    </div>
+
+                    <!-- 게터/세터 인터랙티브 -->
+                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                        <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-play-circle text-orange-500"></i> 직접 해보기: 계좌 잔액 관리
+                        </h3>
+                        <div class="flex flex-col sm:flex-row gap-3 mb-4">
+                            <div class="flex-1">
+                                <label class="text-xs font-semibold text-gray-600 mb-1 block">입금 금액</label>
+                                <input type="number" id="depositAmount" placeholder="금액 입력" class="w-full border border-orange-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300" value="5000">
+                            </div>
+                            <div class="flex-1">
+                                <label class="text-xs font-semibold text-gray-600 mb-1 block">출금 금액</label>
+                                <input type="number" id="withdrawAmount" placeholder="금액 입력" class="w-full border border-orange-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300" value="3000">
+                            </div>
+                        </div>
+                        <div class="flex gap-2 mb-4">
+                            <button onclick="doDeposit()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg text-sm font-semibold transition-all">
+                                <i class="fas fa-plus mr-1"></i> 입금
+                            </button>
+                            <button onclick="doWithdraw()" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg text-sm font-semibold transition-all">
+                                <i class="fas fa-minus mr-1"></i> 출금
+                            </button>
+                        </div>
+                        <div id="accountLog" class="bg-white rounded-lg p-4 text-sm font-mono space-y-1 min-h-[80px] border border-orange-100">
+                            <p class="text-gray-500 text-xs">▶ 잔액: <span id="balanceDisplay" class="text-orange-600 font-bold">10,000</span>원</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== PAGE 2: 상속 ==================== -->
+        <div id="page-1" class="page-content space-y-8 hidden">
+
+            <section class="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center text-sm">2</span>
+                        상속 (Inheritance)
+                    </h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-5 rounded-r-xl">
+                        <p class="text-gray-700 leading-relaxed text-[15px]">
+                            <strong class="text-orange-700">상속</strong>이란 기존 클래스(부모 클래스)의 속성과 메서드를 새로운 클래스(자식 클래스)가
+                            <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-medium">물려받아</span> 재사용하고 확장하는 것입니다.
+                            코드의 <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-medium">재사용성</span>을 높이고
+                            <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-medium">계층 구조</span>를 표현합니다.
+                        </p>
+                    </div>
+
+                    <!-- 상속 다이어그램 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-sitemap text-orange-500"></i> 상속 계층 구조
+                        </h3>
+                        <div class="flex flex-col items-center gap-2 py-4">
+                            <!-- 부모 클래스 -->
+                            <div class="bg-orange-500 text-white rounded-xl px-8 py-4 text-center shadow-md w-64">
+                                <div class="text-xs opacity-80 mb-1">부모 클래스 (Parent)</div>
+                                <div class="font-bold text-lg">Animal</div>
+                                <div class="text-xs mt-2 opacity-90 font-mono">name, age, speak()</div>
+                            </div>
+                            <!-- 화살표 -->
+                            <div class="flex flex-col items-center gap-0">
+                                <div class="w-0.5 h-6 bg-orange-400"></div>
+                                <div class="flex gap-16">
+                                    <div class="w-24 h-0.5 bg-orange-400 relative">
+                                        <div class="absolute -bottom-1 left-0 w-0.5 h-6 bg-orange-400"></div>
+                                    </div>
+                                    <div class="w-24 h-0.5 bg-orange-400 relative">
+                                        <div class="absolute -bottom-1 right-0 w-0.5 h-6 bg-orange-400"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 자식 클래스들 -->
+                            <div class="flex gap-4">
+                                <div class="bg-amber-500 text-white rounded-xl px-6 py-4 text-center shadow-md w-44">
+                                    <div class="text-xs opacity-80 mb-1">자식 클래스 (Child)</div>
+                                    <div class="font-bold">Dog</div>
+                                    <div class="text-xs mt-2 opacity-90 font-mono">breed, fetch()</div>
+                                </div>
+                                <div class="bg-amber-500 text-white rounded-xl px-6 py-4 text-center shadow-md w-44">
+                                    <div class="text-xs opacity-80 mb-1">자식 클래스 (Child)</div>
+                                    <div class="font-bold">Cat</div>
+                                    <div class="text-xs mt-2 opacity-90 font-mono">color, purr()</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-center text-sm text-gray-500 mt-2">Dog와 Cat은 Animal의 name, age, speak()를 상속받습니다.</p>
+                    </div>
+
+                    <!-- 코드 예시 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-code text-orange-500"></i> 상속 구현 예시
+                        </h3>
+                        <div class="code-block">
+                            <div class="bg-gray-800 px-4 py-2 flex items-center justify-between">
+                                <span class="text-gray-400 text-xs font-mono">Python</span>
+                                <span class="text-xs text-gray-500">동물 상속 구조</span>
+                            </div>
+                            <pre class="p-4 text-sm overflow-x-auto"><code><span class="comment"># 부모 클래스</span>
+<span class="keyword">class</span> <span class="class-name">Animal</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, age):
+        self.name = name
+        self.age = age
+
+    <span class="keyword">def</span> <span class="function">speak</span>(self):
+        <span class="function">print</span>(f<span class="string">"{self.name}이(가) 소리를 냅니다."</span>)
+
+    <span class="keyword">def</span> <span class="function">info</span>(self):
+        <span class="function">print</span>(f<span class="string">"이름: {self.name}, 나이: {self.age}살"</span>)
+
+<span class="comment"># 자식 클래스 - Animal 상속</span>
+<span class="keyword">class</span> <span class="class-name">Dog</span>(<span class="class-name">Animal</span>):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, age, breed):
+        <span class="function">super()</span>.__init__(name, age)  <span class="comment"># 부모 생성자 호출</span>
+        self.breed = breed
+
+    <span class="keyword">def</span> <span class="function">fetch</span>(self):
+        <span class="function">print</span>(f<span class="string">"{self.name}이(가) 공을 가져옵니다!"</span>)
+
+<span class="comment"># 사용</span>
+dog = <span class="class-name">Dog</span>(<span class="string">"멍멍이"</span>, <span class="number">3</span>, <span class="string">"골든 리트리버"</span>)
+dog.info()    <span class="comment"># 부모 메서드 사용</span>
+dog.speak()   <span class="comment"># 부모 메서드 사용</span>
+dog.fetch()   <span class="comment"># 자식 메서드 사용</span></code></pre>
+                        </div>
+                    </div>
+
+                    <!-- super() 설명 -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-5">
+                        <h4 class="font-bold text-blue-800 flex items-center gap-2 mb-3">
+                            <i class="fas fa-info-circle"></i> super() 함수
+                        </h4>
+                        <p class="text-sm text-gray-700 mb-2">
+                            <code class="bg-blue-100 px-1.5 py-0.5 rounded font-mono">super()</code>는 자식 클래스에서 부모 클래스의 메서드를 호출할 때 사용합니다.
+                        </p>
+                        <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+                            <li><code class="bg-blue-100 px-1 rounded font-mono text-xs">super().__init__()</code> — 부모 클래스의 생성자를 호출하여 속성을 초기화</li>
+                            <li><code class="bg-blue-100 px-1 rounded font-mono text-xs">super().메서드()</code> — 부모 클래스의 특정 메서드를 호출</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== PAGE 3: 다형성 ==================== -->
+        <div id="page-2" class="page-content space-y-8 hidden">
+
+            <section class="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center text-sm">3</span>
+                        다형성과 메서드 오버라이딩
+                    </h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-5 rounded-r-xl">
+                        <p class="text-gray-700 leading-relaxed text-[15px]">
+                            <strong class="text-orange-700">다형성(Polymorphism)</strong>은 같은 이름의 메서드가 클래스에 따라 다르게 동작하는 것입니다.
+                            <strong class="text-orange-700">메서드 오버라이딩(Overriding)</strong>을 통해 자식 클래스가 부모 클래스의 메서드를
+                            <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-medium">재정의</span>하여 구현합니다.
+                        </p>
+                    </div>
+
+                    <!-- 탭 선택 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-exchange-alt text-orange-500"></i> 오버라이딩 비교
+                        </h3>
+                        <div class="flex gap-2 mb-4">
+                            <button onclick="selectTab('before')" id="tab-before" class="tab-btn active px-4 py-2 rounded-lg text-sm font-semibold border border-orange-200 bg-orange-500 text-white">
+                                오버라이딩 전
+                            </button>
+                            <button onclick="selectTab('after')" id="tab-after" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold border border-orange-200 text-orange-700">
+                                오버라이딩 후
+                            </button>
+                        </div>
+                        <div id="content-before" class="tab-content active">
+                            <div class="code-block">
+                                <div class="bg-gray-800 px-4 py-2"><span class="text-gray-400 text-xs font-mono">오버라이딩 전 - 부모 메서드만 사용</span></div>
+                                <pre class="p-4 text-sm overflow-x-auto"><code><span class="keyword">class</span> <span class="class-name">Animal</span>:
+    <span class="keyword">def</span> <span class="function">speak</span>(self):
+        <span class="function">print</span>(<span class="string">"동물이 소리를 냅니다."</span>)
+
+<span class="keyword">class</span> <span class="class-name">Dog</span>(<span class="class-name">Animal</span>):
+    <span class="keyword">pass</span>  <span class="comment"># speak() 미정의</span>
+
+<span class="keyword">class</span> <span class="class-name">Cat</span>(<span class="class-name">Animal</span>):
+    <span class="keyword">pass</span>  <span class="comment"># speak() 미정의</span>
+
+dog = <span class="class-name">Dog</span>()
+cat = <span class="class-name">Cat</span>()
+dog.speak()  <span class="comment"># "동물이 소리를 냅니다."</span>
+cat.speak()  <span class="comment"># "동물이 소리를 냅니다."</span>
+<span class="comment"># 모두 동일한 출력 → 차별화 없음</span></code></pre>
+                            </div>
+                        </div>
+                        <div id="content-after" class="tab-content">
+                            <div class="code-block">
+                                <div class="bg-gray-800 px-4 py-2"><span class="text-gray-400 text-xs font-mono">오버라이딩 후 - 각 클래스가 다르게 동작</span></div>
+                                <pre class="p-4 text-sm overflow-x-auto"><code><span class="keyword">class</span> <span class="class-name">Animal</span>:
+    <span class="keyword">def</span> <span class="function">speak</span>(self):
+        <span class="function">print</span>(<span class="string">"동물이 소리를 냅니다."</span>)
+
+<span class="keyword">class</span> <span class="class-name">Dog</span>(<span class="class-name">Animal</span>):
+    <span class="keyword">def</span> <span class="function">speak</span>(self):  <span class="comment"># 오버라이딩!</span>
+        <span class="function">print</span>(<span class="string">"멍멍!"</span>)
+
+<span class="keyword">class</span> <span class="class-name">Cat</span>(<span class="class-name">Animal</span>):
+    <span class="keyword">def</span> <span class="function">speak</span>(self):  <span class="comment"># 오버라이딩!</span>
+        <span class="function">print</span>(<span class="string">"야옹!"</span>)
+
+animals = [<span class="class-name">Dog</span>(), <span class="class-name">Cat</span>(), <span class="class-name">Animal</span>()]
+<span class="keyword">for</span> animal <span class="keyword">in</span> animals:
+    animal.speak()
+<span class="comment"># 멍멍!</span>
+<span class="comment"># 야옹!</span>
+<span class="comment"># 동물이 소리를 냅니다.</span></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 다형성 인터랙티브 -->
+                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                        <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-play-circle text-orange-500"></i> 다형성 시뮬레이터
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-4">동물을 선택하면 해당 클래스의 speak() 메서드가 호출됩니다:</p>
+                        <div class="grid grid-cols-3 gap-3 mb-4">
+                            <button onclick="animalSpeak('dog')" class="bg-white border-2 border-orange-200 hover:border-orange-400 rounded-xl p-4 text-center transition-all hover:-translate-y-1">
+                                <div class="text-3xl mb-2">🐶</div>
+                                <div class="text-sm font-bold text-gray-700">Dog</div>
+                                <div class="text-xs text-gray-400 font-mono">speak()</div>
+                            </button>
+                            <button onclick="animalSpeak('cat')" class="bg-white border-2 border-orange-200 hover:border-orange-400 rounded-xl p-4 text-center transition-all hover:-translate-y-1">
+                                <div class="text-3xl mb-2">🐱</div>
+                                <div class="text-sm font-bold text-gray-700">Cat</div>
+                                <div class="text-xs text-gray-400 font-mono">speak()</div>
+                            </button>
+                            <button onclick="animalSpeak('bird')" class="bg-white border-2 border-orange-200 hover:border-orange-400 rounded-xl p-4 text-center transition-all hover:-translate-y-1">
+                                <div class="text-3xl mb-2">🐦</div>
+                                <div class="text-sm font-bold text-gray-700">Bird</div>
+                                <div class="text-xs text-gray-400 font-mono">speak()</div>
+                            </button>
+                        </div>
+                        <div id="speakResult" class="bg-white rounded-lg p-4 text-center min-h-[60px] border border-orange-100 flex items-center justify-center">
+                            <p class="text-gray-400 text-sm">위의 동물을 클릭하세요!</p>
+                        </div>
+                    </div>
+
+                    <!-- OOP 3대 특성 정리 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-list-ul text-orange-500"></i> 객체지향의 3대 특성 정리
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="pillar-card bg-gradient-to-br from-orange-50 to-red-50 border border-orange-200 rounded-xl p-5">
+                                <div class="text-3xl mb-3 text-center">🔒</div>
+                                <h4 class="font-bold text-orange-700 text-center mb-2">캡슐화</h4>
+                                <p class="text-xs text-gray-600 text-center leading-relaxed">데이터와 메서드를 묶어 외부에서의 직접 접근을 제한하고 보호</p>
+                            </div>
+                            <div class="pillar-card bg-gradient-to-br from-amber-50 to-yellow-50 border border-amber-200 rounded-xl p-5">
+                                <div class="text-3xl mb-3 text-center">🌳</div>
+                                <h4 class="font-bold text-amber-700 text-center mb-2">상속</h4>
+                                <p class="text-xs text-gray-600 text-center leading-relaxed">부모 클래스의 특성을 자식 클래스가 물려받아 코드 재사용성 향상</p>
+                            </div>
+                            <div class="pillar-card bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-5">
+                                <div class="text-3xl mb-3 text-center">🎭</div>
+                                <h4 class="font-bold text-yellow-700 text-center mb-2">다형성</h4>
+                                <p class="text-xs text-gray-600 text-center leading-relaxed">같은 메서드가 클래스마다 다르게 동작하여 유연한 프로그래밍 가능</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== PAGE 4: 실습 ==================== -->
+        <div id="page-3" class="page-content space-y-8 hidden">
+
+            <section class="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center text-sm">4</span>
+                        실습: 동물원 관리 시스템
+                    </h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-xl">
+                        <p class="text-sm text-gray-700">
+                            <strong class="text-orange-700">학습 목표:</strong> 캡슐화·상속·다형성을 모두 활용하여 동물원 동물 관리 시스템을 설계하고 구현합니다.
+                        </p>
+                    </div>
+
+                    <!-- 전체 코드 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-code text-orange-500"></i> 전체 코드
+                        </h3>
+                        <div class="code-block">
+                            <div class="bg-gray-800 px-4 py-2 flex items-center justify-between">
+                                <span class="text-gray-400 text-xs font-mono">Python</span>
+                                <span class="text-xs text-gray-500">동물원 관리 시스템</span>
+                            </div>
+                            <pre class="p-4 text-sm overflow-x-auto"><code><span class="keyword">class</span> <span class="class-name">Animal</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, age, species):
+        self.__name = name       <span class="comment"># private</span>
+        self.__age = age         <span class="comment"># private</span>
+        self.species = species   <span class="comment"># public</span>
+
+    <span class="keyword">def</span> <span class="function">get_name</span>(self): <span class="keyword">return</span> self.__name
+    <span class="keyword">def</span> <span class="function">get_age</span>(self): <span class="keyword">return</span> self.__age
+
+    <span class="keyword">def</span> <span class="function">speak</span>(self):
+        <span class="function">print</span>(f<span class="string">"{self.__name}: 소리를 냅니다"</span>)
+
+    <span class="keyword">def</span> <span class="function">info</span>(self):
+        <span class="function">print</span>(f<span class="string">"[{self.species}] {self.__name} ({self.__age}살)"</span>)
+
+<span class="keyword">class</span> <span class="class-name">Lion</span>(<span class="class-name">Animal</span>):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, age):
+        <span class="function">super()</span>.__init__(name, age, <span class="string">"사자"</span>)
+
+    <span class="keyword">def</span> <span class="function">speak</span>(self):    <span class="comment"># 오버라이딩</span>
+        <span class="function">print</span>(f<span class="string">"{self.get_name()}: 으르렁! 🦁"</span>)
+
+    <span class="keyword">def</span> <span class="function">hunt</span>(self):
+        <span class="function">print</span>(f<span class="string">"{self.get_name()}이(가) 사냥합니다!"</span>)
+
+<span class="keyword">class</span> <span class="class-name">Elephant</span>(<span class="class-name">Animal</span>):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, age, weight):
+        <span class="function">super()</span>.__init__(name, age, <span class="string">"코끼리"</span>)
+        self.weight = weight
+
+    <span class="keyword">def</span> <span class="function">speak</span>(self):    <span class="comment"># 오버라이딩</span>
+        <span class="function">print</span>(f<span class="string">"{self.get_name()}: 뿌우~ 🐘"</span>)
+
+<span class="comment"># 동물원 관리</span>
+zoo = [
+    <span class="class-name">Lion</span>(<span class="string">"심바"</span>, <span class="number">5</span>),
+    <span class="class-name">Elephant</span>(<span class="string">"덤보"</span>, <span class="number">10</span>, <span class="number">3000</span>),
+    <span class="class-name">Lion</span>(<span class="string">"나나"</span>, <span class="number">3</span>)
+]
+
+<span class="function">print</span>(<span class="string">"=== 동물원 소개 ==="</span>)
+<span class="keyword">for</span> animal <span class="keyword">in</span> zoo:
+    animal.info()
+    animal.speak()   <span class="comment"># 다형성!</span></code></pre>
+                        </div>
+                    </div>
+
+                    <!-- 실행 결과 시뮬레이터 -->
+                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                        <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-terminal text-orange-500"></i> 동물원 시뮬레이터
+                        </h3>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button onclick="zooAction('intro')" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all">
+                                <i class="fas fa-list mr-1"></i> 동물 소개
+                            </button>
+                            <button onclick="zooAction('speak')" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all">
+                                <i class="fas fa-volume-up mr-1"></i> 소리 내기
+                            </button>
+                            <button onclick="zooAction('clear')" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all">
+                                <i class="fas fa-trash mr-1"></i> 초기화
+                            </button>
+                        </div>
+                        <div id="zooOutput" class="bg-gray-900 rounded-lg p-4 font-mono text-sm text-green-400 min-h-[140px] space-y-1">
+                            <p class="text-gray-500">▶ 버튼을 클릭하여 시뮬레이션을 시작하세요</p>
+                        </div>
+                    </div>
+
+                    <!-- 퀴즈 -->
+                    <div class="bg-white border border-orange-200 rounded-xl p-5">
+                        <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-question-circle text-orange-500"></i> 확인 문제
+                        </h3>
+                        <p class="text-sm font-semibold text-gray-700 mb-3">다음 중 <strong>다형성</strong>에 대한 설명으로 올바른 것은?</p>
+                        <div class="space-y-2" id="oopQuiz">
+                            <div onclick="checkOopQuiz(this, false)" class="quiz-option border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
+                                ① 객체의 속성을 외부에서 직접 수정하지 못하도록 숨기는 것
+                            </div>
+                            <div onclick="checkOopQuiz(this, false)" class="quiz-option border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
+                                ② 부모 클래스의 속성과 메서드를 자식 클래스가 물려받는 것
+                            </div>
+                            <div onclick="checkOopQuiz(this, true)" class="quiz-option border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
+                                ③ 같은 이름의 메서드가 클래스마다 다르게 동작하는 것
+                            </div>
+                            <div onclick="checkOopQuiz(this, false)" class="quiz-option border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
+                                ④ 여러 개의 생성자를 정의하는 것
+                            </div>
+                        </div>
+                        <div id="oopQuizResult" class="mt-3 hidden p-3 rounded-lg text-sm font-semibold"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 border-t border-orange-100 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center">
+                    <i class="fas fa-layer-group text-white text-sm"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-gray-800">객체지향 프로그래밍의 구현</p>
+                    <p class="text-xs text-gray-400">III. 알고리즘과 프로그래밍 · 06단원</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <a href="../01_객체지향 프로그래밍의 이해/index.html" class="flex items-center gap-2 px-4 py-2 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-lg text-sm font-medium transition-all">
+                    <i class="fas fa-arrow-left text-xs"></i> 이전 소단원
+                </a>
+                <a href="../03_선택활동/index.html" class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium transition-all">
+                    다음 소단원 <i class="fas fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentPage = 0;
+        const totalPages = 4;
+        let balance = 10000;
+
+        function changePage(dir) {
+            goToPage(currentPage + dir);
+        }
+
+        function goToPage(n) {
+            if (n < 0 || n >= totalPages) return;
+            document.getElementById(`page-${currentPage}`).classList.add('hidden');
+            currentPage = n;
+            const el = document.getElementById(`page-${currentPage}`);
+            el.classList.remove('hidden');
+            el.classList.remove('page-content');
+            void el.offsetWidth;
+            el.classList.add('page-content');
+            document.querySelectorAll('.page-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentPage);
+            });
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages - 1;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function doDeposit() {
+            const amount = parseInt(document.getElementById('depositAmount').value) || 0;
+            if (amount <= 0) return;
+            balance += amount;
+            addLog(`입금: +${amount.toLocaleString()}원 → 잔액: ${balance.toLocaleString()}원`, 'text-green-600');
+            document.getElementById('balanceDisplay').textContent = balance.toLocaleString();
+        }
+
+        function doWithdraw() {
+            const amount = parseInt(document.getElementById('withdrawAmount').value) || 0;
+            if (amount <= 0) return;
+            if (amount > balance) {
+                addLog(`출금 실패: 잔액 부족 (현재: ${balance.toLocaleString()}원)`, 'text-red-500');
+                return;
+            }
+            balance -= amount;
+            addLog(`출금: -${amount.toLocaleString()}원 → 잔액: ${balance.toLocaleString()}원`, 'text-red-600');
+            document.getElementById('balanceDisplay').textContent = balance.toLocaleString();
+        }
+
+        function addLog(msg, cls) {
+            const log = document.getElementById('accountLog');
+            const p = document.createElement('p');
+            p.className = cls + ' text-xs';
+            p.textContent = '▶ ' + msg;
+            log.appendChild(p);
+        }
+
+        function selectTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active', 'bg-orange-500', 'text-white');
+                b.classList.add('text-orange-700');
+            });
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active', 'bg-orange-500', 'text-white');
+            document.getElementById('tab-' + tab).classList.remove('text-orange-700');
+            document.getElementById('content-' + tab).classList.add('active');
+        }
+
+        function animalSpeak(type) {
+            const sounds = {
+                dog: { emoji: '🐶', name: 'Dog', sound: '멍멍!', cls: 'Dog' },
+                cat: { emoji: '🐱', name: 'Cat', sound: '야옹!', cls: 'Cat' },
+                bird: { emoji: '🐦', name: 'Bird', sound: '짹짹!', cls: 'Bird' }
+            };
+            const a = sounds[type];
+            const el = document.getElementById('speakResult');
+            el.innerHTML = `
+                <div class="text-center">
+                    <div class="text-4xl mb-2">${a.emoji}</div>
+                    <p class="font-mono text-sm text-gray-600"><span class="text-orange-600 font-bold">${a.cls}</span>.speak()</p>
+                    <p class="text-2xl font-bold text-orange-600 mt-1">"${a.sound}"</p>
+                    <p class="text-xs text-gray-400 mt-1">같은 speak() 메서드이지만 클래스마다 다르게 동작 → 다형성!</p>
+                </div>
+            `;
+        }
+
+        const zooAnimals = [
+            { name: '심바', species: '사자', age: 5, sound: '으르렁! 🦁' },
+            { name: '덤보', species: '코끼리', age: 10, sound: '뿌우~ 🐘' },
+            { name: '나나', species: '사자', age: 3, sound: '으르렁! 🦁' }
+        ];
+
+        function zooAction(action) {
+            const out = document.getElementById('zooOutput');
+            if (action === 'clear') { out.innerHTML = '<p class="text-gray-500">▶ 초기화되었습니다.</p>'; return; }
+            let html = '';
+            if (action === 'intro') {
+                html = '<p class="text-yellow-400">=== 동물원 소개 ===</p>';
+                zooAnimals.forEach(a => {
+                    html += `<p class="text-green-400">[${a.species}] ${a.name} (${a.age}살)</p>`;
+                });
+            } else {
+                html = '<p class="text-yellow-400">=== 소리 내기 (다형성 시연) ===</p>';
+                zooAnimals.forEach(a => {
+                    html += `<p class="text-green-400">${a.name}: ${a.sound}</p>`;
+                });
+            }
+            out.innerHTML = html;
+        }
+
+        function checkOopQuiz(el, correct) {
+            if (document.querySelector('.quiz-option.correct, .quiz-option.wrong')) return;
+            const res = document.getElementById('oopQuizResult');
+            if (correct) {
+                el.classList.add('correct');
+                res.textContent = '✅ 정답입니다! 다형성은 같은 메서드 이름이 클래스마다 다르게 동작하는 것입니다.';
+                res.className = 'mt-3 p-3 rounded-lg text-sm font-semibold bg-green-100 text-green-800';
+            } else {
+                el.classList.add('wrong');
+                res.textContent = '❌ 틀렸습니다. ③번이 정답입니다. 다형성은 같은 이름의 메서드가 클래스에 따라 다르게 동작하는 것입니다.';
+                res.className = 'mt-3 p-3 rounded-lg text-sm font-semibold bg-red-100 text-red-800';
+                document.querySelectorAll('.quiz-option')[2].classList.add('correct');
+            }
+            res.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

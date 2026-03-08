@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디지털 윤리 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#e7f5ff',
+                            100: '#d0ebff',
+                            200: '#a5d8ff',
+                            300: '#74c0fc',
+                            400: '#339af0',
+                            500: '#228be6',
+                            600: '#1c7ed6',
+                            700: '#1971c2',
+                            800: '#1864ab',
+                            900: '#145591',
+                        },
+                        accent: {
+                            50: '#e3fafc',
+                            100: '#c5f6fa',
+                            200: '#99e9f2',
+                            300: '#66d9e8',
+                            400: '#3bc9db',
+                            500: '#22b8cf',
+                            600: '#15aabf',
+                            700: '#1098ad',
+                            800: '#0c8599',
+                            900: '#0b7285',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #339af0 0%, #1c7ed6 50%, #1971c2 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #339af0, #1c7ed6, #339af0);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Accordion styles */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+        }
+        .accordion-content.open {
+            max-height: 1200px;
+        }
+
+        /* Tab styles */
+        .tab-btn {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-btn.active {
+            border-bottom-color: #1c7ed6;
+            color: #1c7ed6;
+            font-weight: 700;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Quiz styles */
+        .quiz-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .quiz-option:hover {
+            transform: translateX(4px);
+        }
+        .quiz-option.correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+        }
+        .quiz-option.wrong {
+            background-color: #fef2f2 !important;
+            border-color: #ef4444 !important;
+        }
+
+        /* Tip pulse */
+        .tip-pulse {
+            animation: tipPulse 2s ease-in-out infinite;
+        }
+        @keyframes tipPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(51, 154, 240, 0.3); }
+            50% { box-shadow: 0 0 0 8px rgba(51, 154, 240, 0); }
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { background: #1c7ed6 !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+            a { text-decoration: underline; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #339af0 0%, #1c7ed6 50%, #1971c2 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">V. 디지털 문화</span>
+                <span class="breadcrumb-item text-white font-medium">02 정보 보호와 보안</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-scale-balanced"></i>
+                        <span>V. 디지털 문화 &gt; 02 정보 보호와 보안</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        디지털 윤리
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        디지털 사회에서 올바른 행동과 가치를 지키는 디지털 윤리를 학습합니다
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-handshake mr-1"></i> 디지털 윤리
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-comments mr-1"></i> 네티켓
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-copyright mr-1"></i> 저작권
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-newspaper mr-1"></i> 미디어 문해력
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon - Ethics / Balance -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Balance scale -->
+                        <line x1="110" y1="40" x2="110" y2="140" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <!-- Top beam -->
+                        <line x1="55" y1="70" x2="165" y2="70" stroke="rgba(255,255,255,0.4)" stroke-width="2.5"/>
+                        <!-- Fulcrum triangle -->
+                        <path d="M100 40 L110 28 L120 40 Z" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <!-- Left plate chains -->
+                        <line x1="55" y1="70" x2="45" y2="100" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <line x1="55" y1="70" x2="65" y2="100" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <!-- Left plate -->
+                        <ellipse cx="55" cy="103" rx="22" ry="5" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                        <!-- Right plate chains -->
+                        <line x1="165" y1="70" x2="155" y2="100" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <line x1="165" y1="70" x2="175" y2="100" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <!-- Right plate -->
+                        <ellipse cx="165" cy="103" rx="22" ry="5" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                        <!-- Base -->
+                        <rect x="95" y="140" width="30" height="6" rx="3" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <!-- People icons on left plate -->
+                        <circle cx="48" cy="92" r="4" fill="rgba(255,255,255,0.3)"/>
+                        <circle cx="62" cy="92" r="4" fill="rgba(255,255,255,0.3)"/>
+                        <!-- Heart / ethics on right plate -->
+                        <path d="M160 92 C160 88 164 86 166 89 C168 86 172 88 172 92 C172 96 166 100 166 100 C166 100 160 96 160 92Z" fill="rgba(255,255,255,0.35)"/>
+                        <!-- Digital symbols floating -->
+                        <text x="30" y="165" fill="rgba(255,255,255,0.2)" font-size="10" font-family="monospace">@</text>
+                        <text x="180" y="165" fill="rgba(255,255,255,0.2)" font-size="10" font-family="monospace">#</text>
+                        <circle cx="25" cy="55" r="3" fill="rgba(255,255,255,0.2)"/>
+                        <circle cx="195" cy="50" r="3" fill="rgba(255,255,255,0.2)"/>
+                        <!-- WiFi signal -->
+                        <path d="M100 175 C100 170 120 170 120 175" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none"/>
+                        <path d="M95 170 C95 162 125 162 125 170" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" fill="none"/>
+                        <path d="M90 165 C90 154 130 154 130 165" stroke="rgba(255,255,255,0.09)" stroke-width="1.5" fill="none"/>
+                        <circle cx="110" cy="178" r="2" fill="rgba(255,255,255,0.2)"/>
+                        <!-- Thumbs up / like -->
+                        <text x="35" y="195" fill="rgba(255,255,255,0.15)" font-size="14">&#128077;</text>
+                        <text x="170" y="195" fill="rgba(255,255,255,0.15)" font-size="14">&#128172;</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>디지털 윤리의 기본 소양을 이해할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>디지털 사회에서 발생하는 윤리 문제를 인식하고 올바르게 대처할 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 디지털 윤리</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 네티켓</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 저작권</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 미디어 문해력</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 1: 디지털 윤리란?                                                -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-definition">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-scale-balanced"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">디지털 윤리란?</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">What is Digital Ethics?</p>
+                </div>
+            </div>
+
+            <!-- Main definition callout -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-heart text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">디지털 윤리란?</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            디지털 사회에서 <strong class="text-primary-700">올바른 행동과 가치를 지키는 것</strong>을 말합니다. 개인 정보 보호, 타인 존중, 올바른 기술 사용 등 디지털 환경에서 지켜야 할 도덕적 원칙과 행동 규범을 포함합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5 digital ethics items table -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden mb-8">
+                <div class="bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-4 text-white">
+                    <h3 class="font-bold text-lg flex items-center gap-2">
+                        <i class="fas fa-list-check"></i>
+                        디지털 윤리의 기본 소양
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-primary-50">
+                                <th class="text-left px-6 py-3 text-primary-700 font-bold text-sm w-1/4">항목</th>
+                                <th class="text-left px-6 py-3 text-primary-700 font-bold text-sm">내용</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center">
+                                            <i class="fas fa-user-shield text-primary-600 text-sm"></i>
+                                        </div>
+                                        <span class="font-bold text-gray-900 text-sm">개인 정보 보호</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm leading-relaxed">
+                                    개인 정보의 중요성을 이해하고, 온라인에서의 안전한 정보 공유 방법을 실천합니다.
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-accent-100 flex items-center justify-center">
+                                            <i class="fas fa-comments text-accent-600 text-sm"></i>
+                                        </div>
+                                        <span class="font-bold text-gray-900 text-sm">온라인 행동과 네티켓</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm leading-relaxed">
+                                    온라인에서 적절한 행동을 하고, 디지털 발자국과 사이버 폭력을 방지합니다.
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                                            <i class="fas fa-copyright text-blue-600 text-sm"></i>
+                                        </div>
+                                        <span class="font-bold text-gray-900 text-sm">저작권 이해</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm leading-relaxed">
+                                    저작권이 있는 콘텐츠를 올바르게 사용하고, 타인의 창작물을 존중합니다.
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                                            <i class="fas fa-magnifying-glass text-indigo-600 text-sm"></i>
+                                        </div>
+                                        <span class="font-bold text-gray-900 text-sm">미디어 문해력</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm leading-relaxed">
+                                    올바르게 정보를 찾고 평가하며, 가짜 뉴스를 판별하는 능력을 기릅니다.
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center">
+                                            <i class="fas fa-shield-halved text-teal-600 text-sm"></i>
+                                        </div>
+                                        <span class="font-bold text-gray-900 text-sm">사이버 보안</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm leading-relaxed">
+                                    바이러스, 피싱, 스팸 등으로부터 자신의 정보와 시스템을 보호합니다.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Side note: 디지털 발자국 -->
+            <div class="bg-gradient-to-r from-accent-50 to-primary-50 rounded-2xl p-5 border border-accent-200 shadow-sm tip-pulse">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-accent-400 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-shoe-prints text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-accent-800 mb-1 flex items-center gap-2">
+                            <span>알아두기</span>
+                            <span class="text-xs bg-accent-200 text-accent-700 px-2 py-0.5 rounded-full">디지털 발자국</span>
+                        </h4>
+                        <p class="text-gray-700 text-sm leading-relaxed">
+                            <strong class="text-accent-700">디지털 발자국</strong>이란 인터넷에 남긴 <strong>SNS 계정, 게시글, 쇼핑몰 후기</strong> 등의 디지털 기록을 말합니다. 한 번 남긴 디지털 발자국은 완전히 삭제하기 어렵기 때문에 항상 신중하게 온라인 활동을 해야 합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider max-w-md mx-auto opacity-40"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 2: 디지털 환경에서 의사소통 (하나 더 알기)                         -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-communication">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">디지털 환경에서 의사소통</h2>
+                    <div class="flex items-center gap-2 mt-0.5">
+                        <p class="text-gray-500 text-sm">Digital Communication Etiquette</p>
+                        <span class="text-xs bg-accent-100 text-accent-700 px-2 py-0.5 rounded-full font-medium">하나 더 알기</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-gray-600 mb-8 leading-relaxed">
+                디지털 환경에서 다른 사람과 소통할 때 지켜야 할 기본적인 예의와 규칙을 알아봅시다.
+            </p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+                <!-- Tip 1 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-500 flex items-center justify-center text-white shadow-md">
+                            <span class="font-bold text-sm">1</span>
+                        </div>
+                        <div class="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center">
+                            <i class="fas fa-user-group text-primary-500"></i>
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-gray-900 mb-2">상대는 사람</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        디지털 미디어로 의사소통하지만 상대 역시 <strong class="text-primary-700">감정을 가진 사람</strong>임을 기억합니다.
+                    </p>
+                </div>
+
+                <!-- Tip 2 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-accent-400 to-accent-500 flex items-center justify-center text-white shadow-md">
+                            <span class="font-bold text-sm">2</span>
+                        </div>
+                        <div class="w-8 h-8 rounded-lg bg-accent-50 flex items-center justify-center">
+                            <i class="fas fa-clock text-accent-500"></i>
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-gray-900 mb-2">시간과 상황 존중</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        다른 사람의 <strong class="text-accent-700">시간과 상황을 존중</strong>하여 적절한 시간에 연락합니다.
+                    </p>
+                </div>
+
+                <!-- Tip 3 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center text-white shadow-md">
+                            <span class="font-bold text-sm">3</span>
+                        </div>
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                            <i class="fas fa-equals text-blue-500"></i>
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-gray-900 mb-2">동일한 기준 적용</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        실제 생활에서 적용되는 것처럼 온라인에서도 <strong class="text-blue-700">똑같은 기준과 행동</strong>을 유지합니다.
+                    </p>
+                </div>
+
+                <!-- Tip 4 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-500 flex items-center justify-center text-white shadow-md">
+                            <span class="font-bold text-sm">4</span>
+                        </div>
+                        <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center">
+                            <i class="fas fa-hand-holding-heart text-indigo-500"></i>
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-gray-900 mb-2">이성적 논쟁</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        논쟁은 <strong class="text-indigo-700">이성적이고 절제된 감정</strong>과 상대를 존중하는 마음으로 합니다.
+                    </p>
+                </div>
+
+                <!-- Tip 5 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-teal-500 flex items-center justify-center text-white shadow-md">
+                            <span class="font-bold text-sm">5</span>
+                        </div>
+                        <div class="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center">
+                            <i class="fas fa-globe text-teal-500"></i>
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-gray-900 mb-2">문화에 어울리게</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        현재 접속한 곳의 <strong class="text-teal-700">문화에 어울리게</strong> 행동하고 규칙을 따릅니다.
+                    </p>
+                </div>
+
+                <!-- Tip 6 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-violet-500 flex items-center justify-center text-white shadow-md">
+                            <span class="font-bold text-sm">6</span>
+                        </div>
+                        <div class="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center">
+                            <i class="fas fa-people-arrows text-violet-500"></i>
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-gray-900 mb-2">배려와 존중</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        다른 사람의 <strong class="text-violet-700">생활을 배려하고 존중</strong>하는 태도를 가집니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider max-w-md mx-auto opacity-40"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 3: 디지털 사회에서 발생하는 사례                                   -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-cases">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">디지털 사회에서 발생하는 사례</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Cases in Digital Society</p>
+                </div>
+            </div>
+
+            <p class="text-gray-600 mb-8 leading-relaxed">
+                디지털 사회에서 실제로 발생하고 있는 다양한 윤리적 문제를 살펴봅시다.
+            </p>
+
+            <div class="space-y-6">
+
+                <!-- Case 1: 개인 정보 수집 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="flex flex-col md:flex-row">
+                        <div class="md:w-20 bg-gradient-to-b md:bg-gradient-to-r from-primary-500 to-primary-600 flex items-center justify-center p-4 md:p-0">
+                            <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                                <i class="fas fa-user-secret text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 p-5 md:p-6">
+                            <div class="flex items-center gap-2 mb-2">
+                                <h4 class="font-bold text-gray-900 text-lg">개인 정보 수집</h4>
+                                <span class="text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full font-medium">사례 1</span>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                                온라인 서비스에서 사용자의 <strong class="text-primary-700">활동 정보와 검색 기록</strong>을 수집하여 맞춤형 광고에 활용합니다. 부당한 동의 방식으로 개인 정보를 수집하는 사례가 증가하고 있습니다.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+                                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-1"></i> 맞춤형 광고
+                                </span>
+                                <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+                                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-1"></i> 부당한 동의 방식
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case 2: 디지털 자아 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="flex flex-col md:flex-row">
+                        <div class="md:w-20 bg-gradient-to-b md:bg-gradient-to-r from-accent-500 to-accent-600 flex items-center justify-center p-4 md:p-0">
+                            <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                                <i class="fas fa-masks-theater text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 p-5 md:p-6">
+                            <div class="flex items-center gap-2 mb-2">
+                                <h4 class="font-bold text-gray-900 text-lg">디지털 자아</h4>
+                                <span class="text-xs bg-accent-100 text-accent-700 px-2 py-0.5 rounded-full font-medium">사례 2</span>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                                <strong class="text-accent-700">SNS 프로필, 게임 캐릭터</strong> 등을 통해 온라인에서 가상의 자아를 형성합니다. 현실의 자신과 다른 디지털 자아가 만들어지면서 정체성 혼란이나 과도한 자기 표현의 문제가 발생할 수 있습니다.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+                                    <i class="fas fa-user-circle text-accent-500 mr-1"></i> SNS 프로필
+                                </span>
+                                <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+                                    <i class="fas fa-gamepad text-accent-500 mr-1"></i> 게임 캐릭터
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case 3: 저작권 침해 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="flex flex-col md:flex-row">
+                        <div class="md:w-20 bg-gradient-to-b md:bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center p-4 md:p-0">
+                            <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                                <i class="fas fa-copy text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 p-5 md:p-6">
+                            <div class="flex items-center gap-2 mb-2">
+                                <h4 class="font-bold text-gray-900 text-lg">저작권 침해</h4>
+                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">사례 3</span>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                                인기 채널의 <strong class="text-blue-700">표현 방식을 모방</strong>하거나 타인의 <strong class="text-blue-700">음원을 무단으로 사용</strong>하는 등 디지털 콘텐츠에 대한 저작권 침해 사례가 빈번하게 발생하고 있습니다.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+                                    <i class="fas fa-video text-blue-500 mr-1"></i> 콘텐츠 모방
+                                </span>
+                                <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+                                    <i class="fas fa-music text-blue-500 mr-1"></i> 음원 무단 사용
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case 4: 가짜 뉴스 판별 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="flex flex-col md:flex-row">
+                        <div class="md:w-20 bg-gradient-to-b md:bg-gradient-to-r from-indigo-500 to-indigo-600 flex items-center justify-center p-4 md:p-0">
+                            <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                                <i class="fas fa-newspaper text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 p-5 md:p-6">
+                            <div class="flex items-center gap-2 mb-2">
+                                <h4 class="font-bold text-gray-900 text-lg">가짜 뉴스 판별</h4>
+                                <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">사례 4</span>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                                허위 정보가 <strong class="text-indigo-700">진짜 뉴스보다 6배 빠르게 확산</strong>되는 것으로 나타났습니다. 소셜 미디어를 통해 빠르게 퍼지는 가짜 뉴스는 사회적 혼란을 일으키고, 잘못된 판단을 유도할 수 있습니다.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-red-50 text-red-600 rounded-full px-2.5 py-1 font-medium">
+                                    <i class="fas fa-bolt mr-1"></i> 6배 빠른 확산
+                                </span>
+                                <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+                                    <i class="fas fa-share-nodes text-indigo-500 mr-1"></i> SNS 확산
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case 5: 사이버 불링 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="flex flex-col md:flex-row">
+                        <div class="md:w-20 bg-gradient-to-b md:bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center p-4 md:p-0">
+                            <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                                <i class="fas fa-comment-slash text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 p-5 md:p-6">
+                            <div class="flex items-center gap-2 mb-2">
+                                <h4 class="font-bold text-gray-900 text-lg">사이버 불링</h4>
+                                <span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">사례 5</span>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-3">
+                                온라인에서 <strong class="text-red-700">악성 댓글, 메신저 괴롭힘, 신상 유출, 기프티콘 갈취</strong> 등의 형태로 발생하는 사이버 폭력입니다. 피해자에게 심각한 정신적 고통을 주며, 법적 처벌 대상이 됩니다.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+                                    <i class="fas fa-comment-dots text-red-500 mr-1"></i> 악성 댓글
+                                </span>
+                                <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+                                    <i class="fas fa-mobile text-red-500 mr-1"></i> 메신저 괴롭힘
+                                </span>
+                                <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+                                    <i class="fas fa-id-card text-red-500 mr-1"></i> 신상 유출
+                                </span>
+                                <span class="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+                                    <i class="fas fa-gift text-red-500 mr-1"></i> 기프티콘 갈취
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider max-w-md mx-auto opacity-40"></div>
+
+        <!-- ===================================================================== -->
+        <!-- QUIZ SECTION                                                           -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-quiz">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-circle-question"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">확인 문제</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Check Your Understanding</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-8" id="quiz1-container">
+                <div class="flex items-start gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span class="text-primary-700 font-bold text-sm">Q</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">다음 중 디지털 윤리의 기본 소양에 해당하지 않는 것은?</h3>
+                    </div>
+                </div>
+
+                <div class="space-y-3 ml-11">
+                    <div class="quiz-option flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50/50"
+                         onclick="checkQuiz('quiz1', this, false)">
+                        <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600">1</span>
+                        <span class="font-medium text-gray-700">개인 정보 보호</span>
+                    </div>
+                    <div class="quiz-option flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50/50"
+                         onclick="checkQuiz('quiz1', this, false)">
+                        <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600">2</span>
+                        <span class="font-medium text-gray-700">미디어 문해력</span>
+                    </div>
+                    <div class="quiz-option flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50/50"
+                         onclick="checkQuiz('quiz1', this, true)">
+                        <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600">3</span>
+                        <span class="font-medium text-gray-700">프로그래밍 능력</span>
+                    </div>
+                    <div class="quiz-option flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50/50"
+                         onclick="checkQuiz('quiz1', this, false)">
+                        <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600">4</span>
+                        <span class="font-medium text-gray-700">온라인 행동과 네티켓</span>
+                    </div>
+                </div>
+
+                <div id="quiz1-result" class="hidden ml-11 mt-4"></div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Navigation Buttons -->
+            <div class="flex items-center justify-between mb-10 gap-4 flex-wrap">
+                <!-- 이전 페이지 -->
+                <div class="flex-1">
+                    <a href="../02_정보 보안/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </a>
+                </div>
+
+                <!-- 목차 -->
+                <div class="flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-list"></i>
+                        목차
+                    </a>
+                </div>
+
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex justify-end">
+                    <a href="../04_선택활동/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    V. 디지털 문화 &gt; 02 정보 보호와 보안 &gt; 디지털 윤리
+                </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // ============================
+        // Accordion Toggle
+        // ============================
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(id + '-icon');
+
+            // Close all other accordions in the same section
+            const parent = content.closest('section');
+            if (parent) {
+                parent.querySelectorAll('.accordion-content').forEach(ac => {
+                    if (ac.id !== id && ac.classList.contains('open')) {
+                        ac.classList.remove('open');
+                        const otherIcon = document.getElementById(ac.id + '-icon');
+                        if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
+                    }
+                });
+            }
+
+            content.classList.toggle('open');
+            if (icon) {
+                icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        }
+
+        // ============================
+        // Quiz System
+        // ============================
+        const quizAnswered = {};
+
+        function checkQuiz(quizId, element, isCorrect) {
+            if (quizAnswered[quizId]) return;
+            quizAnswered[quizId] = true;
+
+            const container = document.getElementById(quizId + '-container');
+            const resultDiv = document.getElementById(quizId + '-result');
+            const options = container.querySelectorAll('.quiz-option');
+
+            // Disable all options
+            options.forEach(opt => {
+                opt.style.cursor = 'default';
+                opt.style.opacity = '0.7';
+            });
+
+            // Highlight selected
+            element.style.opacity = '1';
+
+            if (isCorrect) {
+                element.classList.add('correct');
+                resultDiv.className = 'ml-11 mt-4 p-4 rounded-xl bg-green-50 border border-green-200';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500 text-lg"></i><span class="font-bold text-green-700">정답입니다!</span></div>';
+                resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2"><strong>프로그래밍 능력</strong>은 디지털 윤리의 기본 소양이 아닙니다. 디지털 윤리의 기본 소양에는 <strong>개인 정보 보호, 온라인 행동과 네티켓, 저작권 이해, 미디어 문해력, 사이버 보안</strong>이 포함됩니다.</p>';
+            } else {
+                element.classList.add('wrong');
+                resultDiv.className = 'ml-11 mt-4 p-4 rounded-xl bg-red-50 border border-red-200';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-times-circle text-red-500 text-lg"></i><span class="font-bold text-red-700">오답입니다.</span></div>';
+                resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">정답은 <strong>프로그래밍 능력</strong>입니다. 프로그래밍 능력은 디지털 윤리의 기본 소양이 아닙니다. 디지털 윤리의 기본 소양에는 개인 정보 보호, 온라인 행동과 네티켓, 저작권 이해, 미디어 문해력, 사이버 보안이 포함됩니다.</p>';
+
+                // Highlight correct answer
+                options.forEach(opt => {
+                    if (opt.getAttribute('onclick').includes('true')) {
+                        opt.classList.add('correct');
+                        opt.style.opacity = '1';
+                    }
+                });
+            }
+
+            resultDiv.classList.remove('hidden');
+        }
+
+        // ============================
+        // Fade-in animation on scroll
+        // ============================
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+    </script>
+
+</body>
+</html>

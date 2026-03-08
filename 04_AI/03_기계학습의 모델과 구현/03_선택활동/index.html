@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>선택활동 - 기계학습의 분류 실습하기 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#cc5de8',
+                            500: '#a855f7',
+                            600: '#9c36b5',
+                            700: '#7c3aed',
+                            800: '#6b21a8',
+                            900: '#581c87',
+                        },
+                        accent: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#7950f2',
+                            600: '#6366f1',
+                            700: '#4f46e5',
+                            800: '#4338ca',
+                            900: '#3730a3',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #9c36b5 0%, #7c3aed 50%, #7950f2 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #9c36b5, #7950f2, #9c36b5);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Tab styles */
+        .tab-btn {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-btn.active {
+            border-bottom-color: #9c36b5;
+            color: #9c36b5;
+            font-weight: 700;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Model selector */
+        .model-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .model-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(0,0,0,0.1);
+        }
+        .model-card.selected {
+            border-color: #9c36b5;
+            background: linear-gradient(135deg, #faf5ff, #eef2ff);
+        }
+
+        /* Checklist */
+        .check-item {
+            transition: all 0.2s ease;
+        }
+        .check-item.checked {
+            background-color: #f0fdf4;
+            border-color: #22c55e;
+        }
+        .check-item.checked .check-icon {
+            background-color: #22c55e;
+            color: white;
+        }
+
+        /* Self evaluation radio */
+        .eval-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .eval-option:hover {
+            transform: translateX(4px);
+        }
+        .eval-option.selected {
+            background-color: #f3e8ff !important;
+            border-color: #9c36b5 !important;
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { background: #9c36b5 !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+            a { text-decoration: underline; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #9c36b5 0%, #7c3aed 50%, #7950f2 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">IV. 인공지능</span>
+                <span class="breadcrumb-item text-white font-medium">03 기계학습의 모델과 구현</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-flask"></i>
+                        <span>실습</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        선택활동 - 기계학습의<br>분류 실습하기
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        ML Playground를 활용하여 다양한 기계학습 모델의 분류 결과를 직접 비교하고 분석합니다
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-project-diagram mr-1"></i> KNN
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-sitemap mr-1"></i> 결정트리
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-brain mr-1"></i> 인공 신경망
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon - ML Classification -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Grid background -->
+                        <rect x="20" y="20" width="180" height="180" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                        <!-- Grid lines -->
+                        <line x1="65" y1="20" x2="65" y2="200" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                        <line x1="110" y1="20" x2="110" y2="200" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                        <line x1="155" y1="20" x2="155" y2="200" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                        <line x1="20" y1="65" x2="200" y2="65" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                        <line x1="20" y1="110" x2="200" y2="110" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                        <line x1="20" y1="155" x2="200" y2="155" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                        <!-- Decision boundary -->
+                        <path d="M30 140 C60 100 100 130 140 80 C160 55 180 70 195 50" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" stroke-dasharray="6 4"/>
+                        <!-- Orange dots (Class A) -->
+                        <circle cx="50" cy="55" r="8" fill="#ff922b" opacity="0.8"/>
+                        <circle cx="85" cy="45" r="7" fill="#ff922b" opacity="0.8"/>
+                        <circle cx="70" cy="80" r="6" fill="#ff922b" opacity="0.8"/>
+                        <circle cx="120" cy="60" r="7" fill="#ff922b" opacity="0.8"/>
+                        <circle cx="155" cy="40" r="8" fill="#ff922b" opacity="0.8"/>
+                        <circle cx="170" cy="65" r="6" fill="#ff922b" opacity="0.8"/>
+                        <!-- Purple dots (Class B) -->
+                        <circle cx="55" cy="165" r="8" fill="#be4bdb" opacity="0.8"/>
+                        <circle cx="80" cy="145" r="7" fill="#be4bdb" opacity="0.8"/>
+                        <circle cx="110" cy="170" r="6" fill="#be4bdb" opacity="0.8"/>
+                        <circle cx="140" cy="150" r="7" fill="#be4bdb" opacity="0.8"/>
+                        <circle cx="165" cy="130" r="8" fill="#be4bdb" opacity="0.8"/>
+                        <circle cx="180" cy="160" r="6" fill="#be4bdb" opacity="0.8"/>
+                        <!-- Overlapping area dots -->
+                        <circle cx="100" cy="110" r="5" fill="#ff922b" opacity="0.6"/>
+                        <circle cx="115" cy="120" r="5" fill="#be4bdb" opacity="0.6"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>ML Playground에서 다양한 기계학습 모델로 분류를 수행하고 결과를 비교할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>기계학습의 모델별 개념과 하이퍼파라미터의 역할을 이해할 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> KNN</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 결정트리</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 인공 신경망</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 1: 활동 안내                                                    -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-guide">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동 안내</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Activity Guide</p>
+                </div>
+            </div>
+
+            <!-- ML Playground Link -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-external-link-alt text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">Machine Learning Playground</h3>
+                        <p class="text-gray-700 leading-relaxed mb-3">
+                            웹 브라우저에서 직접 기계학습 모델의 분류 결과를 시각적으로 확인할 수 있는 시뮬레이션 도구입니다.
+                        </p>
+                        <a href="https://ml-playground.com/" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-bold px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                            <i class="fas fa-play-circle"></i>
+                            ML Playground 접속하기
+                            <i class="fas fa-external-link-alt text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Steps -->
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xl shadow-lg mb-4">
+                        <span class="font-extrabold">1</span>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-3">ML Playground에 접속</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        위 링크를 클릭하여 ML Playground 웹사이트에 접속합니다. 별도의 설치 없이 브라우저에서 바로 사용할 수 있습니다.
+                    </p>
+                </div>
+
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white text-xl shadow-lg mb-4">
+                        <span class="font-extrabold">2</span>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-3">데이터 포인트 배치</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        <span class="inline-block w-3 h-3 rounded-full bg-orange-400 mr-1"></span><strong>주황색 점</strong>과
+                        <span class="inline-block w-3 h-3 rounded-full bg-purple-500 mr-1 ml-1"></span><strong>보라색 점</strong>(각 클래스)을
+                        영역이 겹치도록 찍어 데이터를 생성합니다.
+                    </p>
+                </div>
+
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white text-xl shadow-lg mb-4">
+                        <span class="font-extrabold">3</span>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-3">모델 선택 및 결과 확인</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        5개 모델(KNN, 결정트리, SVM, 인공 신경망, 나이브 베이즈) 중 하나를 선택하여 분류 결과를 확인하고 비교합니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 2: 실습 과제                                                    -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-tasks">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">실습 과제</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Practice Tasks</p>
+                </div>
+            </div>
+
+            <!-- Task 1: KNN -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold shadow-lg flex-shrink-0">
+                        1
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">k-최근접 이웃(KNN) 분류 비교</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                            KNN 모델을 선택한 후, <strong>K값을 3과 5로 변경</strong>하여 분류 결과가 어떻게 달라지는지 비교해 보세요.
+                        </p>
+
+                        <!-- Interactive checklist -->
+                        <div class="space-y-2">
+                            <div class="check-item flex items-center gap-3 bg-gray-50 rounded-lg p-3 border border-gray-200 cursor-pointer" onclick="toggleCheck(this)">
+                                <div class="check-icon w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-xs">
+                                    <i class="fas fa-check hidden"></i>
+                                </div>
+                                <span class="text-sm text-gray-700">KNN 모델을 선택하고 K=3으로 설정하여 결과 확인</span>
+                            </div>
+                            <div class="check-item flex items-center gap-3 bg-gray-50 rounded-lg p-3 border border-gray-200 cursor-pointer" onclick="toggleCheck(this)">
+                                <div class="check-icon w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-xs">
+                                    <i class="fas fa-check hidden"></i>
+                                </div>
+                                <span class="text-sm text-gray-700">K=5로 변경하여 경계선의 변화를 관찰</span>
+                            </div>
+                            <div class="check-item flex items-center gap-3 bg-gray-50 rounded-lg p-3 border border-gray-200 cursor-pointer" onclick="toggleCheck(this)">
+                                <div class="check-icon w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-xs">
+                                    <i class="fas fa-check hidden"></i>
+                                </div>
+                                <span class="text-sm text-gray-700">K값 변화에 따른 분류 결과 차이를 기록</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task 2: Decision Tree -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold shadow-lg flex-shrink-0">
+                        2
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">결정트리(Decision Tree) 분류 비교</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                            결정트리 모델을 선택한 후, <strong>Max Tree Depth를 3과 5로 변경</strong>하여 분류 결과가 어떻게 달라지는지 비교해 보세요.
+                        </p>
+
+                        <!-- Interactive checklist -->
+                        <div class="space-y-2">
+                            <div class="check-item flex items-center gap-3 bg-gray-50 rounded-lg p-3 border border-gray-200 cursor-pointer" onclick="toggleCheck(this)">
+                                <div class="check-icon w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-xs">
+                                    <i class="fas fa-check hidden"></i>
+                                </div>
+                                <span class="text-sm text-gray-700">결정트리 모델을 선택하고 Max Depth=3으로 설정하여 결과 확인</span>
+                            </div>
+                            <div class="check-item flex items-center gap-3 bg-gray-50 rounded-lg p-3 border border-gray-200 cursor-pointer" onclick="toggleCheck(this)">
+                                <div class="check-icon w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-xs">
+                                    <i class="fas fa-check hidden"></i>
+                                </div>
+                                <span class="text-sm text-gray-700">Max Depth=5로 변경하여 경계선의 변화를 관찰</span>
+                            </div>
+                            <div class="check-item flex items-center gap-3 bg-gray-50 rounded-lg p-3 border border-gray-200 cursor-pointer" onclick="toggleCheck(this)">
+                                <div class="check-icon w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-xs">
+                                    <i class="fas fa-check hidden"></i>
+                                </div>
+                                <span class="text-sm text-gray-700">Depth 변화에 따른 분류 결과 차이를 기록</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 3: 모델별 결과 이해하기 (Tabs)                                   -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-models">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">모델별 결과 이해하기</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Understanding Model Results</p>
+                </div>
+            </div>
+
+            <!-- Tab navigation -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                <div class="flex border-b border-gray-200 overflow-x-auto">
+                    <button class="tab-btn active px-6 py-4 text-sm font-medium text-gray-600 whitespace-nowrap" onclick="switchTab('knn')">
+                        <i class="fas fa-project-diagram mr-1"></i> kNN 결과
+                    </button>
+                    <button class="tab-btn px-6 py-4 text-sm font-medium text-gray-600 whitespace-nowrap" onclick="switchTab('tree')">
+                        <i class="fas fa-sitemap mr-1"></i> 결정트리 결과
+                    </button>
+                    <button class="tab-btn px-6 py-4 text-sm font-medium text-gray-600 whitespace-nowrap" onclick="switchTab('nn')">
+                        <i class="fas fa-brain mr-1"></i> 인공 신경망 결과
+                    </button>
+                </div>
+
+                <!-- kNN Tab -->
+                <div id="tab-knn" class="tab-content active p-6">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg flex-shrink-0">
+                            <i class="fas fa-project-diagram text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">k-최근접 이웃 (k-Nearest Neighbors)</h3>
+                            <p class="text-gray-500 text-sm mt-1">새로운 데이터를 가장 가까운 k개의 이웃 데이터를 기준으로 분류</p>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-blue-50 rounded-xl p-5 border border-blue-200">
+                            <h4 class="font-bold text-blue-800 mb-3 flex items-center gap-2">
+                                <i class="fas fa-cog text-sm"></i> 핵심 파라미터: K값
+                            </h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-circle text-blue-400 mt-1.5 text-[6px]"></i>
+                                    <span><strong>K=3:</strong> 가장 가까운 3개의 이웃을 참조하여 다수결로 분류. 경계가 복잡하고 노이즈에 민감</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-circle text-blue-400 mt-1.5 text-[6px]"></i>
+                                    <span><strong>K=5:</strong> 가장 가까운 5개의 이웃을 참조. 경계가 부드럽고 안정적인 분류 결과</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-amber-50 rounded-xl p-5 border border-amber-200">
+                            <h4 class="font-bold text-amber-800 mb-3 flex items-center gap-2">
+                                <i class="fas fa-lightbulb text-sm"></i> 관찰 포인트
+                            </h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-amber-500 mt-0.5 text-xs"></i>
+                                    <span>K값이 작을수록 경계가 울퉁불퉁(과적합 가능성)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-amber-500 mt-0.5 text-xs"></i>
+                                    <span>K값이 클수록 경계가 부드러움(일반화 향상)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-amber-500 mt-0.5 text-xs"></i>
+                                    <span>겹치는 영역에서의 분류 결과 차이를 주목</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decision Tree Tab -->
+                <div id="tab-tree" class="tab-content p-6">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg flex-shrink-0">
+                            <i class="fas fa-sitemap text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">결정트리 (Decision Tree)</h3>
+                            <p class="text-gray-500 text-sm mt-1">데이터를 조건에 따라 나무 구조로 분할하여 분류</p>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-green-50 rounded-xl p-5 border border-green-200">
+                            <h4 class="font-bold text-green-800 mb-3 flex items-center gap-2">
+                                <i class="fas fa-cog text-sm"></i> 핵심 파라미터: Max Tree Depth
+                            </h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-circle text-green-400 mt-1.5 text-[6px]"></i>
+                                    <span><strong>Depth=3:</strong> 트리의 깊이를 3으로 제한. 단순한 분류 경계를 생성하며 일반화 능력이 좋음</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-circle text-green-400 mt-1.5 text-[6px]"></i>
+                                    <span><strong>Depth=5:</strong> 트리의 깊이를 5로 확장. 복잡한 경계를 형성하며 학습 데이터에 더 잘 맞음</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-amber-50 rounded-xl p-5 border border-amber-200">
+                            <h4 class="font-bold text-amber-800 mb-3 flex items-center gap-2">
+                                <i class="fas fa-lightbulb text-sm"></i> 관찰 포인트
+                            </h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-amber-500 mt-0.5 text-xs"></i>
+                                    <span>경계선이 직각(수평/수직)으로 나뉘는 특징</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-amber-500 mt-0.5 text-xs"></i>
+                                    <span>깊이가 깊을수록 경계가 복잡해짐(과적합 위험)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-amber-500 mt-0.5 text-xs"></i>
+                                    <span>직관적이고 해석이 쉬운 모델 구조</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Neural Network Tab -->
+                <div id="tab-nn" class="tab-content p-6">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg flex-shrink-0">
+                            <i class="fas fa-brain text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">인공 신경망 (Neural Network)</h3>
+                            <p class="text-gray-500 text-sm mt-1">뉴런의 연결 구조를 모방하여 비선형 패턴을 학습</p>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-purple-50 rounded-xl p-5 border border-purple-200">
+                            <h4 class="font-bold text-purple-800 mb-3 flex items-center gap-2">
+                                <i class="fas fa-cog text-sm"></i> 핵심 특징
+                            </h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-circle text-purple-400 mt-1.5 text-[6px]"></i>
+                                    <span>입력층, 은닉층, 출력층으로 구성된 다층 구조</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-circle text-purple-400 mt-1.5 text-[6px]"></i>
+                                    <span>반복 학습(에포크)을 통해 가중치를 점진적으로 조정</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-circle text-purple-400 mt-1.5 text-[6px]"></i>
+                                    <span>비선형 활성화 함수로 복잡한 패턴 학습 가능</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-amber-50 rounded-xl p-5 border border-amber-200">
+                            <h4 class="font-bold text-amber-800 mb-3 flex items-center gap-2">
+                                <i class="fas fa-lightbulb text-sm"></i> 관찰 포인트
+                            </h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-amber-500 mt-0.5 text-xs"></i>
+                                    <span>부드러운 곡선 형태의 분류 경계를 생성</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-amber-500 mt-0.5 text-xs"></i>
+                                    <span>복잡한 데이터 분포에서도 우수한 분류 성능</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-amber-500 mt-0.5 text-xs"></i>
+                                    <span>학습 시간이 다른 모델에 비해 상대적으로 오래 걸림</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 4: 모델 선택 가이드                                              -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-guide-model">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">모델 선택 가이드</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Model Selection Guide</p>
+                </div>
+            </div>
+
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                각 모델의 특성을 클릭하여 자세한 정보를 확인하세요. 데이터의 특성과 목적에 따라 적합한 모델이 달라집니다.
+            </p>
+
+            <!-- Interactive model cards -->
+            <div class="grid md:grid-cols-3 gap-5 mb-8" id="modelCards">
+                <div class="model-card bg-white rounded-2xl shadow-md border border-gray-100 p-5" onclick="selectModel('knn-guide')">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow">
+                            <i class="fas fa-project-diagram text-white text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">KNN</h4>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500">학습 속도</span>
+                            <div class="flex gap-1">
+                                <span class="w-4 h-2 rounded bg-blue-500"></span>
+                                <span class="w-4 h-2 rounded bg-blue-500"></span>
+                                <span class="w-4 h-2 rounded bg-blue-500"></span>
+                                <span class="w-4 h-2 rounded bg-blue-500"></span>
+                                <span class="w-4 h-2 rounded bg-blue-500"></span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500">해석 용이성</span>
+                            <div class="flex gap-1">
+                                <span class="w-4 h-2 rounded bg-blue-500"></span>
+                                <span class="w-4 h-2 rounded bg-blue-500"></span>
+                                <span class="w-4 h-2 rounded bg-blue-500"></span>
+                                <span class="w-4 h-2 rounded bg-blue-500"></span>
+                                <span class="w-4 h-2 rounded bg-gray-200"></span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500">복잡도 처리</span>
+                            <div class="flex gap-1">
+                                <span class="w-4 h-2 rounded bg-blue-500"></span>
+                                <span class="w-4 h-2 rounded bg-blue-500"></span>
+                                <span class="w-4 h-2 rounded bg-blue-500"></span>
+                                <span class="w-4 h-2 rounded bg-gray-200"></span>
+                                <span class="w-4 h-2 rounded bg-gray-200"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-3 italic">클릭하여 상세 보기</p>
+                </div>
+
+                <div class="model-card bg-white rounded-2xl shadow-md border border-gray-100 p-5" onclick="selectModel('tree-guide')">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow">
+                            <i class="fas fa-sitemap text-white text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">결정트리</h4>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500">학습 속도</span>
+                            <div class="flex gap-1">
+                                <span class="w-4 h-2 rounded bg-green-500"></span>
+                                <span class="w-4 h-2 rounded bg-green-500"></span>
+                                <span class="w-4 h-2 rounded bg-green-500"></span>
+                                <span class="w-4 h-2 rounded bg-green-500"></span>
+                                <span class="w-4 h-2 rounded bg-gray-200"></span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500">해석 용이성</span>
+                            <div class="flex gap-1">
+                                <span class="w-4 h-2 rounded bg-green-500"></span>
+                                <span class="w-4 h-2 rounded bg-green-500"></span>
+                                <span class="w-4 h-2 rounded bg-green-500"></span>
+                                <span class="w-4 h-2 rounded bg-green-500"></span>
+                                <span class="w-4 h-2 rounded bg-green-500"></span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500">복잡도 처리</span>
+                            <div class="flex gap-1">
+                                <span class="w-4 h-2 rounded bg-green-500"></span>
+                                <span class="w-4 h-2 rounded bg-green-500"></span>
+                                <span class="w-4 h-2 rounded bg-green-500"></span>
+                                <span class="w-4 h-2 rounded bg-gray-200"></span>
+                                <span class="w-4 h-2 rounded bg-gray-200"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-3 italic">클릭하여 상세 보기</p>
+                </div>
+
+                <div class="model-card bg-white rounded-2xl shadow-md border border-gray-100 p-5" onclick="selectModel('nn-guide')">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow">
+                            <i class="fas fa-brain text-white text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">인공 신경망</h4>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500">학습 속도</span>
+                            <div class="flex gap-1">
+                                <span class="w-4 h-2 rounded bg-purple-500"></span>
+                                <span class="w-4 h-2 rounded bg-purple-500"></span>
+                                <span class="w-4 h-2 rounded bg-gray-200"></span>
+                                <span class="w-4 h-2 rounded bg-gray-200"></span>
+                                <span class="w-4 h-2 rounded bg-gray-200"></span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500">해석 용이성</span>
+                            <div class="flex gap-1">
+                                <span class="w-4 h-2 rounded bg-purple-500"></span>
+                                <span class="w-4 h-2 rounded bg-purple-500"></span>
+                                <span class="w-4 h-2 rounded bg-gray-200"></span>
+                                <span class="w-4 h-2 rounded bg-gray-200"></span>
+                                <span class="w-4 h-2 rounded bg-gray-200"></span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500">복잡도 처리</span>
+                            <div class="flex gap-1">
+                                <span class="w-4 h-2 rounded bg-purple-500"></span>
+                                <span class="w-4 h-2 rounded bg-purple-500"></span>
+                                <span class="w-4 h-2 rounded bg-purple-500"></span>
+                                <span class="w-4 h-2 rounded bg-purple-500"></span>
+                                <span class="w-4 h-2 rounded bg-purple-500"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-3 italic">클릭하여 상세 보기</p>
+                </div>
+            </div>
+
+            <!-- Model detail panel -->
+            <div id="modelDetail" class="hidden bg-white rounded-2xl shadow-md border border-gray-100 p-6 transition-all duration-300">
+                <div id="knn-guide" class="model-detail hidden">
+                    <h3 class="text-lg font-bold text-blue-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-project-diagram"></i> KNN 상세 가이드
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-bold text-gray-700 mb-2">적합한 경우</h4>
+                            <ul class="space-y-1.5 text-sm text-gray-600">
+                                <li class="flex items-start gap-2"><i class="fas fa-check text-green-500 mt-0.5 text-xs"></i> 데이터 양이 적을 때</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-check text-green-500 mt-0.5 text-xs"></i> 별도의 학습 과정 없이 빠르게 결과를 확인하고 싶을 때</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-check text-green-500 mt-0.5 text-xs"></i> 데이터 분포가 명확하게 구분될 때</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-700 mb-2">주의할 점</h4>
+                            <ul class="space-y-1.5 text-sm text-gray-600">
+                                <li class="flex items-start gap-2"><i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 text-xs"></i> 데이터 양이 많으면 예측 속도가 느림</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 text-xs"></i> 고차원 데이터에서 성능 저하</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 text-xs"></i> K값 선택이 결과에 큰 영향</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tree-guide" class="model-detail hidden">
+                    <h3 class="text-lg font-bold text-green-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-sitemap"></i> 결정트리 상세 가이드
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-bold text-gray-700 mb-2">적합한 경우</h4>
+                            <ul class="space-y-1.5 text-sm text-gray-600">
+                                <li class="flex items-start gap-2"><i class="fas fa-check text-green-500 mt-0.5 text-xs"></i> 결과의 이유를 설명해야 할 때</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-check text-green-500 mt-0.5 text-xs"></i> 범주형과 수치형 데이터가 혼합되어 있을 때</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-check text-green-500 mt-0.5 text-xs"></i> 빠른 학습과 예측이 필요할 때</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-700 mb-2">주의할 점</h4>
+                            <ul class="space-y-1.5 text-sm text-gray-600">
+                                <li class="flex items-start gap-2"><i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 text-xs"></i> 깊이가 너무 깊으면 과적합 발생</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 text-xs"></i> 작은 데이터 변화에 민감하게 반응</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 text-xs"></i> 직선 경계만 생성하여 복잡한 패턴에 한계</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="nn-guide" class="model-detail hidden">
+                    <h3 class="text-lg font-bold text-purple-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-brain"></i> 인공 신경망 상세 가이드
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-bold text-gray-700 mb-2">적합한 경우</h4>
+                            <ul class="space-y-1.5 text-sm text-gray-600">
+                                <li class="flex items-start gap-2"><i class="fas fa-check text-green-500 mt-0.5 text-xs"></i> 복잡한 비선형 패턴을 학습해야 할 때</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-check text-green-500 mt-0.5 text-xs"></i> 대용량 데이터가 충분히 확보될 때</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-check text-green-500 mt-0.5 text-xs"></i> 이미지, 음성 등 비정형 데이터를 다룰 때</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-700 mb-2">주의할 점</h4>
+                            <ul class="space-y-1.5 text-sm text-gray-600">
+                                <li class="flex items-start gap-2"><i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 text-xs"></i> 학습 시간이 오래 걸림</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 text-xs"></i> 결과 해석이 어려움(블랙박스)</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 text-xs"></i> 많은 하이퍼파라미터 조정 필요</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 5: 자기 평가                                                    -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-eval">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">자기 평가</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Self Evaluation</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div class="bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl p-5 mb-6 border border-primary-100">
+                    <h3 class="font-bold text-primary-800 text-lg flex items-center gap-2">
+                        <i class="fas fa-question-circle"></i> 기계학습의 모델별 개념을 이해할 수 있는가?
+                    </h3>
+                </div>
+
+                <div class="space-y-3" id="evalOptions">
+                    <div class="eval-option flex items-center gap-4 bg-gray-50 rounded-xl p-4 border border-gray-200" onclick="selectEval(this, 'excellent')">
+                        <div class="w-8 h-8 rounded-full border-2 border-purple-300 flex items-center justify-center flex-shrink-0">
+                            <div class="w-4 h-4 rounded-full eval-dot"></div>
+                        </div>
+                        <div>
+                            <span class="font-bold text-gray-800">매우 잘 이해함</span>
+                            <p class="text-sm text-gray-500 mt-0.5">KNN, 결정트리, 인공 신경망의 개념과 차이점을 명확하게 설명할 수 있다.</p>
+                        </div>
+                    </div>
+
+                    <div class="eval-option flex items-center gap-4 bg-gray-50 rounded-xl p-4 border border-gray-200" onclick="selectEval(this, 'good')">
+                        <div class="w-8 h-8 rounded-full border-2 border-purple-300 flex items-center justify-center flex-shrink-0">
+                            <div class="w-4 h-4 rounded-full eval-dot"></div>
+                        </div>
+                        <div>
+                            <span class="font-bold text-gray-800">대체로 이해함</span>
+                            <p class="text-sm text-gray-500 mt-0.5">각 모델의 기본 개념은 이해하지만, 세부적인 차이점 설명에 어려움이 있다.</p>
+                        </div>
+                    </div>
+
+                    <div class="eval-option flex items-center gap-4 bg-gray-50 rounded-xl p-4 border border-gray-200" onclick="selectEval(this, 'needs-work')">
+                        <div class="w-8 h-8 rounded-full border-2 border-purple-300 flex items-center justify-center flex-shrink-0">
+                            <div class="w-4 h-4 rounded-full eval-dot"></div>
+                        </div>
+                        <div>
+                            <span class="font-bold text-gray-800">추가 학습 필요</span>
+                            <p class="text-sm text-gray-500 mt-0.5">모델별 개념이 아직 혼동되며, 반복 학습이 필요하다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="evalFeedback" class="hidden mt-6"></div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================== -->
+        <!-- KEY CONCEPTS SUMMARY                                                   -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-summary">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">핵심 정리</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Key Concepts Summary</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-5">
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-blue-700 mb-2 flex items-center gap-2">
+                        <i class="fas fa-project-diagram text-sm"></i> KNN
+                    </h4>
+                    <ul class="space-y-1.5 text-sm text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-blue-500 mt-0.5 text-xs"></i>
+                            가장 가까운 K개의 이웃으로 다수결 분류
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-blue-500 mt-0.5 text-xs"></i>
+                            K값이 작으면 복잡, 크면 단순한 경계
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-blue-500 mt-0.5 text-xs"></i>
+                            별도 학습 과정 없이 바로 예측
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-green-700 mb-2 flex items-center gap-2">
+                        <i class="fas fa-sitemap text-sm"></i> 결정트리
+                    </h4>
+                    <ul class="space-y-1.5 text-sm text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-green-500 mt-0.5 text-xs"></i>
+                            조건에 따라 나무 구조로 분류
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-green-500 mt-0.5 text-xs"></i>
+                            깊이(Depth)가 깊을수록 복잡한 분류
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-green-500 mt-0.5 text-xs"></i>
+                            직관적이고 해석이 쉬운 모델
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-purple-700 mb-2 flex items-center gap-2">
+                        <i class="fas fa-brain text-sm"></i> 인공 신경망
+                    </h4>
+                    <ul class="space-y-1.5 text-sm text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-purple-500 mt-0.5 text-xs"></i>
+                            뉴런 연결 구조를 모방한 학습
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-purple-500 mt-0.5 text-xs"></i>
+                            복잡한 비선형 패턴 학습 가능
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-purple-500 mt-0.5 text-xs"></i>
+                            부드러운 곡선 분류 경계 생성
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Page navigation -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <!-- 이전 페이지 -->
+                <div class="flex-1 flex justify-start">
+                    <a href="../02_기계학습의 구현/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </a>
+                </div>
+
+                <!-- 목록으로 돌아가기 -->
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex justify-end">
+                    <a href="../04_프로젝트활동/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    IV. 인공지능 &gt; 03 기계학습의 모델과 구현 &gt; 선택활동 - 기계학습의 분류 실습하기
+                </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // ============================
+        // Tab switching
+        // ============================
+        function switchTab(tabId) {
+            // Deactivate all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Activate selected tab
+            const tabContents = document.querySelectorAll('.tab-btn');
+            const tabMap = { 'knn': 0, 'tree': 1, 'nn': 2 };
+            tabContents[tabMap[tabId]].classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+
+        // ============================
+        // Checklist toggle
+        // ============================
+        function toggleCheck(element) {
+            element.classList.toggle('checked');
+            const icon = element.querySelector('.check-icon i');
+            const iconContainer = element.querySelector('.check-icon');
+
+            if (element.classList.contains('checked')) {
+                icon.classList.remove('hidden');
+                iconContainer.style.backgroundColor = '#22c55e';
+                iconContainer.style.borderColor = '#22c55e';
+                iconContainer.style.color = 'white';
+            } else {
+                icon.classList.add('hidden');
+                iconContainer.style.backgroundColor = '';
+                iconContainer.style.borderColor = '';
+                iconContainer.style.color = '';
+            }
+        }
+
+        // ============================
+        // Model selection guide
+        // ============================
+        function selectModel(modelId) {
+            const detailPanel = document.getElementById('modelDetail');
+            const allDetails = document.querySelectorAll('.model-detail');
+            const allCards = document.querySelectorAll('.model-card');
+
+            // Reset cards
+            allCards.forEach(card => card.classList.remove('selected'));
+
+            // Hide all details
+            allDetails.forEach(detail => detail.classList.add('hidden'));
+
+            // Show selected detail
+            const targetDetail = document.getElementById(modelId);
+            if (targetDetail) {
+                targetDetail.classList.remove('hidden');
+                detailPanel.classList.remove('hidden');
+
+                // Highlight selected card
+                const cardIndex = { 'knn-guide': 0, 'tree-guide': 1, 'nn-guide': 2 };
+                allCards[cardIndex[modelId]].classList.add('selected');
+
+                // Scroll to detail
+                detailPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // ============================
+        // Self evaluation
+        // ============================
+        function selectEval(element, level) {
+            const options = document.querySelectorAll('.eval-option');
+            options.forEach(opt => {
+                opt.classList.remove('selected');
+                opt.querySelector('.eval-dot').style.backgroundColor = '';
+            });
+
+            element.classList.add('selected');
+            element.querySelector('.eval-dot').style.backgroundColor = '#9c36b5';
+
+            const feedbackDiv = document.getElementById('evalFeedback');
+            feedbackDiv.classList.remove('hidden');
+
+            const feedbacks = {
+                'excellent': {
+                    bg: 'bg-green-50 border-green-200',
+                    icon: 'fa-trophy text-green-500',
+                    title: '훌륭합니다!',
+                    titleColor: 'text-green-700',
+                    text: '기계학습 모델에 대한 이해가 잘 되어 있습니다. 실제 데이터셋에 적용하여 각 모델의 성능을 비교해 보세요.'
+                },
+                'good': {
+                    bg: 'bg-blue-50 border-blue-200',
+                    icon: 'fa-thumbs-up text-blue-500',
+                    title: '잘 하고 있습니다!',
+                    titleColor: 'text-blue-700',
+                    text: '기본 개념은 잘 이해하고 있습니다. ML Playground에서 파라미터를 더 다양하게 변경하며 차이점을 관찰해 보세요.'
+                },
+                'needs-work': {
+                    bg: 'bg-amber-50 border-amber-200',
+                    icon: 'fa-book-open text-amber-500',
+                    title: '조금 더 노력해 볼까요?',
+                    titleColor: 'text-amber-700',
+                    text: '위의 모델별 결과 탭을 다시 한번 살펴보고, ML Playground에서 직접 실습하며 각 모델의 특징을 확인해 보세요.'
+                }
+            };
+
+            const fb = feedbacks[level];
+            feedbackDiv.innerHTML = `
+                <div class="p-4 rounded-xl ${fb.bg} border">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas ${fb.icon} text-lg"></i>
+                        <span class="font-bold ${fb.titleColor}">${fb.title}</span>
+                    </div>
+                    <p class="text-sm text-gray-600">${fb.text}</p>
+                </div>
+            `;
+        }
+
+        // ============================
+        // Fade-in animation on scroll
+        // ============================
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+    </script>
+
+</body>
+</html>

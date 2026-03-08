@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>함수 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        orange: {
+                            50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',
+                            500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'
+                        },
+                        amber: {
+                            50:'#fffbeb',100:'#fef3c7',200:'#fde68a',300:'#fcd34d',400:'#fbbf24',
+                            500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e',900:'#78350f'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%);
+        }
+
+        .hero-wave { position: relative; }
+        .hero-wave::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0; right: 0;
+            height: 60px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60'%3E%3Cpath fill='%23f9fafb' d='M0,32L80,37.3C160,43,320,53,480,53.3C640,53,800,43,960,37.3C1120,32,1280,32,1360,32L1440,32L1440,60L1360,60C1280,60,1120,60,960,60C800,60,640,60,480,60C320,60,160,60,80,60L0,60Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom center;
+            background-size: cover;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .info-card {
+            transition: all 0.3s ease;
+        }
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .section-number {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #ea580c, #d97706);
+            color: white; border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.875rem; flex-shrink: 0;
+        }
+
+        /* Code block */
+        .code-block {
+            background: #1e1e2e;
+            border-radius: 12px;
+            overflow: hidden;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+        .code-block .code-header {
+            background: #2a2a3e;
+            padding: 8px 16px;
+            display: flex; align-items: center; gap: 8px;
+            border-bottom: 1px solid #3a3a50;
+        }
+        .code-block .code-header .dot {
+            width: 10px; height: 10px; border-radius: 50%;
+        }
+        .code-block .code-body {
+            padding: 16px 20px;
+            overflow-x: auto;
+            color: #cdd6f4;
+        }
+        .code-block .code-body .kw { color: #cba6f7; }
+        .code-block .code-body .fn { color: #89b4fa; }
+        .code-block .code-body .str { color: #a6e3a1; }
+        .code-block .code-body .num { color: #fab387; }
+        .code-block .code-body .cmt { color: #6c7086; font-style: italic; }
+        .code-block .code-body .op { color: #89dceb; }
+        .code-block .code-body .bi { color: #f9e2af; }
+        .code-block .code-body .param { color: #f38ba8; }
+
+        /* Array cells */
+        .array-cell {
+            width: 56px; height: 56px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.95rem;
+            border-radius: 10px; border: 2px solid #e5e7eb;
+            background: white;
+            transition: all 0.35s ease;
+            position: relative;
+        }
+        .array-cell.checking {
+            border-color: #fb923c;
+            background: #fff7ed;
+            transform: scale(1.12);
+            box-shadow: 0 0 16px rgba(249,115,22,0.35);
+        }
+        .array-cell.found {
+            border-color: #16a34a;
+            background: #dcfce7;
+            transform: scale(1.15);
+            box-shadow: 0 0 20px rgba(22,163,74,0.4);
+            animation: pulse-found 0.6s ease-in-out;
+        }
+        .array-cell.eliminated {
+            border-color: #e5e7eb;
+            background: #f3f4f6;
+            color: #9ca3af;
+            transform: scale(0.92);
+            opacity: 0.5;
+        }
+        .array-cell.in-range {
+            border-color: #fbbf24;
+            background: #fffbeb;
+        }
+
+        @keyframes pulse-found {
+            0% { transform: scale(1.15); }
+            50% { transform: scale(1.25); }
+            100% { transform: scale(1.15); }
+        }
+
+        .index-label {
+            position: absolute;
+            bottom: -20px;
+            font-size: 0.65rem;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        .pointer-label {
+            position: absolute;
+            top: -26px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        /* Flow diagram */
+        .flow-step {
+            transition: all 0.4s ease;
+        }
+        .flow-step.active {
+            transform: scale(1.08);
+            box-shadow: 0 0 20px rgba(249,115,22,0.3);
+        }
+        .flow-arrow {
+            transition: all 0.4s ease;
+        }
+        .flow-arrow.active {
+            color: #ea580c;
+            transform: scale(1.2);
+        }
+
+        /* Scope boxes */
+        .scope-global {
+            border: 3px dashed #3b82f6;
+            background: #eff6ff;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+        }
+        .scope-local {
+            border: 3px dashed #f97316;
+            background: #fff7ed;
+            border-radius: 12px;
+            padding: 16px;
+            position: relative;
+        }
+        .scope-label {
+            position: absolute;
+            top: -12px; left: 16px;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* Function type card */
+        .func-type-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .func-type-card:hover, .func-type-card.selected {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+        .func-type-card.selected {
+            border-color: #ea580c;
+            background: #fff7ed;
+        }
+
+        /* Runner output */
+        .runner-output {
+            background: #0f0f1a;
+            color: #a6e3a1;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 0.82rem;
+            min-height: 36px;
+            transition: all 0.3s ease;
+        }
+
+        /* Page navigation */
+        .page-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #d1d5db;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .page-dot.active {
+            background: #ea580c;
+            transform: scale(1.3);
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .hero-gradient {
+                background: #c2410c !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            body { font-size: 12pt; }
+            section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-14">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-orange-700 transition-colors text-sm font-medium">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>전체 단원</span>
+                </a>
+                <span class="bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-orange-100">
+                    III. 알고리즘과 프로그래밍
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="bg-white border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
+            <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
+                <a href="../../../index.html" class="hover:text-orange-600 transition-colors">
+                    <i class="fas fa-home mr-1"></i>정보
+                </a>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-gray-600 font-medium">III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-gray-600 font-medium">05 함수와 라이브러리</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-orange-700 font-semibold">함수</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-16 sm:py-20 hero-wave">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="max-w-3xl">
+                <span class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-6 border border-white/20">
+                    <i class="fas fa-cube"></i>
+                    함수
+                </span>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
+                    함수
+                </h1>
+                <p class="text-lg sm:text-xl text-orange-100 font-medium mb-4">
+                    코드를 묶어 재사용하는 프로그래밍의 핵심
+                </p>
+                <p class="text-orange-50/90 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                    특정 기능을 수행하는 코드를 함수로 묶어 효율적으로 프로그램을 작성하는 방법을 학습합니다. 다양한 형태의 사용자 정의 함수와 변수의 유효 범위를 이해합니다.
+                </p>
+                <div class="flex flex-wrap gap-3 text-sm mb-8">
+                    <span class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-cube text-orange-200"></i>
+                        <span>함수 개념</span>
+                    </span>
+                    <span class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-code text-orange-200"></i>
+                        <span>사용자 정의 함수</span>
+                    </span>
+                    <span class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-layer-group text-orange-200"></i>
+                        <span>변수 유효 범위</span>
+                    </span>
+                    <span class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-search text-orange-200"></i>
+                        <span>탐색 함수</span>
+                    </span>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/15">
+                    <h3 class="text-sm font-bold mb-3 flex items-center gap-2">
+                        <i class="fas fa-bullseye text-amber-300"></i>
+                        학습 목표
+                    </h3>
+                    <ul class="space-y-2 text-sm text-orange-50/95">
+                        <li class="flex items-start gap-2">
+                            <span class="bg-amber-400 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 flex-shrink-0">1</span>
+                            함수의 개념과 종류를 이해하고 설명할 수 있다.
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="bg-amber-400 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 flex-shrink-0">2</span>
+                            다양한 형태의 사용자 정의 함수를 작성할 수 있다.
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="bg-amber-400 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 flex-shrink-0">3</span>
+                            지역 변수와 전역 변수의 차이를 이해하고 활용할 수 있다.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page Navigation -->
+    <div class="no-print sticky top-14 z-40 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
+            <div class="flex items-center justify-between">
+                <button onclick="changePage(-1)" id="prevBtn" class="flex items-center gap-1.5 text-sm font-medium text-gray-400 cursor-not-allowed transition-colors" disabled>
+                    <i class="fas fa-chevron-left text-xs"></i> 이전
+                </button>
+                <div class="flex items-center gap-3">
+                    <div class="flex gap-2" id="pageDots"></div>
+                    <span class="text-xs text-gray-400 ml-2" id="pageLabel">1 / 5</span>
+                </div>
+                <button onclick="changePage(1)" id="nextBtn" class="flex items-center gap-1.5 text-sm font-medium text-orange-600 hover:text-orange-700 transition-colors">
+                    다음 <i class="fas fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+
+        <!-- ===================== PAGE 1: 함수 개념 ===================== -->
+        <div class="page-content space-y-16" id="page1">
+
+            <!-- 함수란 무엇인가 -->
+            <section class="fade-in">
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3">
+                        <i class="fas fa-cube text-orange-500 mr-2"></i>
+                        함수란 무엇인가?
+                    </h2>
+                    <p class="text-gray-500 text-sm sm:text-base max-w-2xl mx-auto">
+                        함수는 <strong class="text-gray-700">특정 기능을 수행하기 위해 명령문을 코드로 묶은 것</strong>입니다.
+                    </p>
+                </div>
+
+                <!-- Definition card -->
+                <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-8 mb-8 info-card">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="section-number">
+                            <i class="fas fa-lightbulb text-sm"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">함수의 정의</h3>
+                            <p class="text-gray-600 leading-relaxed">
+                                프로그래밍에서 함수란 <strong class="text-orange-700">특정 기능을 수행하기 위해 명령문을 코드로 묶은 것</strong>으로,
+                                반복적인 코드를 줄이고 프로그램을 체계적으로 구성할 수 있게 합니다.
+                                수학에서의 함수 f(x)처럼, 입력(인수)을 받아 처리한 후 결과(반환값)를 돌려줍니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Analogy -->
+                    <div class="bg-amber-50 rounded-xl p-5 border border-amber-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-blender text-amber-600"></i>
+                            <span class="text-sm font-bold text-amber-800">비유: 믹서기처럼 생각하기</span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center gap-4 text-sm text-amber-900">
+                            <div class="flex items-center gap-2 bg-white rounded-lg px-4 py-3 border border-amber-200">
+                                <i class="fas fa-apple-whole text-red-500"></i>
+                                <span>재료(인수)</span>
+                            </div>
+                            <i class="fas fa-arrow-right text-amber-400 hidden sm:block"></i>
+                            <i class="fas fa-arrow-down text-amber-400 sm:hidden"></i>
+                            <div class="flex items-center gap-2 bg-orange-100 rounded-lg px-4 py-3 border border-orange-300 font-bold">
+                                <i class="fas fa-blender text-orange-600"></i>
+                                <span>함수(처리)</span>
+                            </div>
+                            <i class="fas fa-arrow-right text-amber-400 hidden sm:block"></i>
+                            <i class="fas fa-arrow-down text-amber-400 sm:hidden"></i>
+                            <div class="flex items-center gap-2 bg-white rounded-lg px-4 py-3 border border-amber-200">
+                                <i class="fas fa-glass-water text-green-500"></i>
+                                <span>결과(반환값)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Function types -->
+                <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-8 info-card">
+                    <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
+                        <span class="section-number">1</span>
+                        함수의 종류
+                    </h3>
+                    <div class="grid sm:grid-cols-3 gap-4">
+                        <!-- 내장 함수 -->
+                        <div class="bg-blue-50 rounded-xl p-5 border border-blue-200">
+                            <div class="flex items-center gap-2 mb-3">
+                                <i class="fas fa-box-open text-blue-600 text-lg"></i>
+                                <span class="font-bold text-blue-800">내장 함수</span>
+                            </div>
+                            <p class="text-sm text-blue-700 mb-3">파이썬 설치 시 기본 제공되는 함수</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-mono">print()</span>
+                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-mono">input()</span>
+                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-mono">len()</span>
+                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-mono">int()</span>
+                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-mono">range()</span>
+                            </div>
+                        </div>
+                        <!-- 외장 함수 -->
+                        <div class="bg-green-50 rounded-xl p-5 border border-green-200">
+                            <div class="flex items-center gap-2 mb-3">
+                                <i class="fas fa-puzzle-piece text-green-600 text-lg"></i>
+                                <span class="font-bold text-green-800">외장 함수</span>
+                            </div>
+                            <p class="text-sm text-green-700 mb-3">라이브러리 모듈에서 가져와 사용하는 함수</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded font-mono">math.ceil()</span>
+                                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded font-mono">random.randint()</span>
+                                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded font-mono">time.sleep()</span>
+                            </div>
+                        </div>
+                        <!-- 사용자 정의 함수 -->
+                        <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                            <div class="flex items-center gap-2 mb-3">
+                                <i class="fas fa-pen-fancy text-orange-600 text-lg"></i>
+                                <span class="font-bold text-orange-800">사용자 정의 함수</span>
+                            </div>
+                            <p class="text-sm text-orange-700 mb-3">사용자가 직접 만들어 사용하는 함수</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded font-mono">def my_func():</span>
+                                <span class="bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded font-mono">def add(a, b):</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 함수 실행 과정 - Flow Diagram -->
+            <section class="fade-in">
+                <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-8 info-card">
+                    <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
+                        <span class="section-number">2</span>
+                        함수 실행 과정
+                    </h3>
+
+                    <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6" id="flowDiagram">
+                        <div class="flow-step bg-orange-50 border-2 border-orange-300 rounded-xl px-4 py-3 text-center" id="flow-0">
+                            <div class="text-orange-600 font-bold text-xs mb-1">STEP 1</div>
+                            <i class="fas fa-pen-to-square text-orange-500 text-lg mb-1"></i>
+                            <div class="text-xs font-semibold text-gray-700">함수 작성</div>
+                        </div>
+                        <i class="fas fa-arrow-right text-gray-300 flow-arrow" id="arrow-0"></i>
+                        <div class="flow-step bg-amber-50 border-2 border-amber-300 rounded-xl px-4 py-3 text-center" id="flow-1">
+                            <div class="text-amber-600 font-bold text-xs mb-1">STEP 2</div>
+                            <i class="fas fa-eye text-amber-500 text-lg mb-1"></i>
+                            <div class="text-xs font-semibold text-gray-700">함수 만남</div>
+                        </div>
+                        <i class="fas fa-arrow-right text-gray-300 flow-arrow" id="arrow-1"></i>
+                        <div class="flow-step bg-yellow-50 border-2 border-yellow-400 rounded-xl px-4 py-3 text-center" id="flow-2">
+                            <div class="text-yellow-600 font-bold text-xs mb-1">STEP 3</div>
+                            <i class="fas fa-phone text-yellow-500 text-lg mb-1"></i>
+                            <div class="text-xs font-semibold text-gray-700">함수 호출</div>
+                        </div>
+                        <i class="fas fa-arrow-right text-gray-300 flow-arrow" id="arrow-2"></i>
+                        <div class="flow-step bg-green-50 border-2 border-green-300 rounded-xl px-4 py-3 text-center" id="flow-3">
+                            <div class="text-green-600 font-bold text-xs mb-1">STEP 4</div>
+                            <i class="fas fa-play text-green-500 text-lg mb-1"></i>
+                            <div class="text-xs font-semibold text-gray-700">코드 실행</div>
+                        </div>
+                        <i class="fas fa-arrow-right text-gray-300 flow-arrow" id="arrow-3"></i>
+                        <div class="flow-step bg-blue-50 border-2 border-blue-300 rounded-xl px-4 py-3 text-center" id="flow-4">
+                            <div class="text-blue-600 font-bold text-xs mb-1">STEP 5</div>
+                            <i class="fas fa-rotate-left text-blue-500 text-lg mb-1"></i>
+                            <div class="text-xs font-semibold text-gray-700">복귀</div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button onclick="animateFlow()" class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                            <i class="fas fa-play mr-1.5"></i> 실행 과정 보기
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 함수명 규칙 -->
+            <section class="fade-in">
+                <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-8 info-card">
+                    <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
+                        <span class="section-number">3</span>
+                        함수명 규칙
+                    </h3>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div class="bg-green-50 rounded-xl p-4 border border-green-200">
+                            <h4 class="font-bold text-green-800 text-sm mb-3 flex items-center gap-2">
+                                <i class="fas fa-circle-check text-green-500"></i> 사용 가능
+                            </h4>
+                            <ul class="space-y-2 text-sm text-green-700">
+                                <li class="flex items-center gap-2"><i class="fas fa-check text-green-400 text-xs"></i> 숫자 (단, 첫 글자 제외)</li>
+                                <li class="flex items-center gap-2"><i class="fas fa-check text-green-400 text-xs"></i> 한글</li>
+                                <li class="flex items-center gap-2"><i class="fas fa-check text-green-400 text-xs"></i> 알파벳 (대소문자)</li>
+                                <li class="flex items-center gap-2"><i class="fas fa-check text-green-400 text-xs"></i> 언더바 ( _ )</li>
+                            </ul>
+                        </div>
+                        <div class="bg-red-50 rounded-xl p-4 border border-red-200">
+                            <h4 class="font-bold text-red-800 text-sm mb-3 flex items-center gap-2">
+                                <i class="fas fa-circle-xmark text-red-500"></i> 사용 불가
+                            </h4>
+                            <ul class="space-y-2 text-sm text-red-700">
+                                <li class="flex items-center gap-2"><i class="fas fa-xmark text-red-400 text-xs"></i> 공백</li>
+                                <li class="flex items-center gap-2"><i class="fas fa-xmark text-red-400 text-xs"></i> 파이썬 키워드 (if, for, while 등)</li>
+                                <li class="flex items-center gap-2"><i class="fas fa-xmark text-red-400 text-xs"></i> 숫자로 시작</li>
+                            </ul>
+                            <div class="mt-3 flex flex-wrap gap-1.5">
+                                <span class="bg-red-100 text-red-600 text-xs px-2 py-1 rounded line-through font-mono">1func</span>
+                                <span class="bg-red-100 text-red-600 text-xs px-2 py-1 rounded line-through font-mono">my func</span>
+                                <span class="bg-red-100 text-red-600 text-xs px-2 py-1 rounded line-through font-mono">for</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ===================== PAGE 2: 다양한 사용자 정의 함수 ===================== -->
+        <div class="page-content space-y-16 hidden" id="page2">
+
+            <section class="fade-in">
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3">
+                        <i class="fas fa-code text-orange-500 mr-2"></i>
+                        다양한 사용자 정의 함수
+                    </h2>
+                    <p class="text-gray-500 text-sm sm:text-base max-w-2xl mx-auto">
+                        인수와 반환값의 유무에 따라 <strong class="text-gray-700">4가지 방법</strong>으로 함수를 만들 수 있습니다.
+                    </p>
+                </div>
+
+                <!-- 4 Function Types Selector -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+                    <div class="func-type-card bg-white rounded-xl p-4 border-2 border-orange-300 shadow-sm text-center selected" onclick="selectFuncType(0)">
+                        <div class="text-xs font-bold text-orange-600 mb-1">방법 1</div>
+                        <div class="text-[11px] text-gray-500">인수 <span class="text-red-500 font-bold">X</span></div>
+                        <div class="text-[11px] text-gray-500">반환값 <span class="text-red-500 font-bold">X</span></div>
+                    </div>
+                    <div class="func-type-card bg-white rounded-xl p-4 border-2 border-gray-200 shadow-sm text-center" onclick="selectFuncType(1)">
+                        <div class="text-xs font-bold text-orange-600 mb-1">방법 2</div>
+                        <div class="text-[11px] text-gray-500">인수 <span class="text-red-500 font-bold">X</span></div>
+                        <div class="text-[11px] text-gray-500">반환값 <span class="text-green-600 font-bold">O</span></div>
+                    </div>
+                    <div class="func-type-card bg-white rounded-xl p-4 border-2 border-gray-200 shadow-sm text-center" onclick="selectFuncType(2)">
+                        <div class="text-xs font-bold text-orange-600 mb-1">방법 3</div>
+                        <div class="text-[11px] text-gray-500">인수 <span class="text-green-600 font-bold">O</span></div>
+                        <div class="text-[11px] text-gray-500">반환값 <span class="text-red-500 font-bold">X</span></div>
+                    </div>
+                    <div class="func-type-card bg-white rounded-xl p-4 border-2 border-gray-200 shadow-sm text-center" onclick="selectFuncType(3)">
+                        <div class="text-xs font-bold text-orange-600 mb-1">방법 4</div>
+                        <div class="text-[11px] text-gray-500">인수 <span class="text-green-600 font-bold">O</span></div>
+                        <div class="text-[11px] text-gray-500">반환값 <span class="text-green-600 font-bold">O</span></div>
+                    </div>
+                </div>
+
+                <!-- Code Display Area -->
+                <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-8 info-card">
+                    <div id="funcTypeTitle" class="flex items-center gap-3 mb-4">
+                        <span class="section-number" id="funcTypeNum">1</span>
+                        <h3 class="text-lg font-bold text-gray-900" id="funcTypeName">방법 1: 인수 X, 반환값 X</h3>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-4" id="funcTypeDesc">함수가 인수를 받지 않고, 반환값도 없는 가장 기본적인 형태입니다.</p>
+
+                    <!-- Code block -->
+                    <div class="code-block mb-4" id="funcTypeCode">
+                        <div class="code-header">
+                            <div class="dot bg-red-400"></div>
+                            <div class="dot bg-yellow-400"></div>
+                            <div class="dot bg-green-400"></div>
+                            <span class="text-gray-400 text-xs ml-2">Python</span>
+                        </div>
+                        <div class="code-body" id="funcTypeCodeBody">
+                            <span class="kw">def</span> <span class="fn">f</span>():<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="bi">print</span>(<span class="str">"Hello world"</span>)<br><br>
+                            <span class="fn">f</span>()
+                        </div>
+                    </div>
+
+                    <!-- Run button + output -->
+                    <div class="flex items-center gap-3 mb-3">
+                        <button onclick="runFuncType()" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors">
+                            <i class="fas fa-play mr-1.5"></i> 실행
+                        </button>
+                        <span class="text-xs text-gray-400">코드를 실행해 결과를 확인하세요</span>
+                    </div>
+                    <div class="runner-output" id="funcTypeOutput">
+                        <span class="text-gray-500 text-xs">실행 결과가 여기에 표시됩니다...</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ===================== PAGE 3: 활동 21, 22 ===================== -->
+        <div class="page-content space-y-16 hidden" id="page3">
+
+            <section class="fade-in">
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3">
+                        <i class="fas fa-pencil text-orange-500 mr-2"></i>
+                        함수 활용 실습
+                    </h2>
+                    <p class="text-gray-500 text-sm sm:text-base max-w-2xl mx-auto">
+                        함수를 활용한 다양한 활동을 통해 개념을 익혀봅시다.
+                    </p>
+                </div>
+
+                <!-- 활동 21: 채팅방 환영 인사 -->
+                <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-8 info-card mb-8">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1.5 rounded-full">활동 21</span>
+                        <h3 class="text-lg font-bold text-gray-900">채팅방 환영 인사 함수</h3>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-4">
+                        채팅방에 접속하면 환영 인사를 출력하는 함수 g(name)을 완성하세요.
+                    </p>
+
+                    <!-- Fill-in exercise -->
+                    <div class="code-block mb-4">
+                        <div class="code-header">
+                            <div class="dot bg-red-400"></div>
+                            <div class="dot bg-yellow-400"></div>
+                            <div class="dot bg-green-400"></div>
+                            <span class="text-gray-400 text-xs ml-2">활동 21 - 빈칸 채우기</span>
+                        </div>
+                        <div class="code-body">
+                            <span class="kw">def</span> <span class="fn">g</span>(<span class="param">name</span>):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="bi">print</span>(<span class="str">"환영합니다"</span>)<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="bi">print</span>(<span class="param">name</span>, <span class="str">"님 입장하셨습니다"</span>)<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="bi">print</span>(<span class="str">"공지사항을 확인하세요"</span>)<br><br>
+                            <span class="fn">g</span>(<input type="text" id="act21input" class="bg-gray-700 border border-gray-500 rounded px-2 py-0.5 text-amber-300 text-center w-24 text-sm focus:border-orange-400 focus:outline-none" placeholder="???">)
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 mb-3">
+                        <button onclick="checkAct21()" class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors">
+                            <i class="fas fa-check mr-1.5"></i> 확인
+                        </button>
+                        <span class="text-xs text-gray-400">이름을 입력하고 확인을 누르세요 (예: "홍길동")</span>
+                    </div>
+                    <div class="runner-output" id="act21output">
+                        <span class="text-gray-500 text-xs">결과가 여기에 표시됩니다...</span>
+                    </div>
+                </div>
+
+                <!-- 활동 22: 놀이기구 탑승 대기 횟수 -->
+                <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-8 info-card">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1.5 rounded-full">활동 22</span>
+                        <h3 class="text-lg font-bold text-gray-900">놀이기구 탑승 대기 횟수</h3>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-4">
+                        대기 인원과 탑승 인원으로 몇 번 운행해야 모두 탈 수 있는지 계산합니다. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">math.ceil()</code> 함수를 활용합니다.
+                    </p>
+
+                    <!-- math.ceil / floor explanation -->
+                    <div class="bg-amber-50 rounded-xl p-4 border border-amber-200 mb-5">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-calculator text-amber-600"></i>
+                            <span class="text-sm font-bold text-amber-800">math.ceil()과 math.floor()</span>
+                        </div>
+                        <div class="grid sm:grid-cols-2 gap-3 text-sm">
+                            <div class="bg-white rounded-lg px-3 py-2 border border-amber-200">
+                                <code class="text-blue-600 font-mono text-xs">math.ceil(3.14)</code>
+                                <span class="text-gray-500 mx-1">&rarr;</span>
+                                <span class="font-bold text-green-600">4</span>
+                                <span class="text-gray-400 text-xs ml-1">(올림)</span>
+                            </div>
+                            <div class="bg-white rounded-lg px-3 py-2 border border-amber-200">
+                                <code class="text-blue-600 font-mono text-xs">math.floor(3.56)</code>
+                                <span class="text-gray-500 mx-1">&rarr;</span>
+                                <span class="font-bold text-green-600">3</span>
+                                <span class="text-gray-400 text-xs ml-1">(내림)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive calculator -->
+                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                        <div class="grid sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="text-xs font-semibold text-gray-600 mb-1 block">대기 인원</label>
+                                <input type="number" id="act22waiting" value="37" min="1" max="999" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-200">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-gray-600 mb-1 block">1회 탑승 인원</label>
+                                <input type="number" id="act22capacity" value="8" min="1" max="99" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-200">
+                            </div>
+                        </div>
+                        <button onclick="calcRide()" class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors mb-3">
+                            <i class="fas fa-calculator mr-1.5"></i> 계산하기
+                        </button>
+                        <div class="runner-output" id="act22output">
+                            <span class="text-gray-500 text-xs">계산 결과가 여기에 표시됩니다...</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ===================== PAGE 4: 지역 변수와 전역 변수 ===================== -->
+        <div class="page-content space-y-16 hidden" id="page4">
+
+            <section class="fade-in">
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3">
+                        <i class="fas fa-layer-group text-orange-500 mr-2"></i>
+                        지역 변수와 전역 변수
+                    </h2>
+                    <p class="text-gray-500 text-sm sm:text-base max-w-2xl mx-auto">
+                        변수가 사용될 수 있는 <strong class="text-gray-700">범위(Scope)</strong>에 따라 지역 변수와 전역 변수로 나뉩니다.
+                    </p>
+                </div>
+
+                <!-- Scope Visualizer -->
+                <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-8 info-card mb-8">
+                    <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3">
+                        <span class="section-number">1</span>
+                        변수 유효 범위 시각화
+                    </h3>
+
+                    <div class="scope-global mb-6" id="scopeViz">
+                        <span class="scope-label bg-blue-500 text-white">전역 범위 (Global)</span>
+                        <div class="mt-4 mb-4 flex flex-wrap gap-3" id="globalVars">
+                            <div class="bg-blue-100 border border-blue-300 rounded-lg px-4 py-2 text-sm font-mono transition-all" id="gvar-count">
+                                <span class="text-blue-600 font-bold">count</span> = <span class="text-blue-800" id="gvar-count-val">20</span>
+                            </div>
+                        </div>
+
+                        <div class="scope-local">
+                            <span class="scope-label bg-orange-500 text-white">지역 범위 (Local) - func()</span>
+                            <div class="mt-4 flex flex-wrap gap-3" id="localVars">
+                                <div class="bg-orange-100 border border-orange-300 rounded-lg px-4 py-2 text-sm font-mono transition-all" id="lvar-count">
+                                    <span class="text-orange-600 font-bold">count</span> = <span class="text-orange-800" id="lvar-count-val">10</span>
+                                </div>
+                            </div>
+                            <div class="mt-3 text-xs text-orange-600">
+                                <i class="fas fa-info-circle mr-1"></i> 함수 내부의 count는 지역 변수 (전역 변수와 별개)
+                            </div>
+                        </div>
+
+                        <div class="mt-4 text-xs text-blue-600">
+                            <i class="fas fa-info-circle mr-1"></i> 프로그램 전체에서 접근 가능한 전역 변수
+                        </div>
+                    </div>
+
+                    <!-- 예제 35 코드 -->
+                    <div class="code-block mb-4">
+                        <div class="code-header">
+                            <div class="dot bg-red-400"></div>
+                            <div class="dot bg-yellow-400"></div>
+                            <div class="dot bg-green-400"></div>
+                            <span class="text-gray-400 text-xs ml-2">예제 35</span>
+                        </div>
+                        <div class="code-body">
+                            <span class="param">count</span> = <span class="num">20</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt"># 전역 변수</span><br><br>
+                            <span class="kw">def</span> <span class="fn">func</span>():<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="param">count</span> = <span class="num">10</span> &nbsp;&nbsp;<span class="cmt"># 지역 변수</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="bi">print</span>(<span class="str">"함수 내부 count:"</span>, <span class="param">count</span>)<br><br>
+                            <span class="fn">func</span>()<br>
+                            <span class="bi">print</span>(<span class="str">"함수 외부 count:"</span>, <span class="param">count</span>)
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 mb-3">
+                        <button onclick="runScopeDemo()" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors">
+                            <i class="fas fa-play mr-1.5"></i> 실행
+                        </button>
+                    </div>
+                    <div class="runner-output" id="scopeOutput">
+                        <span class="text-gray-500 text-xs">실행 결과가 여기에 표시됩니다...</span>
+                    </div>
+                </div>
+
+                <!-- global 키워드 -->
+                <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-8 info-card">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <span class="section-number">2</span>
+                        <code class="text-orange-600 font-mono">global</code> 키워드
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-5">
+                        함수 내부에서 전역 변수를 변경하려면 <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">global</code> 키워드를 사용합니다.
+                    </p>
+
+                    <div class="code-block mb-4">
+                        <div class="code-header">
+                            <div class="dot bg-red-400"></div>
+                            <div class="dot bg-yellow-400"></div>
+                            <div class="dot bg-green-400"></div>
+                            <span class="text-gray-400 text-xs ml-2">global 키워드 사용 예시</span>
+                        </div>
+                        <div class="code-body">
+                            <span class="param">count</span> = <span class="num">0</span><br><br>
+                            <span class="kw">def</span> <span class="fn">add</span>(<span class="param">a</span>, <span class="param">b</span>):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">global</span> <span class="param">count</span> &nbsp;&nbsp;<span class="cmt"># 전역 변수 사용 선언</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="param">count</span> += <span class="num">1</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> <span class="param">a</span> + <span class="param">b</span><br><br>
+                            <span class="bi">print</span>(<span class="fn">add</span>(<span class="num">3</span>, <span class="num">5</span>)) &nbsp;&nbsp;<span class="cmt"># 8</span><br>
+                            <span class="bi">print</span>(<span class="fn">add</span>(<span class="num">10</span>, <span class="num">20</span>)) <span class="cmt"># 30</span><br>
+                            <span class="bi">print</span>(<span class="str">"호출 횟수:"</span>, <span class="param">count</span>) <span class="cmt"># 2</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                        <div class="flex items-start gap-2">
+                            <i class="fas fa-triangle-exclamation text-amber-600 mt-0.5"></i>
+                            <div class="text-sm text-amber-800">
+                                <strong>주의:</strong> <code class="bg-amber-100 px-1 rounded text-xs">global</code> 키워드 없이 함수 내부에서 전역 변수와 같은 이름의 변수에 값을 대입하면, 그것은 새로운 지역 변수가 됩니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ===================== PAGE 5: 탐색 함수 활동 ===================== -->
+        <div class="page-content space-y-16 hidden" id="page5">
+
+            <section class="fade-in">
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3">
+                        <i class="fas fa-search text-orange-500 mr-2"></i>
+                        탐색 함수 실습
+                    </h2>
+                    <p class="text-gray-500 text-sm sm:text-base max-w-2xl mx-auto">
+                        함수와 전역 변수를 활용하여 순차 탐색과 이진 탐색을 구현합니다.
+                    </p>
+                </div>
+
+                <!-- 활동 23: 순차 탐색 -->
+                <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-8 info-card mb-8">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1.5 rounded-full">활동 23</span>
+                        <h3 class="text-lg font-bold text-gray-900">순차 탐색 함수 L_search</h3>
+                    </div>
+
+                    <div class="code-block mb-5">
+                        <div class="code-header">
+                            <div class="dot bg-red-400"></div>
+                            <div class="dot bg-yellow-400"></div>
+                            <div class="dot bg-green-400"></div>
+                            <span class="text-gray-400 text-xs ml-2">활동 23 - 순차 탐색</span>
+                        </div>
+                        <div class="code-body">
+                            <span class="param">count</span> = <span class="num">0</span><br>
+                            <span class="kw">def</span> <span class="fn">L_search</span>(<span class="param">a</span>, <span class="param">target</span>):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">global</span> <span class="param">count</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="param">n</span> = <span class="bi">len</span>(<span class="param">a</span>)<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span> <span class="param">i</span> <span class="kw">in</span> <span class="bi">range</span>(<span class="param">n</span>):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="param">count</span> += <span class="num">1</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> <span class="param">a</span>[<span class="param">i</span>] == <span class="param">target</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> <span class="param">i</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> -<span class="num">1</span><br><br>
+                            <span class="param">a</span> = [<span class="num">3</span>, <span class="num">5</span>, <span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>, <span class="num">10</span>, <span class="num">14</span>]<br>
+                            <span class="param">target</span> = <span class="num">14</span>
+                        </div>
+                    </div>
+
+                    <!-- Sequential Search Animation -->
+                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-bold text-gray-700">배열: [3, 5, 7, 8, 9, 10, 14] &nbsp; 찾는 값: 14</span>
+                        </div>
+                        <div class="flex flex-wrap gap-3 justify-center mb-6" id="seqArray">
+                            <div class="array-cell" data-idx="0"><span>3</span><span class="index-label">0</span></div>
+                            <div class="array-cell" data-idx="1"><span>5</span><span class="index-label">1</span></div>
+                            <div class="array-cell" data-idx="2"><span>7</span><span class="index-label">2</span></div>
+                            <div class="array-cell" data-idx="3"><span>8</span><span class="index-label">3</span></div>
+                            <div class="array-cell" data-idx="4"><span>9</span><span class="index-label">4</span></div>
+                            <div class="array-cell" data-idx="5"><span>10</span><span class="index-label">5</span></div>
+                            <div class="array-cell" data-idx="6"><span>14</span><span class="index-label">6</span></div>
+                        </div>
+
+                        <div class="flex items-center gap-3 mb-3">
+                            <button onclick="startSeqSearch()" id="seqStartBtn" class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors">
+                                <i class="fas fa-play mr-1.5"></i> 순차 탐색 시작
+                            </button>
+                            <button onclick="resetSeqSearch()" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+                                <i class="fas fa-rotate-right mr-1"></i> 초기화
+                            </button>
+                        </div>
+                        <div class="runner-output" id="seqOutput">
+                            <span class="text-gray-500 text-xs">탐색을 시작하세요...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 활동 24: 이진 탐색 -->
+                <div class="bg-white rounded-2xl shadow-lg border border-orange-100 p-6 sm:p-8 info-card">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1.5 rounded-full">활동 24</span>
+                        <h3 class="text-lg font-bold text-gray-900">이진 탐색 함수 B_search</h3>
+                    </div>
+
+                    <div class="code-block mb-5">
+                        <div class="code-header">
+                            <div class="dot bg-red-400"></div>
+                            <div class="dot bg-yellow-400"></div>
+                            <div class="dot bg-green-400"></div>
+                            <span class="text-gray-400 text-xs ml-2">활동 24 - 이진 탐색</span>
+                        </div>
+                        <div class="code-body">
+                            <span class="param">count</span> = <span class="num">0</span><br>
+                            <span class="kw">def</span> <span class="fn">B_search</span>(<span class="param">a</span>, <span class="param">target</span>):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">global</span> <span class="param">count</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="param">left</span>, <span class="param">right</span> = <span class="num">0</span>, <span class="bi">len</span>(<span class="param">a</span>) - <span class="num">1</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">while</span> <span class="param">left</span> &lt;= <span class="param">right</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="param">mid</span> = (<span class="param">left</span> + <span class="param">right</span>) // <span class="num">2</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="param">count</span> += <span class="num">1</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> <span class="param">a</span>[<span class="param">mid</span>] == <span class="param">target</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> <span class="param">mid</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">elif</span> <span class="param">a</span>[<span class="param">mid</span>] &gt; <span class="param">target</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="param">right</span> = <span class="param">mid</span> - <span class="num">1</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="param">left</span> = <span class="param">mid</span> + <span class="num">1</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> -<span class="num">1</span><br><br>
+                            <span class="param">a</span> = [<span class="num">7</span>, <span class="num">14</span>, <span class="num">3</span>, <span class="num">9</span>, <span class="num">8</span>, <span class="num">5</span>, <span class="num">10</span>]<br>
+                            <span class="param">a</span>.<span class="fn">sort</span>()  <span class="cmt"># [3, 5, 7, 8, 9, 10, 14]</span><br>
+                            <span class="param">target</span> = <span class="num">14</span>
+                        </div>
+                    </div>
+
+                    <!-- Binary Search Animation -->
+                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-bold text-gray-700">정렬된 배열: [3, 5, 7, 8, 9, 10, 14] &nbsp; 찾는 값: 14</span>
+                        </div>
+                        <div class="flex flex-wrap gap-3 justify-center mb-6 pt-8" id="binArray">
+                            <div class="array-cell" data-idx="0"><span>3</span><span class="index-label">0</span></div>
+                            <div class="array-cell" data-idx="1"><span>5</span><span class="index-label">1</span></div>
+                            <div class="array-cell" data-idx="2"><span>7</span><span class="index-label">2</span></div>
+                            <div class="array-cell" data-idx="3"><span>8</span><span class="index-label">3</span></div>
+                            <div class="array-cell" data-idx="4"><span>9</span><span class="index-label">4</span></div>
+                            <div class="array-cell" data-idx="5"><span>10</span><span class="index-label">5</span></div>
+                            <div class="array-cell" data-idx="6"><span>14</span><span class="index-label">6</span></div>
+                        </div>
+
+                        <!-- Step log -->
+                        <div class="mb-4 overflow-x-auto">
+                            <table class="w-full text-sm text-center border-collapse" id="binStepTable">
+                                <thead>
+                                    <tr class="bg-orange-50 text-orange-800">
+                                        <th class="border border-orange-200 px-3 py-2 font-semibold">단계</th>
+                                        <th class="border border-orange-200 px-3 py-2 font-semibold">left</th>
+                                        <th class="border border-orange-200 px-3 py-2 font-semibold">mid</th>
+                                        <th class="border border-orange-200 px-3 py-2 font-semibold">right</th>
+                                        <th class="border border-orange-200 px-3 py-2 font-semibold">a[mid]</th>
+                                        <th class="border border-orange-200 px-3 py-2 font-semibold">비교</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="binStepBody"></tbody>
+                            </table>
+                        </div>
+
+                        <div class="flex items-center gap-3 mb-3">
+                            <button onclick="startBinSearch()" id="binStartBtn" class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors">
+                                <i class="fas fa-play mr-1.5"></i> 이진 탐색 시작
+                            </button>
+                            <button onclick="resetBinSearch()" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+                                <i class="fas fa-rotate-right mr-1"></i> 초기화
+                            </button>
+                        </div>
+                        <div class="runner-output" id="binOutput">
+                            <span class="text-gray-500 text-xs">탐색을 시작하세요...</span>
+                        </div>
+                    </div>
+
+                    <!-- Comparison -->
+                    <div class="mt-6 bg-gradient-to-r from-blue-50 to-orange-50 rounded-xl p-5 border border-gray-200">
+                        <h4 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-scale-balanced text-orange-500"></i>
+                            순차 탐색 vs 이진 탐색 비교
+                        </h4>
+                        <div class="grid sm:grid-cols-2 gap-4 text-sm">
+                            <div class="bg-white rounded-lg p-4 border border-blue-200">
+                                <div class="font-bold text-blue-700 mb-2">순차 탐색 (L_search)</div>
+                                <div class="text-gray-600">탐색 위치: <strong>6</strong></div>
+                                <div class="text-gray-600">탐색 횟수: <strong class="text-red-600">7회</strong></div>
+                                <div class="mt-2 bg-blue-100 rounded-full h-3 overflow-hidden">
+                                    <div class="bg-blue-500 h-full rounded-full" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border border-orange-200">
+                                <div class="font-bold text-orange-700 mb-2">이진 탐색 (B_search)</div>
+                                <div class="text-gray-600">탐색 위치: <strong>6</strong></div>
+                                <div class="text-gray-600">탐색 횟수: <strong class="text-green-600">3회</strong></div>
+                                <div class="mt-2 bg-orange-100 rounded-full h-3 overflow-hidden">
+                                    <div class="bg-orange-500 h-full rounded-full" style="width: 43%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-10 mt-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+            <div class="flex items-center justify-center gap-2 mb-3">
+                <i class="fas fa-book-open text-orange-400"></i>
+                <span class="text-white font-bold text-sm">정보 교과서</span>
+            </div>
+            <p class="text-xs text-gray-500">III. 알고리즘과 프로그래밍 > 05 함수와 라이브러리 > 함수</p>
+        </div>
+    </footer>
+
+    <script>
+    // ==================== PAGE NAVIGATION ====================
+    const totalPages = 5;
+    let currentPage = 1;
+
+    function initPageDots() {
+        const container = document.getElementById('pageDots');
+        const names = ['함수 개념', '사용자 정의 함수', '함수 활용 실습', '변수 유효 범위', '탐색 함수'];
+        container.innerHTML = '';
+        for (let i = 1; i <= totalPages; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'page-dot' + (i === 1 ? ' active' : '');
+            dot.title = names[i - 1];
+            dot.onclick = () => goToPage(i);
+            container.appendChild(dot);
+        }
+    }
+
+    function goToPage(n) {
+        if (n < 1 || n > totalPages) return;
+        document.getElementById('page' + currentPage).classList.add('hidden');
+        currentPage = n;
+        document.getElementById('page' + currentPage).classList.remove('hidden');
+        updatePageUI();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Trigger fade-in
+        setTimeout(() => {
+            document.querySelectorAll('#page' + currentPage + ' .fade-in').forEach(el => el.classList.add('visible'));
+        }, 100);
+    }
+
+    function changePage(delta) {
+        goToPage(currentPage + delta);
+    }
+
+    function updatePageUI() {
+        const label = document.getElementById('pageLabel');
+        label.textContent = currentPage + ' / ' + totalPages;
+
+        const dots = document.querySelectorAll('.page-dot');
+        dots.forEach((d, i) => d.classList.toggle('active', i + 1 === currentPage));
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        if (currentPage === 1) {
+            prevBtn.disabled = true;
+            prevBtn.className = 'flex items-center gap-1.5 text-sm font-medium text-gray-400 cursor-not-allowed transition-colors';
+        } else {
+            prevBtn.disabled = false;
+            prevBtn.className = 'flex items-center gap-1.5 text-sm font-medium text-orange-600 hover:text-orange-700 transition-colors';
+        }
+        if (currentPage === totalPages) {
+            nextBtn.disabled = true;
+            nextBtn.className = 'flex items-center gap-1.5 text-sm font-medium text-gray-400 cursor-not-allowed transition-colors';
+        } else {
+            nextBtn.disabled = false;
+            nextBtn.className = 'flex items-center gap-1.5 text-sm font-medium text-orange-600 hover:text-orange-700 transition-colors';
+        }
+    }
+
+    // ==================== FLOW DIAGRAM ====================
+    let flowAnimating = false;
+    function animateFlow() {
+        if (flowAnimating) return;
+        flowAnimating = true;
+        // Reset
+        for (let i = 0; i < 5; i++) {
+            document.getElementById('flow-' + i).classList.remove('active');
+            if (i < 4) document.getElementById('arrow-' + i).classList.remove('active');
+        }
+        let step = 0;
+        const interval = setInterval(() => {
+            if (step > 0 && step <= 4) {
+                document.getElementById('arrow-' + (step - 1)).classList.add('active');
+            }
+            if (step < 5) {
+                if (step > 0) document.getElementById('flow-' + (step - 1)).classList.remove('active');
+                document.getElementById('flow-' + step).classList.add('active');
+            }
+            step++;
+            if (step > 5) {
+                clearInterval(interval);
+                flowAnimating = false;
+            }
+        }, 700);
+    }
+
+    // ==================== 4 FUNCTION TYPES ====================
+    const funcTypes = [
+        {
+            num: '1',
+            name: '방법 1: 인수 X, 반환값 X',
+            desc: '함수가 인수를 받지 않고, 반환값도 없는 가장 기본적인 형태입니다.',
+            code: '<span class="kw">def</span> <span class="fn">f</span>():\n    <span class="bi">print</span>(<span class="str">"Hello world"</span>)\n\n<span class="fn">f</span>()',
+            output: 'Hello world'
+        },
+        {
+            num: '2',
+            name: '방법 2: 인수 X, 반환값 O',
+            desc: '인수는 받지 않지만, return으로 값을 반환하는 함수입니다.',
+            code: '<span class="kw">def</span> <span class="fn">f</span>():\n    <span class="param">a</span> = <span class="str">"Hello world"</span>\n    <span class="kw">return</span> <span class="param">a</span>\n\n<span class="param">b</span> = <span class="fn">f</span>()\n<span class="bi">print</span>(<span class="param">b</span>)',
+            output: 'Hello world'
+        },
+        {
+            num: '3',
+            name: '방법 3: 인수 O, 반환값 X',
+            desc: '인수를 받아서 처리하지만, 반환값이 없는 함수입니다.',
+            code: '<span class="kw">def</span> <span class="fn">f</span>(<span class="param">a</span>):\n    <span class="bi">print</span>(<span class="param">a</span>)\n\n<span class="fn">f</span>(<span class="num">3</span>)',
+            output: '3'
+        },
+        {
+            num: '4',
+            name: '방법 4: 인수 O, 반환값 O',
+            desc: '인수를 받아서 처리한 결과를 반환하는 가장 완전한 형태입니다.',
+            code: '<span class="kw">def</span> <span class="fn">f</span>(<span class="param">a</span>):\n    <span class="param">x</span> = <span class="param">a</span> + <span class="num">3</span>\n    <span class="kw">return</span> <span class="param">x</span>\n\n<span class="param">c</span> = <span class="num">3</span>\n<span class="param">b</span> = <span class="fn">f</span>(<span class="param">c</span>)\n<span class="bi">print</span>(<span class="param">b</span>)',
+            output: '6'
+        }
+    ];
+    let selectedFuncType = 0;
+
+    function selectFuncType(idx) {
+        selectedFuncType = idx;
+        const cards = document.querySelectorAll('.func-type-card');
+        cards.forEach((c, i) => {
+            c.classList.toggle('selected', i === idx);
+            c.style.borderColor = i === idx ? '#ea580c' : '#e5e7eb';
+        });
+        const t = funcTypes[idx];
+        document.getElementById('funcTypeNum').textContent = t.num;
+        document.getElementById('funcTypeName').textContent = t.name;
+        document.getElementById('funcTypeDesc').textContent = t.desc;
+        document.getElementById('funcTypeCodeBody').innerHTML = t.code.replace(/\n/g, '<br>').replace(/    /g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+        document.getElementById('funcTypeOutput').innerHTML = '<span class="text-gray-500 text-xs">실행 결과가 여기에 표시됩니다...</span>';
+    }
+
+    function runFuncType() {
+        const out = document.getElementById('funcTypeOutput');
+        out.innerHTML = '';
+        const t = funcTypes[selectedFuncType];
+        let i = 0;
+        const lines = t.output.split('\n');
+        function typeLine() {
+            if (i >= lines.length) return;
+            const line = document.createElement('div');
+            out.appendChild(line);
+            let j = 0;
+            function typeChar() {
+                if (j < lines[i].length) {
+                    line.textContent += lines[i][j];
+                    j++;
+                    setTimeout(typeChar, 30);
+                } else {
+                    i++;
+                    setTimeout(typeLine, 100);
+                }
+            }
+            typeChar();
+        }
+        typeLine();
+    }
+
+    // ==================== 활동 21 ====================
+    function checkAct21() {
+        const name = document.getElementById('act21input').value.trim();
+        const out = document.getElementById('act21output');
+        if (!name) {
+            out.innerHTML = '<span class="text-red-400">이름을 입력해주세요!</span>';
+            return;
+        }
+        // Remove quotes if user typed them
+        const cleanName = name.replace(/['"]/g, '');
+        out.innerHTML = '';
+        const lines = ['환영합니다', cleanName + '님 입장하셨습니다', '공지사항을 확인하세요'];
+        lines.forEach((l, i) => {
+            setTimeout(() => {
+                const div = document.createElement('div');
+                div.textContent = l;
+                div.style.opacity = '0';
+                out.appendChild(div);
+                requestAnimationFrame(() => {
+                    div.style.transition = 'opacity 0.3s';
+                    div.style.opacity = '1';
+                });
+            }, i * 400);
+        });
+    }
+
+    // ==================== 활동 22 ====================
+    function calcRide() {
+        const waiting = parseInt(document.getElementById('act22waiting').value) || 0;
+        const capacity = parseInt(document.getElementById('act22capacity').value) || 1;
+        const times = Math.ceil(waiting / capacity);
+        const out = document.getElementById('act22output');
+        out.innerHTML =
+            '<div>import math</div>' +
+            '<div>math.ceil(' + waiting + ' / ' + capacity + ') = math.ceil(' + (waiting / capacity).toFixed(2) + ') = <span class="text-amber-300 font-bold">' + times + '</span></div>' +
+            '<div class="mt-1 text-emerald-300">=> ' + waiting + '명이 ' + capacity + '명씩 타면 <strong>' + times + '번</strong> 운행해야 합니다.</div>';
+    }
+
+    // ==================== 변수 범위 데모 ====================
+    function runScopeDemo() {
+        const out = document.getElementById('scopeOutput');
+        out.innerHTML = '';
+
+        // Highlight local
+        const lv = document.getElementById('lvar-count');
+        const gv = document.getElementById('gvar-count');
+
+        lv.style.transform = 'scale(1.1)';
+        lv.style.boxShadow = '0 0 12px rgba(249,115,22,0.4)';
+
+        setTimeout(() => {
+            out.innerHTML = '<div>함수 내부 count: <span class="text-amber-300 font-bold">10</span></div>';
+            lv.style.transform = '';
+            lv.style.boxShadow = '';
+
+            setTimeout(() => {
+                gv.style.transform = 'scale(1.1)';
+                gv.style.boxShadow = '0 0 12px rgba(59,130,246,0.4)';
+
+                setTimeout(() => {
+                    out.innerHTML += '<div>함수 외부 count: <span class="text-amber-300 font-bold">20</span></div>';
+                    gv.style.transform = '';
+                    gv.style.boxShadow = '';
+                }, 600);
+            }, 600);
+        }, 600);
+    }
+
+    // ==================== 순차 탐색 애니메이션 ====================
+    let seqSearchRunning = false;
+    const seqData = [3, 5, 7, 8, 9, 10, 14];
+    const seqTarget = 14;
+
+    function resetSeqSearch() {
+        seqSearchRunning = false;
+        const cells = document.querySelectorAll('#seqArray .array-cell');
+        cells.forEach(c => {
+            c.className = 'array-cell';
+        });
+        document.getElementById('seqOutput').innerHTML = '<span class="text-gray-500 text-xs">탐색을 시작하세요...</span>';
+        document.getElementById('seqStartBtn').disabled = false;
+    }
+
+    function startSeqSearch() {
+        if (seqSearchRunning) return;
+        seqSearchRunning = true;
+        resetSeqSearch();
+        seqSearchRunning = true;
+        document.getElementById('seqStartBtn').disabled = true;
+
+        const cells = document.querySelectorAll('#seqArray .array-cell');
+        const out = document.getElementById('seqOutput');
+        let i = 0;
+        let count = 0;
+
+        function step() {
+            if (i >= seqData.length || !seqSearchRunning) {
+                seqSearchRunning = false;
+                return;
+            }
+
+            // Reset previous
+            if (i > 0) {
+                cells[i - 1].classList.remove('checking');
+                if (seqData[i - 1] !== seqTarget) {
+                    cells[i - 1].classList.add('eliminated');
+                }
+            }
+
+            cells[i].classList.add('checking');
+            count++;
+
+            out.innerHTML = '<div>비교 ' + count + '회: a[' + i + '] = ' + seqData[i] + (seqData[i] === seqTarget ? ' == ' : ' != ') + seqTarget + '</div>';
+
+            if (seqData[i] === seqTarget) {
+                setTimeout(() => {
+                    cells[i].classList.remove('checking');
+                    cells[i].classList.add('found');
+                    out.innerHTML =
+                        '<div class="text-emerald-300 font-bold">찾았습니다!</div>' +
+                        '<div>탐색 위치: <span class="text-amber-300 font-bold">' + i + '</span></div>' +
+                        '<div>탐색 횟수: <span class="text-amber-300 font-bold">' + count + '회</span></div>';
+                    seqSearchRunning = false;
+                }, 500);
+                return;
+            }
+
+            i++;
+            setTimeout(step, 700);
+        }
+
+        setTimeout(step, 300);
+    }
+
+    // ==================== 이진 탐색 애니메이션 ====================
+    let binSearchRunning = false;
+    const binData = [3, 5, 7, 8, 9, 10, 14];
+    const binTarget = 14;
+
+    function resetBinSearch() {
+        binSearchRunning = false;
+        const cells = document.querySelectorAll('#binArray .array-cell');
+        cells.forEach(c => {
+            c.className = 'array-cell';
+            // Remove pointer labels
+            const existing = c.querySelector('.pointer-label');
+            if (existing) existing.remove();
+        });
+        document.getElementById('binStepBody').innerHTML = '';
+        document.getElementById('binOutput').innerHTML = '<span class="text-gray-500 text-xs">탐색을 시작하세요...</span>';
+        document.getElementById('binStartBtn').disabled = false;
+    }
+
+    function startBinSearch() {
+        if (binSearchRunning) return;
+        binSearchRunning = true;
+        resetBinSearch();
+        binSearchRunning = true;
+        document.getElementById('binStartBtn').disabled = true;
+
+        const cells = document.querySelectorAll('#binArray .array-cell');
+        const tbody = document.getElementById('binStepBody');
+        const out = document.getElementById('binOutput');
+
+        let left = 0, right = binData.length - 1, count = 0;
+
+        function clearPointers() {
+            cells.forEach(c => {
+                const lbl = c.querySelector('.pointer-label');
+                if (lbl) lbl.remove();
+                c.classList.remove('checking', 'in-range');
+            });
+        }
+
+        function addPointer(cellIdx, text, color) {
+            const cell = cells[cellIdx];
+            const lbl = document.createElement('span');
+            lbl.className = 'pointer-label';
+            lbl.style.color = color;
+            lbl.style.background = color + '20';
+            lbl.style.border = '1px solid ' + color;
+            lbl.textContent = text;
+            cell.appendChild(lbl);
+        }
+
+        function step() {
+            if (left > right || !binSearchRunning) {
+                binSearchRunning = false;
+                return;
+            }
+
+            clearPointers();
+            const mid = Math.floor((left + right) / 2);
+            count++;
+
+            // Mark range
+            for (let j = 0; j < binData.length; j++) {
+                if (j >= left && j <= right) {
+                    cells[j].classList.add('in-range');
+                } else {
+                    cells[j].classList.add('eliminated');
+                }
+            }
+
+            cells[mid].classList.add('checking');
+            cells[mid].classList.remove('in-range');
+
+            // Add pointers
+            addPointer(left, 'left', '#3b82f6');
+            if (mid !== left && mid !== right) addPointer(mid, 'mid', '#ea580c');
+            else if (mid === left) {
+                const lbl = cells[left].querySelector('.pointer-label');
+                if (lbl) lbl.textContent = 'left/mid';
+            }
+            addPointer(right, 'right', '#16a34a');
+            if (mid === right) {
+                const lbl = cells[right].querySelector('.pointer-label');
+                if (lbl) lbl.textContent = mid === left ? 'L/M/R' : 'mid/right';
+            }
+
+            // Comparison text
+            let cmp = '';
+            if (binData[mid] === binTarget) cmp = binData[mid] + ' == ' + binTarget + ' (발견!)';
+            else if (binData[mid] > binTarget) cmp = binData[mid] + ' > ' + binTarget + ' (왼쪽 탐색)';
+            else cmp = binData[mid] + ' < ' + binTarget + ' (오른쪽 탐색)';
+
+            // Add table row
+            const tr = document.createElement('tr');
+            tr.className = 'bg-white';
+            tr.innerHTML =
+                '<td class="border border-gray-200 px-3 py-2 font-bold text-orange-600">' + count + '</td>' +
+                '<td class="border border-gray-200 px-3 py-2">' + left + '</td>' +
+                '<td class="border border-gray-200 px-3 py-2 font-bold text-orange-600">' + mid + '</td>' +
+                '<td class="border border-gray-200 px-3 py-2">' + right + '</td>' +
+                '<td class="border border-gray-200 px-3 py-2 font-mono">' + binData[mid] + '</td>' +
+                '<td class="border border-gray-200 px-3 py-2 text-xs">' + cmp + '</td>';
+            tbody.appendChild(tr);
+
+            out.innerHTML = '<div>단계 ' + count + ': a[' + mid + '] = ' + binData[mid] + ' &rarr; ' + cmp + '</div>';
+
+            if (binData[mid] === binTarget) {
+                setTimeout(() => {
+                    clearPointers();
+                    cells[mid].classList.add('found');
+                    addPointer(mid, 'FOUND!', '#16a34a');
+                    out.innerHTML =
+                        '<div class="text-emerald-300 font-bold">찾았습니다!</div>' +
+                        '<div>탐색 위치: <span class="text-amber-300 font-bold">' + mid + '</span></div>' +
+                        '<div>탐색 횟수: <span class="text-amber-300 font-bold">' + count + '회</span></div>';
+                    binSearchRunning = false;
+                }, 600);
+                return;
+            }
+
+            if (binData[mid] > binTarget) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+
+            setTimeout(step, 1200);
+        }
+
+        setTimeout(step, 300);
+    }
+
+    // ==================== FADE-IN OBSERVER ====================
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    // ==================== INIT ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        initPageDots();
+
+        // Observe fade-in elements on page 1
+        document.querySelectorAll('#page1 .fade-in').forEach(el => observer.observe(el));
+
+        // Also observe all pages
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    });
+    </script>
+</body>
+</html>

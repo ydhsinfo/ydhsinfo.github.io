@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기계학습의 이해 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Noto Sans KR', 'sans-serif'] },
+                    colors: {
+                        primary: { 50:'#faf5ff',100:'#f3e8ff',200:'#e9d5ff',300:'#d8b4fe',400:'#cc5de8',500:'#a855f7',600:'#9c36b5',700:'#7c3aed',800:'#6b21a8',900:'#581c87' },
+                        accent: { 50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#7950f2',600:'#6366f1',700:'#4f46e5',800:'#4338ca',900:'#3730a3' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        .hero-pattern {
+            background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15); }
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .section-divider { height: 4px; background: linear-gradient(90deg, #9c36b5, #7950f2, #9c36b5); border-radius: 2px; }
+        .breadcrumb-item + .breadcrumb-item::before { content: '>'; margin: 0 0.5rem; color: rgba(255,255,255,0.6); }
+        .nested-circle { animation: pulse-circle 3s ease-in-out infinite; }
+        @keyframes pulse-circle { 0%,100%{opacity:0.8} 50%{opacity:1} }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        .quiz-option { transition: all 0.2s ease; cursor: pointer; }
+        .quiz-option:hover { transform: translateX(4px); }
+        .quiz-option.correct { background-color: #dcfce7 !important; border-color: #22c55e !important; }
+        .quiz-option.wrong { background-color: #fef2f2 !important; border-color: #ef4444 !important; }
+        @media print {
+            .hero-pattern { background: #9c36b5 !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            footer { display: none; }
+            .shadow-md,.shadow-lg,.shadow-sm { box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #9c36b5 0%, #7c3aed 50%, #7950f2 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1"><i class="fas fa-home text-xs"></i> 정보</span>
+                <span class="breadcrumb-item">IV. 인공지능</span>
+                <span class="breadcrumb-item text-white font-medium">02 기계학습의 개념</span>
+            </nav>
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-cogs"></i>
+                        <span>IV. 인공지능 &gt; 02 기계학습의 개념</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">기계학습의 이해</h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">기계학습의 개념과 인공지능, 기계학습, 딥러닝의 관계를 이해하고, 다양한 활용 사례를 탐구합니다</p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-robot mr-1"></i> 기계학습</span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-microchip mr-1"></i> 머신러닝</span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-brain mr-1"></i> 인공지능</span>
+                    </div>
+                </div>
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <circle cx="40" cy="60" r="8" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <circle cx="40" cy="110" r="8" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <circle cx="40" cy="160" r="8" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <circle cx="110" cy="80" r="10" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                        <circle cx="110" cy="140" r="10" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                        <circle cx="180" cy="110" r="14" fill="rgba(255,255,255,0.3)" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+                        <text x="180" y="114" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10" font-weight="bold">ML</text>
+                        <line x1="48" y1="60" x2="100" y2="80" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                        <line x1="48" y1="60" x2="100" y2="140" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                        <line x1="48" y1="110" x2="100" y2="80" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="48" y1="110" x2="100" y2="140" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                        <line x1="48" y1="160" x2="100" y2="140" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                        <line x1="48" y1="160" x2="100" y2="80" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                        <line x1="120" y1="80" x2="166" y2="110" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                        <line x1="120" y1="140" x2="166" y2="110" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                        <text x="40" y="38" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-weight="bold">DATA</text>
+                        <text x="110" y="55" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="8">학습</text>
+                        <text x="180" y="138" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-weight="bold">예측</text>
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-bullseye"></i> 학습 목표</h3>
+                <div class="flex items-start gap-2 text-sm">
+                    <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                    <span>기계학습의 개념을 이해할 수 있다.</span>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 기계학습</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 머신러닝</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 인공지능</span>
+                </div>
+            </div>
+        </div>
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===== SECTION 1: 기계학습 개념 ===== -->
+        <section class="fade-in" id="section-concept">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">기계학습(Machine Learning) 개념</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Concept of Machine Learning</p>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-cogs text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">기계학습(Machine Learning)이란?</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong class="text-primary-700">사람의 학습 능력</strong>을 컴퓨터로 구현하는 인공지능의 한 분야입니다. 컴퓨터가 <strong class="text-primary-700">수많은 데이터를 학습</strong>하여 모델을 만들고, 이를 통해 새로운 데이터를 <strong class="text-primary-700">예측하거나 분류</strong>합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data-based ML process diagram -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8">
+                <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-database text-primary-500"></i> 데이터 기반 기계학습의 과정
+                </h3>
+                <p class="text-gray-600 text-sm leading-relaxed mb-5">예를 들어, 다양한 자동차 이미지 데이터를 학습한 모델은 실생활에서 자동차를 정확하게 구분할 수 있게 됩니다.</p>
+                <div class="flex justify-center">
+                    <svg viewBox="0 0 560 100" class="w-full max-w-2xl" fill="none">
+                        <defs>
+                            <linearGradient id="mlGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#9c36b5"/><stop offset="100%" stop-color="#7950f2"/></linearGradient>
+                            <marker id="arrP" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#cc5de8"/></marker>
+                        </defs>
+                        <rect x="5" y="15" width="120" height="70" rx="12" fill="#f3e8ff" stroke="#cc5de8" stroke-width="2"/>
+                        <text x="65" y="45" text-anchor="middle" fill="#9c36b5" font-size="13" font-weight="bold">자동차 데이터</text>
+                        <text x="65" y="65" text-anchor="middle" fill="#7c3aed" font-size="11">(수많은 이미지)</text>
+                        <path d="M130 50 L160 50" stroke="#cc5de8" stroke-width="2.5" marker-end="url(#arrP)"/>
+                        <rect x="165" y="10" width="130" height="80" rx="14" fill="url(#mlGrad)" stroke="#9c36b5" stroke-width="2.5"/>
+                        <text x="230" y="42" text-anchor="middle" fill="white" font-size="14" font-weight="bold">기계학습</text>
+                        <text x="230" y="62" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="11">(패턴 학습)</text>
+                        <path d="M300 50 L330 50" stroke="#cc5de8" stroke-width="2.5" marker-end="url(#arrP)"/>
+                        <rect x="335" y="15" width="110" height="70" rx="12" fill="#eef2ff" stroke="#7950f2" stroke-width="2"/>
+                        <text x="390" y="45" text-anchor="middle" fill="#4f46e5" font-size="13" font-weight="bold">학습된 모델</text>
+                        <text x="390" y="65" text-anchor="middle" fill="#6366f1" font-size="11">(예측/분류)</text>
+                        <path d="M450 50 L475 50" stroke="#7950f2" stroke-width="2.5" marker-end="url(#arrP)"/>
+                        <rect x="480" y="15" width="75" height="70" rx="12" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+                        <text x="517" y="45" text-anchor="middle" fill="#166534" font-size="12" font-weight="bold">자동차</text>
+                        <text x="517" y="62" text-anchor="middle" fill="#15803d" font-size="11">구분!</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Application areas grid -->
+            <h3 class="font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <i class="fas fa-th-large text-primary-500"></i> 기계학습의 활용 분야
+            </h3>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg"><i class="fas fa-cloud-sun text-white text-xl"></i></div>
+                    <h4 class="font-bold text-gray-900 mb-1 text-sm">기상 예측</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">날씨 데이터를 분석하여 기상 변화를 예측</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg"><i class="fas fa-chart-line text-white text-xl"></i></div>
+                    <h4 class="font-bold text-gray-900 mb-1 text-sm">수요/주가 예측</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">과거 데이터 패턴으로 미래 수요와 주가를 예측</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg"><i class="fas fa-envelope-open-text text-white text-xl"></i></div>
+                    <h4 class="font-bold text-gray-900 mb-1 text-sm">스팸 메일 분류</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">메일 특성을 학습하여 스팸과 정상을 분류</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg"><i class="fas fa-heartbeat text-white text-xl"></i></div>
+                    <h4 class="font-bold text-gray-900 mb-1 text-sm">의료 영상 분석</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">의료 이미지를 분석하여 질병을 진단</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg"><i class="fas fa-credit-card text-white text-xl"></i></div>
+                    <h4 class="font-bold text-gray-900 mb-1 text-sm">부정거래 탐지</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">신용카드 이상 거래 패턴을 감지</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center shadow-lg"><i class="fas fa-shopping-cart text-white text-xl"></i></div>
+                    <h4 class="font-bold text-gray-900 mb-1 text-sm">상품 추천</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">사용자 취향을 분석하여 맞춤형 추천</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow-lg"><i class="fas fa-gamepad text-white text-xl"></i></div>
+                    <h4 class="font-bold text-gray-900 mb-1 text-sm">지능형 게임</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">이용자 수준에 맞는 난이도 자동 조절</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-lg"><i class="fas fa-car text-white text-xl"></i></div>
+                    <h4 class="font-bold text-gray-900 mb-1 text-sm">자율 주행</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">주변 환경을 인식하고 스스로 운전 판단</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== SECTION 2: AI, ML, DL 관계 ===== -->
+        <section class="fade-in" id="section-relationship">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">인공지능, 기계학습, 딥러닝의 관계</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Relationship of AI, ML, and Deep Learning</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8">
+                <h3 class="font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <i class="fas fa-project-diagram text-primary-500"></i> 포함 관계 (AI &sup; ML &sup; DL)
+                </h3>
+                <div class="flex justify-center">
+                    <svg viewBox="0 0 500 320" class="w-full max-w-lg" fill="none">
+                        <ellipse cx="250" cy="160" rx="230" ry="150" fill="#f3e8ff" stroke="#cc5de8" stroke-width="2.5" class="nested-circle"/>
+                        <text x="250" y="35" text-anchor="middle" fill="#9c36b5" font-size="16" font-weight="bold">인공지능 (AI)</text>
+                        <text x="250" y="53" text-anchor="middle" fill="#9c36b5" font-size="11">Artificial Intelligence</text>
+                        <ellipse cx="250" cy="180" rx="165" ry="105" fill="#e0e7ff" stroke="#7950f2" stroke-width="2.5" class="nested-circle"/>
+                        <text x="250" y="100" text-anchor="middle" fill="#4f46e5" font-size="15" font-weight="bold">기계학습 (ML)</text>
+                        <text x="250" y="117" text-anchor="middle" fill="#4f46e5" font-size="11">Machine Learning</text>
+                        <ellipse cx="250" cy="210" rx="100" ry="60" fill="#c7d2fe" stroke="#6366f1" stroke-width="2.5" class="nested-circle"/>
+                        <text x="250" y="200" text-anchor="middle" fill="#3730a3" font-size="14" font-weight="bold">딥러닝 (DL)</text>
+                        <text x="250" y="217" text-anchor="middle" fill="#3730a3" font-size="11">Deep Learning</text>
+                        <text x="250" y="240" text-anchor="middle" fill="#4338ca" font-size="10">인공 신경망 기반</text>
+                        <text x="75" y="115" fill="#9c36b5" font-size="9" text-anchor="middle">인간의 지적 능력을</text>
+                        <text x="75" y="128" fill="#9c36b5" font-size="9" text-anchor="middle">컴퓨터로 구현</text>
+                        <text x="425" y="150" fill="#4f46e5" font-size="9" text-anchor="middle">데이터로 스스로</text>
+                        <text x="425" y="163" fill="#4f46e5" font-size="9" text-anchor="middle">학습하는 알고리즘</text>
+                    </svg>
+                </div>
+                <p class="text-center text-sm text-gray-500 mt-4">
+                    <i class="fas fa-info-circle text-primary-400 mr-1"></i>
+                    인공지능이 가장 넓은 개념이고, 그 안에 기계학습, 기계학습 안에 딥러닝이 포함됩니다
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg"><i class="fas fa-brain text-white text-2xl"></i></div>
+                    <div class="inline-flex items-center justify-center bg-purple-100 text-purple-700 font-bold text-sm rounded-full px-3 py-1 mb-3 w-full">인공지능 (AI)</div>
+                    <p class="text-gray-600 text-sm leading-relaxed"><strong>인간이 가진 지적 능력</strong>을 컴퓨터로 구현하는 기술의 총칭</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-lg"><i class="fas fa-cogs text-white text-2xl"></i></div>
+                    <div class="inline-flex items-center justify-center bg-violet-100 text-violet-700 font-bold text-sm rounded-full px-3 py-1 mb-3 w-full">기계학습 (ML)</div>
+                    <p class="text-gray-600 text-sm leading-relaxed">컴퓨터가 <strong>스스로 학습</strong>하는 알고리즘을 연구하고 구현하는 분야</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-lg"><i class="fas fa-network-wired text-white text-2xl"></i></div>
+                    <div class="inline-flex items-center justify-center bg-indigo-100 text-indigo-700 font-bold text-sm rounded-full px-3 py-1 mb-3 w-full">딥러닝 (DL)</div>
+                    <p class="text-gray-600 text-sm leading-relaxed">인간의 <strong>뉴런과 비슷한 인공 신경망</strong>으로 학습하는 기계학습의 한 방법</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== SECTION 3: 기계학습의 활용 사례 ===== -->
+        <section class="fade-in" id="section-cases">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-th-large"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">기계학습의 활용 사례</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Application Cases of Machine Learning</p>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow"><i class="fas fa-snowflake text-white text-lg"></i></div>
+                        <div>
+                            <h4 class="font-bold text-gray-900">북극 해빙 면적 예측</h4>
+                            <span class="text-xs text-cyan-600 bg-cyan-50 rounded-full px-2 py-0.5">환경 분야</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 leading-relaxed mb-3">인공위성에서 수집한 북극 해빙 데이터를 기계학습으로 분석하여, 미래의 해빙 면적 변화를 예측합니다.</p>
+                    <div class="bg-cyan-50 rounded-xl p-3 border border-cyan-200">
+                        <p class="text-xs text-cyan-700"><i class="fas fa-satellite mr-1"></i> 인공위성 데이터를 학습하여 해빙 면적 변화 추이를 예측</p>
+                    </div>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center shadow"><i class="fas fa-thumbs-up text-white text-lg"></i></div>
+                        <div>
+                            <h4 class="font-bold text-gray-900">추천 시스템</h4>
+                            <span class="text-xs text-pink-600 bg-pink-50 rounded-full px-2 py-0.5">서비스 분야</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 leading-relaxed mb-3">사용자의 시청 기록, 구매 이력 등을 학습하여 개인의 선호도에 맞는 콘텐츠나 상품을 맞춤형으로 추천합니다.</p>
+                    <div class="bg-pink-50 rounded-xl p-3 border border-pink-200">
+                        <p class="text-xs text-pink-700"><i class="fas fa-user-check mr-1"></i> 사용자 행동 데이터를 학습하여 선호도 맞춤 추천</p>
+                    </div>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow"><i class="fas fa-gamepad text-white text-lg"></i></div>
+                        <div>
+                            <h4 class="font-bold text-gray-900">게임 AI</h4>
+                            <span class="text-xs text-amber-600 bg-amber-50 rounded-full px-2 py-0.5">게임 분야</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 leading-relaxed mb-3">게임 이용자의 플레이 패턴과 실력 수준을 학습하여, 이용자 수준에 맞는 적절한 난이도를 자동으로 조절합니다.</p>
+                    <div class="bg-amber-50 rounded-xl p-3 border border-amber-200">
+                        <p class="text-xs text-amber-700"><i class="fas fa-sliders-h mr-1"></i> 이용자 실력 데이터를 학습하여 난이도 자동 조절</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== QUIZ SECTION ===== -->
+        <section class="fade-in" id="section-quiz">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">확인 문제</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Review Questions</p>
+                </div>
+            </div>
+
+            <!-- Quiz 1 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6" id="quiz1-container">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-primary-100 text-primary-700 font-bold text-sm rounded-full px-3 py-1">Q1</span>
+                    <h4 class="font-bold text-gray-900">기계학습에 대한 설명으로 가장 적절한 것은?</h4>
+                </div>
+                <div class="space-y-3">
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz1',this,false)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">A</span>
+                        <span class="text-sm text-gray-700">사람이 직접 모든 규칙을 프로그래밍하는 방식이다</span>
+                    </div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz1',this,true)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">B</span>
+                        <span class="text-sm text-gray-700">컴퓨터가 데이터를 학습하여 모델을 만들고 예측하는 기술이다</span>
+                    </div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz1',this,false)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">C</span>
+                        <span class="text-sm text-gray-700">인터넷에서 정보를 검색하는 기술이다</span>
+                    </div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz1',this,false)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">D</span>
+                        <span class="text-sm text-gray-700">컴퓨터 하드웨어를 조립하는 기술이다</span>
+                    </div>
+                </div>
+                <div class="hidden mt-4 p-4 rounded-xl" id="quiz1-result"></div>
+            </div>
+
+            <!-- Quiz 2 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6" id="quiz2-container">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-accent-100 text-accent-700 font-bold text-sm rounded-full px-3 py-1">Q2</span>
+                    <h4 class="font-bold text-gray-900">인공지능, 기계학습, 딥러닝의 포함 관계로 올바른 것은?</h4>
+                </div>
+                <div class="space-y-3">
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz2',this,false)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">A</span>
+                        <span class="text-sm text-gray-700">딥러닝 &supset; 기계학습 &supset; 인공지능</span>
+                    </div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz2',this,false)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">B</span>
+                        <span class="text-sm text-gray-700">기계학습 &supset; 인공지능 &supset; 딥러닝</span>
+                    </div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz2',this,true)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">C</span>
+                        <span class="text-sm text-gray-700">인공지능 &supset; 기계학습 &supset; 딥러닝</span>
+                    </div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz2',this,false)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">D</span>
+                        <span class="text-sm text-gray-700">세 가지는 서로 독립적인 관계이다</span>
+                    </div>
+                </div>
+                <div class="hidden mt-4 p-4 rounded-xl" id="quiz2-result"></div>
+            </div>
+
+            <!-- Quiz 3 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz3-container">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-purple-100 text-purple-700 font-bold text-sm rounded-full px-3 py-1">Q3</span>
+                    <h4 class="font-bold text-gray-900">다음 중 기계학습의 활용 사례로 적절하지 <u>않은</u> 것은?</h4>
+                </div>
+                <div class="space-y-3">
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz3',this,false)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">A</span>
+                        <span class="text-sm text-gray-700">인공위성 데이터를 분석하여 북극 해빙 면적을 예측</span>
+                    </div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz3',this,false)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">B</span>
+                        <span class="text-sm text-gray-700">사용자 선호도를 분석하여 맞춤형 콘텐츠를 추천</span>
+                    </div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz3',this,true)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">C</span>
+                        <span class="text-sm text-gray-700">정해진 시간에 알람을 울리도록 설정</span>
+                    </div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz3',this,false)">
+                        <span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">D</span>
+                        <span class="text-sm text-gray-700">이용자 수준에 맞는 게임 난이도를 자동 조절</span>
+                    </div>
+                </div>
+                <div class="hidden mt-4 p-4 rounded-xl" id="quiz3-result"></div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== SUMMARY ===== -->
+        <section class="fade-in" id="section-summary">
+            <div class="bg-gradient-to-br from-primary-50 via-white to-accent-50 rounded-2xl shadow-md border border-gray-100 p-6 md:p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <i class="fas fa-clipboard-check text-primary-500"></i> 핵심 정리
+                </h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-purple-700 mb-2 flex items-center gap-2"><i class="fas fa-cogs text-sm"></i> 기계학습의 개념</h4>
+                        <ul class="space-y-1.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-purple-500 mt-0.5 text-xs"></i> 사람의 학습 능력을 컴퓨터로 구현하는 인공지능 기술</li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-purple-500 mt-0.5 text-xs"></i> 수많은 데이터를 학습하여 모델을 만들고 예측/분류</li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-purple-500 mt-0.5 text-xs"></i> 기상, 의료, 추천, 게임 등 다양한 분야에서 활용</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-violet-700 mb-2 flex items-center gap-2"><i class="fas fa-layer-group text-sm"></i> AI, ML, DL 관계</h4>
+                        <ul class="space-y-1.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-violet-500 mt-0.5 text-xs"></i> 인공지능 &supset; 기계학습 &supset; 딥러닝 (포함 관계)</li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-violet-500 mt-0.5 text-xs"></i> 딥러닝은 인공 신경망을 활용한 기계학습 방법</li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-violet-500 mt-0.5 text-xs"></i> 기계학습은 데이터 기반으로 스스로 학습하는 알고리즘</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 md:col-span-2">
+                        <h4 class="font-bold text-indigo-700 mb-2 flex items-center gap-2"><i class="fas fa-th-large text-sm"></i> 주요 활용 사례</h4>
+                        <div class="grid sm:grid-cols-3 gap-3">
+                            <div class="bg-cyan-50 rounded-lg p-3 border border-cyan-200 text-sm">
+                                <p class="font-bold text-cyan-700 text-xs mb-1">북극 해빙 예측</p>
+                                <p class="text-gray-700 text-xs">인공위성 데이터 분석</p>
+                            </div>
+                            <div class="bg-pink-50 rounded-lg p-3 border border-pink-200 text-sm">
+                                <p class="font-bold text-pink-700 text-xs mb-1">추천 시스템</p>
+                                <p class="text-gray-700 text-xs">사용자 맞춤형 콘텐츠 추천</p>
+                            </div>
+                            <div class="bg-amber-50 rounded-lg p-3 border border-amber-200 text-sm">
+                                <p class="font-bold text-amber-700 text-xs mb-1">게임 AI</p>
+                                <p class="text-gray-700 text-xs">난이도 자동 조절</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../../01_인공지능과 지능 에이전트/03_선택활동/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-arrow-left"></i> 이전 페이지
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i> 목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../02_기계학습의 유형/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        다음 페이지 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">IV. 인공지능 &gt; 02 기계학습의 개념 &gt; 기계학습의 이해</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        const quizAnswered = {};
+        function checkQuiz(quizId, element, isCorrect) {
+            if (quizAnswered[quizId]) return;
+            quizAnswered[quizId] = true;
+            const container = document.getElementById(quizId + '-container');
+            const resultDiv = document.getElementById(quizId + '-result');
+            const options = container.querySelectorAll('.quiz-option');
+            options.forEach(opt => { opt.style.cursor = 'default'; opt.style.opacity = '0.7'; });
+            element.style.opacity = '1';
+            if (isCorrect) {
+                element.classList.add('correct');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-green-50 border border-green-200';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500 text-lg"></i><span class="font-bold text-green-700">정답입니다!</span></div>';
+                if (quizId === 'quiz1') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">기계학습은 컴퓨터가 <strong>수많은 데이터를 학습</strong>하여 모델을 만들고, 새로운 데이터를 <strong>예측하거나 분류</strong>하는 인공지능 기술입니다.</p>';
+                else if (quizId === 'quiz2') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2"><strong>인공지능</strong>이 가장 넓은 개념이고, 그 안에 <strong>기계학습</strong>, 기계학습 안에 <strong>딥러닝</strong>이 포함되는 관계입니다.</p>';
+                else if (quizId === 'quiz3') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">정해진 시간에 알람을 울리는 것은 단순한 <strong>규칙 기반 동작</strong>이므로 기계학습이 필요하지 않습니다.</p>';
+            } else {
+                element.classList.add('wrong');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-red-50 border border-red-200';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-times-circle text-red-500 text-lg"></i><span class="font-bold text-red-700">오답입니다.</span></div>';
+                if (quizId === 'quiz1') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">기계학습은 사람이 규칙을 직접 프로그래밍하는 것이 아니라, 컴퓨터가 <strong>데이터를 학습하여 모델을 만들고 예측</strong>하는 기술입니다.</p>';
+                else if (quizId === 'quiz2') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">정답은 <strong>인공지능 &sup; 기계학습 &sup; 딥러닝</strong>입니다. 인공지능이 가장 넓은 개념이고, 딥러닝이 가장 좁은 개념입니다.</p>';
+                else if (quizId === 'quiz3') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">정답은 <strong>정해진 시간에 알람을 울리도록 설정</strong>입니다. 이것은 단순한 규칙 기반 동작으로 기계학습이 필요하지 않습니다.</p>';
+                options.forEach(opt => { if (opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+            }
+            resultDiv.classList.remove('hidden');
+        }
+
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.fade-in').forEach(el => fadeInObserver.observe(el));
+    </script>
+</body>
+</html>

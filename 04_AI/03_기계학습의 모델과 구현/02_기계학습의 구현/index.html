@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기계학습의 구현 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#cc5de8',
+                            500: '#a855f7',
+                            600: '#9c36b5',
+                            700: '#7c3aed',
+                            800: '#6b21a8',
+                            900: '#581c87',
+                        },
+                        accent: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#7950f2',
+                            600: '#6366f1',
+                            700: '#4f46e5',
+                            800: '#4338ca',
+                            900: '#3730a3',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #9c36b5, #7950f2, #9c36b5);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Accordion styles */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+        }
+        .accordion-content.open {
+            max-height: 1200px;
+        }
+
+        /* Tab styles */
+        .tab-btn {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-btn.active {
+            border-bottom-color: #9c36b5;
+            color: #9c36b5;
+            font-weight: 700;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Step connector animation */
+        .step-pulse {
+            animation: pulse-step 2s ease-in-out infinite;
+        }
+        @keyframes pulse-step {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Quiz styles */
+        .quiz-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .quiz-option:hover {
+            transform: translateX(4px);
+        }
+        .quiz-option.correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+        }
+        .quiz-option.wrong {
+            background-color: #fef2f2 !important;
+            border-color: #ef4444 !important;
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { background: #9c36b5 !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+            a { text-decoration: underline; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background:linear-gradient(135deg,#9c36b5 0%,#7c3aed 50%,#7950f2 100%);color:#fff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1"><i class="fas fa-home text-xs"></i> 정보</span>
+                <span class="breadcrumb-item">IV. 인공지능</span>
+                <span class="breadcrumb-item text-white font-medium">03 기계학습의 모델과 구현</span>
+            </nav>
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-laptop-code"></i>
+                        <span>IV. 인공지능 &gt; 03 기계학습의 모델과 구현</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight" style="color:#fff!important">기계학습의 구현</h1>
+                    <p class="text-lg md:text-xl leading-relaxed max-w-2xl" style="color:rgba(255,255,255,0.92)!important">기계학습의 구현 과정을 이해하고, 오렌지3(Orange3)를 활용하여 회귀와 분류 문제를 실습합니다</p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-cogs mr-1"></i> 기계학습 구현</span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-cubes mr-1"></i> 오렌지3</span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-database mr-1"></i> 데이터 전처리</span>
+                    </div>
+                </div>
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
+                        <rect x="10" y="70" width="45" height="35" rx="7" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <text x="32" y="92" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="10" font-weight="bold">Data</text>
+                        <path d="M58 88 L72 88" stroke="rgba(255,255,255,0.4)" stroke-width="2" marker-end="url(#ha)"/>
+                        <circle cx="100" cy="88" r="22" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <circle cx="100" cy="88" r="8" fill="rgba(255,255,255,0.2)"/>
+                        <circle cx="100" cy="88" r="3" fill="rgba(255,255,255,0.5)"/>
+                        <text x="100" y="120" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9">학습</text>
+                        <path d="M125 88 L140 88" stroke="rgba(255,255,255,0.4)" stroke-width="2" marker-end="url(#ha)"/>
+                        <rect x="145" y="70" width="45" height="35" rx="7" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <polyline points="155,97 165,78 175,90 185,75" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <text x="167" y="120" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9">평가</text>
+                        <rect x="60" y="145" width="80" height="25" rx="12" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                        <text x="100" y="162" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="11" font-weight="bold">Orange3</text>
+                        <defs><marker id="ha" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="rgba(255,255,255,0.4)"/></marker></defs>
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-bullseye"></i> 학습 목표</h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2"><span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span><span>기계학습의 구현 과정을 이해하고 각 단계별 핵심 활동을 설명할 수 있다.</span></div>
+                    <div class="flex items-start gap-2"><span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span><span>오렌지3를 활용하여 회귀 및 분류 문제를 실습하고 모델을 평가할 수 있다.</span></div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 기계학습 구현</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 오렌지3</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 데이터 전처리</span>
+                </div>
+            </div>
+        </div>
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/></svg>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===== SECTION 1: 기계학습의 구현 과정 ===== -->
+        <section class="fade-in" id="section-process">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg"><i class="fas fa-list-ol"></i></div>
+                <div><h2 class="text-2xl md:text-3xl font-bold text-gray-900">기계학습의 구현 과정</h2><p class="text-gray-500 text-sm mt-0.5">Machine Learning Implementation Process</p></div>
+            </div>
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fas fa-info-circle text-white text-sm"></i></div>
+                    <div><h3 class="font-bold text-primary-800 mb-1">기계학습 구현이란?</h3><p class="text-gray-700 leading-relaxed"><strong class="text-primary-700">문제 정의 &rarr; 데이터 수집 및 전처리 &rarr; 모델 선정 및 학습 &rarr; 모델 평가</strong>의 4단계 과정을 거쳐 기계학습을 구현합니다.</p></div>
+                </div>
+            </div>
+            <!-- 4 Steps cards -->
+            <div class="grid md:grid-cols-4 gap-5 mb-8">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center relative">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg"><span class="text-white text-xl font-extrabold">1</span></div>
+                    <h4 class="font-bold text-gray-900 mb-2">문제 정의하기</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">해결하고자 하는 문제가 <strong>기계학습으로 해결 가능한지</strong> 판단합니다.</p>
+                    <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 z-10 step-pulse"><i class="fas fa-chevron-right text-purple-300"></i></div>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center relative">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-lg"><span class="text-white text-xl font-extrabold">2</span></div>
+                    <h4 class="font-bold text-gray-900 mb-2">데이터 수집 및 전처리</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed"><strong>통계 정보를 확인</strong>하고, <strong>결측치 및 이상치</strong>를 처리합니다.</p>
+                    <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 z-10 step-pulse"><i class="fas fa-chevron-right text-violet-300"></i></div>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center relative">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-lg"><span class="text-white text-xl font-extrabold">3</span></div>
+                    <h4 class="font-bold text-gray-900 mb-2">모델 선정 및 학습</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed"><strong>분류/회귀/군집화</strong> 중 적합한 모델을 선택하고 훈련/테스트 데이터로 학습합니다.</p>
+                    <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 z-10 step-pulse"><i class="fas fa-chevron-right text-indigo-300"></i></div>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-fuchsia-400 to-fuchsia-600 flex items-center justify-center shadow-lg"><span class="text-white text-xl font-extrabold">4</span></div>
+                    <h4 class="font-bold text-gray-900 mb-2">모델 평가하기</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">학습 결과를 <strong>평가</strong>하고, 성능이 부족하면 모델을 수정하거나 변경합니다.</p>
+                </div>
+            </div>
+            <!-- Flow diagram -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-project-diagram text-primary-500"></i> 구현 과정 흐름도</h3>
+                <div class="flex justify-center">
+                    <svg viewBox="0 0 700 160" class="w-full max-w-3xl" fill="none">
+                        <rect x="10" y="30" width="130" height="80" rx="12" fill="#faf5ff" stroke="#cc5de8" stroke-width="2"/>
+                        <text x="75" y="60" text-anchor="middle" fill="#9c36b5" font-size="12" font-weight="bold">단계 1</text>
+                        <text x="75" y="80" text-anchor="middle" fill="#6b21a8" font-size="10">문제 정의</text>
+                        <path d="M145 70 L175 70" stroke="#cc5de8" stroke-width="2" marker-end="url(#fa)"/>
+                        <rect x="180" y="30" width="130" height="80" rx="12" fill="#f3e8ff" stroke="#8b5cf6" stroke-width="2"/>
+                        <text x="245" y="60" text-anchor="middle" fill="#7c3aed" font-size="12" font-weight="bold">단계 2</text>
+                        <text x="245" y="80" text-anchor="middle" fill="#5b21b6" font-size="10">데이터 수집/전처리</text>
+                        <path d="M315 70 L345 70" stroke="#8b5cf6" stroke-width="2" marker-end="url(#fa)"/>
+                        <rect x="350" y="30" width="130" height="80" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="2"/>
+                        <text x="415" y="60" text-anchor="middle" fill="#4f46e5" font-size="12" font-weight="bold">단계 3</text>
+                        <text x="415" y="80" text-anchor="middle" fill="#3730a3" font-size="10">모델 선정/학습</text>
+                        <path d="M485 70 L515 70" stroke="#6366f1" stroke-width="2" marker-end="url(#fa)"/>
+                        <rect x="520" y="30" width="130" height="80" rx="12" fill="#fdf2f8" stroke="#ec4899" stroke-width="2"/>
+                        <text x="585" y="60" text-anchor="middle" fill="#be185d" font-size="12" font-weight="bold">단계 4</text>
+                        <text x="585" y="80" text-anchor="middle" fill="#9d174d" font-size="10">모델 평가</text>
+                        <path d="M585 115 L585 140 L75 140 L75 115" stroke="#9c36b5" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#fa)" class="step-pulse"/>
+                        <text x="330" y="153" text-anchor="middle" fill="#9c36b5" font-size="9">성능 부족 시 재수행</text>
+                        <defs><marker id="fa" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#9c36b5"/></marker></defs>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== SECTION 2: 기계학습으로 해결할 수 있는 문제 ===== -->
+        <section class="fade-in" id="section-problems">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg"><i class="fas fa-lightbulb"></i></div>
+                <div><h2 class="text-2xl md:text-3xl font-bold text-gray-900">기계학습으로 해결할 수 있는 문제</h2><p class="text-gray-500 text-sm mt-0.5">Problems Solvable by Machine Learning</p></div>
+            </div>
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fas fa-key text-white text-sm"></i></div>
+                    <div><h3 class="font-bold text-primary-800 mb-1">기계학습이 필요한 문제</h3><p class="text-gray-700 leading-relaxed"><strong class="text-primary-700">명확한 규칙이나 알고리즘이 없어서</strong> 사람이 직접 프로그래밍하기 어려운 문제를 기계학습으로 해결할 수 있습니다.</p></div>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg"><i class="fas fa-chart-line text-white text-2xl"></i></div>
+                    <div class="inline-flex items-center justify-center bg-red-100 text-red-700 font-bold text-sm rounded-full px-3 py-1 mb-3">이상 탐지</div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">주식 이상 거래 탐지</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">수많은 거래 패턴 속에서 비정상적인 거래를 자동으로 감지합니다.</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg"><i class="fas fa-brain text-white text-2xl"></i></div>
+                    <div class="inline-flex items-center justify-center bg-blue-100 text-blue-700 font-bold text-sm rounded-full px-3 py-1 mb-3">의료 진단</div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">의료 영상 뇌 질환 진단</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">MRI, CT 영상에서 뇌 질환의 징후를 자동으로 분석하고 진단합니다.</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg"><i class="fas fa-tshirt text-white text-2xl"></i></div>
+                    <div class="inline-flex items-center justify-center bg-green-100 text-green-700 font-bold text-sm rounded-full px-3 py-1 mb-3">이미지 분류</div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">의류 제품 분류</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">다양한 의류 이미지를 종류별로 자동 분류하여 관리합니다.</p>
+                </div>
+            </div>
+            <!-- Comparison table -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8">
+                <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-columns text-primary-500"></i> 기계학습 vs 전통적 프로그래밍</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead><tr class="bg-gradient-to-r from-purple-50 to-indigo-50">
+                            <th class="text-left py-3 px-4 font-bold text-gray-700 rounded-tl-xl">구분</th>
+                            <th class="text-left py-3 px-4 font-bold text-purple-700"><i class="fas fa-code mr-1"></i> 전통적 프로그래밍</th>
+                            <th class="text-left py-3 px-4 font-bold text-indigo-700 rounded-tr-xl"><i class="fas fa-robot mr-1"></i> 기계학습</th>
+                        </tr></thead>
+                        <tbody>
+                            <tr class="border-t border-gray-100"><td class="py-3 px-4 font-medium text-gray-700">접근 방식</td><td class="py-3 px-4 text-gray-600">사람이 <strong>규칙을 직접</strong> 프로그래밍</td><td class="py-3 px-4 text-gray-600">컴퓨터가 <strong>데이터에서 규칙</strong>을 학습</td></tr>
+                            <tr class="border-t border-gray-100 bg-gray-50/50"><td class="py-3 px-4 font-medium text-gray-700">입력</td><td class="py-3 px-4 text-gray-600">데이터 + 프로그램(규칙)</td><td class="py-3 px-4 text-gray-600">데이터 + 결과(정답)</td></tr>
+                            <tr class="border-t border-gray-100"><td class="py-3 px-4 font-medium text-gray-700">출력</td><td class="py-3 px-4 text-gray-600">결과</td><td class="py-3 px-4 text-gray-600">프로그램(모델)</td></tr>
+                            <tr class="border-t border-gray-100 bg-gray-50/50"><td class="py-3 px-4 font-medium text-gray-700">적합한 문제</td><td class="py-3 px-4 text-gray-600">규칙이 명확한 문제</td><td class="py-3 px-4 text-gray-600">규칙을 정의하기 어려운 문제</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="bg-amber-50 rounded-2xl border border-amber-200 p-6">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-pencil-alt text-amber-600 text-lg"></i></div>
+                    <div>
+                        <h4 class="font-bold text-amber-800 mb-2">활동: 기계학습이 필요한 경우 판단하기</h4>
+                        <p class="text-sm text-gray-700 leading-relaxed mb-3">다음 문제들이 전통적 프로그래밍과 기계학습 중 어떤 방식이 적합한지 생각해 봅시다.</p>
+                        <div class="grid sm:grid-cols-2 gap-3">
+                            <div class="bg-white rounded-lg p-3 border border-amber-200"><p class="text-xs font-bold text-amber-700 mb-1"><i class="fas fa-calculator mr-1"></i> 두 수의 합 구하기</p><p class="text-xs text-gray-600">규칙이 명확 &rarr; <strong>전통적 프로그래밍</strong></p></div>
+                            <div class="bg-white rounded-lg p-3 border border-amber-200"><p class="text-xs font-bold text-amber-700 mb-1"><i class="fas fa-envelope mr-1"></i> 스팸 메일 분류</p><p class="text-xs text-gray-600">패턴이 복잡 &rarr; <strong>기계학습</strong></p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== SECTION 3: 오렌지3(Orange3) 소개 ===== -->
+        <section class="fade-in" id="section-orange3">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg"><i class="fas fa-puzzle-piece"></i></div>
+                <div><h2 class="text-2xl md:text-3xl font-bold text-gray-900">오렌지3(Orange3) 소개</h2><p class="text-gray-500 text-sm mt-0.5">Introduction to Orange3</p></div>
+            </div>
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fas fa-tools text-white text-sm"></i></div>
+                    <div><h3 class="font-bold text-primary-800 mb-1">오렌지3(Orange3)란?</h3><p class="text-gray-700 leading-relaxed"><strong class="text-primary-700">오픈 소스 기계학습 도구</strong>로, 코드를 작성하지 않고 <strong class="text-primary-700">위젯을 드래그 앤 드롭</strong>하여 기계학습 워크플로를 구성할 수 있습니다.</p></div>
+                </div>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                <div class="bg-orange-50 rounded-xl p-4 border border-orange-200"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-orange-400 flex items-center justify-center"><i class="fas fa-database text-white text-sm"></i></div><h4 class="font-bold text-orange-800">Data</h4></div><p class="text-xs text-gray-600">데이터 불러오기, 저장, 정보 확인</p></div>
+                <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-200"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-yellow-500 flex items-center justify-center"><i class="fas fa-exchange-alt text-white text-sm"></i></div><h4 class="font-bold text-yellow-800">Transform</h4></div><p class="text-xs text-gray-600">데이터 변환, 필터링, 전처리</p></div>
+                <div class="bg-blue-50 rounded-xl p-4 border border-blue-200"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center"><i class="fas fa-chart-bar text-white text-sm"></i></div><h4 class="font-bold text-blue-800">Visualize</h4></div><p class="text-xs text-gray-600">데이터를 차트/그래프로 시각화</p></div>
+                <div class="bg-red-50 rounded-xl p-4 border border-red-200"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-red-500 flex items-center justify-center"><i class="fas fa-brain text-white text-sm"></i></div><h4 class="font-bold text-red-800">Model</h4></div><p class="text-xs text-gray-600">기계학습 모델 학습 (회귀, 분류 등)</p></div>
+                <div class="bg-green-50 rounded-xl p-4 border border-green-200"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center"><i class="fas fa-check-double text-white text-sm"></i></div><h4 class="font-bold text-green-800">Evaluate</h4></div><p class="text-xs text-gray-600">모델 성능 테스트 및 평가</p></div>
+                <div class="bg-purple-50 rounded-xl p-4 border border-purple-200"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center"><i class="fas fa-object-group text-white text-sm"></i></div><h4 class="font-bold text-purple-800">Unsupervised</h4></div><p class="text-xs text-gray-600">비지도 학습(군집화 등)</p></div>
+            </div>
+            <div class="bg-gradient-to-br from-primary-50 via-white to-accent-50 rounded-2xl shadow-md border border-gray-100 p-6">
+                <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-sitemap text-primary-500"></i> 워크플로 구성 방법</h3>
+                <div class="grid sm:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm text-center"><div class="w-10 h-10 mx-auto mb-2 rounded-full bg-purple-100 flex items-center justify-center"><span class="font-bold text-purple-700 text-sm">1</span></div><p class="text-xs text-gray-700 font-medium">위젯 선택 후 캔버스에 배치</p></div>
+                    <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm text-center"><div class="w-10 h-10 mx-auto mb-2 rounded-full bg-violet-100 flex items-center justify-center"><span class="font-bold text-violet-700 text-sm">2</span></div><p class="text-xs text-gray-700 font-medium">위젯 간 선으로 연결</p></div>
+                    <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm text-center"><div class="w-10 h-10 mx-auto mb-2 rounded-full bg-indigo-100 flex items-center justify-center"><span class="font-bold text-indigo-700 text-sm">3</span></div><p class="text-xs text-gray-700 font-medium">위젯 더블클릭으로 설정/결과 확인</p></div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== SECTION 4: 실습 - 지구 온도 변화 예측 (회귀) ===== -->
+        <section class="fade-in" id="section-regression">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg"><i class="fas fa-temperature-high"></i></div>
+                <div><h2 class="text-2xl md:text-3xl font-bold text-gray-900">실습: 지구 온도 변화 예측</h2><p class="text-gray-500 text-sm mt-0.5">Practice: Global Temperature Prediction (Regression)</p></div>
+            </div>
+            <div class="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 font-bold text-sm rounded-full px-4 py-1.5 mb-6"><i class="fas fa-chart-line"></i> 회귀(Regression) 문제</div>
+            <!-- Accordion steps -->
+            <div class="space-y-3 mb-8">
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion('rs1')" class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow"><span class="text-white font-bold text-sm">1</span></div><div><h4 class="font-bold text-gray-900 text-sm">문제 정의</h4><p class="text-xs text-gray-500">과거 데이터를 기반으로 미래 지구 온도를 예측</p></div></div>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="rs1-icon"></i>
+                    </button>
+                    <div class="accordion-content" id="rs1"><div class="px-5 pb-4"><div class="bg-purple-50 rounded-xl p-4 border border-purple-100"><p class="text-sm text-gray-700">과거의 지구 평균 온도 데이터를 학습하여 <strong>미래의 온도 변화를 예측</strong>하는 회귀 문제입니다.</p></div></div></div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion('rs2')" class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow"><span class="text-white font-bold text-sm">2</span></div><div><h4 class="font-bold text-gray-900 text-sm">데이터 수집 및 전처리</h4><p class="text-xs text-gray-500">캐글(Kaggle)에서 지구 온도 데이터 수집</p></div></div>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="rs2-icon"></i>
+                    </button>
+                    <div class="accordion-content" id="rs2"><div class="px-5 pb-4"><div class="bg-violet-50 rounded-xl p-4 border border-violet-100"><ul class="space-y-1 text-sm text-gray-700"><li class="flex items-start gap-2"><i class="fas fa-check text-violet-500 mt-0.5 text-xs"></i><span><strong>캐글</strong>에서 CSV 데이터 다운로드 &rarr; <strong>File 위젯</strong>으로 불러오기</span></li><li class="flex items-start gap-2"><i class="fas fa-check text-violet-500 mt-0.5 text-xs"></i><span><strong>Data Table</strong>로 통계 정보 확인, <strong>Preprocess</strong>로 결측치/이상치 처리</span></li></ul></div></div></div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion('rs3')" class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow"><span class="text-white font-bold text-sm">3</span></div><div><h4 class="font-bold text-gray-900 text-sm">모델 선정 및 학습</h4><p class="text-xs text-gray-500">Linear Regression 모델로 학습</p></div></div>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="rs3-icon"></i>
+                    </button>
+                    <div class="accordion-content" id="rs3"><div class="px-5 pb-4"><div class="bg-indigo-50 rounded-xl p-4 border border-indigo-100"><p class="text-sm text-gray-700 mb-2">연속적인 값을 예측하는 <strong>회귀 문제</strong>이므로, <strong>Linear Regression(선형 회귀)</strong> 모델을 사용합니다.</p><div class="bg-white rounded-lg p-3 border border-indigo-200"><p class="text-xs text-gray-600"><i class="fas fa-cog mr-1 text-indigo-500"></i> File &rarr; Data Table &rarr; Select Columns &rarr; Linear Regression &rarr; Predictions</p></div></div></div></div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <button onclick="toggleAccordion('rs4')" class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-gradient-to-br from-fuchsia-400 to-fuchsia-600 flex items-center justify-center shadow"><span class="text-white font-bold text-sm">4</span></div><div><h4 class="font-bold text-gray-900 text-sm">모델 평가</h4><p class="text-xs text-gray-500">MSE, RMSE, MAE, R2 지표로 평가</p></div></div>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="rs4-icon"></i>
+                    </button>
+                    <div class="accordion-content" id="rs4"><div class="px-5 pb-4"><div class="bg-fuchsia-50 rounded-xl p-4 border border-fuchsia-100"><p class="text-sm text-gray-700"><strong>Test &amp; Score 위젯</strong>을 사용하여 모델의 성능을 평가합니다.</p></div></div></div>
+                </div>
+            </div>
+            <!-- Evaluation metrics -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-ruler text-primary-500"></i> 회귀 모델 평가 지표</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead><tr class="bg-gradient-to-r from-purple-50 to-indigo-50">
+                            <th class="text-left py-3 px-4 font-bold text-gray-700 rounded-tl-xl">지표</th>
+                            <th class="text-left py-3 px-4 font-bold text-gray-700">의미</th>
+                            <th class="text-left py-3 px-4 font-bold text-gray-700 rounded-tr-xl">좋은 값</th>
+                        </tr></thead>
+                        <tbody>
+                            <tr class="border-t border-gray-100"><td class="py-3 px-4 font-bold text-purple-700">MSE</td><td class="py-3 px-4 text-gray-600">평균 제곱 오차</td><td class="py-3 px-4 text-gray-600"><span class="text-green-600 font-medium">0에 가까울수록</span> 좋음</td></tr>
+                            <tr class="border-t border-gray-100 bg-gray-50/50"><td class="py-3 px-4 font-bold text-violet-700">RMSE</td><td class="py-3 px-4 text-gray-600">평균 제곱근 오차</td><td class="py-3 px-4 text-gray-600"><span class="text-green-600 font-medium">0에 가까울수록</span> 좋음</td></tr>
+                            <tr class="border-t border-gray-100"><td class="py-3 px-4 font-bold text-indigo-700">MAE</td><td class="py-3 px-4 text-gray-600">평균 절대 오차</td><td class="py-3 px-4 text-gray-600"><span class="text-green-600 font-medium">0에 가까울수록</span> 좋음</td></tr>
+                            <tr class="border-t border-gray-100 bg-gray-50/50"><td class="py-3 px-4 font-bold text-fuchsia-700">R2</td><td class="py-3 px-4 text-gray-600">결정 계수 (모델의 설명력)</td><td class="py-3 px-4 text-gray-600"><span class="text-green-600 font-medium">1에 가까울수록</span> 좋음</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== SECTION 5: 실습 - 펭귄 종 분류 (분류) ===== -->
+        <section class="fade-in" id="section-classification">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg"><i class="fas fa-dove"></i></div>
+                <div><h2 class="text-2xl md:text-3xl font-bold text-gray-900">실습: 펭귄 종 분류</h2><p class="text-gray-500 text-sm mt-0.5">Practice: Penguin Species Classification</p></div>
+            </div>
+            <div class="inline-flex items-center gap-2 bg-purple-100 text-purple-700 font-bold text-sm rounded-full px-4 py-1.5 mb-6"><i class="fas fa-tags"></i> 분류(Classification) 문제</div>
+            <!-- Penguin cards -->
+            <div class="grid md:grid-cols-3 gap-5 mb-8">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg"><i class="fas fa-feather-alt text-white text-xl"></i></div>
+                    <h4 class="font-bold text-gray-900 mb-1">아델리 펭귄</h4><p class="text-xs text-gray-500 mb-2">Adelie</p>
+                    <p class="text-gray-600 text-xs leading-relaxed">남극 해안 전역에 서식하는 가장 널리 분포된 펭귄 종</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg"><i class="fas fa-feather-alt text-white text-xl"></i></div>
+                    <h4 class="font-bold text-gray-900 mb-1">턱끈 펭귄</h4><p class="text-xs text-gray-500 mb-2">Chinstrap</p>
+                    <p class="text-gray-600 text-xs leading-relaxed">턱 아래의 검은 줄무늬가 특징인 펭귄 종</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg"><i class="fas fa-feather-alt text-white text-xl"></i></div>
+                    <h4 class="font-bold text-gray-900 mb-1">젠투 펭귄</h4><p class="text-xs text-gray-500 mb-2">Gentoo</p>
+                    <p class="text-gray-600 text-xs leading-relaxed">머리 위의 흰색 띠가 특징이며 가장 빠르게 헤엄치는 펭귄</p>
+                </div>
+            </div>
+            <!-- Model comparison tabs -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8">
+                <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-balance-scale text-primary-500"></i> 분류 모델 비교</h3>
+                <div class="flex flex-wrap gap-1 border-b border-gray-200 mb-6">
+                    <button class="tab-btn active px-4 py-2 text-sm font-medium text-gray-600" onclick="switchTab(event,'tab-knn')"><i class="fas fa-project-diagram mr-1"></i> kNN</button>
+                    <button class="tab-btn px-4 py-2 text-sm font-medium text-gray-600" onclick="switchTab(event,'tab-tree')"><i class="fas fa-tree mr-1"></i> 결정트리</button>
+                    <button class="tab-btn px-4 py-2 text-sm font-medium text-gray-600" onclick="switchTab(event,'tab-logistic')"><i class="fas fa-wave-square mr-1"></i> 로지스틱 회귀</button>
+                </div>
+                <div class="tab-content active" id="tab-knn">
+                    <div class="bg-blue-50 rounded-xl p-5 border border-blue-100">
+                        <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center flex-shrink-0"><i class="fas fa-project-diagram text-white"></i></div>
+                        <div><h4 class="font-bold text-blue-800 mb-2">k-최근접 이웃 (kNN)</h4><p class="text-sm text-gray-700 leading-relaxed">새로운 데이터가 입력되면, 가장 가까운 <strong>k개의 이웃 데이터</strong>를 찾아 다수결로 분류합니다.</p></div></div>
+                    </div>
+                </div>
+                <div class="tab-content" id="tab-tree">
+                    <div class="bg-green-50 rounded-xl p-5 border border-green-100">
+                        <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-green-500 flex items-center justify-center flex-shrink-0"><i class="fas fa-tree text-white"></i></div>
+                        <div><h4 class="font-bold text-green-800 mb-2">결정트리 (Decision Tree)</h4><p class="text-sm text-gray-700 leading-relaxed">데이터의 특성값을 기준으로 <strong>질문을 반복</strong>하며 트리 구조로 분류합니다. 해석이 용이합니다.</p></div></div>
+                    </div>
+                </div>
+                <div class="tab-content" id="tab-logistic">
+                    <div class="bg-purple-50 rounded-xl p-5 border border-purple-100">
+                        <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-purple-500 flex items-center justify-center flex-shrink-0"><i class="fas fa-wave-square text-white"></i></div>
+                        <div><h4 class="font-bold text-purple-800 mb-2">로지스틱 회귀 (Logistic Regression)</h4><p class="text-sm text-gray-700 leading-relaxed">데이터가 <strong>특정 클래스에 속할 확률</strong>을 계산하여 분류합니다. 이름은 회귀이지만 분류에 사용됩니다.</p></div></div>
+                    </div>
+                </div>
+            </div>
+            <!-- CA metric -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-chart-pie text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">CA (Classification Accuracy) - 분류 정확도</h3>
+                        <p class="text-gray-700 leading-relaxed text-sm">
+                            전체 데이터 중 <strong>올바르게 분류된 데이터의 비율</strong>입니다.
+                            <strong>1에 가까울수록</strong> 우수한 모델입니다.
+                            오렌지3의 <strong>Test &amp; Score 위젯</strong>에서 각 모델의 CA를 비교합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Penguin workflow diagram -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-sitemap text-primary-500"></i> 펭귄 분류 실습 워크플로
+                </h3>
+                <div class="flex justify-center">
+                    <svg viewBox="0 0 620 180" class="w-full max-w-3xl" fill="none">
+                        <!-- File widget -->
+                        <rect x="10" y="60" width="85" height="55" rx="10" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+                        <text x="52" y="85" text-anchor="middle" fill="#c2410c" font-size="11" font-weight="bold">File</text>
+                        <text x="52" y="103" text-anchor="middle" fill="#ea580c" font-size="8">(펭귄 데이터)</text>
+                        <!-- Arrow -->
+                        <path d="M98 88 L120 88" stroke="#9c36b5" stroke-width="1.5" marker-end="url(#wfA)"/>
+                        <!-- Data Table -->
+                        <rect x="125" y="60" width="85" height="55" rx="10" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+                        <text x="167" y="85" text-anchor="middle" fill="#c2410c" font-size="11" font-weight="bold">Data Table</text>
+                        <text x="167" y="103" text-anchor="middle" fill="#ea580c" font-size="8">(데이터 확인)</text>
+                        <!-- Arrow -->
+                        <path d="M213 88 L235 88" stroke="#9c36b5" stroke-width="1.5" marker-end="url(#wfA)"/>
+                        <!-- Test & Score -->
+                        <rect x="240" y="50" width="105" height="75" rx="12" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+                        <text x="292" y="78" text-anchor="middle" fill="#15803d" font-size="11" font-weight="bold">Test &amp; Score</text>
+                        <text x="292" y="95" text-anchor="middle" fill="#16a34a" font-size="8">(교차 검증)</text>
+                        <text x="292" y="115" text-anchor="middle" fill="#16a34a" font-size="8">CA 비교</text>
+                        <!-- Models -->
+                        <rect x="370" y="10" width="75" height="35" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+                        <text x="407" y="33" text-anchor="middle" fill="#1d4ed8" font-size="10" font-weight="bold">kNN</text>
+                        <path d="M370 28 L349 55" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#wfA)"/>
+                        <rect x="370" y="65" width="75" height="35" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+                        <text x="407" y="88" text-anchor="middle" fill="#15803d" font-size="10" font-weight="bold">Tree</text>
+                        <path d="M370 83 L349 83" stroke="#22c55e" stroke-width="1.5" marker-end="url(#wfA)"/>
+                        <rect x="370" y="120" width="95" height="35" rx="8" fill="#faf5ff" stroke="#a855f7" stroke-width="1.5"/>
+                        <text x="417" y="143" text-anchor="middle" fill="#7e22ce" font-size="10" font-weight="bold">Logistic Reg.</text>
+                        <path d="M370 138 L349 118" stroke="#a855f7" stroke-width="1.5" marker-end="url(#wfA)"/>
+                        <!-- Arrow to Predictions -->
+                        <path d="M292 128 L292 160 L510 160 L510 105" stroke="#9c36b5" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#wfA)"/>
+                        <!-- Predictions -->
+                        <rect x="480" y="60" width="105" height="50" rx="10" fill="#faf5ff" stroke="#9c36b5" stroke-width="2"/>
+                        <text x="532" y="82" text-anchor="middle" fill="#7e22ce" font-size="11" font-weight="bold">Predictions</text>
+                        <text x="532" y="100" text-anchor="middle" fill="#9333ea" font-size="8">(예측 결과)</text>
+                        <defs>
+                            <marker id="wfA" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                                <polygon points="0 0,8 3,0 6" fill="#9c36b5"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+                <p class="text-center text-sm text-gray-500 mt-4">
+                    <i class="fas fa-info-circle text-primary-400 mr-1"></i>
+                    3가지 분류 모델의 CA(분류 정확도)를 비교하여 가장 좋은 모델을 선택합니다
+                </p>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== QUIZ SECTION ===== -->
+        <section class="fade-in" id="section-quiz">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center text-white text-xl shadow-lg"><i class="fas fa-question-circle"></i></div>
+                <div><h2 class="text-2xl md:text-3xl font-bold text-gray-900">확인 문제</h2><p class="text-gray-500 text-sm mt-0.5">Review Questions</p></div>
+            </div>
+            <!-- Quiz 1 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6" id="quiz1-container">
+                <div class="flex items-center gap-2 mb-4"><span class="bg-primary-100 text-primary-700 font-bold text-sm rounded-full px-3 py-1">Q1</span><h4 class="font-bold text-gray-900">기계학습 구현 과정의 올바른 순서는?</h4></div>
+                <div class="space-y-3">
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz1',this,false)"><span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">A</span><span class="text-sm text-gray-700">데이터 수집 &rarr; 문제 정의 &rarr; 모델 학습 &rarr; 모델 평가</span></div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz1',this,true)"><span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">B</span><span class="text-sm text-gray-700">문제 정의 &rarr; 데이터 수집/전처리 &rarr; 모델 선정/학습 &rarr; 모델 평가</span></div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz1',this,false)"><span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">C</span><span class="text-sm text-gray-700">모델 선정 &rarr; 데이터 수집 &rarr; 문제 정의 &rarr; 모델 평가</span></div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz1',this,false)"><span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">D</span><span class="text-sm text-gray-700">문제 정의 &rarr; 모델 학습 &rarr; 데이터 수집 &rarr; 모델 평가</span></div>
+                </div>
+                <div class="hidden mt-4 p-4 rounded-xl" id="quiz1-result"></div>
+            </div>
+            <!-- Quiz 2 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6" id="quiz2-container">
+                <div class="flex items-center gap-2 mb-4"><span class="bg-accent-100 text-accent-700 font-bold text-sm rounded-full px-3 py-1">Q2</span><h4 class="font-bold text-gray-900">회귀 모델의 평가 지표 중 1에 가까울수록 좋은 것은?</h4></div>
+                <div class="space-y-3">
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz2',this,false)"><span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">A</span><span class="text-sm text-gray-700">MSE (평균 제곱 오차)</span></div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz2',this,false)"><span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">B</span><span class="text-sm text-gray-700">RMSE (평균 제곱근 오차)</span></div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz2',this,false)"><span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">C</span><span class="text-sm text-gray-700">MAE (평균 절대 오차)</span></div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz2',this,true)"><span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">D</span><span class="text-sm text-gray-700">R2 (결정 계수)</span></div>
+                </div>
+                <div class="hidden mt-4 p-4 rounded-xl" id="quiz2-result"></div>
+            </div>
+            <!-- Quiz 3 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz3-container">
+                <div class="flex items-center gap-2 mb-4"><span class="bg-purple-100 text-purple-700 font-bold text-sm rounded-full px-3 py-1">Q3</span><h4 class="font-bold text-gray-900">다음 중 기계학습으로 해결하기에 가장 적합한 문제는?</h4></div>
+                <div class="space-y-3">
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz3',this,false)"><span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">A</span><span class="text-sm text-gray-700">두 수의 곱 계산하기</span></div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz3',this,false)"><span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">B</span><span class="text-sm text-gray-700">1부터 100까지의 합 구하기</span></div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz3',this,true)"><span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">C</span><span class="text-sm text-gray-700">의료 영상에서 뇌 질환 진단하기</span></div>
+                    <div class="quiz-option bg-gray-50 border border-gray-200 rounded-xl p-3 flex items-center gap-3" onclick="checkQuiz('quiz3',this,false)"><span class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">D</span><span class="text-sm text-gray-700">윤년 여부 판별하기</span></div>
+                </div>
+                <div class="hidden mt-4 p-4 rounded-xl" id="quiz3-result"></div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== SUMMARY ===== -->
+        <section class="fade-in" id="section-summary">
+            <div class="bg-gradient-to-br from-primary-50 via-white to-accent-50 rounded-2xl shadow-md border border-gray-100 p-6 md:p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><i class="fas fa-clipboard-check text-primary-500"></i> 핵심 정리</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-purple-700 mb-2 flex items-center gap-2"><i class="fas fa-list-ol text-sm"></i> 구현 과정 4단계</h4>
+                        <ul class="space-y-1.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-purple-500 mt-0.5 text-xs"></i>문제 정의 &rarr; 데이터 수집/전처리 &rarr; 모델 선정/학습 &rarr; 평가</li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-purple-500 mt-0.5 text-xs"></i>결측치, 이상치 처리는 데이터 전처리 단계에서 수행</li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-purple-500 mt-0.5 text-xs"></i>평가 결과가 부족하면 이전 단계로 돌아가 반복</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-violet-700 mb-2 flex items-center gap-2"><i class="fas fa-puzzle-piece text-sm"></i> 오렌지3(Orange3)</h4>
+                        <ul class="space-y-1.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-violet-500 mt-0.5 text-xs"></i>코드 없이 위젯 드래그 앤 드롭으로 기계학습 구현</li>
+                            <li class="flex items-start gap-2"><i class="fas fa-check text-violet-500 mt-0.5 text-xs"></i>Data, Transform, Visualize, Model, Evaluate, Unsupervised</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 md:col-span-2">
+                        <h4 class="font-bold text-indigo-700 mb-2 flex items-center gap-2"><i class="fas fa-flask text-sm"></i> 실습 정리</h4>
+                        <div class="grid sm:grid-cols-2 gap-3">
+                            <div class="bg-indigo-50 rounded-lg p-3 border border-indigo-200 text-sm"><p class="font-bold text-indigo-700 text-xs mb-1">지구 온도 변화 예측 (회귀)</p><p class="text-gray-700 text-xs">Linear Regression, MSE/RMSE/MAE/R2로 평가</p></div>
+                            <div class="bg-purple-50 rounded-lg p-3 border border-purple-200 text-sm"><p class="font-bold text-purple-700 text-xs mb-1">펭귄 종 분류 (분류)</p><p class="text-gray-700 text-xs">kNN, 결정트리, 로지스틱 회귀 비교, CA로 평가</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../01_기계학습의 다양한 모델/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"><i class="fas fa-th-list"></i> 목록으로 돌아가기</a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../03_선택활동/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">IV. 인공지능 &gt; 03 기계학습의 모델과 구현 &gt; 기계학습의 구현</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(id + '-icon');
+            const parent = content.closest('section');
+            if (parent) {
+                parent.querySelectorAll('.accordion-content').forEach(ac => {
+                    if (ac.id !== id && ac.classList.contains('open')) {
+                        ac.classList.remove('open');
+                        const otherIcon = document.getElementById(ac.id + '-icon');
+                        if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
+                    }
+                });
+            }
+            content.classList.toggle('open');
+            if (icon) icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        function switchTab(event, tabId) {
+            const container = event.target.closest('.bg-white') || event.target.closest('section');
+            container.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            container.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.closest('.tab-btn').classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        const quizAnswered = {};
+        function checkQuiz(quizId, element, isCorrect) {
+            if (quizAnswered[quizId]) return;
+            quizAnswered[quizId] = true;
+            const container = document.getElementById(quizId + '-container');
+            const resultDiv = document.getElementById(quizId + '-result');
+            const options = container.querySelectorAll('.quiz-option');
+            options.forEach(opt => { opt.style.cursor = 'default'; opt.style.opacity = '0.7'; });
+            element.style.opacity = '1';
+            if (isCorrect) {
+                element.classList.add('correct');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-green-50 border border-green-200';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500 text-lg"></i><span class="font-bold text-green-700">정답입니다!</span></div>';
+                if (quizId==='quiz1') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">기계학습 구현은 <strong>문제 정의 &rarr; 데이터 수집/전처리 &rarr; 모델 선정/학습 &rarr; 모델 평가</strong> 순서입니다.</p>';
+                else if (quizId==='quiz2') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2"><strong>R2(결정 계수)</strong>는 1에 가까울수록 좋습니다. MSE, RMSE, MAE는 0에 가까울수록 좋습니다.</p>';
+                else if (quizId==='quiz3') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">의료 영상 진단은 명확한 규칙으로 프로그래밍하기 어려우므로 <strong>기계학습이 적합</strong>합니다.</p>';
+            } else {
+                element.classList.add('wrong');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-red-50 border border-red-200';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-times-circle text-red-500 text-lg"></i><span class="font-bold text-red-700">오답입니다.</span></div>';
+                if (quizId==='quiz1') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">정답: <strong>문제 정의 &rarr; 데이터 수집/전처리 &rarr; 모델 선정/학습 &rarr; 모델 평가</strong></p>';
+                else if (quizId==='quiz2') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">정답: <strong>R2(결정 계수)</strong> - 1에 가까울수록 좋습니다.</p>';
+                else if (quizId==='quiz3') resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">정답: <strong>의료 영상에서 뇌 질환 진단하기</strong> - 규칙 정의가 어려운 문제입니다.</p>';
+                options.forEach(opt => { if (opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+            }
+            resultDiv.classList.remove('hidden');
+        }
+
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.fade-in').forEach(el => fadeInObserver.observe(el));
+    </script>
+
+</body>
+</html>

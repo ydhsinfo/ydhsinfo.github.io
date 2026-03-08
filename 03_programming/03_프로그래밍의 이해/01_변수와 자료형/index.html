@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>변수와 자료형 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        },
+                        accent: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #ea580c, #d97706, #ea580c);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Code block styling */
+        .code-block {
+            background: #1e1e2e;
+            border-radius: 12px;
+            overflow: hidden;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+        .code-header {
+            background: #181825;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #313244;
+        }
+        .code-header .dots {
+            display: flex;
+            gap: 6px;
+        }
+        .code-header .dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .code-body {
+            padding: 16px 20px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        .code-body pre {
+            margin: 0;
+            white-space: pre;
+        }
+
+        /* Syntax colors */
+        .py-keyword { color: #cba6f7; }
+        .py-string { color: #a6e3a1; }
+        .py-number { color: #fab387; }
+        .py-comment { color: #6c7086; font-style: italic; }
+        .py-builtin { color: #89b4fa; }
+        .py-operator { color: #89dceb; }
+        .py-var { color: #cdd6f4; }
+        .py-bool { color: #fab387; }
+
+        /* Run button */
+        .run-btn {
+            background: linear-gradient(135deg, #ea580c, #d97706);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .run-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);
+        }
+
+        /* Output block */
+        .output-block {
+            background: #11111b;
+            border: 1px solid #313244;
+            border-radius: 0 0 12px 12px;
+            padding: 12px 20px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            color: #a6e3a1;
+            margin-top: -12px;
+            display: none;
+        }
+        .output-block.show {
+            display: block;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; padding: 0 20px; }
+            to { opacity: 1; max-height: 300px; padding: 12px 20px; }
+        }
+
+        /* Accordion */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.3s ease;
+        }
+        .accordion-content.open {
+            max-height: 2000px;
+        }
+        .accordion-toggle .chevron {
+            transition: transform 0.3s ease;
+        }
+        .accordion-toggle.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        /* String index table */
+        .index-cell {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+        .index-cell:hover {
+            transform: scale(1.1);
+        }
+        .index-cell.highlighted {
+            background: linear-gradient(135deg, #ea580c, #d97706) !important;
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);
+        }
+
+        /* Data type cards */
+        .dtype-int { border-color: #3b82f6; background: linear-gradient(135deg, #eff6ff, #dbeafe); }
+        .dtype-int .dtype-badge { background: #3b82f6; }
+        .dtype-float { border-color: #22c55e; background: linear-gradient(135deg, #f0fdf4, #dcfce7); }
+        .dtype-float .dtype-badge { background: #22c55e; }
+        .dtype-bool { border-color: #a855f7; background: linear-gradient(135deg, #faf5ff, #f3e8ff); }
+        .dtype-bool .dtype-badge { background: #a855f7; }
+        .dtype-str { border-color: #ec4899; background: linear-gradient(135deg, #fdf2f8, #fce7f3); }
+        .dtype-str .dtype-badge { background: #ec4899; }
+
+        /* Memory visualization */
+        .memory-box {
+            transition: all 0.5s ease;
+        }
+        .memory-box.active {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px -5px rgba(234, 88, 12, 0.3);
+        }
+
+        /* Activity input */
+        .activity-input {
+            border: 2px solid #fed7aa;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            width: 160px;
+            transition: all 0.3s ease;
+            background: #fffbeb;
+        }
+        .activity-input:focus {
+            outline: none;
+            border-color: #ea580c;
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+        }
+        .activity-input.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+        .activity-input.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { background: #c2410c !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+            a { text-decoration: underline; }
+        }
+
+        @media (max-width: 768px) {
+            .code-body { font-size: 12px; }
+            .index-table-wrapper { overflow-x: auto; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero-gradient hero-pattern relative overflow-hidden">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-20">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm mb-8 flex-wrap">
+                <span class="breadcrumb-item">
+                    <i class="fas fa-home mr-1"></i> 정보
+                </span>
+                <span class="breadcrumb-item">III. 알고리즘과 프로그래밍</span>
+                <span class="breadcrumb-item">03 프로그래밍의 이해</span>
+                <span class="breadcrumb-item font-semibold">변수와 자료형</span>
+            </nav>
+
+            <!-- Title -->
+            <div class="max-w-4xl">
+                <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                    <i class="fas fa-code"></i>
+                    <span>03 프로그래밍의 이해</span>
+                </div>
+                <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 leading-tight">
+                    변수와 자료형
+                </h1>
+                <p class="text-lg sm:text-xl leading-relaxed max-w-3xl mb-6" style="color: rgba(255,255,255,0.92) !important;">
+                    프로그래밍의 기초가 되는 변수, 자료형, 연산자의 개념을 이해하고 파이썬으로 직접 실습합니다.
+                </p>
+
+                <!-- Tags -->
+                <div class="flex flex-wrap gap-2 mb-8">
+                    <span class="bg-white/20 backdrop-blur-sm text-white text-sm font-medium px-3 py-1 rounded-full">
+                        <i class="fas fa-box mr-1"></i> 변수
+                    </span>
+                    <span class="bg-white/20 backdrop-blur-sm text-white text-sm font-medium px-3 py-1 rounded-full">
+                        <i class="fas fa-tags mr-1"></i> 자료형
+                    </span>
+                    <span class="bg-white/20 backdrop-blur-sm text-white text-sm font-medium px-3 py-1 rounded-full">
+                        <i class="fas fa-calculator mr-1"></i> 연산자
+                    </span>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                    <h3 class="text-base font-bold mb-3 flex items-center gap-2">
+                        <i class="fas fa-bullseye"></i> 학습 목표
+                    </h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start gap-2">
+                            <span class="bg-white/25 text-white font-bold rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 text-xs mt-0.5">1</span>
+                            <span>변수의 개념과 변수명 지정 규칙을 이해할 수 있다.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="bg-white/25 text-white font-bold rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 text-xs mt-0.5">2</span>
+                            <span>수치형, 불형, 문자열 등 다양한 자료형을 구분할 수 있다.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="bg-white/25 text-white font-bold rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 text-xs mt-0.5">3</span>
+                            <span>산술, 비교, 논리 연산자를 활용한 프로그램을 작성할 수 있다.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wave bottom -->
+        <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-full h-[40px] sm:h-[60px]">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6.01,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" fill="#f9fafb" opacity="1"></path>
+            </svg>
+        </div>
+    </section>
+
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===== SECTION 0: 사전 준비하기 - 구글 코랩 ===== -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-primary-100">
+                <button class="accordion-toggle w-full flex items-center justify-between gap-3" onclick="toggleAccordion(this)">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-primary-100 text-primary-700 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-laptop-code text-lg"></i>
+                        </div>
+                        <div class="text-left">
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">사전 준비하기</h2>
+                            <p class="text-sm text-gray-500">구글 코랩으로 프로그래밍하기</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down chevron text-primary-500 text-xl"></i>
+                </button>
+
+                <div class="accordion-content">
+                    <div class="pt-6 space-y-6">
+                        <div class="bg-primary-50 rounded-xl p-5 border border-primary-200">
+                            <p class="text-gray-700 leading-relaxed mb-4">
+                                <strong class="text-primary-700">구글 코랩(Google Colab)</strong>은 웹 브라우저에서 파이썬 코드를 작성하고 실행할 수 있는 온라인 개발 환경입니다. 별도의 설치 없이 구글 계정만 있으면 바로 사용할 수 있습니다.
+                            </p>
+                        </div>
+
+                        <!-- Steps -->
+                        <div class="space-y-4">
+                            <h4 class="font-bold text-gray-900 flex items-center gap-2">
+                                <i class="fas fa-list-ol text-primary-500"></i> 코랩 시작하기
+                            </h4>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span class="bg-primary-500 text-white font-bold rounded-full w-7 h-7 flex items-center justify-center text-sm">1</span>
+                                        <span class="font-semibold text-gray-800">코랩 열기</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600">
+                                        구글 드라이브 접속 &rarr; <strong>신규</strong> &rarr; <strong>더 보기</strong> &rarr; <strong>Google Colaboratory</strong>
+                                    </p>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span class="bg-primary-500 text-white font-bold rounded-full w-7 h-7 flex items-center justify-center text-sm">2</span>
+                                        <span class="font-semibold text-gray-800">작업 공간 구성</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600">
+                                        <strong>코드 셀:</strong> 코드를 작성하고 실행<br>
+                                        <strong>텍스트 셀:</strong> 텍스트, 이미지 등 설명 작성
+                                    </p>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 md:col-span-2">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span class="bg-primary-500 text-white font-bold rounded-full w-7 h-7 flex items-center justify-center text-sm">3</span>
+                                        <span class="font-semibold text-gray-800">코드 실행하기</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600">
+                                        코드 셀에 코드를 작성한 후 <strong>재생 버튼</strong>(<i class="fas fa-play text-primary-500"></i>)을 클릭하거나 <kbd class="bg-gray-200 px-2 py-0.5 rounded text-xs font-mono">Shift + Enter</kbd>를 누르면 코드가 실행됩니다.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===== SECTION 1: 변수와 자료형 ===== -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-700 text-white rounded-2xl flex items-center justify-center shadow-lg">
+                    <span class="font-extrabold text-lg">1</span>
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900">변수와 자료형</h2>
+                    <p class="text-gray-500 text-sm">Variables & Data Types</p>
+                </div>
+            </div>
+
+            <div class="section-divider max-w-xs mb-8"></div>
+
+
+            <!-- ===== 1) 변수 ===== -->
+            <div class="space-y-8">
+                <div class="fade-in">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-8 h-8 bg-primary-100 text-primary-700 rounded-lg flex items-center justify-center font-bold text-sm">1</div>
+                        <h3 class="text-xl font-bold text-gray-900">변수 (Variable)</h3>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-primary-100 mb-6">
+                        <div class="bg-primary-50 rounded-xl p-5 border border-primary-200 mb-6">
+                            <p class="text-lg text-gray-800 leading-relaxed">
+                                <strong class="text-primary-700">변수</strong>란 값을 저장하는 <strong>기억 공간</strong>입니다.
+                            </p>
+                            <div class="mt-3 bg-white rounded-lg p-3 font-mono text-center text-lg">
+                                <span class="text-primary-700 font-bold">변수명</span>
+                                <span class="text-gray-500 mx-2">=</span>
+                                <span class="text-accent-700 font-bold">변수에 저장할 값</span>
+                                <span class="text-gray-400 text-sm ml-2">(상수, 변수, 수식 등)</span>
+                            </div>
+                        </div>
+
+                        <!-- Variable Memory Visualization -->
+                        <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <i class="fas fa-memory text-primary-500"></i> 변수 메모리 시각화
+                        </h4>
+                        <div class="flex flex-wrap justify-center gap-6 mb-6" id="memoryViz">
+                            <div class="memory-box bg-blue-50 border-2 border-blue-300 rounded-xl p-4 text-center min-w-[120px]" id="mem-a">
+                                <div class="text-xs text-blue-500 font-semibold mb-1">변수</div>
+                                <div class="text-lg font-bold text-blue-700">a</div>
+                                <div class="w-full h-0.5 bg-blue-200 my-2"></div>
+                                <div class="text-2xl font-extrabold text-blue-900" id="mem-a-val">10</div>
+                                <div class="text-xs text-blue-400 mt-1">int</div>
+                            </div>
+                            <div class="memory-box bg-green-50 border-2 border-green-300 rounded-xl p-4 text-center min-w-[120px]" id="mem-b">
+                                <div class="text-xs text-green-500 font-semibold mb-1">변수</div>
+                                <div class="text-lg font-bold text-green-700">b</div>
+                                <div class="w-full h-0.5 bg-green-200 my-2"></div>
+                                <div class="text-2xl font-extrabold text-green-900" id="mem-b-val">2.5</div>
+                                <div class="text-xs text-green-400 mt-1">float</div>
+                            </div>
+                            <div class="memory-box bg-pink-50 border-2 border-pink-300 rounded-xl p-4 text-center min-w-[120px]" id="mem-c">
+                                <div class="text-xs text-pink-500 font-semibold mb-1">변수</div>
+                                <div class="text-lg font-bold text-pink-700">c</div>
+                                <div class="w-full h-0.5 bg-pink-200 my-2"></div>
+                                <div class="text-2xl font-extrabold text-pink-900" id="mem-c-val">"A"</div>
+                                <div class="text-xs text-pink-400 mt-1">str</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center gap-3 mb-6">
+                            <button onclick="runMemoryStep(1)" class="run-btn text-sm" id="memStep1">
+                                <i class="fas fa-play"></i> Step 1: 초기값
+                            </button>
+                            <button onclick="runMemoryStep(2)" class="run-btn text-sm" id="memStep2">
+                                <i class="fas fa-forward"></i> Step 2: a = a * 2
+                            </button>
+                        </div>
+
+                        <!-- 변수명 지정 규칙 -->
+                        <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <i class="fas fa-ruler text-primary-500"></i> 변수명 지정 규칙
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                            <div class="flex items-start gap-3 bg-green-50 rounded-lg p-3 border border-green-200">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                                <div class="text-sm text-gray-700">알파벳 대소문자, 한글, 언더 바(<code class="font-mono bg-white px-1 rounded">_</code>), 숫자 사용 가능</div>
+                            </div>
+                            <div class="flex items-start gap-3 bg-red-50 rounded-lg p-3 border border-red-200">
+                                <i class="fas fa-times-circle text-red-500 mt-0.5"></i>
+                                <div class="text-sm text-gray-700"><code class="font-mono bg-white px-1 rounded">if</code>, <code class="font-mono bg-white px-1 rounded">for</code> 등 파이썬 <strong>예약어</strong> 사용 불가</div>
+                            </div>
+                            <div class="flex items-start gap-3 bg-green-50 rounded-lg p-3 border border-green-200">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                                <div class="text-sm text-gray-700"><strong>대소문자 구별</strong>: <code class="font-mono bg-white px-1 rounded">Name</code>과 <code class="font-mono bg-white px-1 rounded">name</code>은 다른 변수</div>
+                            </div>
+                            <div class="flex items-start gap-3 bg-red-50 rounded-lg p-3 border border-red-200">
+                                <i class="fas fa-times-circle text-red-500 mt-0.5"></i>
+                                <div class="text-sm text-gray-700">첫 글자에 <strong>숫자 사용 불가</strong> (<code class="font-mono bg-white px-1 rounded">1abc</code> &times;)</div>
+                            </div>
+                        </div>
+
+                        <!-- 파이썬 예약어 -->
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <h5 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                                <i class="fas fa-lock text-gray-400"></i> 파이썬 예약어
+                            </h5>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-purple-100 text-purple-700 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">True</span>
+                                <span class="bg-purple-100 text-purple-700 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">False</span>
+                                <span class="bg-purple-100 text-purple-700 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">and</span>
+                                <span class="bg-purple-100 text-purple-700 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">or</span>
+                                <span class="bg-purple-100 text-purple-700 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">not</span>
+                                <span class="bg-purple-100 text-purple-700 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">return</span>
+                                <span class="bg-purple-100 text-purple-700 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">for</span>
+                                <span class="bg-purple-100 text-purple-700 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">while</span>
+                                <span class="bg-purple-100 text-purple-700 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">if</span>
+                                <span class="bg-purple-100 text-purple-700 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">else</span>
+                                <span class="bg-purple-100 text-purple-700 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">elif</span>
+                                <span class="bg-purple-100 text-purple-700 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">continue</span>
+                                <span class="bg-purple-100 text-purple-700 text-xs font-mono font-semibold px-2.5 py-1 rounded-lg">break</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 예제 5 -->
+                    <div class="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-primary-100 mb-6 fade-in">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-primary-500 text-white font-bold text-sm px-3 py-1 rounded-full">예제 5</span>
+                            <span class="font-semibold text-gray-800">변수에 값을 저장하고 변경하기</span>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <div class="dots">
+                                    <span class="bg-red-400"></span>
+                                    <span class="bg-yellow-400"></span>
+                                    <span class="bg-green-400"></span>
+                                </div>
+                                <button class="run-btn" onclick="toggleOutput('output-ex5')">
+                                    <i class="fas fa-play"></i> 실행
+                                </button>
+                            </div>
+                            <div class="code-body">
+<pre><span class="py-comment"># a에 정수 10을 저장하기</span>
+<span class="py-var">a</span> <span class="py-operator">=</span> <span class="py-number">10</span>
+<span class="py-comment"># b, c에 실수 2.5와 문자 'A'를 순서대로 저장하기</span>
+<span class="py-var">b</span><span class="py-operator">,</span> <span class="py-var">c</span> <span class="py-operator">=</span> <span class="py-number">2.5</span><span class="py-operator">,</span> <span class="py-string">"A"</span>
+<span class="py-builtin">print</span>(<span class="py-var">a</span><span class="py-operator">,</span> <span class="py-var">b</span><span class="py-operator">,</span> <span class="py-var">c</span>)
+<span class="py-comment"># a에 저장된 값에 2를 곱하기</span>
+<span class="py-var">a</span> <span class="py-operator">=</span> <span class="py-var">a</span> <span class="py-operator">*</span> <span class="py-number">2</span>
+<span class="py-builtin">print</span>(<span class="py-var">a</span><span class="py-operator">,</span> <span class="py-var">b</span><span class="py-operator">,</span> <span class="py-var">c</span>)</pre>
+                            </div>
+                        </div>
+                        <div class="output-block" id="output-ex5">
+                            <div class="text-xs text-gray-400 mb-1"><i class="fas fa-terminal mr-1"></i> 출력 결과</div>
+<pre>10 2.5 A
+20 2.5 A</pre>
+                        </div>
+                    </div>
+
+                    <!-- 활동 12 -->
+                    <div class="bg-white rounded-2xl shadow-md p-6 sm:p-8 border-2 border-accent-200 mb-6 fade-in">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-accent-500 text-white font-bold text-sm px-3 py-1 rounded-full">
+                                <i class="fas fa-pencil-alt mr-1"></i> 활동 12
+                            </span>
+                            <span class="font-semibold text-gray-800">이름, 나이, 연락처 저장 프로그램</span>
+                            <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded-full">개발</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4">빈칸을 채워 프로그램을 완성하세요.</p>
+
+                        <div class="code-block mb-4">
+                            <div class="code-header">
+                                <div class="dots">
+                                    <span class="bg-red-400"></span>
+                                    <span class="bg-yellow-400"></span>
+                                    <span class="bg-green-400"></span>
+                                </div>
+                                <span class="text-gray-400 text-xs">빈칸 채우기</span>
+                            </div>
+                            <div class="code-body">
+<pre><span class="py-var">name</span> <span class="py-operator">=</span> <span class="py-string">'김민지'</span>
+<span class="py-var">age</span> <span class="py-operator">=</span> <input type="text" class="activity-input" id="act12-age" placeholder="???" style="width:100px;">
+<span class="py-var">phone</span> <span class="py-operator">=</span> <input type="text" class="activity-input" id="act12-phone" placeholder="???" style="width:180px;"></pre>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="checkActivity12()" class="run-btn">
+                                <i class="fas fa-check"></i> 정답 확인
+                            </button>
+                            <span id="act12-result" class="text-sm font-semibold"></span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- ===== 2) 자료형 ===== -->
+                <div class="fade-in">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-8 h-8 bg-primary-100 text-primary-700 rounded-lg flex items-center justify-center font-bold text-sm">2</div>
+                        <h3 class="text-xl font-bold text-gray-900">자료형 (Data Type)</h3>
+                    </div>
+
+                    <!-- Data Type Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        <div class="dtype-int border-2 rounded-2xl p-5 card-hover">
+                            <div class="dtype-badge inline-block text-white text-xs font-bold px-2.5 py-1 rounded-full mb-3">int</div>
+                            <h4 class="font-bold text-blue-800 text-lg mb-1">정수형</h4>
+                            <p class="text-sm text-blue-600 mb-3">소수점이 없는 숫자</p>
+                            <div class="bg-white/70 rounded-lg p-2 text-center font-mono text-blue-900 font-bold">
+                                3, -5, 100
+                            </div>
+                        </div>
+                        <div class="dtype-float border-2 rounded-2xl p-5 card-hover">
+                            <div class="dtype-badge inline-block text-white text-xs font-bold px-2.5 py-1 rounded-full mb-3">float</div>
+                            <h4 class="font-bold text-green-800 text-lg mb-1">실수형</h4>
+                            <p class="text-sm text-green-600 mb-3">소수점이 있는 숫자</p>
+                            <div class="bg-white/70 rounded-lg p-2 text-center font-mono text-green-900 font-bold">
+                                1.5, -3.14, 0.0
+                            </div>
+                        </div>
+                        <div class="dtype-bool border-2 rounded-2xl p-5 card-hover">
+                            <div class="dtype-badge inline-block text-white text-xs font-bold px-2.5 py-1 rounded-full mb-3">bool</div>
+                            <h4 class="font-bold text-purple-800 text-lg mb-1">불형</h4>
+                            <p class="text-sm text-purple-600 mb-3">참(True) 또는 거짓(False)</p>
+                            <div class="bg-white/70 rounded-lg p-2 text-center font-mono text-purple-900 font-bold">
+                                True, False
+                            </div>
+                        </div>
+                        <div class="dtype-str border-2 rounded-2xl p-5 card-hover">
+                            <div class="dtype-badge inline-block text-white text-xs font-bold px-2.5 py-1 rounded-full mb-3">str</div>
+                            <h4 class="font-bold text-pink-800 text-lg mb-1">문자열</h4>
+                            <p class="text-sm text-pink-600 mb-3">따옴표로 감싼 텍스트</p>
+                            <div class="bg-white/70 rounded-lg p-2 text-center font-mono text-pink-900 font-bold">
+                                "apple", '2025'
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 예제 6 -->
+                    <div class="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-primary-100 mb-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-primary-500 text-white font-bold text-sm px-3 py-1 rounded-full">예제 6</span>
+                            <span class="font-semibold text-gray-800">다양한 자료형 확인하기</span>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <div class="dots">
+                                    <span class="bg-red-400"></span>
+                                    <span class="bg-yellow-400"></span>
+                                    <span class="bg-green-400"></span>
+                                </div>
+                                <button class="run-btn" onclick="toggleOutput('output-ex6')">
+                                    <i class="fas fa-play"></i> 실행
+                                </button>
+                            </div>
+                            <div class="code-body">
+<pre><span class="py-var">a</span> <span class="py-operator">=</span> <span class="py-number">3</span>
+<span class="py-builtin">print</span>(<span class="py-var">a</span><span class="py-operator">,</span> <span class="py-builtin">type</span>(<span class="py-var">a</span>))
+<span class="py-var">b</span> <span class="py-operator">=</span> <span class="py-number">1.5</span>
+<span class="py-builtin">print</span>(<span class="py-var">b</span><span class="py-operator">,</span> <span class="py-builtin">type</span>(<span class="py-var">b</span>))
+<span class="py-var">c</span> <span class="py-operator">=</span> <span class="py-bool">True</span>
+<span class="py-builtin">print</span>(<span class="py-var">c</span><span class="py-operator">,</span> <span class="py-builtin">type</span>(<span class="py-var">c</span>))
+<span class="py-var">d</span> <span class="py-operator">=</span> <span class="py-bool">False</span>
+<span class="py-builtin">print</span>(<span class="py-var">d</span><span class="py-operator">,</span> <span class="py-builtin">type</span>(<span class="py-var">d</span>))
+<span class="py-var">e</span> <span class="py-operator">=</span> <span class="py-string">"apple"</span>
+<span class="py-builtin">print</span>(<span class="py-var">e</span><span class="py-operator">,</span> <span class="py-builtin">type</span>(<span class="py-var">e</span>))
+<span class="py-var">f</span> <span class="py-operator">=</span> <span class="py-string">"2025"</span>
+<span class="py-builtin">print</span>(<span class="py-var">f</span><span class="py-operator">,</span> <span class="py-builtin">type</span>(<span class="py-var">f</span>))</pre>
+                            </div>
+                        </div>
+                        <div class="output-block" id="output-ex6">
+                            <div class="text-xs text-gray-400 mb-1"><i class="fas fa-terminal mr-1"></i> 출력 결과</div>
+<pre>3 &lt;class 'int'&gt;
+1.5 &lt;class 'float'&gt;
+True &lt;class 'bool'&gt;
+False &lt;class 'bool'&gt;
+apple &lt;class 'str'&gt;
+2025 &lt;class 'str'&gt;</pre>
+                        </div>
+                    </div>
+
+                    <!-- 예제 7: 문자열 인덱싱과 슬라이싱 -->
+                    <div class="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-primary-100 mb-6 fade-in">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-primary-500 text-white font-bold text-sm px-3 py-1 rounded-full">예제 7</span>
+                            <span class="font-semibold text-gray-800">문자열 인덱싱과 슬라이싱</span>
+                        </div>
+
+                        <!-- Interactive String Index Table -->
+                        <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <i class="fas fa-th text-primary-500"></i> 문자열 인덱스 테이블
+                            <span class="text-xs text-gray-400 font-normal">(클릭하여 하이라이트)</span>
+                        </h4>
+                        <div class="index-table-wrapper mb-6">
+                            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 overflow-x-auto">
+                                <table class="mx-auto" style="border-collapse: separate; border-spacing: 3px;">
+                                    <tr>
+                                        <td class="text-xs text-gray-400 font-semibold pr-2 text-right">인덱스</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 0)">0</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 1)">1</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 2)">2</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 3)">3</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 4)">4</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 5)">5</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 6)">6</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 7)">7</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 8)">8</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 9)">9</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 10)">10</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 11)">11</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 12)">12</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 13)">13</td>
+                                        <td class="index-cell text-center text-xs font-mono text-gray-500 bg-gray-100 rounded-lg w-9 h-7 leading-7" onclick="toggleIndex(this, 14)">14</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-xs text-gray-400 font-semibold pr-2 text-right">문자</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 0)" id="char-0">H</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 1)" id="char-1">A</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 2)" id="char-2">P</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 3)" id="char-3">P</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 4)" id="char-4">Y</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-400 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 5)" id="char-5">&nbsp;</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 6)" id="char-6">B</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 7)" id="char-7">I</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 8)" id="char-8">R</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 9)" id="char-9">T</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 10)" id="char-10">H</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 11)" id="char-11">D</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 12)" id="char-12">A</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 13)" id="char-13">Y</td>
+                                        <td class="index-cell text-center font-mono font-bold text-gray-800 bg-white border-2 border-gray-200 rounded-lg w-9 h-9 leading-9" onclick="toggleIndex(this, 14)" id="char-14">!</td>
+                                    </tr>
+                                </table>
+                                <div class="text-center mt-3">
+                                    <span class="text-xs text-gray-400">
+                                        <i class="fas fa-mouse-pointer mr-1"></i> 셀을 클릭하면 하이라이트됩니다
+                                    </span>
+                                    <button onclick="clearIndexHighlights()" class="ml-3 text-xs text-primary-500 hover:text-primary-700 font-semibold">
+                                        <i class="fas fa-undo mr-1"></i> 초기화
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <div class="dots">
+                                    <span class="bg-red-400"></span>
+                                    <span class="bg-yellow-400"></span>
+                                    <span class="bg-green-400"></span>
+                                </div>
+                                <button class="run-btn" onclick="toggleOutput('output-ex7')">
+                                    <i class="fas fa-play"></i> 실행
+                                </button>
+                            </div>
+                            <div class="code-body">
+<pre><span class="py-var">a</span> <span class="py-operator">=</span> <span class="py-string">"HAPPY BIRTHDAY!"</span>
+<span class="py-builtin">print</span>(<span class="py-var">a</span>[<span class="py-number">1</span>])         <span class="py-comment"># A</span>
+<span class="py-builtin">print</span>(<span class="py-var">a</span>[<span class="py-number">6</span>:<span class="py-number">11</span>])      <span class="py-comment"># BIRTH</span>
+<span class="py-builtin">print</span>(<span class="py-var">a</span>[:<span class="py-number">5</span>])        <span class="py-comment"># HAPPY</span>
+<span class="py-builtin">print</span>(<span class="py-var">a</span>[<span class="py-number">11</span>:])       <span class="py-comment"># DAY!</span>
+<span class="py-var">b</span> <span class="py-operator">=</span> <span class="py-string">"2U"</span>
+<span class="py-builtin">print</span>(<span class="py-var">a</span> <span class="py-operator">+</span> <span class="py-var">b</span>)        <span class="py-comment"># HAPPY BIRTHDAY!2U</span>
+<span class="py-builtin">print</span>(<span class="py-var">b</span> <span class="py-operator">*</span> <span class="py-number">2</span>)         <span class="py-comment"># 2U2U</span></pre>
+                            </div>
+                        </div>
+                        <div class="output-block" id="output-ex7">
+                            <div class="text-xs text-gray-400 mb-1"><i class="fas fa-terminal mr-1"></i> 출력 결과</div>
+<pre>A
+BIRTH
+HAPPY
+DAY!
+HAPPY BIRTHDAY!2U
+2U2U</pre>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- ===== 3) 연산자 ===== -->
+                <div class="fade-in">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-8 h-8 bg-primary-100 text-primary-700 rounded-lg flex items-center justify-center font-bold text-sm">3</div>
+                        <h3 class="text-xl font-bold text-gray-900">연산자 (Operator)</h3>
+                    </div>
+
+                    <div class="bg-primary-50 rounded-xl p-4 border border-primary-200 mb-8">
+                        <p class="text-gray-700 font-semibold text-center">
+                            <i class="fas fa-sort-amount-down text-primary-500 mr-2"></i>
+                            연산자 우선순위: &nbsp;
+                            <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">산술</span>
+                            <span class="text-gray-400 mx-2">&gt;</span>
+                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">비교</span>
+                            <span class="text-gray-400 mx-2">&gt;</span>
+                            <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-bold">논리</span>
+                        </p>
+                    </div>
+
+                    <!-- (1) 산술 연산자 -->
+                    <div class="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-primary-100 mb-6">
+                        <div class="flex items-center gap-3 mb-5">
+                            <span class="bg-blue-500 text-white font-bold text-sm px-3 py-1 rounded-full">(1)</span>
+                            <h4 class="text-lg font-bold text-gray-900">산술 연산자</h4>
+                        </div>
+
+                        <!-- Operator table -->
+                        <div class="overflow-x-auto mb-6">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="bg-blue-50">
+                                        <th class="px-4 py-3 text-left font-bold text-blue-800 rounded-tl-lg">연산자</th>
+                                        <th class="px-4 py-3 text-left font-bold text-blue-800">의미</th>
+                                        <th class="px-4 py-3 text-left font-bold text-blue-800">예시</th>
+                                        <th class="px-4 py-3 text-left font-bold text-blue-800 rounded-tr-lg">결과</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <tr class="hover:bg-gray-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">+</td><td class="px-4 py-2.5">덧셈</td><td class="px-4 py-2.5 font-mono">5 + 3</td><td class="px-4 py-2.5 font-mono font-bold">8</td></tr>
+                                    <tr class="hover:bg-gray-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">-</td><td class="px-4 py-2.5">뺄셈</td><td class="px-4 py-2.5 font-mono">5 - 3</td><td class="px-4 py-2.5 font-mono font-bold">2</td></tr>
+                                    <tr class="hover:bg-gray-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">*</td><td class="px-4 py-2.5">곱셈</td><td class="px-4 py-2.5 font-mono">5 * 3</td><td class="px-4 py-2.5 font-mono font-bold">15</td></tr>
+                                    <tr class="hover:bg-gray-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">/</td><td class="px-4 py-2.5">나눗셈</td><td class="px-4 py-2.5 font-mono">5 / 3</td><td class="px-4 py-2.5 font-mono font-bold">1.666...</td></tr>
+                                    <tr class="hover:bg-gray-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">//</td><td class="px-4 py-2.5">몫</td><td class="px-4 py-2.5 font-mono">5 // 3</td><td class="px-4 py-2.5 font-mono font-bold">1</td></tr>
+                                    <tr class="hover:bg-gray-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">%</td><td class="px-4 py-2.5">나머지</td><td class="px-4 py-2.5 font-mono">5 % 3</td><td class="px-4 py-2.5 font-mono font-bold">2</td></tr>
+                                    <tr class="hover:bg-gray-50"><td class="px-4 py-2.5 font-mono font-bold text-blue-600">**</td><td class="px-4 py-2.5">거듭제곱</td><td class="px-4 py-2.5 font-mono">5 ** 3</td><td class="px-4 py-2.5 font-mono font-bold">125</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="bg-blue-50 rounded-lg p-3 border border-blue-200 mb-6">
+                            <p class="text-sm text-blue-800">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                <strong>우선순위:</strong> 괄호 먼저 &rarr; 곱셈/나눗셈 &rarr; 덧셈/뺄셈 &rarr; 같은 우선순위는 왼쪽에서 오른쪽
+                            </p>
+                        </div>
+
+                        <!-- 예제 8 -->
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-primary-500 text-white font-bold text-sm px-3 py-1 rounded-full">예제 8</span>
+                            <span class="font-semibold text-gray-800">산술 연산자 실습</span>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <div class="dots">
+                                    <span class="bg-red-400"></span>
+                                    <span class="bg-yellow-400"></span>
+                                    <span class="bg-green-400"></span>
+                                </div>
+                                <button class="run-btn" onclick="toggleOutput('output-ex8')">
+                                    <i class="fas fa-play"></i> 실행
+                                </button>
+                            </div>
+                            <div class="code-body">
+<pre><span class="py-builtin">print</span>(<span class="py-number">11</span> <span class="py-operator">+</span> <span class="py-number">4</span> <span class="py-operator">/</span> <span class="py-number">2</span>)    <span class="py-comment"># 나눗셈 먼저!</span>
+<span class="py-builtin">print</span>(<span class="py-number">25</span> <span class="py-operator">//</span> <span class="py-number">2</span>)        <span class="py-comment"># 몫</span>
+<span class="py-builtin">print</span>(<span class="py-number">25</span> <span class="py-operator">%</span> <span class="py-number">2</span>)         <span class="py-comment"># 나머지</span>
+<span class="py-builtin">print</span>(<span class="py-number">2</span> <span class="py-operator">**</span> <span class="py-number">10</span>)        <span class="py-comment"># 거듭제곱</span></pre>
+                            </div>
+                        </div>
+                        <div class="output-block" id="output-ex8">
+                            <div class="text-xs text-gray-400 mb-1"><i class="fas fa-terminal mr-1"></i> 출력 결과</div>
+<pre>13.0
+12
+1
+1024</pre>
+                        </div>
+                    </div>
+
+                    <!-- (2) 비교 연산자 -->
+                    <div class="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-primary-100 mb-6 fade-in">
+                        <div class="flex items-center gap-3 mb-5">
+                            <span class="bg-green-500 text-white font-bold text-sm px-3 py-1 rounded-full">(2)</span>
+                            <h4 class="text-lg font-bold text-gray-900">비교 연산자</h4>
+                        </div>
+
+                        <div class="overflow-x-auto mb-6">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="bg-green-50">
+                                        <th class="px-4 py-3 text-left font-bold text-green-800 rounded-tl-lg">연산자</th>
+                                        <th class="px-4 py-3 text-left font-bold text-green-800">의미</th>
+                                        <th class="px-4 py-3 text-left font-bold text-green-800">예시 (n=10)</th>
+                                        <th class="px-4 py-3 text-left font-bold text-green-800 rounded-tr-lg">결과</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <tr class="hover:bg-gray-50"><td class="px-4 py-2.5 font-mono font-bold text-green-600">></td><td class="px-4 py-2.5">크다</td><td class="px-4 py-2.5 font-mono">n > 5</td><td class="px-4 py-2.5 font-mono font-bold text-green-600">True</td></tr>
+                                    <tr class="hover:bg-gray-50"><td class="px-4 py-2.5 font-mono font-bold text-green-600"><</td><td class="px-4 py-2.5">작다</td><td class="px-4 py-2.5 font-mono">n < 5</td><td class="px-4 py-2.5 font-mono font-bold text-red-500">False</td></tr>
+                                    <tr class="hover:bg-gray-50"><td class="px-4 py-2.5 font-mono font-bold text-green-600">>=</td><td class="px-4 py-2.5">크거나 같다</td><td class="px-4 py-2.5 font-mono">n >= 10</td><td class="px-4 py-2.5 font-mono font-bold text-green-600">True</td></tr>
+                                    <tr class="hover:bg-gray-50"><td class="px-4 py-2.5 font-mono font-bold text-green-600"><=</td><td class="px-4 py-2.5">작거나 같다</td><td class="px-4 py-2.5 font-mono">n <= 5</td><td class="px-4 py-2.5 font-mono font-bold text-red-500">False</td></tr>
+                                    <tr class="hover:bg-gray-50"><td class="px-4 py-2.5 font-mono font-bold text-green-600">==</td><td class="px-4 py-2.5">같다</td><td class="px-4 py-2.5 font-mono">n == 5</td><td class="px-4 py-2.5 font-mono font-bold text-red-500">False</td></tr>
+                                    <tr class="hover:bg-gray-50"><td class="px-4 py-2.5 font-mono font-bold text-green-600">!=</td><td class="px-4 py-2.5">같지 않다</td><td class="px-4 py-2.5 font-mono">n != 5</td><td class="px-4 py-2.5 font-mono font-bold text-green-600">True</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 예제 9 -->
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-primary-500 text-white font-bold text-sm px-3 py-1 rounded-full">예제 9</span>
+                            <span class="font-semibold text-gray-800">비교 연산자 실습</span>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <div class="dots">
+                                    <span class="bg-red-400"></span>
+                                    <span class="bg-yellow-400"></span>
+                                    <span class="bg-green-400"></span>
+                                </div>
+                                <button class="run-btn" onclick="toggleOutput('output-ex9')">
+                                    <i class="fas fa-play"></i> 실행
+                                </button>
+                            </div>
+                            <div class="code-body">
+<pre><span class="py-var">n</span> <span class="py-operator">=</span> <span class="py-number">10</span>
+<span class="py-builtin">print</span>(<span class="py-var">n</span> <span class="py-operator">==</span> <span class="py-number">5</span>)         <span class="py-comment"># False</span>
+<span class="py-builtin">print</span>(<span class="py-var">n</span> <span class="py-operator">!=</span> <span class="py-number">5</span>)         <span class="py-comment"># True</span>
+<span class="py-builtin">print</span>(<span class="py-var">n</span> <span class="py-operator">></span> <span class="py-number">5</span>)          <span class="py-comment"># True</span>
+<span class="py-builtin">print</span>(<span class="py-var">n</span> <span class="py-operator">&lt;=</span> <span class="py-number">5</span>)         <span class="py-comment"># False</span>
+<span class="py-builtin">print</span>(<span class="py-number">5</span> <span class="py-operator">&lt;=</span> <span class="py-var">n</span> <span class="py-operator">&lt;</span> <span class="py-number">10</span>)    <span class="py-comment"># False</span></pre>
+                            </div>
+                        </div>
+                        <div class="output-block" id="output-ex9">
+                            <div class="text-xs text-gray-400 mb-1"><i class="fas fa-terminal mr-1"></i> 출력 결과</div>
+<pre>False
+True
+True
+False
+False</pre>
+                        </div>
+                    </div>
+
+                    <!-- 활동 13: BMI -->
+                    <div class="bg-white rounded-2xl shadow-md p-6 sm:p-8 border-2 border-accent-200 mb-6 fade-in">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-accent-500 text-white font-bold text-sm px-3 py-1 rounded-full">
+                                <i class="fas fa-pencil-alt mr-1"></i> 활동 13
+                            </span>
+                            <span class="font-semibold text-gray-800">BMI 계산 프로그램</span>
+                            <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded-full">개발</span>
+                        </div>
+
+                        <p class="text-gray-600 text-sm mb-4">키와 체중을 이용하여 BMI를 계산하고, 정상 범위인지 확인하세요.</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                                <div class="text-sm font-semibold text-gray-700 mb-2">BMI 공식</div>
+                                <div class="text-center font-mono text-lg">
+                                    BMI = <span class="text-primary-600 font-bold">체중(kg)</span> / <span class="text-primary-600 font-bold">키(m)</span><sup>2</sup>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                                <div class="text-sm font-semibold text-gray-700 mb-2">정상 범위</div>
+                                <div class="text-center font-mono text-lg">
+                                    <span class="text-green-600 font-bold">18.5</span> &le; BMI &lt; <span class="text-green-600 font-bold">23</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="code-block mb-4">
+                            <div class="code-header">
+                                <div class="dots">
+                                    <span class="bg-red-400"></span>
+                                    <span class="bg-yellow-400"></span>
+                                    <span class="bg-green-400"></span>
+                                </div>
+                                <button class="run-btn" onclick="runBMI()">
+                                    <i class="fas fa-play"></i> 실행
+                                </button>
+                            </div>
+                            <div class="code-body">
+<pre><span class="py-var">h</span> <span class="py-operator">=</span> <span class="py-number">1.7</span>
+<span class="py-var">w</span> <span class="py-operator">=</span> <span class="py-number">60</span>
+<span class="py-var">bmi</span> <span class="py-operator">=</span> <span class="py-var">w</span> <span class="py-operator">/</span> <span class="py-var">h</span><span class="py-operator">**</span><span class="py-number">2</span>
+<span class="py-builtin">print</span>(<span class="py-var">bmi</span>)
+<span class="py-builtin">print</span>(<span class="py-number">18.5</span> <span class="py-operator">&lt;=</span> <span class="py-var">bmi</span> <span class="py-operator">&lt;</span> <span class="py-number">23</span>)</pre>
+                            </div>
+                        </div>
+                        <div class="output-block" id="output-bmi">
+                            <div class="text-xs text-gray-400 mb-1"><i class="fas fa-terminal mr-1"></i> 출력 결과</div>
+<pre id="bmi-result"></pre>
+                        </div>
+                    </div>
+
+                    <!-- (3) 논리 연산자 -->
+                    <div class="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-primary-100 mb-6 fade-in">
+                        <div class="flex items-center gap-3 mb-5">
+                            <span class="bg-purple-500 text-white font-bold text-sm px-3 py-1 rounded-full">(3)</span>
+                            <h4 class="text-lg font-bold text-gray-900">논리 연산자</h4>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                            <div class="bg-purple-50 rounded-xl p-4 border border-purple-200 text-center card-hover">
+                                <div class="text-2xl font-mono font-bold text-purple-700 mb-2">and</div>
+                                <div class="text-sm text-purple-600 font-semibold mb-1">논리곱</div>
+                                <div class="text-xs text-gray-500">모두 참일 때 참</div>
+                                <div class="mt-3 text-xs font-mono bg-white rounded-lg p-2">
+                                    T and T = <span class="text-green-600 font-bold">T</span><br>
+                                    T and F = <span class="text-red-500 font-bold">F</span>
+                                </div>
+                            </div>
+                            <div class="bg-purple-50 rounded-xl p-4 border border-purple-200 text-center card-hover">
+                                <div class="text-2xl font-mono font-bold text-purple-700 mb-2">or</div>
+                                <div class="text-sm text-purple-600 font-semibold mb-1">논리합</div>
+                                <div class="text-xs text-gray-500">하나 이상 참이면 참</div>
+                                <div class="mt-3 text-xs font-mono bg-white rounded-lg p-2">
+                                    F or T = <span class="text-green-600 font-bold">T</span><br>
+                                    F or F = <span class="text-red-500 font-bold">F</span>
+                                </div>
+                            </div>
+                            <div class="bg-purple-50 rounded-xl p-4 border border-purple-200 text-center card-hover">
+                                <div class="text-2xl font-mono font-bold text-purple-700 mb-2">not</div>
+                                <div class="text-sm text-purple-600 font-semibold mb-1">논리 부정</div>
+                                <div class="text-xs text-gray-500">참 &harr; 거짓 반전</div>
+                                <div class="mt-3 text-xs font-mono bg-white rounded-lg p-2">
+                                    not T = <span class="text-red-500 font-bold">F</span><br>
+                                    not F = <span class="text-green-600 font-bold">T</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 예제 10 -->
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-primary-500 text-white font-bold text-sm px-3 py-1 rounded-full">예제 10</span>
+                            <span class="font-semibold text-gray-800">논리곱 / 논리합</span>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <div class="dots">
+                                    <span class="bg-red-400"></span>
+                                    <span class="bg-yellow-400"></span>
+                                    <span class="bg-green-400"></span>
+                                </div>
+                                <button class="run-btn" onclick="toggleOutput('output-ex10')">
+                                    <i class="fas fa-play"></i> 실행
+                                </button>
+                            </div>
+                            <div class="code-body">
+<pre><span class="py-var">id</span> <span class="py-operator">=</span> <span class="py-string">"Lee"</span>
+<span class="py-var">pw</span> <span class="py-operator">=</span> <span class="py-string">"1234"</span>
+<span class="py-builtin">print</span>(<span class="py-var">id</span> <span class="py-operator">==</span> <span class="py-string">"Lee"</span> <span class="py-keyword">and</span> <span class="py-var">pw</span> <span class="py-operator">==</span> <span class="py-string">"1234"</span>)
+<span class="py-builtin">print</span>(<span class="py-var">id</span> <span class="py-operator">==</span> <span class="py-string">"Kim"</span> <span class="py-keyword">and</span> <span class="py-var">pw</span> <span class="py-operator">==</span> <span class="py-string">"1234"</span>)
+<span class="py-builtin">print</span>(<span class="py-var">id</span> <span class="py-operator">==</span> <span class="py-string">"Lee"</span> <span class="py-keyword">or</span> <span class="py-var">pw</span> <span class="py-operator">==</span> <span class="py-string">"asdf"</span>)
+<span class="py-builtin">print</span>(<span class="py-var">id</span> <span class="py-operator">==</span> <span class="py-string">"Kim"</span> <span class="py-keyword">or</span> <span class="py-var">pw</span> <span class="py-operator">==</span> <span class="py-string">"asdf"</span>)</pre>
+                            </div>
+                        </div>
+                        <div class="output-block" id="output-ex10">
+                            <div class="text-xs text-gray-400 mb-1"><i class="fas fa-terminal mr-1"></i> 출력 결과</div>
+<pre>True
+False
+True
+False</pre>
+                        </div>
+
+                        <!-- 예제 11 -->
+                        <div class="flex items-center gap-3 mb-4 mt-8">
+                            <span class="bg-primary-500 text-white font-bold text-sm px-3 py-1 rounded-full">예제 11</span>
+                            <span class="font-semibold text-gray-800">논리 부정</span>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <div class="dots">
+                                    <span class="bg-red-400"></span>
+                                    <span class="bg-yellow-400"></span>
+                                    <span class="bg-green-400"></span>
+                                </div>
+                                <button class="run-btn" onclick="toggleOutput('output-ex11')">
+                                    <i class="fas fa-play"></i> 실행
+                                </button>
+                            </div>
+                            <div class="code-body">
+<pre><span class="py-var">a</span> <span class="py-operator">=</span> <span class="py-number">10</span> <span class="py-operator">></span> <span class="py-number">5</span>
+<span class="py-builtin">print</span>(<span class="py-var">a</span>)
+<span class="py-builtin">print</span>(<span class="py-keyword">not</span> <span class="py-var">a</span>)</pre>
+                            </div>
+                        </div>
+                        <div class="output-block" id="output-ex11">
+                            <div class="text-xs text-gray-400 mb-1"><i class="fas fa-terminal mr-1"></i> 출력 결과</div>
+<pre>True
+False</pre>
+                        </div>
+                    </div>
+
+                    <!-- 활동 14: 혈압 단계 구분 -->
+                    <div class="bg-white rounded-2xl shadow-md p-6 sm:p-8 border-2 border-accent-200 fade-in">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-accent-500 text-white font-bold text-sm px-3 py-1 rounded-full">
+                                <i class="fas fa-pencil-alt mr-1"></i> 활동 14
+                            </span>
+                            <span class="font-semibold text-gray-800">혈압 단계 구분 프로그램</span>
+                            <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded-full">개발</span>
+                        </div>
+
+                        <p class="text-gray-600 text-sm mb-4">아래 혈압 기준표를 참고하여 빈칸의 논리식을 완성하세요.</p>
+
+                        <!-- Blood Pressure Table -->
+                        <div class="overflow-x-auto mb-6">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="bg-red-50">
+                                        <th class="px-4 py-3 text-left font-bold text-red-800 rounded-tl-lg">혈압 단계</th>
+                                        <th class="px-4 py-3 text-center font-bold text-red-800">수축기 혈압</th>
+                                        <th class="px-4 py-3 text-center font-bold text-red-800">연산자</th>
+                                        <th class="px-4 py-3 text-center font-bold text-red-800 rounded-tr-lg">이완기 혈압</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <tr class="hover:bg-gray-50 bg-green-50">
+                                        <td class="px-4 py-2.5 font-semibold text-green-700"><i class="fas fa-check-circle mr-1"></i> 정상 혈압</td>
+                                        <td class="px-4 py-2.5 text-center font-mono">120 미만</td>
+                                        <td class="px-4 py-2.5 text-center font-bold text-purple-600">그리고 (and)</td>
+                                        <td class="px-4 py-2.5 text-center font-mono">80 미만</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 bg-yellow-50">
+                                        <td class="px-4 py-2.5 font-semibold text-yellow-700"><i class="fas fa-exclamation-triangle mr-1"></i> 주의 혈압</td>
+                                        <td class="px-4 py-2.5 text-center font-mono">120~129</td>
+                                        <td class="px-4 py-2.5 text-center font-bold text-purple-600">그리고 (and)</td>
+                                        <td class="px-4 py-2.5 text-center font-mono">80 미만</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 bg-orange-50">
+                                        <td class="px-4 py-2.5 font-semibold text-orange-700"><i class="fas fa-exclamation-circle mr-1"></i> 고혈압 전 단계</td>
+                                        <td class="px-4 py-2.5 text-center font-mono">130~139</td>
+                                        <td class="px-4 py-2.5 text-center font-bold text-purple-600">또는 (or)</td>
+                                        <td class="px-4 py-2.5 text-center font-mono">80~89</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 bg-red-50">
+                                        <td class="px-4 py-2.5 font-semibold text-red-700"><i class="fas fa-heart-broken mr-1"></i> 고혈압</td>
+                                        <td class="px-4 py-2.5 text-center font-mono">140 이상</td>
+                                        <td class="px-4 py-2.5 text-center font-bold text-purple-600">또는 (or)</td>
+                                        <td class="px-4 py-2.5 text-center font-mono">90 이상</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Interactive Code -->
+                        <div class="code-block mb-4">
+                            <div class="code-header">
+                                <div class="dots">
+                                    <span class="bg-red-400"></span>
+                                    <span class="bg-yellow-400"></span>
+                                    <span class="bg-green-400"></span>
+                                </div>
+                                <span class="text-gray-400 text-xs">빈칸 채우기</span>
+                            </div>
+                            <div class="code-body text-sm">
+<pre><span class="py-var">a</span><span class="py-operator">,</span> <span class="py-var">b</span> <span class="py-operator">=</span> <span class="py-number">135</span><span class="py-operator">,</span> <span class="py-number">88</span>   <span class="py-comment"># 수축기, 이완기</span>
+<span class="py-builtin">print</span>(<span class="py-string">"수축기 혈압"</span><span class="py-operator">,</span> <span class="py-var">a</span><span class="py-operator">,</span> <span class="py-string">"이완기 혈압"</span><span class="py-operator">,</span> <span class="py-var">b</span>)
+<span class="py-builtin">print</span>(<span class="py-string">"정상 혈압:"</span><span class="py-operator">,</span> <span class="py-var">a</span> <span class="py-operator">&lt;</span> <span class="py-number">120</span> <span class="py-keyword">and</span> <span class="py-var">b</span> <span class="py-operator">&lt;</span> <span class="py-number">80</span>)</pre>
+<div class="mt-2 flex items-center gap-2 flex-wrap">
+  <span class="py-builtin">print</span>(<span class="py-string">"주의 혈압:"</span>,
+  <input type="text" class="activity-input" id="bp-caution" placeholder="조건식을 입력하세요" style="width:280px; font-size:12px;">
+  )
+</div>
+<div class="mt-2 flex items-center gap-2 flex-wrap">
+  <span class="py-builtin">print</span>(<span class="py-string">"고혈압 전 단계:"</span>,
+  <input type="text" class="activity-input" id="bp-prehigh" placeholder="조건식을 입력하세요" style="width:280px; font-size:12px;">
+  )
+</div>
+<div class="mt-2 flex items-center gap-2 flex-wrap">
+  <span class="py-builtin">print</span>(<span class="py-string">"고혈압:"</span>,
+  <input type="text" class="activity-input" id="bp-high" placeholder="조건식을 입력하세요" style="width:280px; font-size:12px;">
+  )
+</div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-3 mb-4">
+                            <button onclick="checkBloodPressure()" class="run-btn">
+                                <i class="fas fa-check"></i> 정답 확인
+                            </button>
+                            <button onclick="showBPAnswer()" class="text-sm text-primary-500 hover:text-primary-700 font-semibold px-3 py-1.5 border border-primary-200 rounded-lg hover:bg-primary-50 transition-all">
+                                <i class="fas fa-lightbulb mr-1"></i> 힌트 보기
+                            </button>
+                            <span id="bp-result" class="text-sm font-semibold"></span>
+                        </div>
+
+                        <div id="bp-hint" class="hidden bg-yellow-50 rounded-xl p-4 border border-yellow-200 mb-4">
+                            <p class="text-sm text-yellow-800">
+                                <i class="fas fa-lightbulb text-yellow-500 mr-1"></i>
+                                <strong>힌트:</strong> 혈압 기준표를 참고하여 조건식을 작성하세요.<br>
+                                예) 주의 혈압: 수축기가 120 이상 129 이하 <strong>그리고</strong> 이완기가 80 미만<br>
+                                &rarr; <code class="bg-white px-1 rounded font-mono text-xs">120 &lt;= a &lt;= 129 and b &lt; 80</code>
+                            </p>
+                        </div>
+
+                        <!-- Expected output -->
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <div class="text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-bullseye text-primary-500 mr-1"></i> 예상 출력 결과 (a=135, b=88)
+                            </div>
+                            <div class="bg-gray-900 rounded-lg p-3 font-mono text-sm text-gray-300">
+<pre>수축기 혈압 135 이완기 혈압 88
+정상 혈압: False
+주의 혈압: False
+고혈압 전 단계: True
+고혈압: False</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Page navigation -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <!-- 이전 페이지 (disabled - first page in section) -->
+                <div class="flex-1 flex justify-start">
+                    <span class="inline-flex items-center gap-2 bg-gray-700/50 text-gray-500 font-medium px-5 py-3 rounded-xl cursor-not-allowed">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </span>
+                </div>
+
+                <!-- 목록으로 돌아가기 -->
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex justify-end">
+                    <a href="../02_표준입출력과 파일입출력/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    III. 알고리즘과 프로그래밍 &gt; 03 프로그래밍의 이해 &gt; 변수와 자료형
+                </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // ===== Fade-in observer =====
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+
+
+        // ===== Toggle output =====
+        function toggleOutput(id) {
+            const el = document.getElementById(id);
+            if (el.classList.contains('show')) {
+                el.classList.remove('show');
+            } else {
+                el.classList.add('show');
+            }
+        }
+
+
+        // ===== Accordion toggle =====
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            btn.classList.toggle('open');
+            content.classList.toggle('open');
+        }
+
+
+        // ===== Memory Visualization =====
+        let memoryStep = 1;
+
+        function runMemoryStep(step) {
+            const memA = document.getElementById('mem-a');
+            const memAVal = document.getElementById('mem-a-val');
+
+            // Reset all
+            document.querySelectorAll('.memory-box').forEach(box => box.classList.remove('active'));
+
+            if (step === 1) {
+                memoryStep = 1;
+                memAVal.textContent = '10';
+                memA.classList.add('active');
+                setTimeout(() => memA.classList.remove('active'), 1500);
+            } else if (step === 2) {
+                memoryStep = 2;
+                memAVal.textContent = '20';
+                memA.classList.add('active');
+                memA.style.transition = 'all 0.5s ease';
+                setTimeout(() => memA.classList.remove('active'), 1500);
+            }
+        }
+
+
+        // ===== String Index Table =====
+        function toggleIndex(cell, index) {
+            // Toggle the cell
+            cell.classList.toggle('highlighted');
+
+            // Also toggle the corresponding cell in the other row
+            const rows = cell.closest('table').querySelectorAll('tr');
+            const row0 = rows[0]; // index row
+            const row1 = rows[1]; // char row
+
+            // Get all index-cells in each row
+            const indexCells = row0.querySelectorAll('.index-cell');
+            const charCells = row1.querySelectorAll('.index-cell');
+
+            if (cell.closest('tr') === row0) {
+                charCells[index].classList.toggle('highlighted');
+            } else {
+                indexCells[index].classList.toggle('highlighted');
+            }
+        }
+
+        function clearIndexHighlights() {
+            document.querySelectorAll('.index-cell').forEach(cell => {
+                cell.classList.remove('highlighted');
+            });
+        }
+
+
+        // ===== Activity 12: Name/Age/Phone =====
+        function checkActivity12() {
+            const ageInput = document.getElementById('act12-age');
+            const phoneInput = document.getElementById('act12-phone');
+            const result = document.getElementById('act12-result');
+
+            const ageVal = ageInput.value.trim();
+            const phoneVal = phoneInput.value.trim();
+
+            let ageCorrect = (ageVal === '17');
+            let phoneCorrect = (
+                phoneVal === "'010-1234-5678'" ||
+                phoneVal === '"010-1234-5678"' ||
+                phoneVal === "'010-1234-5678'" ||
+                phoneVal === '"010-1234-5678"'
+            );
+
+            ageInput.classList.remove('correct', 'incorrect');
+            phoneInput.classList.remove('correct', 'incorrect');
+
+            ageInput.classList.add(ageCorrect ? 'correct' : 'incorrect');
+            phoneInput.classList.add(phoneCorrect ? 'correct' : 'incorrect');
+
+            if (ageCorrect && phoneCorrect) {
+                result.innerHTML = '<span class="text-green-600"><i class="fas fa-check-circle mr-1"></i> 정답입니다!</span>';
+            } else {
+                let hints = [];
+                if (!ageCorrect) hints.push('age: 정수 17을 입력하세요');
+                if (!phoneCorrect) hints.push("phone: 문자열이므로 따옴표를 포함하세요");
+                result.innerHTML = '<span class="text-red-500"><i class="fas fa-times-circle mr-1"></i> ' + hints.join(' / ') + '</span>';
+            }
+        }
+
+
+        // ===== BMI Calculator =====
+        function runBMI() {
+            const h = 1.7;
+            const w = 60;
+            const bmi = w / (h ** 2);
+            const bmiRounded = Math.round(bmi * 100000000) / 100000000;
+            const isNormal = (18.5 <= bmi && bmi < 23);
+
+            document.getElementById('bmi-result').textContent = bmiRounded + '\n' + isNormal;
+
+            const outputEl = document.getElementById('output-bmi');
+            if (!outputEl.classList.contains('show')) {
+                outputEl.classList.add('show');
+            }
+        }
+
+
+        // ===== Blood Pressure Activity =====
+        function checkBloodPressure() {
+            const cautionInput = document.getElementById('bp-caution');
+            const preHighInput = document.getElementById('bp-prehigh');
+            const highInput = document.getElementById('bp-high');
+            const result = document.getElementById('bp-result');
+
+            const a = 135, b = 88;
+
+            // Evaluate the user expressions
+            let cautionCorrect = false;
+            let preHighCorrect = false;
+            let highCorrect = false;
+
+            try {
+                // For caution: 120 <= a <= 129 and b < 80
+                const cautionVal = cautionInput.value.trim();
+                if (cautionVal) {
+                    const cautionResult = evalBPExpression(cautionVal, a, b);
+                    cautionCorrect = (cautionResult === false); // For a=135, b=88, should be False
+                }
+            } catch(e) {}
+
+            try {
+                // For pre-high: (130 <= a <= 139) or (80 <= b <= 89)
+                const preHighVal = preHighInput.value.trim();
+                if (preHighVal) {
+                    const preHighResult = evalBPExpression(preHighVal, a, b);
+                    preHighCorrect = (preHighResult === true); // For a=135, b=88, should be True
+                }
+            } catch(e) {}
+
+            try {
+                // For high: a >= 140 or b >= 90
+                const highVal = highInput.value.trim();
+                if (highVal) {
+                    const highResult = evalBPExpression(highVal, a, b);
+                    highCorrect = (highResult === false); // For a=135, b=88, should be False
+                }
+            } catch(e) {}
+
+            cautionInput.classList.remove('correct', 'incorrect');
+            preHighInput.classList.remove('correct', 'incorrect');
+            highInput.classList.remove('correct', 'incorrect');
+
+            if (cautionInput.value.trim()) cautionInput.classList.add(cautionCorrect ? 'correct' : 'incorrect');
+            if (preHighInput.value.trim()) preHighInput.classList.add(preHighCorrect ? 'correct' : 'incorrect');
+            if (highInput.value.trim()) highInput.classList.add(highCorrect ? 'correct' : 'incorrect');
+
+            if (cautionCorrect && preHighCorrect && highCorrect) {
+                result.innerHTML = '<span class="text-green-600"><i class="fas fa-check-circle mr-1"></i> 모두 정답입니다!</span>';
+            } else {
+                let wrong = [];
+                if (!cautionCorrect) wrong.push('주의 혈압');
+                if (!preHighCorrect) wrong.push('고혈압 전 단계');
+                if (!highCorrect) wrong.push('고혈압');
+                result.innerHTML = '<span class="text-red-500"><i class="fas fa-times-circle mr-1"></i> ' + wrong.join(', ') + ' 조건식을 확인하세요</span>';
+            }
+        }
+
+        function evalBPExpression(expr, a, b) {
+            // Convert Python-style to JavaScript
+            let jsExpr = expr
+                .replace(/\band\b/g, '&&')
+                .replace(/\bor\b/g, '||')
+                .replace(/\bnot\b/g, '!');
+
+            // Handle Python-style chained comparisons like "120 <= a <= 129"
+            // Convert to "(120 <= a && a <= 129)"
+            jsExpr = jsExpr.replace(/(\d+)\s*(<=|<|>=|>)\s*([a-zA-Z_]\w*)\s*(<=|<|>=|>)\s*(\d+)/g,
+                '($1 $2 $3 && $3 $4 $5)');
+
+            // Create function with a and b as parameters
+            const fn = new Function('a', 'b', 'return (' + jsExpr + ');');
+            return fn(a, b);
+        }
+
+        function showBPAnswer() {
+            const hint = document.getElementById('bp-hint');
+            hint.classList.toggle('hidden');
+        }
+
+
+        // ===== Smooth scroll for anchor links =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

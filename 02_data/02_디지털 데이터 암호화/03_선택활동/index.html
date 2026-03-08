@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>선택활동 - 고대 암호를 이용해 암호화, 복호화하기 | 정보</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        violet: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                            950: '#2e1065',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        /* Fillable input/textarea styling */
+        .activity-input {
+            width: 100%;
+            min-height: 2.5rem;
+            padding: 0.5rem 0.75rem;
+            border: 2px solid #ddd6fe;
+            border-radius: 0.5rem;
+            background-color: #f5f3ff;
+            font-size: 0.875rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            transition: all 0.2s ease;
+            resize: vertical;
+        }
+        .activity-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+        }
+        .activity-input::placeholder {
+            color: #c4b5fd;
+            font-style: italic;
+        }
+        .activity-input:not(:placeholder-shown) {
+            background-color: #fff;
+            border-color: #a78bfa;
+        }
+
+        /* Pre-filled example cells */
+        .example-cell {
+            background-color: #ede9fe;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            color: #4c1d95;
+            line-height: 1.6;
+            border-left: 3px solid #8b5cf6;
+        }
+
+        /* Self-evaluation buttons */
+        .eval-btn {
+            padding: 1rem 1.5rem;
+            border: 3px solid #ddd6fe;
+            border-radius: 1rem;
+            background: #f5f3ff;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: center;
+            min-width: 120px;
+        }
+        .eval-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.2);
+        }
+        .eval-btn.selected {
+            border-color: #8b5cf6;
+            background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+        }
+        .eval-btn .emoji {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Activity card animation */
+        .activity-card {
+            transition: transform 0.2s ease;
+        }
+        .activity-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Table responsive wrapper */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Caesar cipher letter boxes */
+        .cipher-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border: 2px solid #c4b5fd;
+            border-radius: 0.375rem;
+            background: #ede9fe;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #4c1d95;
+            font-family: 'Courier New', monospace;
+        }
+        .cipher-arrow {
+            color: #8b5cf6;
+            font-size: 1.2rem;
+            margin: 0 0.25rem;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .activity-input {
+                border: 1px solid #999 !important;
+                background: white !important;
+                min-height: 3rem !important;
+            }
+            .eval-btn.selected {
+                border: 3px solid #6d28d9 !important;
+                background: #ede9fe !important;
+            }
+            .hero-section {
+                background: #6d28d9 !important;
+                color: white !important;
+            }
+            nav, .action-buttons {
+                display: none !important;
+            }
+            .activity-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Scrollbar styling */
+        .table-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #ede9fe;
+            border-radius: 3px;
+        }
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: #a78bfa;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-sm border-b border-violet-100 sticky top-0 z-50 no-print">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="../../../index.html" class="flex items-center gap-2 text-violet-700 hover:text-violet-900 transition-colors text-sm font-medium">
+                <i class="fas fa-arrow-left"></i>
+                <span>전체 단원</span>
+            </a>
+            <div class="flex items-center gap-2 text-sm text-violet-600">
+                <i class="fas fa-book-open"></i>
+                <span class="hidden sm:inline">II. 데이터</span>
+                <span class="sm:hidden">데이터</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section text-white relative overflow-hidden" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #5b21b6 100%);">
+        <!-- Decorative background elements -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-32 h-32 border-2 border-white rounded-full"></div>
+            <div class="absolute top-20 right-20 w-48 h-48 border border-white rounded-full"></div>
+            <div class="absolute bottom-10 left-1/3 w-24 h-24 border-2 border-white rounded-full"></div>
+            <div class="absolute -bottom-8 right-10 w-40 h-40 border border-white rounded-full"></div>
+        </div>
+
+        <div class="max-w-5xl mx-auto px-4 py-12 md:py-16 relative z-10">
+            <!-- Breadcrumb -->
+            <div class="flex items-center gap-2 text-violet-200 text-sm mb-6 flex-wrap">
+                <span>정보</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span>II. 데이터</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span>02 디지털 데이터 암호화</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span class="text-white font-medium">선택활동</span>
+            </div>
+
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm mb-5">
+                <i class="fas fa-lock text-violet-200"></i>
+                <span class="font-medium">암호화 실습</span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 leading-tight">
+                선택활동
+            </h1>
+            <p class="text-xl md:text-2xl font-semibold text-violet-100 mb-3">
+                고대 암호를 이용해 암호화, 복호화하기
+            </p>
+            <p class="text-violet-200 text-base md:text-lg max-w-2xl leading-relaxed">
+                카이사르 암호와 비즈네르 암호를 직접 체험해 봅시다
+            </p>
+
+            <!-- Quick info -->
+            <div class="flex flex-wrap gap-4 mt-8 text-sm">
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                    <i class="fas fa-layer-group text-violet-300"></i>
+                    <span>활동 2개</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                    <i class="fas fa-clock text-violet-300"></i>
+                    <span>소요 시간: 약 30분</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                    <i class="fas fa-pen-to-square text-violet-300"></i>
+                    <span>직접 작성 활동</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 py-10 space-y-10">
+
+        <!-- ============================================ -->
+        <!-- Student Info Section -->
+        <!-- ============================================ -->
+        <section class="bg-white rounded-2xl shadow-md border border-violet-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-violet-500 to-purple-500 px-6 py-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
+                    <i class="fas fa-user-pen"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">학생 정보</h2>
+                    <p class="text-violet-100 text-xs">활동 제출을 위해 정보를 입력하세요</p>
+                </div>
+            </div>
+            <div class="p-6 space-y-5">
+                <!-- Student Info Fields -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">학년 <span class="text-red-400">*</span></label>
+                        <select id="grade" class="activity-input w-full" style="padding: 10px 12px;">
+                            <option value="">선택</option>
+                            <option value="1">1학년</option>
+                            <option value="2">2학년</option>
+                            <option value="3">3학년</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">반 <span class="text-red-400">*</span></label>
+                        <input type="number" id="classNum" class="activity-input w-full" placeholder="예: 3" min="1" max="20">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">번호 <span class="text-red-400">*</span></label>
+                        <input type="number" id="number" class="activity-input w-full" placeholder="예: 15" min="1" max="50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">이름 <span class="text-red-400">*</span></label>
+                        <input type="text" id="name" class="activity-input w-full" placeholder="이름 입력">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- Activity 1: 카이사르 암호 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-violet-100 overflow-hidden">
+            <!-- Activity Header -->
+            <div class="bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                    1
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">카이사르 암호(키=3) 암호화, 복호화</h2>
+                    <p class="text-violet-100 text-sm mt-0.5"><i class="fas fa-key mr-1"></i> 카이사르 암호 실습</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-8">
+                <!-- Caesar Cipher Explanation -->
+                <div class="bg-violet-50 border-l-4 border-violet-400 rounded-r-lg p-4 md:p-5">
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">
+                        <i class="fas fa-info-circle text-violet-500 mr-1"></i>
+                        카이사르 암호는 알파벳을 일정한 수만큼 이동시켜 암호화하는 방법입니다. 키가 3이면 A는 D로, B는 E로, Z는 C로 변환됩니다.
+                        아래 활동에서 직접 암호화와 복호화를 수행해 봅시다.
+                    </p>
+                </div>
+
+                <!-- Caesar Cipher Visual Reference -->
+                <div class="bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl p-5 border border-violet-200">
+                    <h4 class="text-sm font-bold text-violet-800 mb-3">
+                        <i class="fas fa-diagram-project mr-1"></i> 카이사르 암호 변환 규칙 (키=3)
+                    </h4>
+                    <div class="flex flex-wrap gap-1 justify-center text-xs mb-2">
+                        <span class="text-violet-500 font-semibold mr-1">평문:</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem;">A</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem;">B</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem;">C</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem;">D</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem;">E</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem;">F</span>
+                        <span class="text-gray-400">...</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem;">X</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem;">Y</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem;">Z</span>
+                    </div>
+                    <div class="text-center text-violet-400 text-lg mb-2"><i class="fas fa-arrow-down"></i> +3</div>
+                    <div class="flex flex-wrap gap-1 justify-center text-xs">
+                        <span class="text-violet-500 font-semibold mr-1">암호:</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem; background:#c4b5fd; color:#2e1065;">D</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem; background:#c4b5fd; color:#2e1065;">E</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem; background:#c4b5fd; color:#2e1065;">F</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem; background:#c4b5fd; color:#2e1065;">G</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem; background:#c4b5fd; color:#2e1065;">H</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem; background:#c4b5fd; color:#2e1065;">I</span>
+                        <span class="text-gray-400">...</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem; background:#c4b5fd; color:#2e1065;">A</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem; background:#c4b5fd; color:#2e1065;">B</span>
+                        <span class="cipher-letter" style="font-size:0.7rem; width:1.6rem; height:1.6rem; background:#c4b5fd; color:#2e1065;">C</span>
+                    </div>
+                </div>
+
+                <!-- (1) 평문 암호화 -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 text-sm font-bold">(1)</span>
+                        <h3 class="text-lg font-bold text-gray-800">평문 암호화</h3>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                        <p class="text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-file-lines text-violet-500 mr-1"></i> 평문 (암호화할 문장)
+                        </p>
+                        <div class="bg-white rounded-lg p-4 border-2 border-violet-200 mb-4">
+                            <p class="text-xl font-bold text-violet-800 tracking-wider font-mono text-center">
+                                Manners Maketh Man
+                            </p>
+                        </div>
+
+                        <p class="text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-lock text-violet-500 mr-1"></i> 암호문 (카이사르 암호, 키=3으로 암호화한 결과를 입력하세요)
+                        </p>
+                        <input type="text" id="act1_encrypt" class="activity-input" data-activity="1"
+                               placeholder="예: Pdqqhuv Pdnhwk Pdq (각 알파벳을 3칸 이동하세요)">
+                        <p class="text-xs text-gray-400 mt-2">
+                            <i class="fas fa-lightbulb text-amber-400 mr-1"></i>
+                            힌트: 대소문자 구분, 공백/숫자/특수문자는 그대로 유지합니다. M+3=P, a+3=d, ...
+                        </p>
+                    </div>
+                </div>
+
+                <!-- (2) 암호문 복호화 -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 text-sm font-bold">(2)</span>
+                        <h3 class="text-lg font-bold text-gray-800">암호문 복호화</h3>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                        <p class="text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-lock text-violet-500 mr-1"></i> 암호문 (복호화할 문장)
+                        </p>
+                        <div class="bg-white rounded-lg p-4 border-2 border-violet-200 mb-4">
+                            <p class="text-xl font-bold text-violet-800 tracking-wider font-mono text-center" style="word-break:break-all;">
+                                Eh Fduhixo iru Dvvdvvlqdwru
+                            </p>
+                        </div>
+
+                        <p class="text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-unlock text-violet-500 mr-1"></i> 평문 (카이사르 암호, 키=3으로 복호화한 결과를 입력하세요)
+                        </p>
+                        <input type="text" id="act1_decrypt" class="activity-input" data-activity="1"
+                               placeholder="각 알파벳을 3칸 역방향으로 이동하세요">
+                        <p class="text-xs text-gray-400 mt-2">
+                            <i class="fas fa-lightbulb text-amber-400 mr-1"></i>
+                            힌트: 암호화의 역과정입니다. E-3=B, h-3=e, ...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- Activity 2: 비즈네르 암호 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-violet-100 overflow-hidden">
+            <!-- Activity Header -->
+            <div class="bg-gradient-to-r from-purple-600 to-violet-600 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                    2
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">비즈네르 암호</h2>
+                    <p class="text-violet-100 text-sm mt-0.5"><i class="fas fa-shield-halved mr-1"></i> 다중 키 암호 실습</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-8">
+
+                <!-- (1) 카이사르 암호의 한계 vs 비즈네르 암호 -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 text-sm font-bold">(1)</span>
+                        <h3 class="text-lg font-bold text-gray-800">카이사르 암호의 한계와 비즈네르 암호 방식 조사</h3>
+                    </div>
+
+                    <!-- Explanation -->
+                    <div class="bg-violet-50 border-l-4 border-violet-400 rounded-r-lg p-4 md:p-5">
+                        <p class="text-gray-700 leading-relaxed text-sm md:text-base">
+                            <i class="fas fa-info-circle text-violet-500 mr-1"></i>
+                            카이사르 암호는 <strong class="text-violet-700">문자의 출현 빈도를 이용해 쉽게 해독</strong>이 가능하다는 한계가 있습니다.
+                            이를 보완한 비즈네르 암호 방식을 조사해 봅시다.
+                        </p>
+                    </div>
+
+                    <!-- Reference link -->
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                        <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-lightbulb text-amber-500"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-amber-800 mb-1">참고 자료</p>
+                            <p class="text-sm text-amber-700">
+                                비즈네르 암호에 대해 아래 링크를 참고하세요:<br>
+                                <a href="https://ko.wikipedia.org/wiki/%EB%B9%84%EC%A6%88%EB%84%A4%EB%A5%B4_%EC%95%94%ED%98%B8" target="_blank" rel="noopener noreferrer" class="text-violet-600 hover:text-violet-800 underline font-medium">
+                                    <i class="fas fa-external-link-alt mr-1"></i>위키백과: 비즈네르 암호
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Comparison Table -->
+                    <div class="table-wrapper">
+                        <table class="w-full border-collapse min-w-[500px]">
+                            <thead>
+                                <tr>
+                                    <th class="bg-violet-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tl-lg w-1/2">
+                                        <i class="fas fa-triangle-exclamation mr-2"></i>카이사르 암호의 한계
+                                    </th>
+                                    <th class="bg-violet-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tr-lg w-1/2">
+                                        <i class="fas fa-shield-halved mr-2"></i>비즈네르 암호 방식
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="px-4 py-3 align-top border-b border-violet-100">
+                                        <textarea id="act2_caesar_limit" class="activity-input" data-activity="2" rows="5"
+                                                  placeholder="카이사르 암호의 한계점을 조사하여 작성하세요. 예: 하나의 키만 사용하므로 빈도 분석에 취약합니다..."></textarea>
+                                    </td>
+                                    <td class="px-4 py-3 align-top border-b border-violet-100">
+                                        <textarea id="act2_vigenere_method" class="activity-input" data-activity="2" rows="5"
+                                                  placeholder="비즈네르 암호의 방식을 조사하여 작성하세요. 예: 여러 개의 시프트 값을 사용하여..."></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- (2) 비즈네르 암호문 만들기 -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 text-sm font-bold">(2)</span>
+                        <h3 class="text-lg font-bold text-gray-800">비즈네르 암호문 만들기</h3>
+                    </div>
+
+                    <!-- Explanation -->
+                    <div class="bg-violet-50 border-l-4 border-violet-400 rounded-r-lg p-4 md:p-5">
+                        <p class="text-gray-700 leading-relaxed text-sm md:text-base">
+                            <i class="fas fa-info-circle text-violet-500 mr-1"></i>
+                            비즈네르 암호는 각 문자마다 다른 이동 수를 적용합니다.
+                            암호화 키의 각 문자가 이동 수를 결정합니다 (A=0, B=1, C=2, ... G=6, ...).
+                            아래 표에서 각 문자의 이동 수와 암호문을 구해 봅시다.
+                        </p>
+                    </div>
+
+                    <!-- Vigenere Table -->
+                    <div class="table-wrapper">
+                        <table class="w-full border-collapse text-center">
+                            <thead>
+                                <tr>
+                                    <th class="bg-violet-800 text-white px-3 py-2.5 text-sm font-semibold rounded-tl-lg w-[120px] text-left">구분</th>
+                                    <th class="bg-violet-700 text-white px-2 py-2.5 text-sm font-semibold">H</th>
+                                    <th class="bg-violet-700 text-white px-2 py-2.5 text-sm font-semibold">E</th>
+                                    <th class="bg-violet-700 text-white px-2 py-2.5 text-sm font-semibold">L</th>
+                                    <th class="bg-violet-700 text-white px-2 py-2.5 text-sm font-semibold">L</th>
+                                    <th class="bg-violet-700 text-white px-2 py-2.5 text-sm font-semibold">O</th>
+                                    <th class="bg-violet-700 text-white px-2 py-2.5 text-sm font-semibold">W</th>
+                                    <th class="bg-violet-700 text-white px-2 py-2.5 text-sm font-semibold">O</th>
+                                    <th class="bg-violet-700 text-white px-2 py-2.5 text-sm font-semibold">R</th>
+                                    <th class="bg-violet-700 text-white px-2 py-2.5 text-sm font-semibold">L</th>
+                                    <th class="bg-violet-700 text-white px-2 py-2.5 text-sm font-semibold rounded-tr-lg">D</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- 평문 Row -->
+                                <tr class="border-b border-violet-100">
+                                    <td class="px-3 py-3 text-left text-sm font-semibold text-violet-800 bg-violet-50">
+                                        <i class="fas fa-file-lines text-violet-400 mr-1"></i>평문
+                                    </td>
+                                    <td class="px-2 py-3 font-mono font-bold text-violet-900 bg-violet-50/50">H</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-violet-900 bg-violet-50/50">E</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-violet-900 bg-violet-50/50">L</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-violet-900 bg-violet-50/50">L</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-violet-900 bg-violet-50/50">O</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-violet-900 bg-violet-50/50">W</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-violet-900 bg-violet-50/50">O</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-violet-900 bg-violet-50/50">R</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-violet-900 bg-violet-50/50">L</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-violet-900 bg-violet-50/50">D</td>
+                                </tr>
+                                <!-- 암호화 키 Row -->
+                                <tr class="border-b border-violet-100">
+                                    <td class="px-3 py-3 text-left text-sm font-semibold text-violet-800 bg-violet-50">
+                                        <i class="fas fa-key text-violet-400 mr-1"></i>암호화 키
+                                    </td>
+                                    <td class="px-2 py-3 font-mono font-bold text-purple-700 bg-purple-50/50">B</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-purple-700 bg-purple-50/50">A</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-purple-700 bg-purple-50/50">G</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-purple-700 bg-purple-50/50">B</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-purple-700 bg-purple-50/50">A</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-purple-700 bg-purple-50/50">G</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-purple-700 bg-purple-50/50">B</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-purple-700 bg-purple-50/50">A</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-purple-700 bg-purple-50/50">G</td>
+                                    <td class="px-2 py-3 font-mono font-bold text-purple-700 bg-purple-50/50">B</td>
+                                </tr>
+                                <!-- 이동 수 Row (학생 입력) -->
+                                <tr class="border-b border-violet-200 bg-amber-50/30">
+                                    <td class="px-3 py-3 text-left text-sm font-semibold text-violet-800 bg-violet-50">
+                                        <i class="fas fa-arrows-left-right text-violet-400 mr-1"></i>이동 수
+                                    </td>
+                                    <td class="px-1 py-2" colspan="10">
+                                        <input type="text" id="act2_shift_numbers" class="activity-input text-center font-mono"
+                                               placeholder="예: 1, 0, 6, 1, 0, 6, 1, 0, 6, 1 (A=0, B=1, C=2, ... G=6)"
+                                               style="letter-spacing: 0.1em;">
+                                    </td>
+                                </tr>
+                                <!-- 암호문 Row (학생 입력) -->
+                                <tr class="bg-green-50/30">
+                                    <td class="px-3 py-3 text-left text-sm font-semibold text-violet-800 bg-violet-50 rounded-bl-lg">
+                                        <i class="fas fa-lock text-violet-400 mr-1"></i>암호문
+                                    </td>
+                                    <td class="px-1 py-2 rounded-br-lg" colspan="10">
+                                        <input type="text" id="act2_cipher_text" class="activity-input text-center font-mono font-bold"
+                                               placeholder="예: I, E, R, M, O, C, P, R, R, E (각 글자에 이동 수를 더하세요)"
+                                               style="letter-spacing: 0.1em;">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Hint -->
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                        <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-lightbulb text-amber-500"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-amber-800 mb-1">이동 수 계산 방법</p>
+                            <p class="text-sm text-amber-700">
+                                암호화 키의 각 알파벳이 이동 수를 결정합니다: <strong>A=0, B=1, C=2, D=3, E=4, F=5, G=6</strong>, ...<br>
+                                예시: 평문 H + 키 B(이동 수 1) = I, 평문 E + 키 A(이동 수 0) = E
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- Self-Evaluation Section -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-violet-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-violet-700 to-violet-800 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white flex-shrink-0">
+                    <i class="fas fa-clipboard-check text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">스스로 평가하기</h2>
+                    <p class="text-violet-200 text-sm mt-0.5">자기 평가</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <!-- Evaluation Question -->
+                <div class="bg-violet-50 rounded-xl p-5 md:p-6 mb-8 text-center">
+                    <p class="text-lg md:text-xl font-semibold text-violet-900 leading-relaxed">
+                        <i class="fas fa-question-circle text-violet-500 mr-2"></i>
+                        데이터 암호화 &middot; 복호화 과정을 이해하고<br class="hidden md:inline">
+                        평문을 암호화 &middot; 복호화할 수 있는가?
+                    </p>
+                </div>
+
+                <!-- Evaluation Buttons -->
+                <div class="flex flex-wrap justify-center gap-4 md:gap-6" id="evalGroup">
+                    <button type="button" class="eval-btn" data-value="잘함" onclick="selectEval(this)">
+                        <span class="emoji">&#128522;</span>
+                        <span class="text-sm font-semibold text-violet-800">잘함</span>
+                    </button>
+                    <button type="button" class="eval-btn" data-value="보통" onclick="selectEval(this)">
+                        <span class="emoji">&#128528;</span>
+                        <span class="text-sm font-semibold text-violet-800">보통</span>
+                    </button>
+                    <button type="button" class="eval-btn" data-value="노력필요" onclick="selectEval(this)">
+                        <span class="emoji">&#128533;</span>
+                        <span class="text-sm font-semibold text-violet-800">노력필요</span>
+                    </button>
+                </div>
+
+                <!-- Hidden radio inputs for form submission -->
+                <div class="hidden">
+                    <input type="radio" name="selfEval" value="잘함" id="eval_good">
+                    <input type="radio" name="selfEval" value="보통" id="eval_normal">
+                    <input type="radio" name="selfEval" value="노력필요" id="eval_needwork">
+                </div>
+
+                <!-- Selected indicator -->
+                <div id="evalResult" class="mt-6 text-center text-sm text-violet-500 hidden">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    <span id="evalResultText"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- Action Buttons -->
+        <!-- ============================================ -->
+        <div class="action-buttons flex flex-wrap justify-center gap-4 no-print">
+            <button onclick="resetAll()" class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-violet-300 text-violet-700 rounded-xl font-semibold text-sm hover:bg-violet-50 hover:border-violet-400 transition-all shadow-sm">
+                <i class="fas fa-rotate-left"></i>
+                초기화
+            </button>
+            <button onclick="printPage()" class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-violet-300 text-violet-700 rounded-xl font-semibold text-sm hover:bg-violet-50 hover:border-violet-400 transition-all shadow-sm">
+                <i class="fas fa-print"></i>
+                인쇄하기
+            </button>
+            <button id="submitBtn" onclick="submitData()" class="inline-flex items-center gap-2 px-8 py-3 bg-violet-600 text-white rounded-xl font-semibold text-sm hover:bg-violet-700 transition-all shadow-lg hover:shadow-xl">
+                <i class="fas fa-paper-plane mr-2"></i>제출하기
+            </button>
+        </div>
+
+        <!-- Submit Result Messages -->
+        <div id="submitResult" class="hidden text-center">
+            <div id="submitSuccess" class="hidden inline-flex items-center gap-3 bg-green-50 border-2 border-green-300 text-green-700 rounded-xl px-6 py-4 text-sm font-semibold">
+                <i class="fas fa-circle-check text-xl"></i>
+                <span>제출이 완료되었습니다!</span>
+            </div>
+            <div id="submitError" class="hidden inline-flex items-center gap-3 bg-red-50 border-2 border-red-300 text-red-700 rounded-xl px-6 py-4 text-sm font-semibold">
+                <i class="fas fa-circle-exclamation text-xl"></i>
+                <span id="submitErrorMsg">제출 중 오류가 발생했습니다. 다시 시도해 주세요.</span>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- Navigation Buttons -->
+        <!-- ============================================ -->
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4 pb-2 no-print">
+            <a href="../02_암호화 활용 사례/index.html"
+               class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-violet-300 text-violet-700 rounded-xl font-semibold text-sm hover:bg-violet-50 hover:border-violet-400 transition-all shadow-sm">
+                <i class="fas fa-arrow-left"></i>
+                이전: 암호화 활용 사례
+            </a>
+            <a href="../../../index.html"
+               class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold text-base hover:from-violet-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                <i class="fas fa-list"></i>
+                목록으로 돌아가기
+            </a>
+        </div>
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../02_암호화 활용 사례/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../../03_빅데이터 개념과 분석/01_빅데이터 개념 이해/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">II. 데이터 &gt; 02 디지털 데이터 암호화 &gt; 선택활동</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // =============================================
+        // Apps Script Web App URL
+        // 선생님이 배포 후 아래에 URL을 입력
+        // =============================================
+        const APPS_SCRIPT_URL = '';
+
+        // Submit data to Google Sheets
+        function submitData() {
+            var grade = document.getElementById('grade').value;
+            var classNum = document.getElementById('classNum').value;
+            var number = document.getElementById('number').value;
+            var name = document.getElementById('name').value;
+
+            if (!grade || !classNum || !number || !name) {
+                alert('학년, 반, 번호, 이름을 모두 입력해주세요.');
+                return;
+            }
+            if (!APPS_SCRIPT_URL) {
+                alert('Apps Script URL이 설정되지 않았습니다. 선생님에게 문의하세요.');
+                return;
+            }
+
+            var payload = {
+                page: '암호화 선택활동',
+                grade: grade,
+                class: classNum,
+                number: number,
+                name: name,
+                act1_encrypt: document.getElementById('act1_encrypt')?.value || '',
+                act1_decrypt: document.getElementById('act1_decrypt')?.value || '',
+                act2_caesar_limit: document.getElementById('act2_caesar_limit')?.value || '',
+                act2_vigenere_method: document.getElementById('act2_vigenere_method')?.value || '',
+                act2_shift_numbers: document.getElementById('act2_shift_numbers')?.value || '',
+                act2_cipher_text: document.getElementById('act2_cipher_text')?.value || '',
+                selfEval: document.querySelector('input[name="selfEval"]:checked')?.value || ''
+            };
+
+            var btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>제출 중...';
+
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.result === 'success') {
+                    btn.innerHTML = '<i class="fas fa-check mr-2"></i>제출 완료!';
+                    btn.classList.remove('bg-violet-600');
+                    btn.classList.add('bg-green-600');
+                    document.getElementById('submitResult').classList.remove('hidden');
+                    document.getElementById('submitSuccess').classList.remove('hidden');
+                }
+            })
+            .catch(function(err) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>제출하기';
+                document.getElementById('submitResult').classList.remove('hidden');
+                document.getElementById('submitError').classList.remove('hidden');
+                alert('제출 중 오류가 발생했습니다.');
+            });
+        }
+
+        // Self-evaluation button selection
+        function selectEval(btn) {
+            // Remove selected state from all buttons
+            document.querySelectorAll('.eval-btn').forEach(function(b) {
+                b.classList.remove('selected');
+            });
+            // Add selected state to clicked button
+            btn.classList.add('selected');
+
+            // Set the corresponding hidden radio input
+            var value = btn.getAttribute('data-value');
+            var radioMap = { '잘함': 'eval_good', '보통': 'eval_normal', '노력필요': 'eval_needwork' };
+            if (radioMap[value]) {
+                document.getElementById(radioMap[value]).checked = true;
+            }
+
+            // Show result
+            var resultDiv = document.getElementById('evalResult');
+            var resultText = document.getElementById('evalResultText');
+            resultDiv.classList.remove('hidden');
+            resultText.textContent = '"' + value + '"을(를) 선택했습니다.';
+        }
+
+        // Reset all form inputs and evaluation
+        function resetAll() {
+            if (!confirm('모든 입력 내용을 초기화하시겠습니까?\n작성한 내용이 모두 지워집니다.')) {
+                return;
+            }
+
+            // Clear all inputs and textareas
+            document.querySelectorAll('.activity-input').forEach(function(input) {
+                if (input.tagName === 'SELECT') {
+                    input.selectedIndex = 0;
+                } else {
+                    input.value = '';
+                }
+            });
+
+            // Reset submit button state
+            var submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('bg-green-600');
+                submitBtn.classList.add('bg-violet-600');
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>제출하기';
+                document.getElementById('submitResult').classList.add('hidden');
+                document.getElementById('submitSuccess').classList.add('hidden');
+                document.getElementById('submitError').classList.add('hidden');
+            }
+
+            // Reset evaluation buttons
+            document.querySelectorAll('.eval-btn').forEach(function(b) {
+                b.classList.remove('selected');
+            });
+            document.querySelectorAll('input[name="selfEval"]').forEach(function(r) {
+                r.checked = false;
+            });
+
+            // Hide evaluation result
+            document.getElementById('evalResult').classList.add('hidden');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Print page
+        function printPage() {
+            window.print();
+        }
+
+        // Add subtle animation on scroll
+        (function() {
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.activity-card').forEach(function(card) {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    observer.observe(card);
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

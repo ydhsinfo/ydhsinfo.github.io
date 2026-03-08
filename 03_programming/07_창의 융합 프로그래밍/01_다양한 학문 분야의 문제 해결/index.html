@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>다양한 학문 분야의 문제 해결 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'sans': ['Noto Sans KR', 'sans-serif'] },
+                    colors: {
+                        primary: { 50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12' },
+                        amber: { 50:'#fffbeb',100:'#fef3c7',200:'#fde68a',300:'#fcd34d',400:'#fbbf24',500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e',900:'#78350f' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        .hero-gradient { background: linear-gradient(135deg, #f97316 0%, #ea580c 25%, #d97706 50%, #f59e0b 75%, #fb923c 100%); }
+        .page-dot { transition: all 0.3s ease; }
+        .page-dot.active { background-color: #f97316; transform: scale(1.3); }
+        .page-content { animation: fadeInUp 0.5s ease-out; }
+        @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        .nav-btn:disabled { opacity:0.4; cursor:not-allowed; }
+        .field-card { transition: all 0.3s ease; cursor: pointer; }
+        .field-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(249,115,22,0.2); }
+        .field-card.active { border-color: #f97316; box-shadow: 0 0 0 3px rgba(249,115,22,0.2); }
+        .code-block { background: #1e1e2e; color: #cdd6f4; border-radius: 12px; overflow: hidden; }
+        .code-block .keyword { color: #cba6f7; }
+        .code-block .string { color: #a6e3a1; }
+        .code-block .function { color: #89b4fa; }
+        .code-block .comment { color: #6c7086; }
+        .code-block .number { color: #fab387; }
+        pre code { font-family: 'Consolas', 'Monaco', 'Courier New', monospace; }
+        .bar { transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1); }
+        .subject-detail { display: none; animation: fadeInUp 0.4s ease; }
+        .subject-detail.active { display: block; }
+        .quiz-opt { cursor: pointer; transition: all 0.2s; }
+        .quiz-opt:hover { transform: translateX(4px); }
+        .quiz-opt.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-opt.wrong { background: #fee2e2; border-color: #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Header -->
+    <header class="hero-gradient text-white shadow-lg relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <svg class="w-full h-full" viewBox="0 0 800 200" preserveAspectRatio="none">
+                <circle cx="100" cy="50" r="80" fill="white" opacity="0.1"/>
+                <circle cx="700" cy="150" r="120" fill="white" opacity="0.08"/>
+                <circle cx="400" cy="30" r="60" fill="white" opacity="0.06"/>
+            </svg>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 relative z-10">
+            <nav class="flex items-center space-x-2 text-sm text-orange-100 mb-4 flex-wrap">
+                <a href="../../../index.html" class="hover:text-white transition-colors flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </a>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span>III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span>07 창의 융합 프로그래밍</span>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span class="text-white font-medium">다양한 학문 분야의 문제 해결</span>
+            </nav>
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/30">
+                            <i class="fas fa-flask mr-1"></i> 융합
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/30">
+                            <i class="fas fa-brain mr-1"></i> 창의
+                        </span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
+                        <i class="fas fa-atom mr-2 opacity-90"></i>다양한 학문 분야의 문제 해결
+                    </h1>
+                    <p class="mt-2 text-orange-100 text-sm sm:text-base max-w-2xl">
+                        수학, 과학, 사회 등 다양한 학문 분야의 문제를 프로그래밍으로 해결하는 방법을 탐구합니다.
+                    </p>
+                </div>
+                <a href="../../../index.html" class="hidden sm:flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-xl transition-all text-sm border border-white/30">
+                    <i class="fas fa-arrow-left"></i> 목록으로
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Nav -->
+    <div class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-orange-100 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <button onclick="changePage(-1)" id="prevBtn" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-700 font-medium text-sm transition-all" disabled>
+                <i class="fas fa-chevron-left text-xs"></i> 이전
+            </button>
+            <div class="flex items-center gap-2">
+                <button onclick="goToPage(0)" class="page-dot w-3 h-3 rounded-full bg-orange-300 cursor-pointer active" data-page="0" title="1. 창의 융합 프로그래밍"></button>
+                <button onclick="goToPage(1)" class="page-dot w-3 h-3 rounded-full bg-orange-300 cursor-pointer" data-page="1" title="2. 수학 분야 문제 해결"></button>
+                <button onclick="goToPage(2)" class="page-dot w-3 h-3 rounded-full bg-orange-300 cursor-pointer" data-page="2" title="3. 과학·사회 분야 문제 해결"></button>
+            </div>
+            <button onclick="changePage(1)" id="nextBtn" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-700 font-medium text-sm transition-all">
+                다음 <i class="fas fa-chevron-right text-xs"></i>
+            </button>
+        </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+
+        <!-- ==================== PAGE 1 ==================== -->
+        <div id="page-0" class="page-content space-y-8">
+
+            <section class="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center text-sm">1</span>
+                        창의 융합 프로그래밍이란?
+                    </h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-5 rounded-r-xl">
+                        <p class="text-gray-700 leading-relaxed text-[15px]">
+                            <strong class="text-orange-700">창의 융합 프로그래밍</strong>은 프로그래밍과 다른 학문 분야를 결합하여
+                            실생활 문제를 창의적으로 해결하는 것입니다.
+                            <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-medium">컴퓨팅 사고력</span>을 바탕으로
+                            수학, 과학, 사회, 예술 등 다양한 분야의 지식을 융합합니다.
+                        </p>
+                    </div>
+
+                    <!-- 학문 분야 카드 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-th text-orange-500"></i> 프로그래밍과 융합되는 학문 분야
+                        </h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div onclick="showField('math')" class="field-card bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-center" id="field-math">
+                                <div class="text-3xl mb-2">📐</div>
+                                <h4 class="font-bold text-blue-700 text-sm">수학</h4>
+                                <p class="text-xs text-gray-500 mt-1">통계, 확률, 수식 계산</p>
+                            </div>
+                            <div onclick="showField('science')" class="field-card bg-green-50 border-2 border-green-200 rounded-xl p-4 text-center" id="field-science">
+                                <div class="text-3xl mb-2">🔬</div>
+                                <h4 class="font-bold text-green-700 text-sm">과학</h4>
+                                <p class="text-xs text-gray-500 mt-1">물리 시뮬레이션, 데이터 분석</p>
+                            </div>
+                            <div onclick="showField('social')" class="field-card bg-purple-50 border-2 border-purple-200 rounded-xl p-4 text-center" id="field-social">
+                                <div class="text-3xl mb-2">🌍</div>
+                                <h4 class="font-bold text-purple-700 text-sm">사회</h4>
+                                <p class="text-xs text-gray-500 mt-1">인구 분석, 경제 모델링</p>
+                            </div>
+                            <div onclick="showField('art')" class="field-card bg-pink-50 border-2 border-pink-200 rounded-xl p-4 text-center" id="field-art">
+                                <div class="text-3xl mb-2">🎨</div>
+                                <h4 class="font-bold text-pink-700 text-sm">예술</h4>
+                                <p class="text-xs text-gray-500 mt-1">생성 예술, 음악 생성</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 분야 상세 -->
+                    <div id="fieldDetail" class="bg-orange-50 rounded-xl border border-orange-200 p-5 min-h-[100px]">
+                        <p class="text-gray-400 text-sm text-center py-4">위의 분야 카드를 클릭하면 자세한 내용이 나타납니다.</p>
+                    </div>
+
+                    <!-- 융합 프로세스 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-arrows-alt text-orange-500"></i> 창의 융합 프로그래밍 과정
+                        </h3>
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+                            <div class="flex-1 bg-orange-100 rounded-xl p-4 text-center">
+                                <div class="text-2xl mb-1">🎯</div>
+                                <p class="font-bold text-orange-700 text-sm">문제 발견</p>
+                                <p class="text-xs text-gray-600 mt-1">실생활에서 해결할 문제 찾기</p>
+                            </div>
+                            <i class="fas fa-arrow-right text-orange-400 text-xl hidden sm:block"></i>
+                            <i class="fas fa-arrow-down text-orange-400 text-xl sm:hidden"></i>
+                            <div class="flex-1 bg-amber-100 rounded-xl p-4 text-center">
+                                <div class="text-2xl mb-1">🔍</div>
+                                <p class="font-bold text-amber-700 text-sm">분야 지식 습득</p>
+                                <p class="text-xs text-gray-600 mt-1">관련 학문의 개념과 원리 학습</p>
+                            </div>
+                            <i class="fas fa-arrow-right text-orange-400 text-xl hidden sm:block"></i>
+                            <i class="fas fa-arrow-down text-orange-400 text-xl sm:hidden"></i>
+                            <div class="flex-1 bg-yellow-100 rounded-xl p-4 text-center">
+                                <div class="text-2xl mb-1">🖥️</div>
+                                <p class="font-bold text-yellow-700 text-sm">알고리즘 설계</p>
+                                <p class="text-xs text-gray-600 mt-1">문제 해결 절차 설계</p>
+                            </div>
+                            <i class="fas fa-arrow-right text-orange-400 text-xl hidden sm:block"></i>
+                            <i class="fas fa-arrow-down text-orange-400 text-xl sm:hidden"></i>
+                            <div class="flex-1 bg-orange-100 rounded-xl p-4 text-center">
+                                <div class="text-2xl mb-1">✅</div>
+                                <p class="font-bold text-orange-700 text-sm">구현 및 검증</p>
+                                <p class="text-xs text-gray-600 mt-1">코드 작성 후 결과 확인</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== PAGE 2: 수학 ==================== -->
+        <div id="page-1" class="page-content space-y-8 hidden">
+
+            <section class="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center text-sm">2</span>
+                        수학 분야 문제 해결
+                    </h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-5 rounded-r-xl">
+                        <p class="text-gray-700 leading-relaxed text-[15px]">
+                            수학의 통계, 확률, 수치 계산 등을 프로그래밍으로 처리하면
+                            복잡한 계산을 빠르고 정확하게 수행할 수 있습니다.
+                            파이썬의 <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-mono text-sm">math</span>,
+                            <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-mono text-sm">statistics</span> 모듈을 활용합니다.
+                        </p>
+                    </div>
+
+                    <!-- 예시 1: 기술통계 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-chart-bar text-orange-500"></i> 예시 1: 학급 성적 통계 분석
+                        </h3>
+                        <div class="code-block mb-4">
+                            <div class="bg-gray-800 px-4 py-2 flex justify-between">
+                                <span class="text-gray-400 text-xs font-mono">Python</span>
+                                <span class="text-xs text-gray-500">statistics 모듈 활용</span>
+                            </div>
+                            <pre class="p-4 text-sm overflow-x-auto"><code><span class="keyword">import</span> statistics
+
+scores = [<span class="number">85</span>, <span class="number">92</span>, <span class="number">78</span>, <span class="number">96</span>, <span class="number">73</span>, <span class="number">88</span>, <span class="number">91</span>, <span class="number">65</span>, <span class="number">84</span>, <span class="number">79</span>]
+
+mean = statistics.<span class="function">mean</span>(scores)          <span class="comment"># 평균</span>
+median = statistics.<span class="function">median</span>(scores)      <span class="comment"># 중앙값</span>
+mode = statistics.<span class="function">mode</span>(scores)          <span class="comment"># 최빈값</span>
+stdev = statistics.<span class="function">stdev</span>(scores)        <span class="comment"># 표준편차</span>
+
+<span class="function">print</span>(f<span class="string">"평균: {mean}"</span>)        <span class="comment"># 83.1</span>
+<span class="function">print</span>(f<span class="string">"중앙값: {median}"</span>)     <span class="comment"># 84.5</span>
+<span class="function">print</span>(f<span class="string">"표준편차: {stdev:.2f}"</span>) <span class="comment"># 8.97</span>
+
+<span class="comment"># 등급 분류</span>
+<span class="keyword">for</span> s <span class="keyword">in</span> scores:
+    grade = <span class="string">"A"</span> <span class="keyword">if</span> s >= <span class="number">90</span> <span class="keyword">else</span> <span class="string">"B"</span> <span class="keyword">if</span> s >= <span class="number">80</span> <span class="keyword">else</span> <span class="string">"C"</span>
+    <span class="function">print</span>(f<span class="string">{s}점: {grade}등급</span>)</code></pre>
+                        </div>
+
+                        <!-- 인터랙티브 통계 -->
+                        <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                            <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <i class="fas fa-play-circle text-orange-500"></i> 직접 해보기: 성적 통계 계산기
+                            </h4>
+                            <div class="mb-3">
+                                <label class="text-xs font-semibold text-gray-600 block mb-1">점수 입력 (쉼표로 구분, 예: 85,92,78,96,73)</label>
+                                <input type="text" id="scoreInput" value="85,92,78,96,73,88,91,65,84,79" class="w-full border border-orange-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                            </div>
+                            <button onclick="calcStats()" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all mb-3">
+                                <i class="fas fa-calculator mr-1"></i> 통계 계산
+                            </button>
+                            <div id="statsResult" class="grid grid-cols-2 sm:grid-cols-4 gap-3 hidden">
+                                <div class="bg-white rounded-lg p-3 text-center border border-orange-100">
+                                    <p class="text-xs text-gray-500">평균</p>
+                                    <p class="font-bold text-orange-600 text-lg" id="statMean">-</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 text-center border border-orange-100">
+                                    <p class="text-xs text-gray-500">중앙값</p>
+                                    <p class="font-bold text-orange-600 text-lg" id="statMedian">-</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 text-center border border-orange-100">
+                                    <p class="text-xs text-gray-500">최고점</p>
+                                    <p class="font-bold text-green-600 text-lg" id="statMax">-</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 text-center border border-orange-100">
+                                    <p class="text-xs text-gray-500">최저점</p>
+                                    <p class="font-bold text-red-600 text-lg" id="statMin">-</p>
+                                </div>
+                            </div>
+                            <!-- 막대 그래프 -->
+                            <div id="barChart" class="mt-4 hidden">
+                                <p class="text-xs font-semibold text-gray-600 mb-2">점수 분포:</p>
+                                <div id="barContainer" class="space-y-1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 예시 2: 몬테카를로 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-dice text-orange-500"></i> 예시 2: 몬테카를로 시뮬레이션으로 원주율 추정
+                        </h3>
+                        <div class="code-block">
+                            <div class="bg-gray-800 px-4 py-2"><span class="text-gray-400 text-xs font-mono">Python - 확률로 π 계산</span></div>
+                            <pre class="p-4 text-sm overflow-x-auto"><code><span class="keyword">import</span> random
+<span class="keyword">import</span> math
+
+<span class="keyword">def</span> <span class="function">estimate_pi</span>(n):
+    inside = <span class="number">0</span>
+    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="function">range</span>(n):
+        x = random.<span class="function">uniform</span>(-<span class="number">1</span>, <span class="number">1</span>)
+        y = random.<span class="function">uniform</span>(-<span class="number">1</span>, <span class="number">1</span>)
+        <span class="keyword">if</span> x**<span class="number">2</span> + y**<span class="number">2</span> <= <span class="number">1</span>:  <span class="comment"># 단위원 내부</span>
+            inside += <span class="number">1</span>
+    <span class="keyword">return</span> <span class="number">4</span> * inside / n
+
+<span class="function">print</span>(f<span class="string">"π 추정값 (1만 번): {estimate_pi(10000):.4f}"</span>)
+<span class="function">print</span>(f<span class="string">"실제 π 값:       {math.pi:.4f}"</span>)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== PAGE 3: 과학·사회 ==================== -->
+        <div id="page-2" class="page-content space-y-8 hidden">
+
+            <section class="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="bg-white/20 w-8 h-8 rounded-lg flex items-center justify-center text-sm">3</span>
+                        과학·사회 분야 문제 해결
+                    </h2>
+                </div>
+                <div class="p-6 space-y-6">
+
+                    <!-- 과학 - 시뮬레이션 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-flask text-orange-500"></i> 과학: 자유 낙하 시뮬레이션
+                        </h3>
+                        <div class="code-block mb-4">
+                            <div class="bg-gray-800 px-4 py-2"><span class="text-gray-400 text-xs font-mono">Python - 물리 시뮬레이션</span></div>
+                            <pre class="p-4 text-sm overflow-x-auto"><code><span class="comment"># 자유 낙하: h = 1/2 × g × t²</span>
+g = <span class="number">9.8</span>   <span class="comment"># 중력가속도 (m/s²)</span>
+h0 = <span class="number">100</span>  <span class="comment"># 초기 높이 (m)</span>
+dt = <span class="number">0.1</span>  <span class="comment"># 시간 간격 (s)</span>
+
+t = <span class="number">0</span>
+h = h0
+v = <span class="number">0</span>
+
+<span class="function">print</span>(<span class="string">"시간(s) | 높이(m) | 속도(m/s)"</span>)
+<span class="keyword">while</span> h > <span class="number">0</span>:
+    <span class="function">print</span>(f<span class="string">"{t:.1f}    | {h:.1f}   | {v:.1f}"</span>)
+    v += g * dt      <span class="comment"># 속도 증가</span>
+    h -= v * dt      <span class="comment"># 높이 감소</span>
+    t += dt
+
+<span class="function">print</span>(f<span class="string">"지면 도달: {t:.1f}초"</span>)
+<span class="comment"># 이론값: t = √(2h/g) ≈ 4.52초</span></code></pre>
+                        </div>
+
+                        <!-- 낙하 시뮬레이터 -->
+                        <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                            <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                <i class="fas fa-play-circle text-orange-500"></i> 자유 낙하 시뮬레이터
+                            </h4>
+                            <div class="flex gap-3 mb-4">
+                                <div class="flex-1">
+                                    <label class="text-xs font-semibold text-gray-600 block mb-1">초기 높이 (m)</label>
+                                    <input type="number" id="heightInput" value="100" min="10" max="500" class="w-full border border-orange-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-xs font-semibold text-gray-600 block mb-1">행성 중력 (m/s²)</label>
+                                    <select id="gravitySelect" class="w-full border border-orange-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                                        <option value="9.8">지구 (9.8)</option>
+                                        <option value="1.6">달 (1.6)</option>
+                                        <option value="3.7">화성 (3.7)</option>
+                                        <option value="24.8">목성 (24.8)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button onclick="runFallSim()" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all mb-3">
+                                <i class="fas fa-rocket mr-1"></i> 시뮬레이션 실행
+                            </button>
+                            <div id="fallResult" class="bg-white rounded-lg p-4 border border-orange-100 hidden">
+                                <div class="grid grid-cols-3 gap-3 text-center">
+                                    <div>
+                                        <p class="text-xs text-gray-500">도달 시간</p>
+                                        <p class="font-bold text-orange-600 text-xl" id="fallTime">-</p>
+                                        <p class="text-xs text-gray-400">초</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">충돌 속도</p>
+                                        <p class="font-bold text-red-600 text-xl" id="fallSpeed">-</p>
+                                        <p class="text-xs text-gray-400">m/s</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">최대 운동에너지</p>
+                                        <p class="font-bold text-blue-600 text-xl" id="fallEnergy">-</p>
+                                        <p class="text-xs text-gray-400">J (1kg 기준)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 사회 - 인구 분석 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-users text-orange-500"></i> 사회: 연령별 인구 분포 분석
+                        </h3>
+                        <div class="code-block mb-4">
+                            <div class="bg-gray-800 px-4 py-2"><span class="text-gray-400 text-xs font-mono">Python - 사회 데이터 분석</span></div>
+                            <pre class="p-4 text-sm overflow-x-auto"><code><span class="comment"># 연령별 인구 데이터 분석</span>
+population = {
+    <span class="string">"0~14세"</span>: <span class="number">612</span>,    <span class="comment"># 만 명 단위</span>
+    <span class="string">"15~64세"</span>: <span class="number">3567</span>,
+    <span class="string">"65세 이상"</span>: <span class="number">901</span>
+}
+
+total = <span class="function">sum</span>(population.<span class="function">values</span>())
+
+<span class="function">print</span>(f<span class="string">"총 인구: {total}만 명"</span>)
+<span class="keyword">for</span> age, pop <span class="keyword">in</span> population.<span class="function">items</span>():
+    ratio = pop / total * <span class="number">100</span>
+    <span class="function">print</span>(f<span class="string">{age}: {pop}만 명 ({ratio:.1f}%)</span>)
+
+<span class="comment"># 고령화 지수 = 65세 이상 / 0~14세 × 100</span>
+aging_index = population[<span class="string">"65세 이상"</span>] / population[<span class="string">"0~14세"</span>] * <span class="number">100</span>
+<span class="function">print</span>(f<span class="string">"고령화 지수: {aging_index:.1f}"</span>)</code></pre>
+                        </div>
+
+                        <!-- 퀴즈 -->
+                        <div class="bg-white border border-orange-200 rounded-xl p-5">
+                            <h4 class="font-bold text-gray-800 flex items-center gap-2 mb-3">
+                                <i class="fas fa-question-circle text-orange-500"></i> 확인 문제
+                            </h4>
+                            <p class="text-sm font-semibold text-gray-700 mb-3">프로그래밍과 다른 학문의 융합에 대한 설명으로 <strong>옳지 않은</strong> 것은?</p>
+                            <div class="space-y-2" id="fusionQuiz">
+                                <div onclick="checkFusionQuiz(this, false)" class="quiz-opt border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
+                                    ① 통계 모듈을 사용하면 수학의 평균, 중앙값 등을 쉽게 계산할 수 있다.
+                                </div>
+                                <div onclick="checkFusionQuiz(this, false)" class="quiz-opt border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
+                                    ② 물리 공식을 코드로 구현하면 다양한 조건의 시뮬레이션이 가능하다.
+                                </div>
+                                <div onclick="checkFusionQuiz(this, true)" class="quiz-opt border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
+                                    ③ 창의 융합 프로그래밍은 프로그래밍 언어 하나만 완벽히 알면 충분하다.
+                                </div>
+                                <div onclick="checkFusionQuiz(this, false)" class="quiz-opt border border-gray-200 rounded-lg p-3 text-sm text-gray-700">
+                                    ④ 사회 데이터를 분석하여 인구 구조 변화 추이를 파악할 수 있다.
+                                </div>
+                            </div>
+                            <div id="fusionQuizResult" class="mt-3 hidden p-3 rounded-lg text-sm font-semibold"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 border-t border-orange-100 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center">
+                    <i class="fas fa-atom text-white text-sm"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-gray-800">다양한 학문 분야의 문제 해결</p>
+                    <p class="text-xs text-gray-400">III. 알고리즘과 프로그래밍 · 07단원</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <a href="../../06_객체지향 프로그래밍/03_선택활동/index.html" class="flex items-center gap-2 px-4 py-2 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-lg text-sm font-medium transition-all">
+                    <i class="fas fa-arrow-left text-xs"></i> 이전 단원
+                </a>
+                <a href="../02_지속가능발전목표의 문제 해결/index.html" class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium transition-all">
+                    다음 소단원 <i class="fas fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentPage = 0;
+        const totalPages = 3;
+
+        function changePage(dir) { goToPage(currentPage + dir); }
+        function goToPage(n) {
+            if (n < 0 || n >= totalPages) return;
+            document.getElementById('page-' + currentPage).classList.add('hidden');
+            currentPage = n;
+            const el = document.getElementById('page-' + currentPage);
+            el.classList.remove('hidden');
+            el.classList.remove('page-content');
+            void el.offsetWidth;
+            el.classList.add('page-content');
+            document.querySelectorAll('.page-dot').forEach((d, i) => d.classList.toggle('active', i === currentPage));
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages - 1;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const fieldData = {
+            math: { icon: '📐', title: '수학', color: 'blue', examples: ['통계 분석 (평균, 분산, 표준편차)', '확률 시뮬레이션 (몬테카를로 방법)', '수치 계산 (뉴턴법, 이진 탐색)', '그래프 이론 (최단 경로 문제)'] },
+            science: { icon: '🔬', title: '과학', color: 'green', examples: ['물리 시뮬레이션 (자유 낙하, 포물선 운동)', '화학 반응 모델링', '생물 개체군 성장 모델', '기상 데이터 분석'] },
+            social: { icon: '🌍', title: '사회', color: 'purple', examples: ['인구 통계 분석', '경제 데이터 시각화', '지역별 투표 결과 분석', '교통 흐름 시뮬레이션'] },
+            art: { icon: '🎨', title: '예술', color: 'pink', examples: ['알고리즘 생성 예술 (프랙탈)', '음악 패턴 생성', '이미지 필터링', '텍스트 기반 시 창작'] }
+        };
+
+        function showField(key) {
+            document.querySelectorAll('.field-card').forEach(c => c.classList.remove('active'));
+            document.getElementById('field-' + key).classList.add('active');
+            const d = fieldData[key];
+            const colors = { blue: 'text-blue-700 bg-blue-50 border-blue-200', green: 'text-green-700 bg-green-50 border-green-200', purple: 'text-purple-700 bg-purple-50 border-purple-200', pink: 'text-pink-700 bg-pink-50 border-pink-200' };
+            document.getElementById('fieldDetail').innerHTML = `
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-2xl">${d.icon}</span>
+                    <h4 class="font-bold text-gray-800">${d.title} 분야 활용 예시</h4>
+                </div>
+                <ul class="space-y-2">
+                    ${d.examples.map(e => `<li class="flex items-center gap-2 text-sm text-gray-700"><i class="fas fa-check-circle text-orange-400"></i> ${e}</li>`).join('')}
+                </ul>
+            `;
+        }
+
+        function calcStats() {
+            const raw = document.getElementById('scoreInput').value;
+            const nums = raw.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+            if (nums.length === 0) return;
+            const mean = nums.reduce((a, b) => a + b, 0) / nums.length;
+            const sorted = [...nums].sort((a, b) => a - b);
+            const median = sorted.length % 2 === 0 ? (sorted[sorted.length/2-1] + sorted[sorted.length/2])/2 : sorted[Math.floor(sorted.length/2)];
+            document.getElementById('statMean').textContent = mean.toFixed(1);
+            document.getElementById('statMedian').textContent = median.toFixed(1);
+            document.getElementById('statMax').textContent = Math.max(...nums);
+            document.getElementById('statMin').textContent = Math.min(...nums);
+            document.getElementById('statsResult').classList.remove('hidden');
+            const bc = document.getElementById('barContainer');
+            bc.innerHTML = '';
+            nums.forEach(s => {
+                const pct = (s / 100 * 100).toFixed(0);
+                const color = s >= 90 ? 'bg-green-500' : s >= 80 ? 'bg-blue-500' : s >= 70 ? 'bg-yellow-500' : 'bg-red-500';
+                bc.innerHTML += `<div class="flex items-center gap-2"><span class="text-xs w-8 text-right font-mono">${s}</span><div class="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden"><div class="bar ${color} h-full rounded-full" style="width:${pct}%"></div></div></div>`;
+            });
+            document.getElementById('barChart').classList.remove('hidden');
+        }
+
+        function runFallSim() {
+            const h = parseFloat(document.getElementById('heightInput').value) || 100;
+            const g = parseFloat(document.getElementById('gravitySelect').value) || 9.8;
+            const t = Math.sqrt(2 * h / g);
+            const v = g * t;
+            const ke = 0.5 * 1 * v * v;
+            document.getElementById('fallTime').textContent = t.toFixed(2);
+            document.getElementById('fallSpeed').textContent = v.toFixed(1);
+            document.getElementById('fallEnergy').textContent = ke.toFixed(0);
+            document.getElementById('fallResult').classList.remove('hidden');
+        }
+
+        function checkFusionQuiz(el, isWrong) {
+            if (document.querySelector('.quiz-opt.correct, .quiz-opt.wrong')) return;
+            const res = document.getElementById('fusionQuizResult');
+            if (isWrong) {
+                el.classList.add('correct');
+                res.textContent = '✅ 정답! 창의 융합 프로그래밍은 프로그래밍 기술뿐 아니라 다양한 학문 분야의 지식도 함께 필요합니다.';
+                res.className = 'mt-3 p-3 rounded-lg text-sm font-semibold bg-green-100 text-green-800';
+            } else {
+                el.classList.add('wrong');
+                document.querySelectorAll('.quiz-opt')[2].classList.add('correct');
+                res.textContent = '❌ 틀렸습니다. ③번이 정답입니다. 창의 융합 프로그래밍은 프로그래밍 능력과 관련 학문의 지식 모두 필요합니다.';
+                res.className = 'mt-3 p-3 rounded-lg text-sm font-semibold bg-red-100 text-red-800';
+            }
+            res.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

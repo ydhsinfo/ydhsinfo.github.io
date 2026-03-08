@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문제 분석 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        },
+                        accent: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #ea580c, #d97706, #ea580c);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Robot grid styles */
+        .grid-cell {
+            transition: all 0.3s ease;
+        }
+        .grid-cell.robot {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            border-radius: 4px;
+        }
+        .grid-cell.visited {
+            background-color: #ffedd5;
+        }
+        .grid-cell.start {
+            background-color: #bbf7d0;
+        }
+
+        /* Robot animation */
+        .robot-move {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Command button styles */
+        .cmd-btn {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .cmd-btn:hover {
+            transform: scale(1.05);
+        }
+        .cmd-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Accordion styles */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+        }
+        .accordion-content.open {
+            max-height: 800px;
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { background: #c2410c !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+            a { text-decoration: underline; }
+        }
+
+        @media (max-width: 768px) {
+            .robot-grid-container { overflow-x: auto; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">III. 알고리즘과 프로그래밍</span>
+                <span class="breadcrumb-item text-white font-medium">01 문제 분해와 모델링</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-search-plus"></i>
+                        <span>III. 알고리즘과 프로그래밍 &gt; 01 문제 분해와 모델링</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        문제 분석
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        문제를 명확하게 이해하고 현재 상태, 요구 사항, 제약 조건을 정의하는 문제 분석의 핵심을 학습합니다
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-crosshairs mr-1"></i> 현재 상태와 목표 상태
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-clipboard-list mr-1"></i> 요구 사항
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-exclamation-triangle mr-1"></i> 제약 조건
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Problem document -->
+                        <rect x="20" y="30" width="70" height="90" rx="8" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+                        <text x="55" y="55" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9" font-weight="bold">문제</text>
+                        <line x1="35" y1="68" x2="75" y2="68" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <line x1="35" y1="78" x2="70" y2="78" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <line x1="35" y1="88" x2="65" y2="88" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <line x1="35" y1="98" x2="72" y2="98" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <circle cx="42" cy="108" r="3" fill="rgba(255,255,255,0.4)"/>
+                        <circle cx="55" cy="108" r="3" fill="rgba(255,255,255,0.4)"/>
+                        <circle cx="68" cy="108" r="3" fill="rgba(255,255,255,0.4)"/>
+
+                        <!-- Analysis arrow -->
+                        <path d="M98 75 L125 75" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M120 70 L128 75 L120 80" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        <text x="112" y="66" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="7">분석</text>
+
+                        <!-- Analysis results - 3 cards -->
+                        <rect x="132" y="25" width="68" height="30" rx="5" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                        <text x="166" y="44" text-anchor="middle" fill="white" font-size="8" font-weight="bold">현재/목표 상태</text>
+
+                        <rect x="132" y="62" width="68" height="30" rx="5" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                        <text x="166" y="81" text-anchor="middle" fill="white" font-size="8" font-weight="bold">요구 사항</text>
+
+                        <rect x="132" y="99" width="68" height="30" rx="5" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                        <text x="166" y="118" text-anchor="middle" fill="white" font-size="8" font-weight="bold">제약 조건</text>
+
+                        <!-- Decorative elements -->
+                        <circle cx="30" cy="160" r="15" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <text x="30" y="164" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="10">?</text>
+
+                        <circle cx="100" cy="170" r="12" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <text x="100" y="174" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-size="14">!</text>
+
+                        <!-- Grid hint -->
+                        <rect x="140" y="145" width="50" height="50" rx="4" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="157" y1="145" x2="157" y2="195" stroke="rgba(255,255,255,0.1)" stroke-width="0.8"/>
+                        <line x1="173" y1="145" x2="173" y2="195" stroke="rgba(255,255,255,0.1)" stroke-width="0.8"/>
+                        <line x1="140" y1="162" x2="190" y2="162" stroke="rgba(255,255,255,0.1)" stroke-width="0.8"/>
+                        <line x1="140" y1="178" x2="190" y2="178" stroke="rgba(255,255,255,0.1)" stroke-width="0.8"/>
+                        <circle cx="148" cy="153" r="4" fill="rgba(255,255,255,0.3)"/>
+                        <text x="148" y="156" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="6">R</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>문제의 현재 상태와 목표 상태를 파악할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>문제의 요구 사항을 분석할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">3</span>
+                        <span>문제의 제약 조건을 정의할 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 학습 요소: 문제 분석</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 현재/목표 상태</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 요구 사항과 제약 조건</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 1: 문제 분석이란?                                               -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-what-is-analysis">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-search-plus"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">문제 분석이란?</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">What is Problem Analysis?</p>
+                </div>
+            </div>
+
+            <!-- Definition callout -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-500 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">문제 분석의 정의</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong>문제</strong>는 우리가 해결해야 할 구체적이고 명확한 요구 사항을 말합니다.
+                            <strong>문제 분석</strong>이란 문제를 명확하게 이해하고, 주어진 문제의 <strong>현재 상태</strong>와 <strong>요구 사항</strong> 및 <strong>제약 조건</strong>을 정의하기 위해 수행하는 과정입니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concept explanation -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8">
+                <p class="text-gray-700 leading-relaxed">
+                    문제 해결의 첫 번째 단계는 문제를 정확히 이해하는 것입니다. 문제를 제대로 분석하지 않으면 올바른 해결책을 찾기 어렵습니다.
+                    문제 분석을 통해 우리는 문제의 본질을 파악하고, 효율적인 해결 방법을 설계할 수 있는 기초를 마련합니다.
+                </p>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 2: 문제 분석의 세 가지 핵심 질문                                  -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-three-questions">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">문제 분석의 세 가지 핵심 질문</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Three Key Questions for Problem Analysis</p>
+                </div>
+            </div>
+
+            <p class="text-gray-600 mb-8 leading-relaxed">
+                문제를 분석할 때 다음 세 가지 질문을 통해 문제를 체계적으로 이해할 수 있습니다.
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Question 1: 현재 상태와 목표 상태 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-crosshairs text-white text-2xl"></i>
+                    </div>
+                    <div class="inline-flex items-center justify-center bg-primary-100 text-primary-700 font-bold text-sm rounded-full px-3 py-1 mb-3">
+                        질문 1
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-3">현재 상태와 목표 상태</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        문제의 <strong>현재 상태</strong>와 <strong>목표 상태</strong>는 무엇인가?
+                    </p>
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <p class="text-xs text-gray-400">지금의 상황과 도달하고자 하는 결과를 명확히 구분합니다.</p>
+                    </div>
+                </div>
+
+                <!-- Question 2: 요구 사항 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-clipboard-list text-white text-2xl"></i>
+                    </div>
+                    <div class="inline-flex items-center justify-center bg-accent-100 text-accent-700 font-bold text-sm rounded-full px-3 py-1 mb-3">
+                        질문 2
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-3">요구 사항</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        문제의 <strong>요구 사항</strong>은 무엇인가?
+                    </p>
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <p class="text-xs text-gray-400">문제 해결을 위해 반드시 충족해야 할 조건을 파악합니다.</p>
+                    </div>
+                </div>
+
+                <!-- Question 3: 제약 조건 -->
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+                    </div>
+                    <div class="inline-flex items-center justify-center bg-red-100 text-red-700 font-bold text-sm rounded-full px-3 py-1 mb-3">
+                        질문 3
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-lg mb-3">제약 조건</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        문제의 <strong>제약 조건</strong>은 무엇인가?
+                    </p>
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <p class="text-xs text-gray-400">문제 해결 과정에서 지켜야 할 한계와 규칙을 정의합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 3: 예제 - 퍼레이드 로봇 문제                                     -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-example">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">예제: 퍼레이드 로봇 문제</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Example: Robot Navigation Problem</p>
+                </div>
+            </div>
+
+            <!-- Problem statement -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-file-alt text-primary-600 text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 mb-2">문제 상황</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            N&times;N 크기(N: 1~100)의 정사각형으로 구성된 놀이공원에서 이동 계획에 따라 움직이는 퍼레이드 로봇이 있다. 격자 공간의 크기와 이동 계획이 주어졌을 때, 퍼레이드 로봇이 도착한 <strong>최종 좌표 P</strong>를 출력하는 프로그램을 만들어 보자.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Conditions -->
+                <div class="bg-gray-50 rounded-xl p-4 mt-4">
+                    <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-primary-500"></i> 조건
+                    </h4>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-map-marker-alt text-primary-500 mt-0.5"></i>
+                            로봇은 시작 좌표 <strong>S(1, 1)</strong>에서 출발한다.
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-arrows-alt text-primary-500 mt-0.5"></i>
+                            이동 명령: <strong>L</strong>(왼쪽), <strong>R</strong>(오른쪽), <strong>U</strong>(위), <strong>D</strong>(아래) - 한 칸씩 이동
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-ban text-red-500 mt-0.5"></i>
+                            격자 공간을 벗어나는 이동은 <strong>무시</strong>한다.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Problem Analysis breakdown -->
+            <div class="bg-gradient-to-br from-primary-50 via-white to-accent-50 rounded-2xl shadow-md border border-gray-100 p-6 mb-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <i class="fas fa-microscope text-primary-500"></i> 문제 분석 적용
+                </h3>
+
+                <div class="space-y-4">
+                    <!-- Analysis 1 -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-3">
+                            <span class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">1</span>
+                            <div>
+                                <h4 class="font-bold text-primary-700 mb-2">현재 상태와 목표 상태</h4>
+                                <div class="grid sm:grid-cols-2 gap-3">
+                                    <div class="bg-green-50 rounded-lg p-3 border border-green-200">
+                                        <p class="text-xs font-bold text-green-700 mb-1"><i class="fas fa-play-circle mr-1"></i> 현재 상태</p>
+                                        <p class="text-sm text-gray-700">로봇이 시작 좌표 S(1, 1)에 있다.</p>
+                                    </div>
+                                    <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                                        <p class="text-xs font-bold text-blue-700 mb-1"><i class="fas fa-flag-checkered mr-1"></i> 목표 상태</p>
+                                        <p class="text-sm text-gray-700">로봇이 도착한 최종 좌표를 출력한다.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analysis 2 -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-3">
+                            <span class="w-8 h-8 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">2</span>
+                            <div>
+                                <h4 class="font-bold text-accent-700 mb-2">요구 사항</h4>
+                                <p class="text-sm text-gray-700 bg-accent-50 rounded-lg p-3 border border-accent-200">
+                                    <i class="fas fa-clipboard-check text-accent-500 mr-1"></i>
+                                    로봇이 이동 계획에 따라 최종적으로 도착한 좌표를 출력한다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analysis 3 -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-3">
+                            <span class="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-red-700 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">3</span>
+                            <div>
+                                <h4 class="font-bold text-red-700 mb-2">제약 조건</h4>
+                                <ul class="space-y-2 text-sm text-gray-700">
+                                    <li class="flex items-start gap-2 bg-red-50 rounded-lg p-3 border border-red-200">
+                                        <i class="fas fa-exclamation-circle text-red-500 mt-0.5"></i>
+                                        상(U), 하(D), 좌(L), 우(R)로 한 칸씩 이동한다.
+                                    </li>
+                                    <li class="flex items-start gap-2 bg-red-50 rounded-lg p-3 border border-red-200">
+                                        <i class="fas fa-exclamation-circle text-red-500 mt-0.5"></i>
+                                        격자 공간을 벗어나는 움직임은 무시한다.
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input/Output Examples (accordion) -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden mb-8">
+                <button onclick="toggleAccordion('io-examples')" class="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-accent-100 flex items-center justify-center">
+                            <i class="fas fa-table text-accent-600 text-sm"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900">입력 및 출력 예시</h3>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="io-examples-icon"></i>
+                </button>
+                <div class="accordion-content open px-5 pb-5" id="io-examples">
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <!-- Example 1 -->
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <h4 class="font-bold text-gray-800 text-sm mb-3 flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-full bg-primary-500 text-white flex items-center justify-center text-xs font-bold">1</span>
+                                예시 1
+                            </h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-gray-500 w-16">격자 크기:</span>
+                                    <code class="bg-white px-2 py-0.5 rounded border text-primary-700 font-mono">3</code>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-gray-500 w-16">이동 계획:</span>
+                                    <div class="flex gap-1">
+                                        <code class="bg-white px-1.5 py-0.5 rounded border text-xs font-mono">R</code>
+                                        <code class="bg-white px-1.5 py-0.5 rounded border text-xs font-mono">R</code>
+                                        <code class="bg-white px-1.5 py-0.5 rounded border text-xs font-mono">D</code>
+                                        <code class="bg-white px-1.5 py-0.5 rounded border text-xs font-mono">R</code>
+                                        <code class="bg-white px-1.5 py-0.5 rounded border text-xs font-mono">D</code>
+                                        <code class="bg-white px-1.5 py-0.5 rounded border text-xs font-mono">L</code>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200">
+                                    <span class="text-xs font-bold text-gray-500 w-16">출력:</span>
+                                    <code class="bg-primary-100 text-primary-800 px-3 py-1 rounded-lg font-bold font-mono">(3, 2)</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Example 2 -->
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <h4 class="font-bold text-gray-800 text-sm mb-3 flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-full bg-accent-500 text-white flex items-center justify-center text-xs font-bold">2</span>
+                                예시 2
+                            </h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-gray-500 w-16">격자 크기:</span>
+                                    <code class="bg-white px-2 py-0.5 rounded border text-primary-700 font-mono">4</code>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-gray-500 w-16">이동 계획:</span>
+                                    <div class="flex gap-1">
+                                        <code class="bg-white px-1.5 py-0.5 rounded border text-xs font-mono">D</code>
+                                        <code class="bg-white px-1.5 py-0.5 rounded border text-xs font-mono">D</code>
+                                        <code class="bg-white px-1.5 py-0.5 rounded border text-xs font-mono">R</code>
+                                        <code class="bg-white px-1.5 py-0.5 rounded border text-xs font-mono">R</code>
+                                        <code class="bg-white px-1.5 py-0.5 rounded border text-xs font-mono">U</code>
+                                        <code class="bg-white px-1.5 py-0.5 rounded border text-xs font-mono">R</code>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200">
+                                    <span class="text-xs font-bold text-gray-500 w-16">출력:</span>
+                                    <code class="bg-accent-100 text-accent-800 px-3 py-1 rounded-lg font-bold font-mono">(2, 4)</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 4: 로봇 시뮬레이터                                              -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-simulator">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">로봇 시뮬레이터</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Interactive Robot Simulator</p>
+                </div>
+            </div>
+
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                직접 격자 크기와 이동 명령을 입력하여 로봇의 이동 경로를 확인해 보세요. 방향 버튼을 클릭하거나 이동 계획을 직접 입력할 수 있습니다.
+            </p>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <!-- Controls -->
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <!-- Left: Settings -->
+                    <div>
+                        <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-cog text-primary-500"></i> 설정
+                        </h4>
+
+                        <!-- Grid size -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-600 mb-1">격자 크기 (N&times;N)</label>
+                            <div class="flex items-center gap-3">
+                                <input type="range" id="gridSize" min="3" max="10" value="5" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-500" oninput="updateGridSizeLabel(); resetSimulator();">
+                                <span id="gridSizeLabel" class="bg-primary-100 text-primary-700 font-bold px-3 py-1 rounded-lg text-sm min-w-[48px] text-center">5</span>
+                            </div>
+                        </div>
+
+                        <!-- Command input -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-600 mb-1">이동 계획 입력</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="commandInput" placeholder="예: R R D R D L" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono" onkeydown="if(event.key==='Enter') loadCommands();">
+                                <button onclick="loadCommands()" class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
+                                    <i class="fas fa-play mr-1"></i> 실행
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">L(왼쪽), R(오른쪽), U(위), D(아래)를 공백으로 구분하여 입력</p>
+                        </div>
+
+                        <!-- Direction buttons -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-600 mb-2">방향 버튼으로 조작</label>
+                            <div class="flex flex-col items-center gap-1">
+                                <button onclick="addCommand('U')" class="cmd-btn w-12 h-12 bg-gradient-to-b from-gray-100 to-gray-200 hover:from-primary-100 hover:to-primary-200 border border-gray-300 rounded-lg flex items-center justify-center font-bold text-gray-700 hover:text-primary-700 shadow-sm">
+                                    <i class="fas fa-arrow-up"></i>
+                                </button>
+                                <div class="flex gap-1">
+                                    <button onclick="addCommand('L')" class="cmd-btn w-12 h-12 bg-gradient-to-b from-gray-100 to-gray-200 hover:from-primary-100 hover:to-primary-200 border border-gray-300 rounded-lg flex items-center justify-center font-bold text-gray-700 hover:text-primary-700 shadow-sm">
+                                        <i class="fas fa-arrow-left"></i>
+                                    </button>
+                                    <button onclick="resetSimulator()" class="cmd-btn w-12 h-12 bg-gradient-to-b from-red-50 to-red-100 hover:from-red-100 hover:to-red-200 border border-red-300 rounded-lg flex items-center justify-center font-bold text-red-600 shadow-sm text-xs">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                    <button onclick="addCommand('R')" class="cmd-btn w-12 h-12 bg-gradient-to-b from-gray-100 to-gray-200 hover:from-primary-100 hover:to-primary-200 border border-gray-300 rounded-lg flex items-center justify-center font-bold text-gray-700 hover:text-primary-700 shadow-sm">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                                <button onclick="addCommand('D')" class="cmd-btn w-12 h-12 bg-gradient-to-b from-gray-100 to-gray-200 hover:from-primary-100 hover:to-primary-200 border border-gray-300 rounded-lg flex items-center justify-center font-bold text-gray-700 hover:text-primary-700 shadow-sm">
+                                    <i class="fas fa-arrow-down"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quick examples -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">예제 실행</label>
+                            <div class="flex gap-2">
+                                <button onclick="runExample1()" class="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-700 border border-primary-200 px-3 py-2 rounded-lg text-xs font-bold transition-colors">
+                                    <i class="fas fa-play mr-1"></i> 예시 1
+                                </button>
+                                <button onclick="runExample2()" class="flex-1 bg-accent-50 hover:bg-accent-100 text-accent-700 border border-accent-200 px-3 py-2 rounded-lg text-xs font-bold transition-colors">
+                                    <i class="fas fa-play mr-1"></i> 예시 2
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Grid display -->
+                    <div>
+                        <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-th text-primary-500"></i> 격자 공간
+                        </h4>
+                        <div class="robot-grid-container flex justify-center">
+                            <div id="robotGrid" class="inline-block border-2 border-gray-300 rounded-lg overflow-hidden bg-white"></div>
+                        </div>
+
+                        <!-- Status display -->
+                        <div class="mt-4 bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <div class="grid grid-cols-2 gap-3 text-sm">
+                                <div>
+                                    <span class="text-gray-500 text-xs font-medium">현재 위치</span>
+                                    <p class="font-bold text-primary-700 font-mono text-lg" id="currentPos">(1, 1)</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 text-xs font-medium">이동 횟수</span>
+                                    <p class="font-bold text-accent-700 font-mono text-lg" id="moveCount">0</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 pt-3 border-t border-gray-200">
+                                <span class="text-gray-500 text-xs font-medium">이동 경로</span>
+                                <div class="flex flex-wrap gap-1 mt-1" id="commandHistory"></div>
+                                <p class="text-xs text-gray-400 mt-1" id="commandHistoryEmpty">아직 이동 명령이 없습니다.</p>
+                            </div>
+                        </div>
+
+                        <!-- Legend -->
+                        <div class="mt-3 flex flex-wrap gap-3 text-xs text-gray-500">
+                            <span class="flex items-center gap-1">
+                                <span class="w-4 h-4 rounded bg-green-200 border border-green-300 inline-block"></span> 시작점
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <span class="w-4 h-4 rounded bg-gradient-to-br from-primary-400 to-primary-600 inline-block"></span> 로봇
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <span class="w-4 h-4 rounded bg-orange-100 border border-orange-200 inline-block"></span> 방문한 셀
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ignored moves message -->
+                <div id="ignoredMsg" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 text-red-700 text-sm flex items-center gap-2 mt-4">
+                    <i class="fas fa-info-circle text-red-500"></i>
+                    <span id="ignoredText"></span>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 5: 핵심 정리                                                    -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-summary">
+            <div class="bg-gradient-to-br from-primary-50 via-white to-accent-50 rounded-2xl shadow-md border border-gray-100 p-6 md:p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <i class="fas fa-clipboard-check text-primary-500"></i> 핵심 정리
+                </h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-primary-700 mb-2 flex items-center gap-2">
+                            <i class="fas fa-search-plus text-sm"></i> 문제 분석의 개념
+                        </h4>
+                        <ul class="space-y-1.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                문제를 명확하게 이해하고 정의하기 위한 과정
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                현재 상태, 요구 사항, 제약 조건을 분석
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                                효율적인 해결 방법 설계의 기초
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-accent-700 mb-2 flex items-center gap-2">
+                            <i class="fas fa-question-circle text-sm"></i> 문제 분석의 세 가지 질문
+                        </h4>
+                        <ul class="space-y-1.5 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-500 mt-0.5 text-xs"></i>
+                                현재 상태와 목표 상태는 무엇인가?
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-500 mt-0.5 text-xs"></i>
+                                요구 사항은 무엇인가?
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-accent-500 mt-0.5 text-xs"></i>
+                                제약 조건은 무엇인가?
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 md:col-span-2">
+                        <h4 class="font-bold text-red-700 mb-2 flex items-center gap-2">
+                            <i class="fas fa-robot text-sm"></i> 퍼레이드 로봇 문제 분석 요약
+                        </h4>
+                        <div class="grid sm:grid-cols-3 gap-3">
+                            <div class="bg-green-50 rounded-lg p-3 border border-green-200 text-sm">
+                                <p class="font-bold text-green-700 text-xs mb-1">현재/목표 상태</p>
+                                <p class="text-gray-700 text-xs">S(1,1) 출발 &rarr; 최종 좌표 P 출력</p>
+                            </div>
+                            <div class="bg-blue-50 rounded-lg p-3 border border-blue-200 text-sm">
+                                <p class="font-bold text-blue-700 text-xs mb-1">요구 사항</p>
+                                <p class="text-gray-700 text-xs">이동 계획에 따른 최종 좌표 출력</p>
+                            </div>
+                            <div class="bg-red-50 rounded-lg p-3 border border-red-200 text-sm">
+                                <p class="font-bold text-red-700 text-xs mb-1">제약 조건</p>
+                                <p class="text-gray-700 text-xs">U/D/L/R 한 칸 이동, 범위 밖 무시</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Page navigation -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <!-- 이전 페이지 (disabled) -->
+                <div class="flex-1 flex justify-start">
+                    <span class="inline-flex items-center gap-2 bg-gray-700/50 text-gray-500 font-medium px-5 py-3 rounded-xl cursor-not-allowed">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </span>
+                </div>
+
+                <!-- 목록으로 돌아가기 -->
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex justify-end">
+                    <span class="inline-flex items-center gap-2 bg-gray-700/50 text-gray-500 font-medium px-5 py-3 rounded-xl cursor-not-allowed">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    III. 알고리즘과 프로그래밍 &gt; 01 문제 분해와 모델링 &gt; 문제 분석
+                </p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // ============================
+        // Accordion Toggle
+        // ============================
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(id + '-icon');
+            content.classList.toggle('open');
+            if (icon) {
+                icon.style.transform = content.classList.contains('open') ? 'rotate(0deg)' : 'rotate(-90deg)';
+            }
+        }
+
+        // ============================
+        // Fade-in animation on scroll
+        // ============================
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+
+        // ============================
+        // Robot Simulator
+        // ============================
+        let gridSize = 5;
+        let robotRow = 1;   // 1-based indexing (row = y direction, top = 1)
+        let robotCol = 1;   // 1-based indexing (col = x direction, left = 1)
+        let moveHistory = [];
+        let visitedCells = new Set();
+        let ignoredCount = 0;
+        let animating = false;
+
+        function updateGridSizeLabel() {
+            const size = document.getElementById('gridSize').value;
+            document.getElementById('gridSizeLabel').textContent = size;
+        }
+
+        function resetSimulator() {
+            gridSize = parseInt(document.getElementById('gridSize').value);
+            robotRow = 1;
+            robotCol = 1;
+            moveHistory = [];
+            visitedCells = new Set();
+            visitedCells.add('1,1');
+            ignoredCount = 0;
+            animating = false;
+            document.getElementById('commandInput').value = '';
+            document.getElementById('ignoredMsg').classList.add('hidden');
+            renderGrid();
+            updateStatus();
+        }
+
+        function renderGrid() {
+            const gridEl = document.getElementById('robotGrid');
+            const cellSize = Math.min(40, Math.floor(300 / gridSize));
+
+            let html = '<table style="border-collapse: collapse;">';
+
+            // Column headers
+            html += '<tr><td style="width: ' + cellSize + 'px; height: 20px;" class="text-center text-xs text-gray-400"></td>';
+            for (let c = 1; c <= gridSize; c++) {
+                html += '<td style="width: ' + cellSize + 'px; height: 20px;" class="text-center text-xs text-gray-400 font-mono">' + c + '</td>';
+            }
+            html += '</tr>';
+
+            for (let r = 1; r <= gridSize; r++) {
+                html += '<tr>';
+                // Row header
+                html += '<td style="width: 20px; height: ' + cellSize + 'px;" class="text-center text-xs text-gray-400 font-mono">' + r + '</td>';
+
+                for (let c = 1; c <= gridSize; c++) {
+                    let cellClass = '';
+                    let cellContent = '';
+                    let bgStyle = 'background-color: #fff;';
+
+                    if (r === robotRow && c === robotCol) {
+                        bgStyle = 'background: linear-gradient(135deg, #f97316, #ea580c);';
+                        cellContent = '<i class="fas fa-robot text-white" style="font-size: ' + Math.max(10, cellSize * 0.4) + 'px;"></i>';
+                    } else if (r === 1 && c === 1) {
+                        bgStyle = 'background-color: #bbf7d0;';
+                        cellContent = '<span class="text-green-600" style="font-size: ' + Math.max(8, cellSize * 0.25) + 'px;">S</span>';
+                    } else if (visitedCells.has(r + ',' + c)) {
+                        bgStyle = 'background-color: #ffedd5;';
+                        cellContent = '<span class="text-orange-300" style="font-size: ' + Math.max(6, cellSize * 0.2) + 'px;"><i class="fas fa-circle"></i></span>';
+                    }
+
+                    html += '<td style="width: ' + cellSize + 'px; height: ' + cellSize + 'px; ' + bgStyle + ' border: 1px solid #e5e7eb; text-align: center; vertical-align: middle; border-radius: 2px; transition: all 0.3s ease;">' + cellContent + '</td>';
+                }
+                html += '</tr>';
+            }
+            html += '</table>';
+            gridEl.innerHTML = html;
+        }
+
+        function updateStatus() {
+            document.getElementById('currentPos').textContent = '(' + robotRow + ', ' + robotCol + ')';
+            document.getElementById('moveCount').textContent = moveHistory.length;
+
+            const historyEl = document.getElementById('commandHistory');
+            const emptyEl = document.getElementById('commandHistoryEmpty');
+
+            if (moveHistory.length === 0) {
+                historyEl.innerHTML = '';
+                emptyEl.classList.remove('hidden');
+            } else {
+                emptyEl.classList.add('hidden');
+                let html = '';
+                moveHistory.forEach((cmd, i) => {
+                    const colors = {
+                        'U': 'bg-blue-100 text-blue-700 border-blue-200',
+                        'D': 'bg-green-100 text-green-700 border-green-200',
+                        'L': 'bg-purple-100 text-purple-700 border-purple-200',
+                        'R': 'bg-primary-100 text-primary-700 border-primary-200'
+                    };
+                    const icons = {
+                        'U': 'fa-arrow-up',
+                        'D': 'fa-arrow-down',
+                        'L': 'fa-arrow-left',
+                        'R': 'fa-arrow-right'
+                    };
+                    html += '<span class="inline-flex items-center gap-0.5 ' + colors[cmd] + ' border rounded px-1.5 py-0.5 text-xs font-bold font-mono"><i class="fas ' + icons[cmd] + ' text-[8px]"></i> ' + cmd + '</span>';
+                });
+                historyEl.innerHTML = html;
+            }
+        }
+
+        function moveRobot(command) {
+            let newRow = robotRow;
+            let newCol = robotCol;
+
+            switch (command) {
+                case 'U': newRow = robotRow - 1; break;
+                case 'D': newRow = robotRow + 1; break;
+                case 'L': newCol = robotCol - 1; break;
+                case 'R': newCol = robotCol + 1; break;
+                default: return false;
+            }
+
+            // Check bounds
+            if (newRow < 1 || newRow > gridSize || newCol < 1 || newCol > gridSize) {
+                ignoredCount++;
+                return false;
+            }
+
+            robotRow = newRow;
+            robotCol = newCol;
+            visitedCells.add(robotRow + ',' + robotCol);
+            moveHistory.push(command);
+            return true;
+        }
+
+        function addCommand(command) {
+            if (animating) return;
+            const moved = moveRobot(command);
+            if (!moved) {
+                moveHistory.push(command);
+                showIgnoredMessage();
+            }
+            renderGrid();
+            updateStatus();
+        }
+
+        function showIgnoredMessage() {
+            if (ignoredCount > 0) {
+                const msgEl = document.getElementById('ignoredMsg');
+                const textEl = document.getElementById('ignoredText');
+                textEl.textContent = '격자 공간을 벗어나는 이동이 ' + ignoredCount + '회 무시되었습니다.';
+                msgEl.classList.remove('hidden');
+            }
+        }
+
+        async function loadCommands() {
+            if (animating) return;
+
+            const input = document.getElementById('commandInput').value.trim().toUpperCase();
+            if (!input) return;
+
+            const commands = input.split(/[\s,]+/).filter(c => ['U', 'D', 'L', 'R'].includes(c));
+            if (commands.length === 0) return;
+
+            // Reset before running
+            gridSize = parseInt(document.getElementById('gridSize').value);
+            robotRow = 1;
+            robotCol = 1;
+            moveHistory = [];
+            visitedCells = new Set();
+            visitedCells.add('1,1');
+            ignoredCount = 0;
+            document.getElementById('ignoredMsg').classList.add('hidden');
+            renderGrid();
+            updateStatus();
+
+            // Animate each command
+            animating = true;
+            for (let i = 0; i < commands.length; i++) {
+                await new Promise(resolve => setTimeout(resolve, 400));
+                const moved = moveRobot(commands[i]);
+                if (!moved) {
+                    // moveRobot doesn't add to history on failure, so add it here
+                    moveHistory.push(commands[i]);
+                }
+                renderGrid();
+                updateStatus();
+            }
+            animating = false;
+            showIgnoredMessage();
+        }
+
+        function runExample1() {
+            document.getElementById('gridSize').value = 3;
+            document.getElementById('gridSizeLabel').textContent = '3';
+            document.getElementById('commandInput').value = 'R R D R D L';
+            loadCommands();
+        }
+
+        function runExample2() {
+            document.getElementById('gridSize').value = 4;
+            document.getElementById('gridSizeLabel').textContent = '4';
+            document.getElementById('commandInput').value = 'D D R R U R';
+            loadCommands();
+        }
+
+        // Initialize grid on page load
+        resetSimulator();
+    </script>
+
+</body>
+</html>

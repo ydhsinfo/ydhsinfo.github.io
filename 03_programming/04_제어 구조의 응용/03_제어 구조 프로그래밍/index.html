@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>제어 구조 프로그래밍 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'sans': ['Noto Sans KR', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        .hero-gradient {
+            background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%);
+        }
+        pre code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+        .code-block {
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .code-block pre {
+            padding: 1.25rem;
+            overflow-x: auto;
+        }
+        .code-header {
+            background: #334155;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .code-header .dot {
+            width: 10px; height: 10px; border-radius: 50%;
+        }
+        .keyword { color: #c084fc; }
+        .string { color: #86efac; }
+        .func { color: #93c5fd; }
+        .comment { color: #6b7280; font-style: italic; }
+        .number { color: #fbbf24; }
+        .op { color: #f472b6; }
+        .builtin { color: #67e8f9; }
+
+        .page-indicator {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        .page-dot {
+            width: 12px; height: 12px; border-radius: 50%;
+            background: #d6d3d1;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .page-dot.active {
+            background: #ea580c;
+            transform: scale(1.2);
+        }
+
+        .game-area {
+            background: linear-gradient(145deg, #fff7ed, #ffedd5);
+            border: 2px solid #fed7aa;
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+        }
+        @keyframes slotSpin {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100%); }
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .bounce-in { animation: bounceIn 0.5s ease-out; }
+        .slide-up { animation: slideUp 0.4s ease-out; }
+        .pulse-anim { animation: pulse 0.3s ease-in-out; }
+        .shake-anim { animation: shake 0.4s ease-in-out; }
+        .fade-slide { animation: fadeSlide 0.3s ease-out; }
+
+        .updown-msg {
+            transition: all 0.3s ease;
+        }
+        .updown-up { color: #dc2626; font-weight: 700; }
+        .updown-down { color: #2563eb; font-weight: 700; }
+        .updown-correct { color: #16a34a; font-weight: 700; }
+
+        .typing-word {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #1e293b;
+        }
+        .typing-pass { color: #16a34a; }
+        .typing-fail { color: #dc2626; }
+
+        .dice-face {
+            width: 80px; height: 80px;
+            background: white;
+            border-radius: 12px;
+            border: 3px solid #c2410c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #c2410c;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        .dice-spinning {
+            animation: shake 0.1s infinite;
+        }
+
+        .round-result {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #92400e;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border-left: 4px solid #3b82f6;
+            border-radius: 0 12px 12px 0;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .example-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #ea580c, #d97706);
+            color: white;
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .know-more-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .attempt-bubble {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        .attempt-pending { background: #e5e7eb; color: #9ca3af; }
+        .attempt-up { background: #fecaca; color: #dc2626; }
+        .attempt-down { background: #bfdbfe; color: #2563eb; }
+        .attempt-correct { background: #bbf7d0; color: #16a34a; }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        .progress-step.active { background: #fff7ed; border: 1px solid #fed7aa; }
+        .progress-step.done { background: #f0fdf4; border: 1px solid #bbf7d0; }
+        .progress-step.waiting { background: #f9fafb; border: 1px solid #e5e7eb; }
+    </style>
+</head>
+<body class="bg-stone-50 min-h-screen">
+
+    <!-- Header -->
+    <header class="hero-gradient text-white shadow-xl">
+        <div class="max-w-5xl mx-auto px-6 py-8">
+            <div class="flex items-center gap-3 text-orange-200 text-sm mb-6 flex-wrap">
+                <a href="../../../index.html" class="flex items-center gap-2 hover:text-white transition-colors">
+                    <i class="fas fa-home"></i>
+                    <span>정보</span>
+                </a>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span>III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span>04 제어 구조의 응용</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span class="text-white font-semibold">제어 구조 프로그래밍</span>
+            </div>
+            <a href="../../../index.html" class="inline-flex items-center gap-2 text-orange-200 hover:text-white text-sm mb-6 transition-colors group">
+                <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                <span>목차로 돌아가기</span>
+            </a>
+            <h1 class="text-4xl font-extrabold tracking-tight mt-2 mb-3">
+                <i class="fas fa-gamepad mr-3"></i>제어 구조 프로그래밍
+            </h1>
+            <p class="text-orange-100 text-lg leading-relaxed max-w-2xl">
+                제어 구조를 활용하여 다양한 문제를 해결해 보자.
+            </p>
+        </div>
+    </header>
+
+    <!-- Page Navigation -->
+    <div class="max-w-5xl mx-auto px-6 mt-6">
+        <div class="flex items-center justify-between bg-white rounded-xl shadow-sm border border-stone-200 px-6 py-3">
+            <button onclick="showPage(1)" id="pageBtn1" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-100 text-orange-700 font-semibold transition-all">
+                <span class="w-7 h-7 rounded-full bg-orange-600 text-white flex items-center justify-center text-sm font-bold">1</span>
+                Up-Down 게임 · random 모듈
+            </button>
+            <button onclick="showPage(2)" id="pageBtn2" class="flex items-center gap-2 px-4 py-2 rounded-lg text-stone-500 hover:bg-stone-100 font-medium transition-all">
+                <span class="w-7 h-7 rounded-full bg-stone-300 text-white flex items-center justify-center text-sm font-bold">2</span>
+                영어 타자 게임 · round() 함수
+            </button>
+        </div>
+    </div>
+
+    <!-- Page 1 -->
+    <div id="page1" class="max-w-5xl mx-auto px-6 py-8">
+
+        <!-- 예제 33: Up-Down 숫자 맞히기 게임 -->
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="example-tag"><i class="fas fa-code"></i> 예제 33</span>
+                <h2 class="text-2xl font-bold text-stone-800">Up-Down 숫자 맞히기 게임</h2>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-6 mb-6">
+                <p class="text-stone-600 mb-4 leading-relaxed">
+                    1부터 10 사이의 숫자를 랜덤으로 생성하고, 사용자가 추측한 숫자와 비교하여
+                    <strong class="text-red-600">업(Up)</strong> 또는 <strong class="text-blue-600">다운(Down)</strong> 힌트를 제공하는 게임입니다.
+                </p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="dot" style="background:#ef4444"></span>
+                        <span class="dot" style="background:#f59e0b"></span>
+                        <span class="dot" style="background:#22c55e"></span>
+                        <span class="ml-2">updown_game.py</span>
+                    </div>
+                    <pre><code><span class="keyword">import</span> random
+num = random.<span class="func">randint</span>(<span class="number">1</span>, <span class="number">10</span>)
+guess = <span class="builtin">int</span>(<span class="func">input</span>(<span class="string">"1부터 10 사이의 숫자 입력: "</span>))
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="func">range</span>(<span class="number">10</span>):
+    <span class="keyword">if</span> guess <span class="op">==</span> num:
+        <span class="func">print</span>(<span class="string">"정답: "</span>, num)
+        <span class="keyword">break</span>
+    <span class="keyword">elif</span> guess <span class="op">&lt;</span> num:
+        <span class="func">print</span>(guess, <span class="string">"보다 업!"</span>)
+    <span class="keyword">else</span>:
+        <span class="func">print</span>(guess, <span class="string">"보다 다운!"</span>)
+    guess = <span class="builtin">int</span>(<span class="func">input</span>(<span class="string">"다시 숫자 입력: "</span>))
+</code></pre>
+                </div>
+
+                <div class="info-box mt-4">
+                    <p class="text-sm text-blue-800">
+                        <i class="fas fa-play-circle mr-1"></i>
+                        <strong>실행 예시 (num=6일 때):</strong> 5 입력 → <span class="text-red-600 font-semibold">"5보다 업!"</span> →
+                        8 입력 → <span class="text-blue-600 font-semibold">"8보다 다운!"</span> →
+                        6 입력 → <span class="text-green-600 font-semibold">"정답: 6"</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Interactive Up-Down Game -->
+            <div class="game-area" id="updownGame">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-orange-800">
+                        <i class="fas fa-gamepad mr-2"></i>직접 해보기: Up-Down 게임
+                    </h3>
+                    <button onclick="resetUpDown()" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-semibold text-sm">
+                        <i class="fas fa-redo mr-1"></i> 새 게임
+                    </button>
+                </div>
+
+                <div id="updownGameArea">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center gap-2 bg-white rounded-full px-6 py-3 shadow-sm border border-orange-200">
+                            <i class="fas fa-question-circle text-orange-500 text-xl"></i>
+                            <span class="text-stone-700 font-medium">1부터 10 사이의 숫자를 맞혀보세요!</span>
+                        </div>
+                    </div>
+
+                    <!-- Attempt Tracker -->
+                    <div class="flex justify-center gap-2 mb-6" id="attemptTracker">
+                        <!-- filled by JS -->
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="flex justify-center gap-3 mb-6" id="updownInputArea">
+                        <div class="flex gap-2">
+                            <input type="number" id="updownInput" min="1" max="10" placeholder="1~10"
+                                class="w-28 px-4 py-3 text-center text-xl font-bold border-2 border-orange-300 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none"
+                                onkeypress="if(event.key==='Enter') makeGuess()">
+                            <button onclick="makeGuess()" class="px-6 py-3 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition font-bold text-lg shadow-md hover:shadow-lg">
+                                <i class="fas fa-paper-plane mr-1"></i> 확인
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Message Area -->
+                    <div id="updownMessages" class="space-y-2 max-h-64 overflow-y-auto">
+                        <!-- messages appear here -->
+                    </div>
+
+                    <!-- Result Area (hidden initially) -->
+                    <div id="updownResult" class="hidden text-center mt-6">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 하나 더 알기: random 모듈 -->
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="know-more-tag"><i class="fas fa-lightbulb"></i> 하나 더 알기</span>
+                <h2 class="text-2xl font-bold text-stone-800">random 모듈</h2>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-6 mb-6">
+                <p class="text-stone-600 mb-4 leading-relaxed">
+                    <code class="bg-stone-100 px-2 py-0.5 rounded text-orange-700 font-semibold">random</code> 모듈의
+                    <code class="bg-stone-100 px-2 py-0.5 rounded text-orange-700 font-semibold">randint(a, b)</code> 함수는
+                    a 이상 b 이하의 랜덤 정수를 반환합니다.
+                </p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="dot" style="background:#ef4444"></span>
+                        <span class="dot" style="background:#f59e0b"></span>
+                        <span class="dot" style="background:#22c55e"></span>
+                        <span class="ml-2">random_example.py</span>
+                    </div>
+                    <pre><code><span class="keyword">import</span> random
+<span class="func">print</span>(random.<span class="func">randint</span>(<span class="number">1</span>, <span class="number">5</span>))  <span class="comment"># 1~5 사이의 랜덤 정수 출력</span>
+</code></pre>
+                </div>
+            </div>
+
+            <!-- Interactive Random Module Demo -->
+            <div class="game-area">
+                <h3 class="text-xl font-bold text-orange-800 mb-4">
+                    <i class="fas fa-dice mr-2"></i>직접 해보기: 랜덤 숫자 생성기
+                </h3>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Dice Roll -->
+                    <div class="bg-white rounded-xl p-5 shadow-sm border border-orange-100">
+                        <h4 class="font-semibold text-stone-700 mb-3"><i class="fas fa-dice-five mr-2 text-orange-500"></i>주사위 굴리기</h4>
+                        <p class="text-sm text-stone-500 mb-4">random.randint(1, 6)</p>
+                        <div class="flex items-center gap-4">
+                            <div class="dice-face" id="diceDisplay">?</div>
+                            <button onclick="rollDice()" class="px-5 py-3 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition font-bold shadow-md hover:shadow-lg">
+                                <i class="fas fa-dice mr-1"></i> 굴리기!
+                            </button>
+                        </div>
+                        <div id="diceHistory" class="mt-3 flex flex-wrap gap-1"></div>
+                    </div>
+
+                    <!-- Slot Machine -->
+                    <div class="bg-white rounded-xl p-5 shadow-sm border border-orange-100">
+                        <h4 class="font-semibold text-stone-700 mb-3"><i class="fas fa-slot-machine mr-2 text-orange-500"></i>슬롯 머신</h4>
+                        <p class="text-sm text-stone-500 mb-4">random.randint(1, 9) × 3</p>
+                        <div class="flex items-center gap-4">
+                            <div class="flex gap-2">
+                                <div class="dice-face" id="slot1">?</div>
+                                <div class="dice-face" id="slot2">?</div>
+                                <div class="dice-face" id="slot3">?</div>
+                            </div>
+                        </div>
+                        <button onclick="spinSlots()" class="mt-3 px-5 py-3 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition font-bold shadow-md hover:shadow-lg">
+                            <i class="fas fa-play mr-1"></i> 돌리기!
+                        </button>
+                        <div id="slotResult" class="mt-3 text-sm font-semibold"></div>
+                    </div>
+                </div>
+
+                <!-- Custom Range -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-orange-100 mt-4">
+                    <h4 class="font-semibold text-stone-700 mb-3"><i class="fas fa-sliders-h mr-2 text-orange-500"></i>범위 지정 랜덤</h4>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <span class="text-stone-600">random.randint(</span>
+                        <input type="number" id="randMin" value="1" class="w-20 px-3 py-2 border-2 border-orange-300 rounded-lg text-center font-bold focus:border-orange-500 outline-none">
+                        <span class="text-stone-600">,</span>
+                        <input type="number" id="randMax" value="100" class="w-20 px-3 py-2 border-2 border-orange-300 rounded-lg text-center font-bold focus:border-orange-500 outline-none">
+                        <span class="text-stone-600">)</span>
+                        <button onclick="customRandom()" class="px-5 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-bold">
+                            실행
+                        </button>
+                        <span class="text-stone-400">→</span>
+                        <span id="customResult" class="text-2xl font-extrabold text-orange-600">?</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Navigation Bottom -->
+        <div class="flex justify-end mt-8">
+            <button onclick="showPage(2)" class="flex items-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition font-semibold shadow-md">
+                다음: 영어 타자 게임 <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Page 2 -->
+    <div id="page2" class="max-w-5xl mx-auto px-6 py-8 hidden">
+
+        <!-- 예제 34: 영어 타자 게임 -->
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="example-tag"><i class="fas fa-code"></i> 예제 34</span>
+                <h2 class="text-2xl font-bold text-stone-800">영어 타자 게임</h2>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-6 mb-6">
+                <p class="text-stone-600 mb-4 leading-relaxed">
+                    세계 수도 이름을 랜덤으로 출제하고, 사용자가 정확히 타이핑하면
+                    <strong class="text-green-600">pass</strong>, 틀리면 <strong class="text-red-600">fail</strong>을 표시합니다.
+                    3문제를 풀고 성공률을 계산합니다.
+                </p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="dot" style="background:#ef4444"></span>
+                        <span class="dot" style="background:#f59e0b"></span>
+                        <span class="dot" style="background:#22c55e"></span>
+                        <span class="ml-2">typing_game.py</span>
+                    </div>
+                    <pre><code><span class="keyword">import</span> random
+capital = [<span class="string">"Beijing"</span>, <span class="string">"Seoul"</span>, <span class="string">"Kathmandu"</span>, <span class="string">"Tokyo"</span>, <span class="string">"Paris"</span>]
+correct = <span class="number">0</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="func">range</span>(<span class="number">3</span>):
+    <span class="func">print</span>(<span class="string">"*** problem"</span>, i+<span class="number">1</span>, <span class="string">"***"</span>)
+    a = random.<span class="func">randint</span>(<span class="number">0</span>, <span class="number">4</span>)
+    word = capital[a]
+    <span class="func">print</span>(word)
+    user = <span class="func">input</span>()
+    <span class="keyword">if</span> user <span class="op">==</span> word:
+        <span class="func">print</span>(<span class="string">"- pass -"</span>)
+        correct += <span class="number">1</span>
+    <span class="keyword">else</span>:
+        <span class="func">print</span>(<span class="string">"- fail -"</span>)
+success = <span class="func">round</span>(correct/<span class="number">3</span>, <span class="number">2</span>)
+<span class="func">print</span>(<span class="string">"success rate"</span>, success)
+</code></pre>
+                </div>
+            </div>
+
+            <!-- Interactive Typing Game -->
+            <div class="game-area" id="typingGame">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-orange-800">
+                        <i class="fas fa-keyboard mr-2"></i>직접 해보기: 영어 타자 게임
+                    </h3>
+                    <button onclick="resetTyping()" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-semibold text-sm">
+                        <i class="fas fa-redo mr-1"></i> 새 게임
+                    </button>
+                </div>
+
+                <!-- Progress Steps -->
+                <div class="flex justify-center gap-2 mb-6" id="typingProgress">
+                    <div class="progress-step active" id="typingStep0">
+                        <span class="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">1</span>
+                        <span class="text-sm">Problem 1</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-stone-300 self-center text-xs"></i>
+                    <div class="progress-step waiting" id="typingStep1">
+                        <span class="w-6 h-6 rounded-full bg-stone-300 text-white flex items-center justify-center text-xs font-bold">2</span>
+                        <span class="text-sm">Problem 2</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-stone-300 self-center text-xs"></i>
+                    <div class="progress-step waiting" id="typingStep2">
+                        <span class="w-6 h-6 rounded-full bg-stone-300 text-white flex items-center justify-center text-xs font-bold">3</span>
+                        <span class="text-sm">Problem 3</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-stone-300 self-center text-xs"></i>
+                    <div class="progress-step waiting" id="typingStepResult">
+                        <span class="w-6 h-6 rounded-full bg-stone-300 text-white flex items-center justify-center text-xs font-bold"><i class="fas fa-flag text-xs"></i></span>
+                        <span class="text-sm">결과</span>
+                    </div>
+                </div>
+
+                <div id="typingGameArea">
+                    <!-- Problem Display -->
+                    <div class="text-center mb-4">
+                        <div class="inline-block bg-orange-100 text-orange-700 px-4 py-1 rounded-full text-sm font-bold mb-3" id="typingProblemNum">
+                            *** problem 1 ***
+                        </div>
+                    </div>
+
+                    <div class="text-center mb-6">
+                        <div class="bg-white inline-block px-10 py-6 rounded-2xl shadow-md border-2 border-orange-200">
+                            <div class="typing-word" id="typingWord">---</div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center gap-3 mb-6" id="typingInputArea">
+                        <input type="text" id="typingInput" placeholder="위 단어를 정확히 입력하세요"
+                            class="w-72 px-4 py-3 text-center text-lg font-semibold border-2 border-orange-300 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none"
+                            onkeypress="if(event.key==='Enter') submitTyping()" autocomplete="off" spellcheck="false">
+                        <button onclick="submitTyping()" class="px-6 py-3 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition font-bold text-lg shadow-md">
+                            <i class="fas fa-check mr-1"></i> 입력
+                        </button>
+                    </div>
+
+                    <!-- Feedback -->
+                    <div id="typingFeedback" class="text-center mb-4"></div>
+
+                    <!-- History -->
+                    <div id="typingHistory" class="space-y-2"></div>
+                </div>
+
+                <!-- Result Area -->
+                <div id="typingResult" class="hidden text-center"></div>
+            </div>
+        </section>
+
+        <!-- 하나 더 알기: round() 함수 -->
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="know-more-tag"><i class="fas fa-lightbulb"></i> 하나 더 알기</span>
+                <h2 class="text-2xl font-bold text-stone-800">round() 함수</h2>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-stone-200 p-6 mb-6">
+                <p class="text-stone-600 mb-4 leading-relaxed">
+                    <code class="bg-stone-100 px-2 py-0.5 rounded text-orange-700 font-semibold">round(number, ndigits)</code> 함수는
+                    숫자를 지정한 소수점 자릿수로 반올림합니다. Python은
+                    <strong>은행가 반올림(Banker's Rounding)</strong>을 사용합니다.
+                </p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="dot" style="background:#ef4444"></span>
+                        <span class="dot" style="background:#f59e0b"></span>
+                        <span class="dot" style="background:#22c55e"></span>
+                        <span class="ml-2">round_example.py</span>
+                    </div>
+                    <pre><code>a = <span class="number">3.141592</span>
+<span class="func">print</span>(<span class="func">round</span>(a))        <span class="comment"># 3</span>
+<span class="func">print</span>(<span class="func">round</span>(a, <span class="number">3</span>))     <span class="comment"># 3.142</span>
+<span class="func">print</span>(<span class="func">round</span>(<span class="number">0.5</span>))       <span class="comment"># 0 (은행가 반올림)</span>
+<span class="func">print</span>(<span class="func">round</span>(<span class="number">1.5</span>))       <span class="comment"># 2</span>
+</code></pre>
+                </div>
+
+                <div class="info-box mt-4">
+                    <p class="text-sm text-blue-800">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        <strong>은행가 반올림이란?</strong> 정확히 0.5인 경우, 가장 가까운 <em>짝수</em>로 반올림합니다.
+                        예를 들어 0.5 → 0, 1.5 → 2, 2.5 → 2, 3.5 → 4가 됩니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Interactive Round Explorer -->
+            <div class="game-area">
+                <h3 class="text-xl font-bold text-orange-800 mb-4">
+                    <i class="fas fa-calculator mr-2"></i>직접 해보기: round() 함수 탐구
+                </h3>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Custom Input -->
+                    <div class="bg-white rounded-xl p-5 shadow-sm border border-orange-100">
+                        <h4 class="font-semibold text-stone-700 mb-3"><i class="fas fa-pencil-alt mr-2 text-orange-500"></i>직접 입력해 보기</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <label class="text-sm text-stone-600 w-16">숫자:</label>
+                                <input type="text" id="roundNumber" value="3.141592"
+                                    class="flex-1 px-3 py-2 border-2 border-orange-300 rounded-lg font-mono font-bold focus:border-orange-500 outline-none">
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <label class="text-sm text-stone-600 w-16">자릿수:</label>
+                                <input type="number" id="roundDigits" value="2" min="0" max="10"
+                                    class="flex-1 px-3 py-2 border-2 border-orange-300 rounded-lg font-mono font-bold focus:border-orange-500 outline-none">
+                            </div>
+                            <button onclick="calculateRound()" class="w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-bold">
+                                <i class="fas fa-calculator mr-1"></i> 계산하기
+                            </button>
+                            <div id="roundResult" class="round-result text-center hidden"></div>
+                        </div>
+                    </div>
+
+                    <!-- Banker's Rounding Examples -->
+                    <div class="bg-white rounded-xl p-5 shadow-sm border border-orange-100">
+                        <h4 class="font-semibold text-stone-700 mb-3"><i class="fas fa-university mr-2 text-orange-500"></i>은행가 반올림 예시</h4>
+                        <p class="text-xs text-stone-500 mb-3">0.5 → 짝수 방향으로 반올림됩니다</p>
+                        <div class="space-y-2" id="bankerExamples">
+                            <!-- filled by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Test -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-orange-100 mt-4">
+                    <h4 class="font-semibold text-stone-700 mb-3"><i class="fas fa-bolt mr-2 text-orange-500"></i>빠른 테스트</h4>
+                    <div class="flex flex-wrap gap-2" id="quickTests">
+                        <!-- filled by JS -->
+                    </div>
+                    <div id="quickTestResult" class="mt-3 text-center text-lg font-bold text-orange-700 hidden"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Navigation Bottom -->
+        <div class="flex justify-start mt-8">
+            <button onclick="showPage(1)" class="flex items-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition font-semibold shadow-md">
+                <i class="fas fa-arrow-left"></i> 이전: Up-Down 게임
+            </button>
+        </div>
+    </div>
+
+    <!-- Page Indicator -->
+    <div class="page-indicator pb-8">
+        <div class="page-dot active" id="dot1" onclick="showPage(1)"></div>
+        <div class="page-dot" id="dot2" onclick="showPage(2)"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-stone-800 text-stone-400 py-6 text-center text-sm">
+        <p>정보 교과서 &mdash; III. 알고리즘과 프로그래밍 &gt; 04 제어 구조의 응용 &gt; 제어 구조 프로그래밍</p>
+    </footer>
+
+    <script>
+        // ===== Page Navigation =====
+        function showPage(n) {
+            document.getElementById('page1').classList.toggle('hidden', n !== 1);
+            document.getElementById('page2').classList.toggle('hidden', n !== 2);
+            document.getElementById('dot1').classList.toggle('active', n === 1);
+            document.getElementById('dot2').classList.toggle('active', n === 2);
+
+            const btn1 = document.getElementById('pageBtn1');
+            const btn2 = document.getElementById('pageBtn2');
+            if (n === 1) {
+                btn1.className = 'flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-100 text-orange-700 font-semibold transition-all';
+                btn1.querySelector('span').className = 'w-7 h-7 rounded-full bg-orange-600 text-white flex items-center justify-center text-sm font-bold';
+                btn2.className = 'flex items-center gap-2 px-4 py-2 rounded-lg text-stone-500 hover:bg-stone-100 font-medium transition-all';
+                btn2.querySelector('span').className = 'w-7 h-7 rounded-full bg-stone-300 text-white flex items-center justify-center text-sm font-bold';
+            } else {
+                btn2.className = 'flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-100 text-orange-700 font-semibold transition-all';
+                btn2.querySelector('span').className = 'w-7 h-7 rounded-full bg-orange-600 text-white flex items-center justify-center text-sm font-bold';
+                btn1.className = 'flex items-center gap-2 px-4 py-2 rounded-lg text-stone-500 hover:bg-stone-100 font-medium transition-all';
+                btn1.querySelector('span').className = 'w-7 h-7 rounded-full bg-stone-300 text-white flex items-center justify-center text-sm font-bold';
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ===== Up-Down Game =====
+        let udTarget, udAttempts, udMaxAttempts, udGameOver;
+
+        function resetUpDown() {
+            udTarget = Math.floor(Math.random() * 10) + 1;
+            udAttempts = [];
+            udMaxAttempts = 10;
+            udGameOver = false;
+
+            const tracker = document.getElementById('attemptTracker');
+            tracker.innerHTML = '';
+            for (let i = 0; i < udMaxAttempts; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'attempt-bubble attempt-pending';
+                bubble.id = 'attempt' + i;
+                bubble.textContent = i + 1;
+                tracker.appendChild(bubble);
+            }
+
+            document.getElementById('updownMessages').innerHTML = '';
+            document.getElementById('updownResult').classList.add('hidden');
+            document.getElementById('updownResult').innerHTML = '';
+            document.getElementById('updownInputArea').classList.remove('hidden');
+            document.getElementById('updownInput').value = '';
+            document.getElementById('updownInput').focus();
+        }
+
+        function makeGuess() {
+            if (udGameOver) return;
+            const input = document.getElementById('updownInput');
+            const val = parseInt(input.value);
+            if (isNaN(val) || val < 1 || val > 10) {
+                input.classList.add('shake-anim');
+                setTimeout(() => input.classList.remove('shake-anim'), 400);
+                return;
+            }
+
+            const idx = udAttempts.length;
+            const bubble = document.getElementById('attempt' + idx);
+            const msgArea = document.getElementById('updownMessages');
+
+            let msgHtml = '';
+            let bubbleClass = '';
+
+            if (val === udTarget) {
+                msgHtml = `<div class="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 bounce-in">
+                    <span class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center font-bold text-sm">${idx + 1}</span>
+                    <span class="updown-correct text-lg"><i class="fas fa-trophy mr-1"></i> ${val} &mdash; 정답!</span>
+                </div>`;
+                bubbleClass = 'attempt-correct';
+                bubble.innerHTML = '<i class="fas fa-check text-xs"></i>';
+                udGameOver = true;
+
+                setTimeout(() => {
+                    document.getElementById('updownInputArea').classList.add('hidden');
+                    const result = document.getElementById('updownResult');
+                    result.classList.remove('hidden');
+                    result.innerHTML = `
+                        <div class="bounce-in">
+                            <div class="text-6xl mb-4">🎉</div>
+                            <div class="text-2xl font-extrabold text-green-600 mb-2">축하합니다!</div>
+                            <div class="text-stone-600">정답: <strong class="text-green-600">${udTarget}</strong></div>
+                            <div class="text-stone-500 text-sm mt-1">${idx + 1}번 만에 맞혔습니다!</div>
+                            <div class="flex justify-center gap-1 mt-3">
+                                ${Array.from({length: Math.min(idx + 1, 5)}, () => '<i class="fas fa-star text-yellow-400"></i>').join('')}
+                            </div>
+                        </div>
+                    `;
+                }, 300);
+            } else if (val < udTarget) {
+                msgHtml = `<div class="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 fade-slide">
+                    <span class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center font-bold text-sm">${idx + 1}</span>
+                    <span class="updown-up"><i class="fas fa-arrow-up mr-1"></i> ${val}보다 업!</span>
+                    <span class="text-stone-400 text-sm ml-auto">더 큰 수를 입력하세요</span>
+                </div>`;
+                bubbleClass = 'attempt-up';
+                bubble.innerHTML = '<i class="fas fa-arrow-up text-xs"></i>';
+            } else {
+                msgHtml = `<div class="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 fade-slide">
+                    <span class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm">${idx + 1}</span>
+                    <span class="updown-down"><i class="fas fa-arrow-down mr-1"></i> ${val}보다 다운!</span>
+                    <span class="text-stone-400 text-sm ml-auto">더 작은 수를 입력하세요</span>
+                </div>`;
+                bubbleClass = 'attempt-down';
+                bubble.innerHTML = '<i class="fas fa-arrow-down text-xs"></i>';
+            }
+
+            bubble.className = 'attempt-bubble ' + bubbleClass;
+            msgArea.innerHTML += msgHtml;
+            msgArea.scrollTop = msgArea.scrollHeight;
+            udAttempts.push(val);
+
+            if (!udGameOver && udAttempts.length >= udMaxAttempts) {
+                udGameOver = true;
+                document.getElementById('updownInputArea').classList.add('hidden');
+                const result = document.getElementById('updownResult');
+                result.classList.remove('hidden');
+                result.innerHTML = `
+                    <div class="bounce-in">
+                        <div class="text-6xl mb-4">😢</div>
+                        <div class="text-2xl font-extrabold text-red-600 mb-2">게임 오버!</div>
+                        <div class="text-stone-600">정답은 <strong class="text-orange-600">${udTarget}</strong>이었습니다.</div>
+                        <div class="text-stone-500 text-sm mt-1">10번의 기회를 모두 사용했습니다.</div>
+                    </div>
+                `;
+            }
+
+            input.value = '';
+            if (!udGameOver) input.focus();
+        }
+
+        // ===== Random Module Demo =====
+        let diceHistory = [];
+
+        function rollDice() {
+            const display = document.getElementById('diceDisplay');
+            display.classList.add('dice-spinning');
+            let count = 0;
+            const interval = setInterval(() => {
+                display.textContent = Math.floor(Math.random() * 6) + 1;
+                count++;
+                if (count >= 15) {
+                    clearInterval(interval);
+                    display.classList.remove('dice-spinning');
+                    const result = Math.floor(Math.random() * 6) + 1;
+                    display.textContent = result;
+                    display.classList.add('bounce-in');
+                    setTimeout(() => display.classList.remove('bounce-in'), 500);
+                    diceHistory.push(result);
+                    updateDiceHistory();
+                }
+            }, 60);
+        }
+
+        function updateDiceHistory() {
+            const histEl = document.getElementById('diceHistory');
+            const last10 = diceHistory.slice(-10);
+            histEl.innerHTML = last10.map(n =>
+                `<span class="inline-flex items-center justify-center w-7 h-7 rounded bg-orange-100 text-orange-700 font-bold text-sm">${n}</span>`
+            ).join('');
+        }
+
+        function spinSlots() {
+            const slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
+            const resultEl = document.getElementById('slotResult');
+            resultEl.textContent = '';
+
+            slots.forEach(s => s.classList.add('dice-spinning'));
+
+            const results = [];
+            slots.forEach((slot, i) => {
+                let count = 0;
+                const interval = setInterval(() => {
+                    slot.textContent = Math.floor(Math.random() * 9) + 1;
+                    count++;
+                    if (count >= 12 + i * 5) {
+                        clearInterval(interval);
+                        slot.classList.remove('dice-spinning');
+                        const val = Math.floor(Math.random() * 9) + 1;
+                        slot.textContent = val;
+                        slot.classList.add('bounce-in');
+                        setTimeout(() => slot.classList.remove('bounce-in'), 500);
+                        results.push(val);
+                        if (results.length === 3) {
+                            if (results[0] === results[1] && results[1] === results[2]) {
+                                resultEl.innerHTML = '<span class="text-green-600">🎉 잭팟! 모두 같은 숫자!</span>';
+                            } else if (results[0] === results[1] || results[1] === results[2] || results[0] === results[2]) {
+                                resultEl.innerHTML = '<span class="text-orange-600">👏 두 개가 같습니다!</span>';
+                            } else {
+                                resultEl.innerHTML = '<span class="text-stone-500">모두 다른 숫자입니다.</span>';
+                            }
+                        }
+                    }
+                }, 60);
+            });
+        }
+
+        function customRandom() {
+            const min = parseInt(document.getElementById('randMin').value);
+            const max = parseInt(document.getElementById('randMax').value);
+            if (isNaN(min) || isNaN(max) || min > max) return;
+            const result = Math.floor(Math.random() * (max - min + 1)) + min;
+            const el = document.getElementById('customResult');
+            el.textContent = result;
+            el.classList.add('bounce-in');
+            setTimeout(() => el.classList.remove('bounce-in'), 500);
+        }
+
+        // ===== Typing Game =====
+        const capitals = ["Beijing", "Seoul", "Kathmandu", "Tokyo", "Paris"];
+        let typingRound, typingCorrect, typingWords, typingGameDone;
+
+        function resetTyping() {
+            typingRound = 0;
+            typingCorrect = 0;
+            typingGameDone = false;
+            // Pick 3 random words
+            typingWords = [];
+            for (let i = 0; i < 3; i++) {
+                typingWords.push(capitals[Math.floor(Math.random() * capitals.length)]);
+            }
+
+            document.getElementById('typingGameArea').classList.remove('hidden');
+            document.getElementById('typingResult').classList.add('hidden');
+            document.getElementById('typingResult').innerHTML = '';
+            document.getElementById('typingHistory').innerHTML = '';
+            document.getElementById('typingFeedback').innerHTML = '';
+            document.getElementById('typingInputArea').classList.remove('hidden');
+
+            // Reset progress
+            for (let i = 0; i < 3; i++) {
+                const step = document.getElementById('typingStep' + i);
+                step.className = i === 0 ? 'progress-step active' : 'progress-step waiting';
+                step.querySelector('span').className = i === 0
+                    ? 'w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold'
+                    : 'w-6 h-6 rounded-full bg-stone-300 text-white flex items-center justify-center text-xs font-bold';
+            }
+            const stepR = document.getElementById('typingStepResult');
+            stepR.className = 'progress-step waiting';
+            stepR.querySelector('span').className = 'w-6 h-6 rounded-full bg-stone-300 text-white flex items-center justify-center text-xs font-bold';
+
+            showTypingProblem();
+        }
+
+        function showTypingProblem() {
+            document.getElementById('typingProblemNum').textContent = `*** problem ${typingRound + 1} ***`;
+            document.getElementById('typingWord').textContent = typingWords[typingRound];
+            document.getElementById('typingInput').value = '';
+            document.getElementById('typingFeedback').innerHTML = '';
+            document.getElementById('typingInput').focus();
+        }
+
+        function submitTyping() {
+            if (typingGameDone || typingRound >= 3) return;
+            const input = document.getElementById('typingInput');
+            const userVal = input.value;
+            const correctWord = typingWords[typingRound];
+            const isCorrect = userVal === correctWord;
+
+            if (isCorrect) typingCorrect++;
+
+            // Show feedback
+            const feedbackEl = document.getElementById('typingFeedback');
+            if (isCorrect) {
+                feedbackEl.innerHTML = `<div class="inline-block bg-green-100 text-green-700 px-6 py-2 rounded-full font-bold text-lg bounce-in"><i class="fas fa-check-circle mr-2"></i>- pass -</div>`;
+            } else {
+                feedbackEl.innerHTML = `<div class="inline-block bg-red-100 text-red-700 px-6 py-2 rounded-full font-bold text-lg shake-anim"><i class="fas fa-times-circle mr-2"></i>- fail -</div>
+                    <div class="text-sm text-stone-500 mt-2">정답: <strong>${correctWord}</strong> / 입력: <strong>${userVal || '(빈 입력)'}</strong></div>`;
+            }
+
+            // Update history
+            const histEl = document.getElementById('typingHistory');
+            histEl.innerHTML += `
+                <div class="flex items-center justify-between bg-white rounded-lg px-4 py-2 border border-stone-200 fade-slide">
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full ${isCorrect ? 'bg-green-500' : 'bg-red-500'} text-white flex items-center justify-center text-xs">
+                            ${typingRound + 1}
+                        </span>
+                        <span class="font-mono font-bold">${correctWord}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-mono text-sm ${isCorrect ? 'text-green-600' : 'text-red-600'}">${userVal || '(빈 입력)'}</span>
+                        <span class="${isCorrect ? 'text-green-500' : 'text-red-500'}">
+                            <i class="fas ${isCorrect ? 'fa-check' : 'fa-times'}"></i>
+                        </span>
+                    </div>
+                </div>
+            `;
+
+            // Update progress step
+            const step = document.getElementById('typingStep' + typingRound);
+            step.className = 'progress-step done';
+            step.querySelector('span').className = `w-6 h-6 rounded-full ${isCorrect ? 'bg-green-500' : 'bg-red-500'} text-white flex items-center justify-center text-xs font-bold`;
+            step.querySelector('span').innerHTML = isCorrect ? '<i class="fas fa-check text-xs"></i>' : '<i class="fas fa-times text-xs"></i>';
+
+            typingRound++;
+
+            if (typingRound < 3) {
+                // Next problem
+                const nextStep = document.getElementById('typingStep' + typingRound);
+                nextStep.className = 'progress-step active';
+                nextStep.querySelector('span').className = 'w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold';
+
+                setTimeout(() => {
+                    showTypingProblem();
+                }, 800);
+            } else {
+                // Game over - show result
+                typingGameDone = true;
+                const stepR = document.getElementById('typingStepResult');
+                stepR.className = 'progress-step active';
+                stepR.querySelector('span').className = 'w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold';
+
+                const successRate = Math.round((typingCorrect / 3) * 100) / 100;
+                const percent = Math.round(successRate * 100);
+
+                setTimeout(() => {
+                    document.getElementById('typingInputArea').classList.add('hidden');
+                    document.getElementById('typingProblemNum').textContent = '결과';
+                    document.getElementById('typingWord').textContent = '';
+
+                    const result = document.getElementById('typingResult');
+                    result.classList.remove('hidden');
+
+                    let emoji = '😢';
+                    let color = 'text-red-600';
+                    let msg = '더 연습해 봅시다!';
+                    if (typingCorrect === 3) { emoji = '🏆'; color = 'text-green-600'; msg = '완벽합니다!'; }
+                    else if (typingCorrect === 2) { emoji = '👍'; color = 'text-orange-600'; msg = '잘했습니다!'; }
+                    else if (typingCorrect === 1) { emoji = '💪'; color = 'text-yellow-600'; msg = '조금만 더 노력!'; }
+
+                    result.innerHTML = `
+                        <div class="bounce-in bg-white rounded-2xl p-8 shadow-md border border-stone-200 inline-block">
+                            <div class="text-6xl mb-4">${emoji}</div>
+                            <div class="text-2xl font-extrabold ${color} mb-2">${msg}</div>
+                            <div class="text-stone-600 mb-4">
+                                <strong>${typingCorrect}</strong> / 3 정답
+                            </div>
+                            <div class="bg-stone-100 rounded-xl p-4">
+                                <div class="text-sm text-stone-500 mb-1">success rate</div>
+                                <div class="text-3xl font-extrabold ${color}">${successRate}</div>
+                                <div class="text-sm text-stone-400">(${percent}%)</div>
+                            </div>
+                            <div class="mt-4 text-sm text-stone-500">
+                                round(${typingCorrect}/3, 2) = ${successRate}
+                            </div>
+                        </div>
+                    `;
+                }, 800);
+            }
+        }
+
+        // ===== Round Function Explorer =====
+        function pythonRound(num, digits) {
+            // Simulate Python's banker's rounding
+            if (digits === undefined || digits === null) digits = 0;
+            const multiplier = Math.pow(10, digits);
+            const shifted = num * multiplier;
+            const floor = Math.floor(shifted);
+            const decimal = shifted - floor;
+
+            let result;
+            if (Math.abs(decimal - 0.5) < 1e-9) {
+                // Exactly 0.5 - round to even
+                if (floor % 2 === 0) {
+                    result = floor / multiplier;
+                } else {
+                    result = (floor + 1) / multiplier;
+                }
+            } else {
+                result = Math.round(shifted) / multiplier;
+            }
+
+            if (digits === 0) return Math.round(result);
+            return parseFloat(result.toFixed(digits));
+        }
+
+        function calculateRound() {
+            const numStr = document.getElementById('roundNumber').value;
+            const digits = parseInt(document.getElementById('roundDigits').value);
+            const num = parseFloat(numStr);
+
+            if (isNaN(num) || isNaN(digits)) return;
+
+            const result = pythonRound(num, digits);
+            const el = document.getElementById('roundResult');
+            el.classList.remove('hidden');
+            el.innerHTML = `
+                <div class="text-sm text-stone-500 mb-1">round(${num}, ${digits})</div>
+                <div class="text-2xl">${result}</div>
+            `;
+            el.classList.add('bounce-in');
+            setTimeout(() => el.classList.remove('bounce-in'), 500);
+        }
+
+        function initBankerExamples() {
+            const examples = [
+                { val: 0.5, expected: 0, note: '0은 짝수 → 0' },
+                { val: 1.5, expected: 2, note: '2는 짝수 → 2' },
+                { val: 2.5, expected: 2, note: '2는 짝수 → 2' },
+                { val: 3.5, expected: 4, note: '4는 짝수 → 4' },
+                { val: 4.5, expected: 4, note: '4는 짝수 → 4' },
+                { val: 5.5, expected: 6, note: '6은 짝수 → 6' },
+            ];
+
+            const container = document.getElementById('bankerExamples');
+            container.innerHTML = examples.map(ex => `
+                <div class="flex items-center justify-between bg-stone-50 rounded-lg px-3 py-2 text-sm">
+                    <span class="font-mono"><span class="text-stone-500">round(</span><strong class="text-orange-600">${ex.val}</strong><span class="text-stone-500">)</span></span>
+                    <span class="font-mono font-bold text-orange-700">= ${ex.expected}</span>
+                    <span class="text-xs text-stone-400">${ex.note}</span>
+                </div>
+            `).join('');
+        }
+
+        function initQuickTests() {
+            const tests = [
+                { label: 'round(3.141592)', val: 3.141592, digits: 0 },
+                { label: 'round(3.141592, 3)', val: 3.141592, digits: 3 },
+                { label: 'round(2.675, 2)', val: 2.675, digits: 2 },
+                { label: 'round(7.5)', val: 7.5, digits: 0 },
+                { label: 'round(8.5)', val: 8.5, digits: 0 },
+                { label: 'round(1234, -2)', val: 1234, digits: -2 },
+            ];
+
+            const container = document.getElementById('quickTests');
+            container.innerHTML = tests.map((t, i) => `
+                <button onclick="runQuickTest(${i})" class="px-4 py-2 bg-white border-2 border-orange-200 rounded-lg hover:border-orange-400 hover:bg-orange-50 transition text-sm font-mono font-semibold text-stone-700">
+                    ${t.label}
+                </button>
+            `).join('');
+
+            window._quickTests = tests;
+        }
+
+        function runQuickTest(i) {
+            const t = window._quickTests[i];
+            let result;
+            if (t.digits < 0) {
+                // Negative digits: round to tens, hundreds, etc.
+                const factor = Math.pow(10, -t.digits);
+                result = Math.round(t.val / factor) * factor;
+            } else {
+                result = pythonRound(t.val, t.digits);
+            }
+
+            const el = document.getElementById('quickTestResult');
+            el.classList.remove('hidden');
+            el.innerHTML = `<span class="font-mono">${t.label}</span> = <span class="text-2xl text-orange-600 font-extrabold">${result}</span>`;
+            el.classList.add('bounce-in');
+            setTimeout(() => el.classList.remove('bounce-in'), 500);
+        }
+
+        // ===== Initialize =====
+        resetUpDown();
+        resetTyping();
+        initBankerExamples();
+        initQuickTests();
+    </script>
+</body>
+</html>

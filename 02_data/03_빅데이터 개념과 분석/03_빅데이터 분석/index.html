@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>빅데이터 분석 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['"Noto Sans KR"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #059669 0%, #0d9488 50%, #0891b2 100%);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Process Flow */
+        .process-step {
+            transition: all 0.3s ease;
+        }
+        .process-step:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+        }
+        .process-step.active {
+            ring: 2px;
+        }
+
+        .flow-arrow {
+            animation: flowPulse 2s ease-in-out infinite;
+        }
+        @keyframes flowPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* Cards */
+        .info-card {
+            transition: all 0.3s ease;
+        }
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .viz-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .viz-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        }
+
+        /* Box Plot */
+        .boxplot-part {
+            transition: all 0.3s ease;
+        }
+        .boxplot-part:hover {
+            filter: brightness(1.1);
+        }
+
+        /* Stats Calculator */
+        .calc-input:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+        }
+
+        /* Section Number */
+        .section-number {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #059669, #0d9488);
+            color: white;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        /* Data site cards */
+        .site-card {
+            transition: all 0.3s ease;
+        }
+        .site-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .hero-gradient {
+                background: #059669 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .process-step:hover, .info-card:hover, .viz-card:hover { transform: none; box-shadow: none; }
+            body { font-size: 12pt; }
+            section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-14">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-emerald-700 transition-colors text-sm font-medium">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>전체 단원</span>
+                </a>
+                <span class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-emerald-100">
+                    II. 데이터
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="bg-white border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
+            <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
+                <a href="../../../index.html" class="hover:text-emerald-600 transition-colors">
+                    <i class="fas fa-home mr-1"></i>정보
+                </a>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-gray-600 font-medium">II. 데이터</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-gray-600 font-medium">03 빅데이터 개념과 분석</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-emerald-700 font-semibold">빅데이터 분석</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-16 sm:py-20">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="max-w-3xl">
+                <span class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-6 border border-white/20">
+                    <i class="fas fa-chart-bar"></i>
+                    분석 · 실습
+                </span>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
+                    빅데이터 분석
+                </h1>
+                <p class="text-lg sm:text-xl text-emerald-100 font-medium mb-4">
+                    데이터 분석의 전 과정 이해하기
+                </p>
+                <p class="text-emerald-50/90 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                    문제를 정의하고 데이터를 수집하여 분석하고, 그 결과를 공유하고 평가하는 빅데이터 분석의 전 과정을 학습합니다.
+                </p>
+                <div class="flex flex-wrap gap-4 text-sm">
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-list-ol text-emerald-200"></i>
+                        <span>4단계 분석 과정</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-calculator text-emerald-200"></i>
+                        <span>통계 계산기 실습</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-chart-pie text-emerald-200"></i>
+                        <span>시각화 유형 탐구</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-16">
+
+        <!-- ============================================ -->
+        <!-- Process Flow Diagram -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="text-center mb-10">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3">
+                    <i class="fas fa-project-diagram text-emerald-600 mr-2"></i>
+                    빅데이터 분석 과정
+                </h2>
+                <p class="text-gray-500 text-sm sm:text-base">4단계로 진행되는 빅데이터 분석의 전체 흐름을 살펴봅시다.</p>
+            </div>
+
+            <!-- Desktop Flow (hidden on mobile) -->
+            <div class="hidden md:flex items-center justify-center gap-3 lg:gap-4">
+                <!-- Step 1 -->
+                <div class="process-step bg-white rounded-2xl p-5 shadow-md border border-emerald-100 text-center w-52 cursor-pointer" onclick="showProcessDetail(1)">
+                    <div class="w-14 h-14 bg-emerald-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-bullseye text-emerald-600 text-xl"></i>
+                    </div>
+                    <span class="inline-block bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full mb-2">STEP 1</span>
+                    <h3 class="font-bold text-gray-900 text-sm">문제 정의하기</h3>
+                    <p class="text-xs text-gray-500 mt-1">분석 목적과 범위 설정</p>
+                </div>
+                <!-- Arrow -->
+                <div class="flow-arrow text-emerald-400 text-xl flex-shrink-0">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <!-- Step 2 -->
+                <div class="process-step bg-white rounded-2xl p-5 shadow-md border border-teal-100 text-center w-52 cursor-pointer" onclick="showProcessDetail(2)">
+                    <div class="w-14 h-14 bg-teal-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-database text-teal-600 text-xl"></i>
+                    </div>
+                    <span class="inline-block bg-teal-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full mb-2">STEP 2</span>
+                    <h3 class="font-bold text-gray-900 text-sm">데이터 수집하기</h3>
+                    <p class="text-xs text-gray-500 mt-1">필요한 데이터 확보</p>
+                </div>
+                <!-- Arrow -->
+                <div class="flow-arrow text-teal-400 text-xl flex-shrink-0" style="animation-delay: 0.3s;">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <!-- Step 3 -->
+                <div class="process-step bg-white rounded-2xl p-5 shadow-md border border-cyan-100 text-center w-52 cursor-pointer" onclick="showProcessDetail(3)">
+                    <div class="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-chart-line text-cyan-600 text-xl"></i>
+                    </div>
+                    <span class="inline-block bg-cyan-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full mb-2">STEP 3</span>
+                    <h3 class="font-bold text-gray-900 text-sm">데이터 분석하기</h3>
+                    <p class="text-xs text-gray-500 mt-1">전처리 및 시각화</p>
+                </div>
+                <!-- Arrow -->
+                <div class="flow-arrow text-cyan-400 text-xl flex-shrink-0" style="animation-delay: 0.6s;">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <!-- Step 4 -->
+                <div class="process-step bg-white rounded-2xl p-5 shadow-md border border-sky-100 text-center w-52 cursor-pointer" onclick="showProcessDetail(4)">
+                    <div class="w-14 h-14 bg-sky-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-share-nodes text-sky-600 text-xl"></i>
+                    </div>
+                    <span class="inline-block bg-sky-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full mb-2">STEP 4</span>
+                    <h3 class="font-bold text-gray-900 text-sm">공유 및 평가하기</h3>
+                    <p class="text-xs text-gray-500 mt-1">결과 검토 및 개선</p>
+                </div>
+            </div>
+
+            <!-- Mobile Flow (hidden on desktop) -->
+            <div class="md:hidden space-y-3">
+                <div class="process-step bg-white rounded-xl p-4 shadow-md border border-emerald-100 flex items-center gap-4 cursor-pointer" onclick="showProcessDetail(1)">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-bullseye text-emerald-600 text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="inline-block bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full mb-1">STEP 1</span>
+                        <h3 class="font-bold text-gray-900 text-sm">문제 정의하기</h3>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-300 ml-auto"></i>
+                </div>
+                <div class="flex justify-center"><i class="fas fa-chevron-down text-emerald-300 flow-arrow"></i></div>
+                <div class="process-step bg-white rounded-xl p-4 shadow-md border border-teal-100 flex items-center gap-4 cursor-pointer" onclick="showProcessDetail(2)">
+                    <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-database text-teal-600 text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="inline-block bg-teal-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full mb-1">STEP 2</span>
+                        <h3 class="font-bold text-gray-900 text-sm">데이터 수집하기</h3>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-300 ml-auto"></i>
+                </div>
+                <div class="flex justify-center"><i class="fas fa-chevron-down text-teal-300 flow-arrow" style="animation-delay:0.3s;"></i></div>
+                <div class="process-step bg-white rounded-xl p-4 shadow-md border border-cyan-100 flex items-center gap-4 cursor-pointer" onclick="showProcessDetail(3)">
+                    <div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-chart-line text-cyan-600 text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="inline-block bg-cyan-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full mb-1">STEP 3</span>
+                        <h3 class="font-bold text-gray-900 text-sm">데이터 분석하기</h3>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-300 ml-auto"></i>
+                </div>
+                <div class="flex justify-center"><i class="fas fa-chevron-down text-cyan-300 flow-arrow" style="animation-delay:0.6s;"></i></div>
+                <div class="process-step bg-white rounded-xl p-4 shadow-md border border-sky-100 flex items-center gap-4 cursor-pointer" onclick="showProcessDetail(4)">
+                    <div class="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-share-nodes text-sky-600 text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="inline-block bg-sky-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full mb-1">STEP 4</span>
+                        <h3 class="font-bold text-gray-900 text-sm">공유 및 평가하기</h3>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-300 ml-auto"></i>
+                </div>
+            </div>
+
+            <!-- Process Detail Panel -->
+            <div id="processDetail" class="mt-8 bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sm:p-8 hidden">
+                <div id="processDetailContent"></div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 1. 문제 정의하기 -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="section-number">1</span>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900">문제 정의하기</h2>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 sm:p-8">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-bullseye text-emerald-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">분석의 출발점</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            빅데이터 분석의 첫 단계는 <strong>분석의 필요성, 요구 사항, 분석 범위</strong> 등을 정확히 파악하는 것입니다.
+                            무엇을 알고 싶은지, 어떤 문제를 해결하고자 하는지를 명확히 해야 합니다.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-emerald-50 rounded-xl p-5 border border-emerald-100">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-search text-emerald-600"></i>
+                            <h4 class="font-bold text-emerald-800 text-sm">파악해야 할 사항</h4>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-emerald-500 mt-1 text-xs"></i>
+                                <span>분석의 <strong>필요성</strong> 확인</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-emerald-500 mt-1 text-xs"></i>
+                                <span>구체적인 <strong>요구 사항</strong> 정리</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-emerald-500 mt-1 text-xs"></i>
+                                <span><strong>분석 범위</strong> 설정</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-teal-50 rounded-xl p-5 border border-teal-100">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-crosshairs text-teal-600"></i>
+                            <h4 class="font-bold text-teal-800 text-sm">핵심 활동</h4>
+                        </div>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            구체적인 문제의 <strong>분석 목적</strong>을 정의합니다.
+                            모호한 목적은 잘못된 방향으로 분석을 이끌 수 있으므로, 명확하고 측정 가능한 목적을 세우는 것이 중요합니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 예시 박스 -->
+                <div class="mt-6 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-200">
+                    <h4 class="font-bold text-emerald-800 mb-3 flex items-center gap-2 text-sm">
+                        <i class="fas fa-lightbulb text-yellow-500"></i>
+                        예시: 문제 정의
+                    </h4>
+                    <div class="bg-white rounded-lg p-4 border border-emerald-100">
+                        <p class="text-sm text-gray-700">
+                            <strong class="text-emerald-700">"우리 학교 학생들의 통학 시간이 학업 성취도에 영향을 미치는가?"</strong>
+                        </p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="bg-emerald-100 text-emerald-700 text-xs px-3 py-1 rounded-full font-medium">필요성: 통학 부담 개선</span>
+                            <span class="bg-teal-100 text-teal-700 text-xs px-3 py-1 rounded-full font-medium">범위: 우리 학교 전교생</span>
+                            <span class="bg-cyan-100 text-cyan-700 text-xs px-3 py-1 rounded-full font-medium">목적: 상관관계 분석</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 2. 데이터 수집하기 -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="section-number">2</span>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900">데이터 수집하기</h2>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 sm:p-8">
+                <!-- 핵심 설명 -->
+                <div class="bg-amber-50 rounded-xl p-5 border border-amber-200 mb-6">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-exclamation-triangle text-amber-500 mt-0.5"></i>
+                        <div>
+                            <h4 class="font-bold text-amber-800 text-sm mb-1">가장 중요한 단계</h4>
+                            <p class="text-sm text-gray-700">
+                                데이터 수집은 <strong>분석 결과에 가장 큰 영향</strong>을 미치는 단계입니다.
+                                잘못된 데이터를 수집하면 아무리 좋은 분석 기법을 사용해도 의미 있는 결과를 얻을 수 없습니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 고려사항 -->
+                <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-shield-halved text-teal-600"></i>
+                    데이터 수집 시 고려사항
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                    <div class="info-card bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-balance-scale text-blue-600 text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-sm">데이터양의 균형</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">수집하는 데이터의 양이 너무 적으면 신뢰성이 떨어지고, 너무 많으면 처리가 어렵습니다.</p>
+                    </div>
+                    <div class="info-card bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-9 h-9 bg-red-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-user-shield text-red-600 text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-sm">개인 정보 노출</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">데이터 수집 시 개인 정보가 포함되지 않도록 주의하고, 관련 법규를 준수해야 합니다.</p>
+                    </div>
+                    <div class="info-card bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-9 h-9 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-arrows-left-right text-purple-600 text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-sm">데이터 편향성</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">특정 집단에 치우친 데이터는 분석 결과를 왜곡할 수 있으므로 균형 잡힌 수집이 필요합니다.</p>
+                    </div>
+                    <div class="info-card bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-copyright text-orange-600 text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-sm">저작권</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">타인이 만든 데이터를 사용할 때는 저작권과 이용 조건을 확인해야 합니다.</p>
+                    </div>
+                </div>
+
+                <!-- 수집 방법 -->
+                <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-hand-pointer text-teal-600"></i>
+                    데이터 수집 방법
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-xl p-5 border border-emerald-200 text-center">
+                        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-3 shadow-sm">
+                            <i class="fas fa-robot text-emerald-600 text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-emerald-800 text-sm mb-2">자동화된 수집기</h4>
+                        <p class="text-xs text-gray-600">웹 크롤러, API 등을 이용한 자동 수집</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-teal-50 to-teal-100/50 rounded-xl p-5 border border-teal-200 text-center">
+                        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-3 shadow-sm">
+                            <i class="fas fa-globe text-teal-600 text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-teal-800 text-sm mb-2">인터넷 직접 검색</h4>
+                        <p class="text-xs text-gray-600">포털 사이트나 데이터 제공 사이트를 통한 수집</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-cyan-50 to-cyan-100/50 rounded-xl p-5 border border-cyan-200 text-center">
+                        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-3 shadow-sm">
+                            <i class="fas fa-clipboard-list text-cyan-600 text-lg"></i>
+                        </div>
+                        <h4 class="font-bold text-cyan-800 text-sm mb-2">직접 수집</h4>
+                        <p class="text-xs text-gray-600">설문 조사, 센서 측정, 관찰 기록 등</p>
+                    </div>
+                </div>
+
+                <!-- 데이터 수집 사이트 -->
+                <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-link text-teal-600"></i>
+                    주요 데이터 수집 사이트
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div class="site-card bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-landmark text-blue-600 text-xs"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-xs">공공데이터포털</h4>
+                                <span class="text-[11px] text-blue-600 font-medium">data.go.kr</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-gray-500">공공기관의 데이터를 개방하여 제공</p>
+                    </div>
+                    <div class="site-card bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chart-column text-green-600 text-xs"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-xs">국가통계포털</h4>
+                                <span class="text-[11px] text-green-600 font-medium">kosis.kr</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-gray-500">국가 승인 통계 데이터 제공</p>
+                    </div>
+                    <div class="site-card bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-8 h-8 bg-cyan-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-trophy text-cyan-600 text-xs"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-xs">캐글 (Kaggle)</h4>
+                                <span class="text-[11px] text-cyan-600 font-medium">kaggle.com</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-gray-500">세계적인 데이터 과학 플랫폼</p>
+                    </div>
+                    <div class="site-card bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-code text-purple-600 text-xs"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-xs">데이콘 (DACON)</h4>
+                                <span class="text-[11px] text-purple-600 font-medium">dacon.io</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-gray-500">국내 AI/데이터 경진대회 플랫폼</p>
+                    </div>
+                    <div class="site-card bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-gauge-high text-orange-600 text-xs"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-xs">지표누리</h4>
+                                <span class="text-[11px] text-orange-600 font-medium">index.go.kr</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-gray-500">국가 주요 지표 데이터 제공</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 3. 데이터 분석하기 -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="section-number">3</span>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900">데이터 분석하기</h2>
+            </div>
+
+            <!-- (1) 데이터 전처리하기 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 sm:p-8 mb-8">
+                <h3 class="font-bold text-gray-900 text-lg mb-2 flex items-center gap-2">
+                    <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-full">1</span>
+                    데이터 전처리하기
+                </h3>
+                <p class="text-gray-500 text-sm mb-6">수집한 데이터를 분석에 적합한 형태로 정리하는 과정입니다.</p>
+
+                <!-- 통계 지표 -->
+                <div class="mb-8">
+                    <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm">
+                        <i class="fas fa-square-root-variable text-emerald-600"></i>
+                        기본 통계 지표
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-emerald-50 rounded-xl p-5 border border-emerald-200 text-center">
+                            <div class="text-2xl font-extrabold text-emerald-600 mb-1">x&#772;</div>
+                            <h5 class="font-bold text-gray-800 text-sm mb-2">평균 (Mean)</h5>
+                            <p class="text-xs text-gray-600">모든 값을 더한 후 개수로 나눈 값</p>
+                        </div>
+                        <div class="bg-teal-50 rounded-xl p-5 border border-teal-200 text-center">
+                            <div class="text-2xl font-extrabold text-teal-600 mb-1">M</div>
+                            <h5 class="font-bold text-gray-800 text-sm mb-2">중앙값 (Median)</h5>
+                            <p class="text-xs text-gray-600">데이터를 크기순으로 나열했을 때 가운데 값</p>
+                        </div>
+                        <div class="bg-cyan-50 rounded-xl p-5 border border-cyan-200 text-center">
+                            <div class="text-2xl font-extrabold text-cyan-600 mb-1">Mo</div>
+                            <h5 class="font-bold text-gray-800 text-sm mb-2">최빈값 (Mode)</h5>
+                            <p class="text-xs text-gray-600">데이터에서 가장 자주 나타나는 값</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Statistics Calculator -->
+                <div class="bg-gradient-to-br from-gray-50 to-emerald-50/30 rounded-xl p-6 border border-gray-200 mb-8" id="statsCalculator">
+                    <h4 class="font-bold text-gray-800 mb-1 flex items-center gap-2 text-sm">
+                        <i class="fas fa-calculator text-emerald-600"></i>
+                        통계 계산기
+                    </h4>
+                    <p class="text-xs text-gray-500 mb-4">5개의 숫자를 입력하고 계산 버튼을 눌러보세요.</p>
+
+                    <div class="flex flex-wrap gap-3 mb-4">
+                        <input type="number" id="stat1" class="calc-input w-20 h-11 text-center border-2 border-gray-200 rounded-lg text-sm font-semibold bg-white" placeholder="1번" />
+                        <input type="number" id="stat2" class="calc-input w-20 h-11 text-center border-2 border-gray-200 rounded-lg text-sm font-semibold bg-white" placeholder="2번" />
+                        <input type="number" id="stat3" class="calc-input w-20 h-11 text-center border-2 border-gray-200 rounded-lg text-sm font-semibold bg-white" placeholder="3번" />
+                        <input type="number" id="stat4" class="calc-input w-20 h-11 text-center border-2 border-gray-200 rounded-lg text-sm font-semibold bg-white" placeholder="4번" />
+                        <input type="number" id="stat5" class="calc-input w-20 h-11 text-center border-2 border-gray-200 rounded-lg text-sm font-semibold bg-white" placeholder="5번" />
+                        <button onclick="calculateStats()" class="bg-emerald-600 text-white px-5 h-11 rounded-lg font-semibold text-sm hover:bg-emerald-700 transition-colors shadow-md shadow-emerald-200">
+                            <i class="fas fa-calculator mr-1"></i> 계산
+                        </button>
+                    </div>
+
+                    <div id="statsResult" class="hidden">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="bg-white rounded-lg p-4 border border-emerald-200 text-center shadow-sm">
+                                <p class="text-xs text-gray-500 mb-1">평균</p>
+                                <p id="resultMean" class="text-xl font-extrabold text-emerald-600">-</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border border-teal-200 text-center shadow-sm">
+                                <p class="text-xs text-gray-500 mb-1">중앙값</p>
+                                <p id="resultMedian" class="text-xl font-extrabold text-teal-600">-</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border border-cyan-200 text-center shadow-sm">
+                                <p class="text-xs text-gray-500 mb-1">최빈값</p>
+                                <p id="resultMode" class="text-xl font-extrabold text-cyan-600">-</p>
+                            </div>
+                        </div>
+                        <div id="statsExplanation" class="mt-3 bg-emerald-50 rounded-lg p-3 border border-emerald-100">
+                            <p id="statsExplanationText" class="text-xs text-gray-600"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 결측치/중복값/이상치 -->
+                <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm">
+                    <i class="fas fa-broom text-emerald-600"></i>
+                    데이터 정제 대상
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                    <div class="info-card bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mb-3">
+                            <i class="fas fa-question text-red-500"></i>
+                        </div>
+                        <h5 class="font-bold text-gray-800 text-sm mb-2">결측치</h5>
+                        <p class="text-xs text-gray-600 leading-relaxed">누락된 값으로, 데이터 수집 과정에서 빠진 항목입니다. 삭제하거나 대표값으로 대체합니다.</p>
+                    </div>
+                    <div class="info-card bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+                        <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mb-3">
+                            <i class="fas fa-clone text-yellow-600"></i>
+                        </div>
+                        <h5 class="font-bold text-gray-800 text-sm mb-2">중복값</h5>
+                        <p class="text-xs text-gray-600 leading-relaxed">같은 데이터가 여러 번 기록된 것입니다. 분석 결과를 왜곡할 수 있으므로 제거합니다.</p>
+                    </div>
+                    <div class="info-card bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-3">
+                            <i class="fas fa-arrow-up-right-dots text-purple-600"></i>
+                        </div>
+                        <h5 class="font-bold text-gray-800 text-sm mb-2">이상치</h5>
+                        <p class="text-xs text-gray-600 leading-relaxed">데이터 분포에서 크게 벗어난 값입니다. 박스 플롯을 이용하여 확인할 수 있습니다.</p>
+                    </div>
+                </div>
+
+                <!-- Box Plot Explanation -->
+                <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6 border border-purple-200">
+                    <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2 text-sm">
+                        <i class="fas fa-chart-simple text-purple-600"></i>
+                        박스 플롯 (Box Plot) 이해하기
+                    </h4>
+                    <p class="text-xs text-gray-500 mb-5">이상치를 시각적으로 확인하는 대표적인 방법입니다. 각 부분 위에 마우스를 올려보세요.</p>
+
+                    <!-- SVG Box Plot -->
+                    <div class="flex justify-center mb-4">
+                        <svg viewBox="0 0 600 200" class="w-full max-w-lg" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Main horizontal line (whiskers) -->
+                            <line x1="80" y1="100" x2="520" y2="100" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="4,4"/>
+
+                            <!-- Left whisker line -->
+                            <line x1="80" y1="100" x2="180" y2="100" stroke="#6366F1" stroke-width="2.5" class="boxplot-part"/>
+                            <!-- Left whisker cap -->
+                            <line x1="80" y1="80" x2="80" y2="120" stroke="#6366F1" stroke-width="2.5" class="boxplot-part"/>
+
+                            <!-- Box -->
+                            <rect x="180" y="65" width="220" height="70" rx="4" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2.5" class="boxplot-part"/>
+
+                            <!-- Q1 label -->
+                            <text x="180" y="155" text-anchor="middle" class="text-xs" fill="#6D28D9" font-weight="600" font-size="12">Q1</text>
+                            <text x="180" y="170" text-anchor="middle" fill="#6B7280" font-size="10">제1사분위수</text>
+
+                            <!-- Median line -->
+                            <line x1="310" y1="65" x2="310" y2="135" stroke="#7C3AED" stroke-width="3" class="boxplot-part"/>
+                            <text x="310" y="155" text-anchor="middle" fill="#6D28D9" font-weight="600" font-size="12">중앙값</text>
+
+                            <!-- Q3 label -->
+                            <text x="400" y="155" text-anchor="middle" fill="#6D28D9" font-weight="600" font-size="12">Q3</text>
+                            <text x="400" y="170" text-anchor="middle" fill="#6B7280" font-size="10">제3사분위수</text>
+
+                            <!-- Right whisker line -->
+                            <line x1="400" y1="100" x2="520" y2="100" stroke="#6366F1" stroke-width="2.5" class="boxplot-part"/>
+                            <!-- Right whisker cap -->
+                            <line x1="520" y1="80" x2="520" y2="120" stroke="#6366F1" stroke-width="2.5" class="boxplot-part"/>
+
+                            <!-- Min label -->
+                            <text x="80" y="155" text-anchor="middle" fill="#4F46E5" font-weight="600" font-size="12">최솟값</text>
+
+                            <!-- Max label -->
+                            <text x="520" y="155" text-anchor="middle" fill="#4F46E5" font-weight="600" font-size="12">최댓값</text>
+
+                            <!-- IQR bracket -->
+                            <line x1="180" y1="45" x2="400" y2="45" stroke="#0D9488" stroke-width="2"/>
+                            <line x1="180" y1="40" x2="180" y2="50" stroke="#0D9488" stroke-width="2"/>
+                            <line x1="400" y1="40" x2="400" y2="50" stroke="#0D9488" stroke-width="2"/>
+                            <text x="290" y="38" text-anchor="middle" fill="#0D9488" font-weight="700" font-size="12">IQR (Q3 - Q1)</text>
+
+                            <!-- Outlier dots -->
+                            <circle cx="30" cy="100" r="6" fill="#EF4444" class="boxplot-part" opacity="0.8"/>
+                            <text x="30" y="85" text-anchor="middle" fill="#EF4444" font-weight="600" font-size="10">이상치</text>
+                            <circle cx="570" cy="100" r="6" fill="#EF4444" class="boxplot-part" opacity="0.8"/>
+                            <text x="570" y="85" text-anchor="middle" fill="#EF4444" font-weight="600" font-size="10">이상치</text>
+                        </svg>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="bg-white rounded-lg p-3 border border-purple-100 text-center">
+                            <p class="text-xs font-bold text-purple-700">Q1</p>
+                            <p class="text-[11px] text-gray-600">하위 25%</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-purple-100 text-center">
+                            <p class="text-xs font-bold text-purple-700">Q3</p>
+                            <p class="text-[11px] text-gray-600">상위 25%</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-teal-100 text-center">
+                            <p class="text-xs font-bold text-teal-700">IQR</p>
+                            <p class="text-[11px] text-gray-600">Q3 - Q1</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-red-100 text-center">
+                            <p class="text-xs font-bold text-red-600">이상치</p>
+                            <p class="text-[11px] text-gray-600">IQR x 1.5 범위 밖</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- (2) 데이터 시각화·분석하기 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 sm:p-8">
+                <h3 class="font-bold text-gray-900 text-lg mb-2 flex items-center gap-2">
+                    <span class="bg-teal-100 text-teal-700 text-xs font-bold px-2.5 py-1 rounded-full">2</span>
+                    데이터 시각화 &middot; 분석하기
+                </h3>
+                <p class="text-gray-500 text-sm mb-6">전처리된 데이터를 목적에 맞는 차트로 시각화하여 의미를 파악합니다.</p>
+
+                <!-- 3 Visualization Type Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <!-- 시간 시각화 -->
+                    <div class="viz-card bg-white rounded-2xl border-2 border-emerald-200 overflow-hidden shadow-sm" onclick="toggleVizDetail('time')">
+                        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 text-white text-center">
+                            <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-3 backdrop-blur-sm">
+                                <i class="fas fa-clock text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-lg">시간 시각화</h4>
+                            <p class="text-emerald-100 text-xs mt-1">Time Visualization</p>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-sm text-gray-700 mb-3"><strong>시간에 따른 데이터 추이</strong>를 파악할 때 사용합니다.</p>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 text-xs text-gray-600">
+                                    <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
+                                    선 그래프 (Line Chart)
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-gray-600">
+                                    <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
+                                    막대 그래프 (Bar Chart)
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-gray-600">
+                                    <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
+                                    영역형 차트 (Area Chart)
+                                </div>
+                            </div>
+                            <!-- Mini chart illustration -->
+                            <div class="mt-4 flex items-end gap-1 h-12 justify-center">
+                                <div class="w-3 bg-emerald-200 rounded-t" style="height:30%"></div>
+                                <div class="w-3 bg-emerald-300 rounded-t" style="height:50%"></div>
+                                <div class="w-3 bg-emerald-400 rounded-t" style="height:40%"></div>
+                                <div class="w-3 bg-emerald-500 rounded-t" style="height:70%"></div>
+                                <div class="w-3 bg-emerald-400 rounded-t" style="height:60%"></div>
+                                <div class="w-3 bg-emerald-500 rounded-t" style="height:80%"></div>
+                                <div class="w-3 bg-emerald-600 rounded-t" style="height:90%"></div>
+                            </div>
+                        </div>
+                        <div id="vizDetailTime" class="hidden bg-emerald-50 p-4 border-t border-emerald-200">
+                            <p class="text-xs text-gray-700 leading-relaxed">
+                                <strong>활용 예시:</strong> 연도별 인구 변화, 월별 매출 추이, 일별 기온 변화 등 시간의 흐름에 따라 데이터가 어떻게 변하는지 확인할 수 있습니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 관계 시각화 -->
+                    <div class="viz-card bg-white rounded-2xl border-2 border-teal-200 overflow-hidden shadow-sm" onclick="toggleVizDetail('relation')">
+                        <div class="bg-gradient-to-br from-teal-500 to-teal-600 p-6 text-white text-center">
+                            <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-3 backdrop-blur-sm">
+                                <i class="fas fa-link text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-lg">관계 시각화</h4>
+                            <p class="text-teal-100 text-xs mt-1">Relationship Visualization</p>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-sm text-gray-700 mb-3"><strong>데이터 간 연관성</strong>을 파악할 때 사용합니다.</p>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 text-xs text-gray-600">
+                                    <span class="w-2 h-2 bg-teal-400 rounded-full"></span>
+                                    버블 차트 (Bubble Chart)
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-gray-600">
+                                    <span class="w-2 h-2 bg-teal-400 rounded-full"></span>
+                                    히스토그램 (Histogram)
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-gray-600">
+                                    <span class="w-2 h-2 bg-teal-400 rounded-full"></span>
+                                    산점도 (Scatter Plot)
+                                </div>
+                            </div>
+                            <!-- Mini scatter illustration -->
+                            <div class="mt-4 relative h-12 flex items-center justify-center">
+                                <svg viewBox="0 0 100 48" class="w-28 h-12">
+                                    <circle cx="15" cy="35" r="4" fill="#5EEAD4" opacity="0.7"/>
+                                    <circle cx="25" cy="28" r="3" fill="#2DD4BF" opacity="0.7"/>
+                                    <circle cx="38" cy="22" r="5" fill="#14B8A6" opacity="0.7"/>
+                                    <circle cx="50" cy="18" r="3.5" fill="#0D9488" opacity="0.7"/>
+                                    <circle cx="62" cy="14" r="4" fill="#0F766E" opacity="0.7"/>
+                                    <circle cx="75" cy="10" r="3" fill="#115E59" opacity="0.7"/>
+                                    <circle cx="88" cy="8" r="5" fill="#134E4A" opacity="0.7"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div id="vizDetailRelation" class="hidden bg-teal-50 p-4 border-t border-teal-200">
+                            <p class="text-xs text-gray-700 leading-relaxed">
+                                <strong>활용 예시:</strong> 키와 몸무게의 관계, 학습 시간과 성적의 상관관계, 기온과 아이스크림 판매량의 연관성 등을 분석할 수 있습니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 비교 시각화 -->
+                    <div class="viz-card bg-white rounded-2xl border-2 border-cyan-200 overflow-hidden shadow-sm" onclick="toggleVizDetail('compare')">
+                        <div class="bg-gradient-to-br from-cyan-500 to-cyan-600 p-6 text-white text-center">
+                            <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-3 backdrop-blur-sm">
+                                <i class="fas fa-not-equal text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-lg">비교 시각화</h4>
+                            <p class="text-cyan-100 text-xs mt-1">Comparison Visualization</p>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-sm text-gray-700 mb-3"><strong>데이터 간 차이와 유사성</strong>을 비교할 때 사용합니다.</p>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 text-xs text-gray-600">
+                                    <span class="w-2 h-2 bg-cyan-400 rounded-full"></span>
+                                    히트맵 (Heatmap)
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-gray-600">
+                                    <span class="w-2 h-2 bg-cyan-400 rounded-full"></span>
+                                    워드 클라우드 (Word Cloud)
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-gray-600">
+                                    <span class="w-2 h-2 bg-cyan-400 rounded-full"></span>
+                                    방사형 차트 (Radar Chart)
+                                </div>
+                            </div>
+                            <!-- Mini heatmap illustration -->
+                            <div class="mt-4 grid grid-cols-5 gap-0.5 w-24 mx-auto">
+                                <div class="h-4 rounded-sm bg-cyan-100"></div>
+                                <div class="h-4 rounded-sm bg-cyan-300"></div>
+                                <div class="h-4 rounded-sm bg-cyan-200"></div>
+                                <div class="h-4 rounded-sm bg-cyan-500"></div>
+                                <div class="h-4 rounded-sm bg-cyan-100"></div>
+                                <div class="h-4 rounded-sm bg-cyan-400"></div>
+                                <div class="h-4 rounded-sm bg-cyan-600"></div>
+                                <div class="h-4 rounded-sm bg-cyan-300"></div>
+                                <div class="h-4 rounded-sm bg-cyan-100"></div>
+                                <div class="h-4 rounded-sm bg-cyan-400"></div>
+                                <div class="h-4 rounded-sm bg-cyan-200"></div>
+                                <div class="h-4 rounded-sm bg-cyan-100"></div>
+                                <div class="h-4 rounded-sm bg-cyan-500"></div>
+                                <div class="h-4 rounded-sm bg-cyan-300"></div>
+                                <div class="h-4 rounded-sm bg-cyan-600"></div>
+                            </div>
+                        </div>
+                        <div id="vizDetailCompare" class="hidden bg-cyan-50 p-4 border-t border-cyan-200">
+                            <p class="text-xs text-gray-700 leading-relaxed">
+                                <strong>활용 예시:</strong> 지역별 기온 분포(히트맵), 뉴스 키워드 빈도(워드 클라우드), 학생 역량 비교(방사형 차트) 등에 활용됩니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 4. 공유 및 평가하기 -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="section-number">4</span>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900">공유 및 평가하기</h2>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 sm:p-8">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-share-nodes text-sky-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">분석의 마무리</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            분석 결과를 다른 사람들과 공유하고, 그 결과를 검토하고 평가하는 마지막 단계입니다.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-sky-50 rounded-xl p-5 border border-sky-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-magnifying-glass-chart text-sky-600"></i>
+                            <h4 class="font-bold text-sky-800 text-sm">분석 결과 검토 및 평가</h4>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-sky-500 mt-1 text-xs"></i>
+                                <span>분석 결과가 초기 문제 정의와 부합하는지 확인</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-sky-500 mt-1 text-xs"></i>
+                                <span>데이터와 분석 방법의 적절성 평가</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-sky-500 mt-1 text-xs"></i>
+                                <span>결과의 신뢰성과 타당성 검증</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-indigo-50 rounded-xl p-5 border border-indigo-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-lightbulb text-indigo-600"></i>
+                            <h4 class="font-bold text-indigo-800 text-sm">개선책/해결책 제시</h4>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-indigo-500 mt-1 text-xs"></i>
+                                <span>분석 결과에 기반한 올바른 개선책 도출</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-indigo-500 mt-1 text-xs"></i>
+                                <span>실행 가능한 해결책 제시</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-indigo-500 mt-1 text-xs"></i>
+                                <span>이해관계자와 결과 공유 및 피드백 수렴</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 전체 프로세스 요약 -->
+                <div class="mt-6 bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 rounded-xl p-5 border border-emerald-200">
+                    <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
+                        <i class="fas fa-arrows-rotate text-emerald-600"></i>
+                        기억하세요!
+                    </h4>
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        빅데이터 분석은 <strong>문제 정의 &rarr; 데이터 수집 &rarr; 데이터 분석 &rarr; 공유 및 평가</strong>의 순환적 과정입니다.
+                        평가 결과에 따라 이전 단계로 되돌아가 분석을 보완할 수도 있습니다.
+                        이 과정에서 가장 중요한 것은 <strong>정확한 문제 정의</strong>와 <strong>신뢰할 수 있는 데이터 수집</strong>입니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 핵심 정리 -->
+        <!-- ============================================ -->
+        <section class="fade-in">
+            <div class="bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 rounded-2xl p-6 sm:p-8 text-white">
+                <h2 class="text-xl font-extrabold mb-6 flex items-center gap-2">
+                    <i class="fas fa-star"></i>
+                    핵심 정리
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/15">
+                        <h4 class="font-bold text-emerald-200 text-sm mb-2">빅데이터 분석 과정</h4>
+                        <p class="text-white/90 text-xs leading-relaxed">문제 정의 &rarr; 데이터 수집 &rarr; 데이터 분석(전처리 + 시각화) &rarr; 공유 및 평가</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/15">
+                        <h4 class="font-bold text-emerald-200 text-sm mb-2">수집 시 고려사항</h4>
+                        <p class="text-white/90 text-xs leading-relaxed">데이터양의 균형, 개인 정보 보호, 데이터 편향성, 저작권 준수</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/15">
+                        <h4 class="font-bold text-emerald-200 text-sm mb-2">전처리 핵심</h4>
+                        <p class="text-white/90 text-xs leading-relaxed">평균/중앙값/최빈값 파악, 결측치/중복값/이상치 처리, 박스 플롯 활용</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/15">
+                        <h4 class="font-bold text-emerald-200 text-sm mb-2">시각화 유형</h4>
+                        <p class="text-white/90 text-xs leading-relaxed">시간 시각화(추이), 관계 시각화(연관성), 비교 시각화(차이점)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../02_빅데이터 활용 분야/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../04_선택활동/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">II. 데이터 &gt; 03 빅데이터 개념과 분석 &gt; 빅데이터 분석</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // ============================
+        // Fade-in on scroll
+        // ============================
+        document.addEventListener('DOMContentLoaded', function() {
+            var fadeElements = document.querySelectorAll('.fade-in');
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+            fadeElements.forEach(function(el) {
+                observer.observe(el);
+            });
+        });
+
+        // ============================
+        // Process Detail Panel
+        // ============================
+        var processDetails = {
+            1: {
+                title: '문제 정의하기',
+                icon: 'fa-bullseye',
+                color: 'emerald',
+                content: '<p class="text-sm text-gray-700 mb-3">빅데이터 분석의 출발점으로, 분석의 <strong>필요성, 요구 사항, 분석 범위</strong>를 정확히 파악합니다.</p>' +
+                    '<div class="bg-emerald-50 rounded-lg p-3 border border-emerald-100"><p class="text-xs text-gray-600"><strong class="text-emerald-700">핵심:</strong> 구체적인 문제의 분석 목적을 정의하는 것이 가장 중요합니다. 모호한 목적은 분석을 실패로 이끕니다.</p></div>'
+            },
+            2: {
+                title: '데이터 수집하기',
+                icon: 'fa-database',
+                color: 'teal',
+                content: '<p class="text-sm text-gray-700 mb-3">분석에 필요한 데이터를 다양한 방법으로 수집합니다. <strong>분석 결과에 가장 큰 영향</strong>을 미치는 단계입니다.</p>' +
+                    '<div class="bg-teal-50 rounded-lg p-3 border border-teal-100"><p class="text-xs text-gray-600"><strong class="text-teal-700">고려사항:</strong> 데이터양의 균형, 개인 정보 노출, 데이터 편향성, 저작권을 반드시 확인해야 합니다.</p></div>'
+            },
+            3: {
+                title: '데이터 분석하기',
+                icon: 'fa-chart-line',
+                color: 'cyan',
+                content: '<p class="text-sm text-gray-700 mb-3">수집한 데이터를 <strong>전처리</strong>(결측치/중복값/이상치 처리)한 후, 목적에 맞게 <strong>시각화</strong>하여 분석합니다.</p>' +
+                    '<div class="bg-cyan-50 rounded-lg p-3 border border-cyan-100"><p class="text-xs text-gray-600"><strong class="text-cyan-700">시각화 유형:</strong> 시간 시각화(추이), 관계 시각화(연관성), 비교 시각화(차이점)로 구분됩니다.</p></div>'
+            },
+            4: {
+                title: '공유 및 평가하기',
+                icon: 'fa-share-nodes',
+                color: 'sky',
+                content: '<p class="text-sm text-gray-700 mb-3">분석 결과를 <strong>검토하고 평가</strong>하여 올바른 개선책과 해결책을 제시합니다.</p>' +
+                    '<div class="bg-sky-50 rounded-lg p-3 border border-sky-100"><p class="text-xs text-gray-600"><strong class="text-sky-700">핵심:</strong> 평가 결과에 따라 이전 단계로 되돌아가 분석을 보완하는 순환적 과정이 될 수 있습니다.</p></div>'
+            }
+        };
+
+        function showProcessDetail(step) {
+            var detail = processDetails[step];
+            var panel = document.getElementById('processDetail');
+            var content = document.getElementById('processDetailContent');
+
+            content.innerHTML =
+                '<div class="flex items-center gap-3 mb-4">' +
+                    '<div class="w-10 h-10 bg-' + detail.color + '-100 rounded-xl flex items-center justify-center">' +
+                        '<i class="fas ' + detail.icon + ' text-' + detail.color + '-600 text-lg"></i>' +
+                    '</div>' +
+                    '<div>' +
+                        '<span class="text-xs text-' + detail.color + '-600 font-bold">STEP ' + step + '</span>' +
+                        '<h3 class="font-bold text-gray-900">' + detail.title + '</h3>' +
+                    '</div>' +
+                '</div>' +
+                detail.content;
+
+            panel.classList.remove('hidden');
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // ============================
+        // Statistics Calculator
+        // ============================
+        function calculateStats() {
+            var values = [];
+            for (var i = 1; i <= 5; i++) {
+                var val = document.getElementById('stat' + i).value;
+                if (val === '' || isNaN(parseFloat(val))) {
+                    alert('5개의 숫자를 모두 입력해 주세요.');
+                    return;
+                }
+                values.push(parseFloat(val));
+            }
+
+            // Mean
+            var sum = values.reduce(function(a, b) { return a + b; }, 0);
+            var mean = sum / values.length;
+
+            // Median
+            var sorted = values.slice().sort(function(a, b) { return a - b; });
+            var median = sorted[Math.floor(sorted.length / 2)];
+
+            // Mode
+            var freq = {};
+            var maxFreq = 0;
+            values.forEach(function(v) {
+                freq[v] = (freq[v] || 0) + 1;
+                if (freq[v] > maxFreq) maxFreq = freq[v];
+            });
+            var modes = [];
+            for (var key in freq) {
+                if (freq[key] === maxFreq) modes.push(parseFloat(key));
+            }
+            var modeText = maxFreq === 1 ? '없음' : modes.join(', ');
+
+            // Display
+            document.getElementById('resultMean').textContent = mean % 1 === 0 ? mean : mean.toFixed(2);
+            document.getElementById('resultMedian').textContent = median;
+            document.getElementById('resultMode').textContent = modeText;
+            document.getElementById('statsResult').classList.remove('hidden');
+
+            // Explanation
+            var expText = '입력한 값: [' + sorted.join(', ') + '] (정렬) | ' +
+                '합계: ' + sum + ', 개수: ' + values.length + ' → 평균 = ' + (mean % 1 === 0 ? mean : mean.toFixed(2)) + ' | ' +
+                '정렬 후 가운데 값 → 중앙값 = ' + median;
+            if (maxFreq > 1) {
+                expText += ' | 가장 많이 나타난 값(' + maxFreq + '번) → 최빈값 = ' + modes.join(', ');
+            } else {
+                expText += ' | 모든 값이 1번씩만 나타남 → 최빈값 없음';
+            }
+            document.getElementById('statsExplanationText').textContent = expText;
+        }
+
+        // ============================
+        // Visualization Detail Toggle
+        // ============================
+        function toggleVizDetail(type) {
+            var map = { time: 'Time', relation: 'Relation', compare: 'Compare' };
+            var el = document.getElementById('vizDetail' + map[type]);
+            if (el.classList.contains('hidden')) {
+                // Close all first
+                document.querySelectorAll('[id^="vizDetail"]').forEach(function(d) {
+                    d.classList.add('hidden');
+                });
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>소리 압축 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#ecfeff',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            800: '#155e75',
+                            900: '#164e63',
+                        },
+                        accent: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #0891b2 0%, #0284c7 50%, #0369a1 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .hero-gradient * {
+            color: inherit;
+        }
+
+        .hero-gradient h1 {
+            color: #ffffff !important;
+        }
+
+        .hero-gradient p {
+            color: rgba(255,255,255,0.92) !important;
+        }
+
+        .hero-gradient .breadcrumb-item {
+            color: rgba(255,255,255,0.7) !important;
+        }
+
+        .hero-gradient .breadcrumb-item:last-child {
+            color: #ffffff !important;
+        }
+
+        .hero-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #0891b2, #0284c7, #0891b2);
+            border-radius: 2px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '>';
+            margin: 0 0.5rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .tooltip-container {
+            position: relative;
+        }
+        .tooltip-container .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s;
+            position: absolute;
+            z-index: 20;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            margin-bottom: 6px;
+        }
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Sound wave animation */
+        .wave-bar {
+            animation: wave-pulse 1.5s ease-in-out infinite;
+        }
+        .wave-bar:nth-child(1) { animation-delay: 0s; }
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+        .wave-bar:nth-child(6) { animation-delay: 0.5s; }
+        .wave-bar:nth-child(7) { animation-delay: 0.6s; }
+
+        @keyframes wave-pulse {
+            0%, 100% { transform: scaleY(0.4); }
+            50% { transform: scaleY(1); }
+        }
+
+        /* Process step connector */
+        .process-connector {
+            position: relative;
+        }
+        .process-connector::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -1.5rem;
+            width: 1.5rem;
+            height: 2px;
+            background: linear-gradient(90deg, #0891b2, #0284c7);
+        }
+        .process-connector:last-child::after {
+            display: none;
+        }
+
+        /* Data flow animation */
+        .data-flow-line {
+            stroke-dasharray: 8 4;
+            animation: flowAnim 2s linear infinite;
+        }
+        @keyframes flowAnim {
+            to { stroke-dashoffset: -24; }
+        }
+
+        /* Format card active state */
+        .format-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .format-card:hover {
+            transform: scale(1.02);
+        }
+        .format-card.active {
+            border-color: #0891b2;
+            box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.2);
+        }
+
+        /* Calculator result animation */
+        @keyframes resultPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            60% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .result-pop {
+            animation: resultPop 0.4s ease-out forwards;
+        }
+
+        /* Print styles */
+        @media print {
+            .hero-pattern { break-after: avoid; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .wave-bar { animation: none !important; }
+        }
+
+        @media (max-width: 768px) {
+            .process-connector::after { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #0891b2 0%, #0284c7 50%, #0369a1 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1">
+                    <i class="fas fa-home text-xs"></i> 정보
+                </span>
+                <span class="breadcrumb-item">II. 데이터</span>
+                <span class="breadcrumb-item text-white font-medium">01 디지털 데이터 압축</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-music"></i>
+                        <span>II. 데이터 &gt; 01 디지털 데이터 압축</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        소리 압축
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        아날로그 소리를 디지털로 변환하는 과정과 다양한 소리 압축 방식을 이해해 봅시다
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-wave-square mr-1"></i> WAV 파일
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-compress-alt mr-1"></i> 손실/비손실 압축
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm">
+                            <i class="fas fa-headphones mr-1"></i> MP3 / AAC / FLAC
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hero SVG Icon - Sound waves -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <!-- Central speaker icon -->
+                        <circle cx="110" cy="110" r="45" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <circle cx="110" cy="110" r="25" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <circle cx="110" cy="110" r="10" fill="rgba(255,255,255,0.3)"/>
+                        <!-- Sound wave arcs -->
+                        <path d="M150 80 Q170 110 150 140" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" fill="none" stroke-linecap="round" class="wave-bar"/>
+                        <path d="M165 65 Q195 110 165 155" stroke="rgba(255,255,255,0.3)" stroke-width="2" fill="none" stroke-linecap="round" class="wave-bar" style="animation-delay:0.2s"/>
+                        <path d="M180 50 Q218 110 180 170" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" fill="none" stroke-linecap="round" class="wave-bar" style="animation-delay:0.4s"/>
+                        <!-- Digital signal dots -->
+                        <g opacity="0.5">
+                            <rect x="30" y="90" width="4" height="12" rx="2" fill="white" class="wave-bar" style="animation-delay:0.1s"/>
+                            <rect x="40" y="85" width="4" height="22" rx="2" fill="white" class="wave-bar" style="animation-delay:0.2s"/>
+                            <rect x="50" y="80" width="4" height="32" rx="2" fill="white" class="wave-bar" style="animation-delay:0.3s"/>
+                            <rect x="60" y="88" width="4" height="16" rx="2" fill="white" class="wave-bar" style="animation-delay:0.4s"/>
+                            <rect x="70" y="82" width="4" height="28" rx="2" fill="white" class="wave-bar" style="animation-delay:0.5s"/>
+                        </g>
+                        <!-- Binary digits -->
+                        <text x="35" y="145" fill="rgba(255,255,255,0.35)" font-size="10" font-family="monospace">01101</text>
+                        <text x="35" y="160" fill="rgba(255,255,255,0.25)" font-size="10" font-family="monospace">10010</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Learning objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 학습 목표
+                </h3>
+                <div class="grid sm:grid-cols-3 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>아날로그 소리를 디지털로 변환하는 과정(표본화, 양자화, 부호화)을 이해한다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>WAV 파일의 특성과 디지털 음원의 용량을 계산할 수 있다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">3</span>
+                        <span>FLAC, MP3, AAC 등 다양한 소리 압축 방식의 특징을 비교한다.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative bottom wave -->
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 1: WAV 파일                                                    -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-wav">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-wave-square"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">WAV 파일</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Waveform Audio File Format</p>
+                </div>
+            </div>
+
+            <!-- Definition callout -->
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-500 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">WAV 파일이란?</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong>WAV(Waveform Audio)</strong>는 웨이브 방식의 디지털 신호를 <strong>압축하지 않은 무압축 파일</strong>로, 확장자는 <code class="bg-primary-100 text-primary-800 px-1.5 py-0.5 rounded text-sm font-mono">.wav</code>입니다. 원본 소리 데이터를 그대로 저장하기 때문에 음질이 우수하지만 파일 크기가 큽니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analog to Digital Conversion Process -->
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-exchange-alt text-primary-500"></i> 아날로그 → 디지털 변환 과정
+            </h3>
+            <p class="text-gray-600 mb-6">아날로그 소리 신호를 디지털로 변환하려면 다음 세 단계를 거칩니다.</p>
+
+            <!-- Visual Process Diagram -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-8 mb-8">
+                <div class="grid md:grid-cols-3 gap-6 md:gap-8">
+                    <!-- Step 1: 표본화 -->
+                    <div class="process-connector">
+                        <div class="text-center mb-4">
+                            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white text-xl font-bold shadow-lg mb-3">1</div>
+                            <h4 class="text-lg font-bold text-gray-900">표본화</h4>
+                            <p class="text-sm text-primary-600 font-medium">Sampling</p>
+                        </div>
+                        <!-- SVG diagram for sampling -->
+                        <div class="bg-gray-50 rounded-xl p-4 mb-3">
+                            <svg viewBox="0 0 280 140" class="w-full" style="max-height: 140px;">
+                                <!-- Analog wave -->
+                                <path d="M20 100 Q50 20, 80 70 Q110 120, 140 50 Q170 -20, 200 70 Q230 120, 260 60"
+                                      stroke="#0891b2" stroke-width="2" fill="none" opacity="0.4"/>
+                                <!-- Sample points -->
+                                <line x1="50" y1="10" x2="50" y2="130" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
+                                <line x1="95" y1="10" x2="95" y2="130" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
+                                <line x1="140" y1="10" x2="140" y2="130" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
+                                <line x1="185" y1="10" x2="185" y2="130" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
+                                <line x1="230" y1="10" x2="230" y2="130" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
+                                <!-- Sample dots -->
+                                <circle cx="50" cy="42" r="5" fill="#0891b2"/>
+                                <circle cx="95" cy="85" r="5" fill="#0891b2"/>
+                                <circle cx="140" cy="50" r="5" fill="#0891b2"/>
+                                <circle cx="185" cy="38" r="5" fill="#0891b2"/>
+                                <circle cx="230" cy="80" r="5" fill="#0891b2"/>
+                                <!-- Labels -->
+                                <text x="140" y="135" text-anchor="middle" fill="#6b7280" font-size="10">시간 →</text>
+                            </svg>
+                        </div>
+                        <p class="text-sm text-gray-600 leading-relaxed text-center">
+                            아날로그 소리 파형을 <strong class="text-primary-700">일정 간격</strong>으로 나누어 샘플 신호의 값을 측정합니다.
+                        </p>
+                        <div class="mt-2 tooltip-container inline-block w-full text-center">
+                            <span class="inline-flex items-center gap-1 text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full cursor-help">
+                                <i class="fas fa-info-circle"></i> 핵심 용어
+                            </span>
+                            <span class="tooltip-text">주파수: 1초당 샘플링 횟수 (Hz)</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: 양자화 -->
+                    <div class="process-connector">
+                        <div class="text-center mb-4">
+                            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-cyan-400 to-accent-500 text-white text-xl font-bold shadow-lg mb-3">2</div>
+                            <h4 class="text-lg font-bold text-gray-900">양자화</h4>
+                            <p class="text-sm text-accent-600 font-medium">Quantization</p>
+                        </div>
+                        <!-- SVG diagram for quantization -->
+                        <div class="bg-gray-50 rounded-xl p-4 mb-3">
+                            <svg viewBox="0 0 280 140" class="w-full" style="max-height: 140px;">
+                                <!-- Grid lines (quantization levels) -->
+                                <line x1="20" y1="20" x2="260" y2="20" stroke="#e5e7eb" stroke-width="1"/>
+                                <text x="15" y="24" text-anchor="end" fill="#9ca3af" font-size="9">7</text>
+                                <line x1="20" y1="40" x2="260" y2="40" stroke="#e5e7eb" stroke-width="1"/>
+                                <text x="15" y="44" text-anchor="end" fill="#9ca3af" font-size="9">6</text>
+                                <line x1="20" y1="60" x2="260" y2="60" stroke="#e5e7eb" stroke-width="1"/>
+                                <text x="15" y="64" text-anchor="end" fill="#9ca3af" font-size="9">5</text>
+                                <line x1="20" y1="80" x2="260" y2="80" stroke="#e5e7eb" stroke-width="1"/>
+                                <text x="15" y="84" text-anchor="end" fill="#9ca3af" font-size="9">4</text>
+                                <line x1="20" y1="100" x2="260" y2="100" stroke="#e5e7eb" stroke-width="1"/>
+                                <text x="15" y="104" text-anchor="end" fill="#9ca3af" font-size="9">3</text>
+                                <line x1="20" y1="120" x2="260" y2="120" stroke="#e5e7eb" stroke-width="1"/>
+                                <text x="15" y="124" text-anchor="end" fill="#9ca3af" font-size="9">2</text>
+                                <!-- Original points (faded) -->
+                                <circle cx="50" cy="42" r="4" fill="#0891b2" opacity="0.3"/>
+                                <circle cx="95" cy="85" r="4" fill="#0891b2" opacity="0.3"/>
+                                <circle cx="140" cy="50" r="4" fill="#0891b2" opacity="0.3"/>
+                                <circle cx="185" cy="38" r="4" fill="#0891b2" opacity="0.3"/>
+                                <circle cx="230" cy="80" r="4" fill="#0891b2" opacity="0.3"/>
+                                <!-- Quantized points (snapped to grid) -->
+                                <circle cx="50" cy="40" r="5" fill="#2563eb"/>
+                                <circle cx="95" cy="80" r="5" fill="#2563eb"/>
+                                <circle cx="140" cy="60" r="5" fill="#2563eb"/>
+                                <circle cx="185" cy="40" r="5" fill="#2563eb"/>
+                                <circle cx="230" cy="80" r="5" fill="#2563eb"/>
+                                <!-- Arrows showing snapping -->
+                                <line x1="50" y1="42" x2="50" y2="40" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowQ)"/>
+                                <line x1="140" y1="50" x2="140" y2="60" stroke="#f59e0b" stroke-width="1.5"/>
+                                <defs>
+                                    <marker id="arrowQ" markerWidth="6" markerHeight="4" refX="3" refY="2" orient="auto">
+                                        <path d="M0,0 L6,2 L0,4" fill="#f59e0b"/>
+                                    </marker>
+                                </defs>
+                            </svg>
+                        </div>
+                        <p class="text-sm text-gray-600 leading-relaxed text-center">
+                            소리의 크기를 <strong class="text-accent-700">가까운 정숫값</strong>으로 표현합니다.
+                        </p>
+                        <div class="mt-2 tooltip-container inline-block w-full text-center">
+                            <span class="inline-flex items-center gap-1 text-xs bg-accent-100 text-accent-700 px-2 py-1 rounded-full cursor-help">
+                                <i class="fas fa-info-circle"></i> 핵심 용어
+                            </span>
+                            <span class="tooltip-text">진폭: 소리 신호의 크기(세기)</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: 부호화 -->
+                    <div>
+                        <div class="text-center mb-4">
+                            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 text-white text-xl font-bold shadow-lg mb-3">3</div>
+                            <h4 class="text-lg font-bold text-gray-900">부호화</h4>
+                            <p class="text-sm text-accent-700 font-medium">Encoding</p>
+                        </div>
+                        <!-- SVG diagram for encoding -->
+                        <div class="bg-gray-50 rounded-xl p-4 mb-3">
+                            <svg viewBox="0 0 280 140" class="w-full" style="max-height: 140px;">
+                                <!-- Integer values with arrows to binary -->
+                                <g transform="translate(30, 15)">
+                                    <!-- Value 6 -->
+                                    <rect x="0" y="0" width="40" height="28" rx="6" fill="#dbeafe"/>
+                                    <text x="20" y="19" text-anchor="middle" fill="#1e40af" font-size="13" font-weight="bold">6</text>
+                                    <text x="65" y="19" text-anchor="middle" fill="#9ca3af" font-size="14">→</text>
+                                    <rect x="80" y="0" width="70" height="28" rx="6" fill="#1e40af"/>
+                                    <text x="115" y="19" text-anchor="middle" fill="white" font-size="12" font-family="monospace">110</text>
+                                </g>
+                                <g transform="translate(30, 50)">
+                                    <!-- Value 4 -->
+                                    <rect x="0" y="0" width="40" height="28" rx="6" fill="#dbeafe"/>
+                                    <text x="20" y="19" text-anchor="middle" fill="#1e40af" font-size="13" font-weight="bold">4</text>
+                                    <text x="65" y="19" text-anchor="middle" fill="#9ca3af" font-size="14">→</text>
+                                    <rect x="80" y="0" width="70" height="28" rx="6" fill="#1e40af"/>
+                                    <text x="115" y="19" text-anchor="middle" fill="white" font-size="12" font-family="monospace">100</text>
+                                </g>
+                                <g transform="translate(30, 85)">
+                                    <!-- Value 5 -->
+                                    <rect x="0" y="0" width="40" height="28" rx="6" fill="#dbeafe"/>
+                                    <text x="20" y="19" text-anchor="middle" fill="#1e40af" font-size="13" font-weight="bold">5</text>
+                                    <text x="65" y="19" text-anchor="middle" fill="#9ca3af" font-size="14">→</text>
+                                    <rect x="80" y="0" width="70" height="28" rx="6" fill="#1e40af"/>
+                                    <text x="115" y="19" text-anchor="middle" fill="white" font-size="12" font-family="monospace">101</text>
+                                </g>
+                                <!-- Label -->
+                                <text x="50" y="135" fill="#6b7280" font-size="10">정숫값</text>
+                                <text x="145" y="135" fill="#6b7280" font-size="10">이진수</text>
+                                <!-- Decorative: 0 and 1 floating -->
+                                <text x="200" y="30" fill="#0891b2" font-size="11" opacity="0.4" font-family="monospace">0 1 1 0</text>
+                                <text x="195" y="65" fill="#0891b2" font-size="11" opacity="0.3" font-family="monospace">1 0 0 1</text>
+                                <text x="205" y="100" fill="#0891b2" font-size="11" opacity="0.2" font-family="monospace">1 0 1 0</text>
+                            </svg>
+                        </div>
+                        <p class="text-sm text-gray-600 leading-relaxed text-center">
+                            각 정수를 <strong class="text-accent-800">0과 1의 디지털값</strong>으로 표현합니다.
+                        </p>
+                        <div class="mt-2 tooltip-container inline-block w-full text-center">
+                            <span class="inline-flex items-center gap-1 text-xs bg-accent-100 text-accent-700 px-2 py-1 rounded-full cursor-help">
+                                <i class="fas fa-info-circle"></i> 핵심 용어
+                            </span>
+                            <span class="tooltip-text">비트: 디지털 데이터의 최소 단위 (0 또는 1)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Process flow arrow bar (mobile-visible) -->
+                <div class="hidden md:flex justify-center items-center mt-6 gap-2 text-sm text-gray-500">
+                    <span class="bg-primary-100 text-primary-700 px-3 py-1 rounded-full font-medium">아날로그 신호</span>
+                    <i class="fas fa-arrow-right text-gray-400"></i>
+                    <span class="bg-primary-100 text-primary-700 px-3 py-1 rounded-full font-medium">표본화</span>
+                    <i class="fas fa-arrow-right text-gray-400"></i>
+                    <span class="bg-accent-100 text-accent-700 px-3 py-1 rounded-full font-medium">양자화</span>
+                    <i class="fas fa-arrow-right text-gray-400"></i>
+                    <span class="bg-accent-100 text-accent-700 px-3 py-1 rounded-full font-medium">부호화</span>
+                    <i class="fas fa-arrow-right text-gray-400"></i>
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">디지털 신호</span>
+                </div>
+            </div>
+
+            <!-- CD 음원 용량 계산 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mt-8">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-compact-disc text-primary-500"></i> CD 음원 1초의 용량
+                </h3>
+                <div class="bg-gradient-to-r from-primary-50 to-cyan-50 rounded-xl p-5">
+                    <div class="flex flex-wrap items-center justify-center gap-3 text-center mb-4">
+                        <div class="bg-white rounded-lg px-4 py-3 shadow-sm border border-primary-200">
+                            <div class="text-2xl font-bold text-primary-700">44,100</div>
+                            <div class="text-xs text-gray-500 mt-1">샘플 수 (Hz)</div>
+                        </div>
+                        <span class="text-2xl font-bold text-gray-400">&times;</span>
+                        <div class="bg-white rounded-lg px-4 py-3 shadow-sm border border-primary-200">
+                            <div class="text-2xl font-bold text-primary-700">16</div>
+                            <div class="text-xs text-gray-500 mt-1">비트 수 (bit)</div>
+                        </div>
+                        <span class="text-2xl font-bold text-gray-400">&times;</span>
+                        <div class="bg-white rounded-lg px-4 py-3 shadow-sm border border-primary-200">
+                            <div class="text-2xl font-bold text-primary-700">2</div>
+                            <div class="text-xs text-gray-500 mt-1">채널 수 (스테레오)</div>
+                        </div>
+                        <span class="text-2xl font-bold text-gray-400">=</span>
+                        <div class="bg-gradient-to-r from-primary-500 to-accent-500 rounded-lg px-5 py-3 shadow-md">
+                            <div class="text-2xl font-bold text-white">1,411,200</div>
+                            <div class="text-xs text-white/80 mt-1">bit (≒ 0.16MB)</div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 text-center">
+                        CD 음질 기준 1초에 약 <strong>0.16MB</strong>의 용량이 필요하며, 3분 음원은 약 <strong>28.8MB</strong>에 달합니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 2: 소리 압축 파일                                               -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-compression">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-file-audio"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">소리 압축 파일</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Audio Compression Formats</p>
+                </div>
+            </div>
+
+            <p class="text-gray-600 mb-8 leading-relaxed">
+                WAV 파일은 고음질이지만 용량이 매우 크기 때문에 다양한 압축 기술이 개발되었습니다.
+                소리 압축 방식은 <strong>비손실 압축</strong>과 <strong>손실 압축</strong>으로 나뉩니다.
+            </p>
+
+            <!-- Format Comparison Cards -->
+            <div class="grid md:grid-cols-3 gap-6 mb-10">
+                <!-- FLAC Card -->
+                <div class="format-card card-hover bg-white rounded-2xl shadow-md border-2 border-gray-100 overflow-hidden" onclick="selectFormat('flac')">
+                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-file-audio text-2xl text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-bold text-xl">FLAC</h4>
+                                    <p class="text-white/80 text-xs">Free Lossless Audio Codec</p>
+                                </div>
+                            </div>
+                            <span class="bg-white/25 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full">비손실</span>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-emerald-500 mt-0.5"></i>
+                                <span class="text-gray-700"><strong>무음 구간</strong>과 <strong>반복 구간</strong>을 더 적은 비트로 표현</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-emerald-500 mt-0.5"></i>
+                                <span class="text-gray-700">원음 파형의 <strong>예측 수식</strong>과 실제 차이만 저장</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-emerald-500 mt-0.5"></i>
+                                <span class="text-gray-700">압축 해제 시 <strong>원본 복원 가능</strong></span>
+                            </li>
+                        </ul>
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500">파일 크기 예시</span>
+                                <span class="font-bold text-emerald-600">4.01 MB</span>
+                            </div>
+                            <div class="mt-2 w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 51.7%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MP3 Card -->
+                <div class="format-card card-hover bg-white rounded-2xl shadow-md border-2 border-gray-100 overflow-hidden" onclick="selectFormat('mp3')">
+                    <div class="bg-gradient-to-r from-orange-500 to-red-500 p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-file-audio text-2xl text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-bold text-xl">MP3</h4>
+                                    <p class="text-white/80 text-xs">MPEG-1 Audio Layer 3</p>
+                                </div>
+                            </div>
+                            <span class="bg-white/25 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full">손실</span>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-orange-500 mt-0.5"></i>
+                                <span class="text-gray-700">사람이 <strong>잘 듣지 못하는 대역</strong>의 신호를 제거</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-orange-500 mt-0.5"></i>
+                                <span class="text-gray-700"><strong>비트 전송률(bitrate)</strong>로 음질 조절 가능</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-orange-500 mt-0.5"></i>
+                                <span class="text-gray-700">가장 널리 사용되는 <strong>음악 포맷</strong></span>
+                            </li>
+                        </ul>
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500">파일 크기 예시</span>
+                                <span class="font-bold text-orange-600">361 KB</span>
+                            </div>
+                            <div class="mt-2 w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-orange-500 h-2.5 rounded-full" style="width: 4.7%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AAC Card -->
+                <div class="format-card card-hover bg-white rounded-2xl shadow-md border-2 border-gray-100 overflow-hidden" onclick="selectFormat('aac')">
+                    <div class="bg-gradient-to-r from-purple-500 to-indigo-600 p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-file-audio text-2xl text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-bold text-xl">AAC</h4>
+                                    <p class="text-white/80 text-xs">Advanced Audio Coding</p>
+                                </div>
+                            </div>
+                            <span class="bg-white/25 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full">손실</span>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-purple-500 mt-0.5"></i>
+                                <span class="text-gray-700">MP3와 <strong>같은 방식</strong>으로 압축</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-purple-500 mt-0.5"></i>
+                                <span class="text-gray-700">동일 비트 전송률에서 MP3보다 <strong>음질이 더 좋음</strong></span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-purple-500 mt-0.5"></i>
+                                <span class="text-gray-700">Apple Music 등 <strong>스트리밍 서비스</strong>에서 활용</span>
+                            </li>
+                        </ul>
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500">파일 크기 예시</span>
+                                <span class="font-bold text-purple-600">366 KB</span>
+                            </div>
+                            <div class="mt-2 w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-purple-500 h-2.5 rounded-full" style="width: 4.7%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden mb-10">
+                <div class="bg-gradient-to-r from-primary-600 to-accent-600 px-6 py-4">
+                    <h3 class="text-white font-bold text-lg flex items-center gap-2">
+                        <i class="fas fa-table"></i> 소리 파일 형식 비교
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-6 py-4 text-left font-bold text-gray-700 border-b-2 border-gray-200">구분</th>
+                                <th class="px-6 py-4 text-center font-bold text-gray-700 border-b-2 border-gray-200">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-blue-500"></span> WAV
+                                    </span>
+                                </th>
+                                <th class="px-6 py-4 text-center font-bold text-gray-700 border-b-2 border-gray-200">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-emerald-500"></span> FLAC
+                                    </span>
+                                </th>
+                                <th class="px-6 py-4 text-center font-bold text-gray-700 border-b-2 border-gray-200">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-orange-500"></span> MP3
+                                    </span>
+                                </th>
+                                <th class="px-6 py-4 text-center font-bold text-gray-700 border-b-2 border-gray-200">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-purple-500"></span> AAC
+                                    </span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-gray-800">압축 방식</td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full text-xs font-medium">무압축</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full text-xs font-medium">비손실</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full text-xs font-medium">손실</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="inline-flex items-center gap-1 bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full text-xs font-medium">손실</span>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-gray-800">음질</td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex justify-center gap-0.5">
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                    </div>
+                                    <span class="text-xs text-gray-500">원본</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex justify-center gap-0.5">
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                    </div>
+                                    <span class="text-xs text-gray-500">원본 동일</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex justify-center gap-0.5">
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="far fa-star text-gray-300 text-xs"></i>
+                                        <i class="far fa-star text-gray-300 text-xs"></i>
+                                    </div>
+                                    <span class="text-xs text-gray-500">비트 전송률에 따라</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex justify-center gap-0.5">
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <i class="fas fa-star-half-alt text-yellow-400 text-xs"></i>
+                                        <i class="far fa-star text-gray-300 text-xs"></i>
+                                    </div>
+                                    <span class="text-xs text-gray-500">MP3보다 우수</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-gray-800">파일 크기</td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="text-lg font-bold text-blue-600">7.76 MB</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="text-lg font-bold text-emerald-600">4.01 MB</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="text-lg font-bold text-orange-600">361 KB</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="text-lg font-bold text-purple-600">366 KB</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- File Size Visual Comparison -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <i class="fas fa-chart-bar text-accent-500"></i> 파일 크기 비교
+                </h3>
+                <div class="space-y-4">
+                    <!-- WAV -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 text-right font-bold text-blue-600 text-sm">WAV</div>
+                        <div class="flex-1">
+                            <div class="relative h-10 bg-gray-100 rounded-lg overflow-hidden">
+                                <div class="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg flex items-center justify-end pr-3 transition-all duration-1000" style="width: 100%">
+                                    <span class="text-white text-xs font-bold">7.76 MB</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- FLAC -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 text-right font-bold text-emerald-600 text-sm">FLAC</div>
+                        <div class="flex-1">
+                            <div class="relative h-10 bg-gray-100 rounded-lg overflow-hidden">
+                                <div class="absolute inset-y-0 left-0 bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-end pr-3 transition-all duration-1000" style="width: 51.7%">
+                                    <span class="text-white text-xs font-bold">4.01 MB</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- AAC -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 text-right font-bold text-purple-600 text-sm">AAC</div>
+                        <div class="flex-1">
+                            <div class="relative h-10 bg-gray-100 rounded-lg overflow-hidden">
+                                <div class="absolute inset-y-0 left-0 bg-gradient-to-r from-purple-400 to-purple-600 rounded-lg flex items-center pl-3 transition-all duration-1000" style="width: 4.7%">
+                                </div>
+                                <span class="absolute left-16 top-1/2 -translate-y-1/2 text-purple-700 text-xs font-bold">366 KB</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- MP3 -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 text-right font-bold text-orange-600 text-sm">MP3</div>
+                        <div class="flex-1">
+                            <div class="relative h-10 bg-gray-100 rounded-lg overflow-hidden">
+                                <div class="absolute inset-y-0 left-0 bg-gradient-to-r from-orange-400 to-orange-600 rounded-lg flex items-center pl-3 transition-all duration-1000" style="width: 4.65%">
+                                </div>
+                                <span class="absolute left-16 top-1/2 -translate-y-1/2 text-orange-700 text-xs font-bold">361 KB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 mt-4 text-center">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    WAV(7.76MB) &gt; FLAC(4.01MB) &gt; AAC(366KB) &asymp; MP3(361KB)
+                </p>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 3: CD 용량 계산기 (Interactive)                                  -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-calculator">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">CD 용량 계산기</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Audio File Size Calculator</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-primary-500 to-accent-500 px-6 py-4">
+                    <p class="text-white text-sm">
+                        <i class="fas fa-flask mr-1"></i> 샘플 수, 비트 수, 채널 수를 입력하여 디지털 음원의 용량을 계산해 보세요.
+                    </p>
+                </div>
+                <div class="p-6 md:p-8">
+                    <div class="grid sm:grid-cols-3 gap-6 mb-8">
+                        <!-- 샘플 수 -->
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">
+                                <i class="fas fa-wave-square text-primary-500 mr-1"></i> 샘플 수 (Hz)
+                            </label>
+                            <input type="number" id="calcSamples" value="44100"
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all text-lg font-mono"
+                                   placeholder="예: 44100">
+                            <p class="text-xs text-gray-400 mt-1">CD 기준: 44,100 Hz</p>
+                        </div>
+                        <!-- 비트 수 -->
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">
+                                <i class="fas fa-microchip text-primary-500 mr-1"></i> 비트 수 (bit)
+                            </label>
+                            <select id="calcBits"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all text-lg font-mono">
+                                <option value="8">8 bit</option>
+                                <option value="16" selected>16 bit</option>
+                                <option value="24">24 bit</option>
+                                <option value="32">32 bit</option>
+                            </select>
+                            <p class="text-xs text-gray-400 mt-1">CD 기준: 16 bit</p>
+                        </div>
+                        <!-- 채널 수 -->
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">
+                                <i class="fas fa-headphones text-primary-500 mr-1"></i> 채널 수
+                            </label>
+                            <select id="calcChannels"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all text-lg font-mono">
+                                <option value="1">1 (모노)</option>
+                                <option value="2" selected>2 (스테레오)</option>
+                                <option value="6">6 (5.1 서라운드)</option>
+                            </select>
+                            <p class="text-xs text-gray-400 mt-1">CD 기준: 2 (스테레오)</p>
+                        </div>
+                    </div>
+
+                    <!-- Calculate Button -->
+                    <div class="text-center mb-6">
+                        <button onclick="calculateSize()"
+                                class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 no-print">
+                            <i class="fas fa-calculator"></i>
+                            용량 계산하기
+                        </button>
+                    </div>
+
+                    <!-- Result -->
+                    <div id="calcResult" class="hidden">
+                        <div class="bg-gradient-to-r from-primary-50 to-accent-50 rounded-2xl p-6 border border-primary-200">
+                            <h4 class="font-bold text-gray-800 mb-4 text-center text-lg">
+                                <i class="fas fa-chart-pie text-primary-500 mr-1"></i> 계산 결과
+                            </h4>
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                                    <div class="text-sm text-gray-500 mb-1">계산식</div>
+                                    <div id="calcFormula" class="text-sm font-mono text-gray-700"></div>
+                                </div>
+                                <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                                    <div class="text-sm text-gray-500 mb-1">1초 용량</div>
+                                    <div id="calcBitsResult" class="text-2xl font-bold text-primary-600"></div>
+                                </div>
+                                <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                                    <div class="text-sm text-gray-500 mb-1">1초 (MB 변환)</div>
+                                    <div id="calcMBResult" class="text-2xl font-bold text-accent-600"></div>
+                                </div>
+                                <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                                    <div class="text-sm text-gray-500 mb-1">3분 음원 용량</div>
+                                    <div id="calc3MinResult" class="text-2xl font-bold text-purple-600"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 4: 핵심 용어 정리                                               -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-terms">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-accent-500 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">핵심 용어 정리</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Key Terms</p>
+                </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- 표본화 -->
+                <div class="card-hover bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center">
+                            <i class="fas fa-ruler-combined text-primary-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-800">표본화 <span class="text-xs text-gray-400 font-normal">Sampling</span></h4>
+                    </div>
+                    <p class="text-sm text-gray-600">아날로그 소리 파형을 일정 간격으로 나누어 신호의 값을 측정하는 과정</p>
+                </div>
+
+                <!-- 양자화 -->
+                <div class="card-hover bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-lg bg-accent-100 flex items-center justify-center">
+                            <i class="fas fa-sort-numeric-up text-accent-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-800">양자화 <span class="text-xs text-gray-400 font-normal">Quantization</span></h4>
+                    </div>
+                    <p class="text-sm text-gray-600">측정된 소리의 크기를 가까운 정숫값으로 표현하는 과정</p>
+                </div>
+
+                <!-- 부호화 -->
+                <div class="card-hover bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
+                            <i class="fas fa-binary text-indigo-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-800">부호화 <span class="text-xs text-gray-400 font-normal">Encoding</span></h4>
+                    </div>
+                    <p class="text-sm text-gray-600">각 정숫값을 0과 1의 이진수(디지털값)로 표현하는 과정</p>
+                </div>
+
+                <!-- 비트 전송률 -->
+                <div class="card-hover bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                            <i class="fas fa-tachometer-alt text-orange-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-800">비트 전송률 <span class="text-xs text-gray-400 font-normal">Bitrate</span></h4>
+                    </div>
+                    <p class="text-sm text-gray-600">1초당 전송되는 비트 수. 높을수록 음질이 좋지만 파일 크기가 커짐</p>
+                </div>
+
+                <!-- 주파수 -->
+                <div class="card-hover bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+                            <i class="fas fa-signal text-emerald-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-800">주파수 <span class="text-xs text-gray-400 font-normal">Frequency</span></h4>
+                    </div>
+                    <p class="text-sm text-gray-600">1초당 파형이 반복되는 횟수(Hz). 소리의 높낮이를 결정</p>
+                </div>
+
+                <!-- 진폭 -->
+                <div class="card-hover bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center">
+                            <i class="fas fa-volume-up text-rose-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-800">진폭 <span class="text-xs text-gray-400 font-normal">Amplitude</span></h4>
+                    </div>
+                    <p class="text-sm text-gray-600">소리 파형의 크기(세기). 진폭이 클수록 소리가 크게 들림</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider max-w-xs mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 5: 학습 정리                                                    -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-summary">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">학습 정리</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Summary</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-primary-700 mb-3 flex items-center gap-2">
+                        <i class="fas fa-wave-square text-sm"></i> WAV 파일
+                    </h4>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                            무압축 오디오 파일 (.wav 확장자)
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                            변환 과정: 표본화 → 양자화 → 부호화
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-primary-500 mt-0.5 text-xs"></i>
+                            CD 음질 1초 = 약 1,411,200 bit (≒ 0.16MB)
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-accent-700 mb-3 flex items-center gap-2">
+                        <i class="fas fa-file-audio text-sm"></i> 소리 압축 파일
+                    </h4>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-accent-500 mt-0.5 text-xs"></i>
+                            FLAC: 비손실 압축, 원본 복원 가능
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-accent-500 mt-0.5 text-xs"></i>
+                            MP3: 손실 압축, 사람이 듣지 못하는 대역 제거
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-accent-500 mt-0.5 text-xs"></i>
+                            AAC: 손실 압축, MP3보다 음질 우수
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ===== NAVIGATION ===== -->
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 no-print">
+        <div class="grid grid-cols-3 gap-4">
+            <a href="../03_이미지 압축/index.html"
+               class="flex items-center gap-3 bg-white rounded-xl p-4 shadow-sm border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all group">
+                <div class="w-10 h-10 rounded-lg bg-gray-100 group-hover:bg-primary-100 flex items-center justify-center transition-colors">
+                    <i class="fas fa-arrow-left text-gray-400 group-hover:text-primary-500 transition-colors"></i>
+                </div>
+                <div>
+                    <div class="text-xs text-gray-400">이전</div>
+                    <div class="text-sm font-medium text-gray-700 group-hover:text-primary-700">이미지 압축</div>
+                </div>
+            </a>
+            <a href="../../../index.html"
+               class="flex items-center justify-center gap-2 bg-white rounded-xl p-4 shadow-sm border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all group text-center">
+                <div class="w-10 h-10 rounded-lg bg-gray-100 group-hover:bg-primary-100 flex items-center justify-center transition-colors">
+                    <i class="fas fa-th-large text-gray-400 group-hover:text-primary-500 transition-colors"></i>
+                </div>
+                <div>
+                    <div class="text-xs text-gray-400">전체</div>
+                    <div class="text-sm font-medium text-gray-700 group-hover:text-primary-700">목록</div>
+                </div>
+            </a>
+            <a href="../05_선택활동/index.html"
+               class="flex items-center justify-end gap-3 bg-white rounded-xl p-4 shadow-sm border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all group text-right">
+                <div>
+                    <div class="text-xs text-gray-400">다음</div>
+                    <div class="text-sm font-medium text-gray-700 group-hover:text-primary-700">선택활동</div>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-gray-100 group-hover:bg-primary-100 flex items-center justify-center transition-colors">
+                    <i class="fas fa-arrow-right text-gray-400 group-hover:text-primary-500 transition-colors"></i>
+                </div>
+            </a>
+        </div>
+    </nav>
+
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../03_이미지 압축/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../05_선택활동/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">II. 데이터 &gt; 01 디지털 데이터 압축 &gt; 소리 압축</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // CD 용량 계산기
+        function calculateSize() {
+            const samples = parseInt(document.getElementById('calcSamples').value) || 0;
+            const bits = parseInt(document.getElementById('calcBits').value) || 0;
+            const channels = parseInt(document.getElementById('calcChannels').value) || 0;
+
+            const totalBits = samples * bits * channels;
+            const totalMB = totalBits / 8 / 1024 / 1024;
+            const threeMinMB = totalMB * 180;
+
+            // Show result
+            const resultDiv = document.getElementById('calcResult');
+            resultDiv.classList.remove('hidden');
+            resultDiv.querySelector('.bg-gradient-to-r').classList.add('result-pop');
+
+            // Format numbers with commas
+            function numberWithCommas(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            document.getElementById('calcFormula').textContent =
+                numberWithCommas(samples) + ' × ' + bits + ' × ' + channels + ' = ' + numberWithCommas(totalBits) + ' bit';
+            document.getElementById('calcBitsResult').textContent = numberWithCommas(totalBits) + ' bit';
+            document.getElementById('calcMBResult').textContent = totalMB.toFixed(2) + ' MB';
+            document.getElementById('calc3MinResult').textContent = threeMinMB.toFixed(2) + ' MB';
+
+            // Remove animation class after it's done
+            setTimeout(() => {
+                resultDiv.querySelector('.bg-gradient-to-r').classList.remove('result-pop');
+            }, 500);
+        }
+
+        // Format card selection (visual feedback)
+        function selectFormat(format) {
+            document.querySelectorAll('.format-card').forEach(card => card.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // Fade-in animation on scroll
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+
+        // Add fadeSlideIn keyframes dynamically
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = `
+            @keyframes fadeSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    </script>
+
+</body>
+</html>

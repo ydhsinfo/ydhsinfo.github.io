@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>선택활동 - 기계학습의 유형 구분하기 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Noto Sans KR', 'sans-serif'] },
+                    colors: {
+                        primary: { 50:'#faf5ff',100:'#f3e8ff',200:'#e9d5ff',300:'#d8b4fe',400:'#cc5de8',500:'#a855f7',600:'#9c36b5',700:'#7c3aed',800:'#6b21a8',900:'#581c87' },
+                        accent: { 50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#7950f2',600:'#6366f1',700:'#4f46e5',800:'#4338ca',900:'#3730a3' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        .hero-gradient { background: linear-gradient(135deg, #9c36b5 0%, #7c3aed 50%, #7950f2 100%) !important; color: #ffffff !important; }
+        .hero-gradient * { color: inherit; }
+        .hero-gradient h1 { color: #ffffff !important; }
+        .hero-gradient p { color: rgba(255,255,255,0.92) !important; }
+        .hero-gradient .breadcrumb-item { color: rgba(255,255,255,0.7) !important; }
+        .hero-gradient .breadcrumb-item:last-child { color: #ffffff !important; }
+        .hero-pattern {
+            background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.04) 0%, transparent 40%);
+        }
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15); }
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .section-divider { height: 4px; background: linear-gradient(90deg, #9c36b5, #7950f2, #9c36b5); border-radius: 2px; }
+        .breadcrumb-item + .breadcrumb-item::before { content: '>'; margin: 0 0.5rem; color: rgba(255,255,255,0.6); }
+        .reveal-btn { transition: all 0.3s ease; }
+        .reveal-btn:hover { transform: scale(1.02); }
+        .answer-panel { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.5s ease-out, opacity 0.4s ease-out, padding 0.4s ease-out; }
+        .answer-panel.open { max-height: 400px; opacity: 1; }
+        .case-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+        .case-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: 16px 16px 0 0; }
+        .case-card.case-1::before { background: linear-gradient(90deg, #9c36b5, #7c3aed); }
+        .case-card.case-2::before { background: linear-gradient(90deg, #059669, #10b981); }
+        .case-card.case-3::before { background: linear-gradient(90deg, #d97706, #f59e0b); }
+        .eval-checkbox { transition: all 0.3s ease; }
+        .eval-checkbox.checked { background-color: #22c55e !important; border-color: #22c55e !important; }
+        .eval-checkbox.checked i { display: block !important; }
+        @media print {
+            .hero-pattern { background: #9c36b5 !important; }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+    <!-- ===== HERO SECTION ===== -->
+    <header class="hero-pattern relative overflow-hidden" style="background: linear-gradient(135deg, #9c36b5 0%, #7c3aed 50%, #7950f2 100%); color: #ffffff;">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <nav class="flex items-center text-sm text-white/70 mb-6 flex-wrap">
+                <span class="breadcrumb-item flex items-center gap-1"><i class="fas fa-home text-xs"></i> 정보</span>
+                <span class="breadcrumb-item">IV. 인공지능</span>
+                <span class="breadcrumb-item text-white font-medium">02 기계학습의 개념</span>
+            </nav>
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+                        <i class="fas fa-flask"></i>
+                        <span>선택활동</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                        선택활동 - 기계학습의<br>유형 구분하기
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        실제 사례를 분석하여 기계학습의 유형(지도학습, 비지도학습, 강화학습)을 구분하고, 각 유형의 특징을 이해합니다
+                    </p>
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-search mr-1"></i> 탐색</span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-users mr-1"></i> 협력</span>
+                        <span class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm"><i class="fas fa-clipboard-list mr-1"></i> 조사</span>
+                    </div>
+                </div>
+                <!-- Hero SVG Icon -->
+                <div class="hidden md:block flex-shrink-0">
+                    <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+                        <circle cx="110" cy="110" r="35" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <text x="110" y="106" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="10" font-weight="bold">Machine</text>
+                        <text x="110" y="120" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="10" font-weight="bold">Learning</text>
+                        <circle cx="60" cy="45" r="22" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <text x="60" y="43" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="8">지도</text>
+                        <text x="60" y="53" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="8">학습</text>
+                        <line x1="75" y1="62" x2="90" y2="85" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                        <circle cx="165" cy="50" r="22" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <text x="165" y="48" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="8">비지도</text>
+                        <text x="165" y="58" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="8">학습</text>
+                        <line x1="148" y1="65" x2="132" y2="88" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                        <circle cx="110" cy="190" r="22" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                        <text x="110" y="188" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="8">강화</text>
+                        <text x="110" y="198" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="8">학습</text>
+                        <line x1="110" y1="145" x2="110" y2="168" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                        <circle cx="30" cy="100" r="3" fill="rgba(255,255,255,0.2)"/>
+                        <circle cx="190" cy="110" r="3" fill="rgba(255,255,255,0.2)"/>
+                        <circle cx="45" cy="170" r="2.5" fill="rgba(255,255,255,0.15)"/>
+                        <circle cx="175" cy="165" r="2.5" fill="rgba(255,255,255,0.15)"/>
+                    </svg>
+                </div>
+            </div>
+            <!-- Activity objectives -->
+            <div class="mt-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fas fa-bullseye"></i> 활동 목표
+                </h3>
+                <div class="grid sm:grid-cols-1 gap-3 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">1</span>
+                        <span>기계학습의 세 가지 유형(지도학습, 비지도학습, 강화학습)의 특징을 이해한다.</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">2</span>
+                        <span>실제 사례를 분석하여 각 사례에 해당하는 기계학습 유형을 구분할 수 있다.</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 지도학습</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 비지도학습</span>
+                    <span class="text-xs bg-white/15 rounded-full px-3 py-1"><i class="fas fa-tag mr-1"></i> 강화학습</span>
+                </div>
+            </div>
+        </div>
+        <svg class="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z" fill="#f9fafb"/>
+        </svg>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- SECTION: 활동 안내 -->
+        <section class="fade-in" id="section-intro">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동 안내</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Activity Guide</p>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-tasks text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">활동 방법</h3>
+                        <p class="text-gray-700 leading-relaxed text-sm">
+                            아래 세 가지 사례를 읽고, 각 사례가 <strong class="text-primary-700">지도학습</strong>, <strong class="text-primary-700">비지도학습</strong>, <strong class="text-primary-700">강화학습</strong> 중 어떤 유형에 해당하는지 생각해 보세요. 충분히 고민한 후 <strong>"정답 확인"</strong> 버튼을 눌러 답을 확인합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- ML Types Quick Reference -->
+            <div class="grid md:grid-cols-3 gap-5">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-chalkboard-teacher text-white text-xl"></i>
+                    </div>
+                    <div class="inline-flex items-center justify-center bg-emerald-100 text-emerald-700 font-bold text-sm rounded-full px-3 py-1 mb-2">지도학습</div>
+                    <p class="text-gray-600 text-xs leading-relaxed"><strong>정답(레이블)</strong>이 있는 데이터로 학습하여 새로운 데이터를 분류하거나 예측</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-project-diagram text-white text-xl"></i>
+                    </div>
+                    <div class="inline-flex items-center justify-center bg-amber-100 text-amber-700 font-bold text-sm rounded-full px-3 py-1 mb-2">비지도학습</div>
+                    <p class="text-gray-600 text-xs leading-relaxed">정답 없이 데이터의 <strong>숨겨진 패턴</strong>이나 구조를 스스로 발견</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-gamepad text-white text-xl"></i>
+                    </div>
+                    <div class="inline-flex items-center justify-center bg-purple-100 text-purple-700 font-bold text-sm rounded-full px-3 py-1 mb-2">강화학습</div>
+                    <p class="text-gray-600 text-xs leading-relaxed"><strong>보상과 벌칙</strong>을 통해 시행착오를 거치며 최적의 행동을 스스로 학습</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- SECTION: 사례 분석 -->
+        <section class="fade-in" id="section-cases">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">사례 분석</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Case Studies</p>
+                </div>
+            </div>
+
+            <!-- Case 1: Alpha Zero -->
+            <div class="case-card case-1 bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8" id="case1">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow">
+                        <i class="fas fa-chess text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-purple-600 bg-purple-50 rounded-full px-2 py-0.5 font-bold">사례 1</span>
+                        <h3 class="font-bold text-gray-900 text-lg">알파 제로 (Alpha Zero)</h3>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-5 mb-5">
+                    <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                        <strong class="text-purple-700">게임의 법칙을 스스로 터득하는 AI</strong> - 알파 제로는 바둑, 장기, 체스 등의 게임에서 사람의 도움 없이 스스로 규칙을 터득하고, 짧은 시간 안에 세계 최고 수준의 실력을 갖추었습니다.
+                    </p>
+                    <div class="bg-white rounded-lg p-4 border border-purple-100">
+                        <h4 class="font-bold text-purple-700 text-sm mb-3 flex items-center gap-2"><i class="fas fa-sitemap text-xs"></i> 발전 계보</h4>
+                        <div class="flex items-center justify-center gap-2 flex-wrap">
+                            <div class="bg-purple-50 rounded-lg px-4 py-2 text-center border border-purple-200">
+                                <p class="font-bold text-purple-700 text-sm">알파고</p><p class="text-xs text-gray-500">AlphaGo</p>
+                            </div>
+                            <i class="fas fa-arrow-right text-purple-300"></i>
+                            <div class="bg-purple-100 rounded-lg px-4 py-2 text-center border border-purple-200">
+                                <p class="font-bold text-purple-700 text-sm">알파고 제로</p><p class="text-xs text-gray-500">AlphaGo Zero</p>
+                            </div>
+                            <i class="fas fa-arrow-right text-purple-300"></i>
+                            <div class="bg-purple-200 rounded-lg px-4 py-2 text-center border border-purple-300">
+                                <p class="font-bold text-purple-800 text-sm">알파 제로</p><p class="text-xs text-gray-600">Alpha Zero</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span class="text-xs bg-purple-50 text-purple-600 rounded-full px-2 py-0.5 border border-purple-200">바둑</span>
+                        <span class="text-xs bg-purple-50 text-purple-600 rounded-full px-2 py-0.5 border border-purple-200">체스</span>
+                        <span class="text-xs bg-purple-50 text-purple-600 rounded-full px-2 py-0.5 border border-purple-200">장기</span>
+                        <span class="text-xs bg-purple-50 text-purple-600 rounded-full px-2 py-0.5 border border-purple-200">자기 대국</span>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button onclick="revealAnswer('case1')" id="case1-btn" class="reveal-btn inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white font-bold px-8 py-3 rounded-xl shadow-lg">
+                        <i class="fas fa-eye"></i> 정답 확인
+                    </button>
+                </div>
+                <div class="answer-panel mt-5 rounded-xl bg-gradient-to-r from-purple-50 to-violet-50 border border-purple-200" id="case1-answer">
+                    <div class="p-5">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center"><i class="fas fa-check text-white"></i></div>
+                            <div>
+                                <p class="text-xs text-purple-500 font-bold">정답</p>
+                                <p class="text-xl font-extrabold text-purple-800">강화학습</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            알파 제로는 게임의 규칙만 주어진 상태에서 <strong class="text-purple-700">자기 자신과의 대국(시행착오)</strong>을 반복하며, 승리하면 보상을 받고 패배하면 벌칙을 받는 방식으로 학습합니다. 정답 데이터 없이 <strong class="text-purple-700">보상과 벌칙</strong>을 통해 최적의 전략을 스스로 터득하는 전형적인 <strong>강화학습</strong> 사례입니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Case 2: AI Citrus Sorting -->
+            <div class="case-card case-2 bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8" id="case2">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow">
+                        <i class="fas fa-lemon text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-emerald-600 bg-emerald-50 rounded-full px-2 py-0.5 font-bold">사례 2</span>
+                        <h3 class="font-bold text-gray-900 text-lg">AI 감귤 선별 시스템</h3>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-5 mb-5">
+                    <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                        <strong class="text-emerald-700">카메라로 이미지를 보고 외부 결함에 따라 정상/불량을 선별하는 AI 시스템</strong> - 감귤의 외관 이미지를 촬영하여 결함 유무를 판단하고, 정상품과 불량품을 자동으로 분류합니다.
+                    </p>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-4 border border-emerald-100 text-center">
+                            <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-emerald-100 flex items-center justify-center"><i class="fas fa-user-tie text-emerald-600 text-lg"></i></div>
+                            <p class="font-bold text-emerald-700 text-sm mb-1">숙련된 전문가</p>
+                            <p class="text-2xl font-extrabold text-gray-800">1,000<span class="text-sm font-normal text-gray-500">개/시간</span></p>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border border-emerald-100 text-center">
+                            <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-emerald-100 flex items-center justify-center"><i class="fas fa-robot text-emerald-600 text-lg"></i></div>
+                            <p class="font-bold text-emerald-700 text-sm mb-1">AI 선별 시스템</p>
+                            <p class="text-2xl font-extrabold text-gray-800">33,000<span class="text-sm font-normal text-gray-500">개/시간</span></p>
+                        </div>
+                    </div>
+                    <p class="text-center text-xs text-gray-500 mt-3"><i class="fas fa-bolt text-amber-500 mr-1"></i> AI가 전문가보다 약 <strong class="text-emerald-700">33배</strong> 빠른 속도로 선별</p>
+                </div>
+                <div class="text-center">
+                    <button onclick="revealAnswer('case2')" id="case2-btn" class="reveal-btn inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 text-white font-bold px-8 py-3 rounded-xl shadow-lg">
+                        <i class="fas fa-eye"></i> 정답 확인
+                    </button>
+                </div>
+                <div class="answer-panel mt-5 rounded-xl bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200" id="case2-answer">
+                    <div class="p-5">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center"><i class="fas fa-check text-white"></i></div>
+                            <div>
+                                <p class="text-xs text-emerald-500 font-bold">정답</p>
+                                <p class="text-xl font-extrabold text-emerald-800">지도학습</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            전문가가 미리 <strong class="text-emerald-700">"정상" 또는 "불량"이라는 레이블(정답)</strong>을 붙인 감귤 이미지 데이터를 사용하여 AI를 학습시킵니다. AI는 이 레이블이 있는 데이터를 학습한 뒤, 새로운 감귤 이미지를 보고 정상과 불량을 분류합니다. <strong class="text-emerald-700">정답이 포함된 학습 데이터</strong>를 사용하는 전형적인 <strong>지도학습</strong> 사례입니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Case 3: Convenience Store Data -->
+            <div class="case-card case-3 bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="case3">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow">
+                        <i class="fas fa-store text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-amber-600 bg-amber-50 rounded-full px-2 py-0.5 font-bold">사례 3</span>
+                        <h3 class="font-bold text-gray-900 text-lg">편의점 매출 데이터 분석</h3>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-5 mb-5">
+                    <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                        <strong class="text-amber-700">매출 데이터를 분석하여 숨겨진 구매 패턴을 발견</strong> - 편의점의 대량의 매출 데이터를 AI가 분석한 결과, 흥미로운 패턴을 발견했습니다.
+                    </p>
+                    <div class="bg-white rounded-lg p-5 border border-amber-100">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center"><i class="fas fa-chart-bar text-amber-600"></i></div>
+                            <h4 class="font-bold text-amber-700 text-sm">발견된 패턴</h4>
+                        </div>
+                        <div class="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                            <div class="flex items-center gap-3 flex-wrap justify-center">
+                                <div class="text-center">
+                                    <div class="w-10 h-10 mx-auto mb-1 rounded-full bg-pink-100 flex items-center justify-center"><i class="fas fa-female text-pink-500"></i></div>
+                                    <p class="text-xs font-bold text-gray-700">아침 시간대</p>
+                                    <p class="text-xs text-gray-500">여성 고객</p>
+                                </div>
+                                <i class="fas fa-plus text-amber-300"></i>
+                                <div class="text-center">
+                                    <div class="w-10 h-10 mx-auto mb-1 rounded-full bg-orange-100 flex items-center justify-center"><i class="fas fa-cookie-bite text-orange-500"></i></div>
+                                    <p class="text-xs font-bold text-gray-700">스낵류</p>
+                                </div>
+                                <i class="fas fa-plus text-amber-300"></i>
+                                <div class="text-center">
+                                    <div class="w-10 h-10 mx-auto mb-1 rounded-full bg-blue-100 flex items-center justify-center"><i class="fas fa-glass-water text-blue-500"></i></div>
+                                    <p class="text-xs font-bold text-gray-700">음료</p>
+                                </div>
+                                <i class="fas fa-arrow-right text-amber-400 text-lg"></i>
+                                <div class="text-center bg-amber-200 rounded-lg px-3 py-2">
+                                    <i class="fas fa-shopping-cart text-amber-700 text-lg mb-1"></i>
+                                    <p class="text-xs font-bold text-amber-800">함께 구입</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex flex-wrap gap-2">
+                        <span class="text-xs bg-amber-50 text-amber-600 rounded-full px-2 py-0.5 border border-amber-200">매출 분석</span>
+                        <span class="text-xs bg-amber-50 text-amber-600 rounded-full px-2 py-0.5 border border-amber-200">구매 패턴</span>
+                        <span class="text-xs bg-amber-50 text-amber-600 rounded-full px-2 py-0.5 border border-amber-200">연관 규칙</span>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button onclick="revealAnswer('case3')" id="case3-btn" class="reveal-btn inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white font-bold px-8 py-3 rounded-xl shadow-lg">
+                        <i class="fas fa-eye"></i> 정답 확인
+                    </button>
+                </div>
+                <div class="answer-panel mt-5 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200" id="case3-answer">
+                    <div class="p-5">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center"><i class="fas fa-check text-white"></i></div>
+                            <div>
+                                <p class="text-xs text-amber-500 font-bold">정답</p>
+                                <p class="text-xl font-extrabold text-amber-800">비지도학습 (연관 규칙)</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            매출 데이터에는 "정답"이 따로 존재하지 않습니다. AI는 <strong class="text-amber-700">레이블 없는 대량의 데이터</strong>에서 스스로 패턴을 찾아냅니다. "아침 시간대 여성 고객이 스낵류와 음료를 함께 구매한다"는 규칙을 AI가 자체적으로 발견한 것이며, 이는 <strong class="text-amber-700">연관 규칙(Association Rule)</strong>을 찾는 대표적인 <strong>비지도학습</strong> 사례입니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- SECTION: 자기 평가 -->
+        <section class="fade-in" id="section-eval">
+            <div class="bg-gradient-to-br from-primary-50 via-white to-accent-50 rounded-2xl shadow-md border border-gray-100 p-6 md:p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <i class="fas fa-clipboard-check text-primary-500"></i> 자기 평가
+                </h3>
+                <div class="space-y-4">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-4 cursor-pointer" onclick="toggleEval(this)">
+                        <div class="eval-checkbox w-8 h-8 rounded-lg border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-check text-white text-sm" style="display: none;"></i>
+                        </div>
+                        <p class="text-sm text-gray-700">기계학습의 세 가지 유형(지도학습, 비지도학습, 강화학습)의 <strong>차이점</strong>을 이해하고 설명할 수 있는가?</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-4 cursor-pointer" onclick="toggleEval(this)">
+                        <div class="eval-checkbox w-8 h-8 rounded-lg border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-check text-white text-sm" style="display: none;"></i>
+                        </div>
+                        <p class="text-sm text-gray-700">실제 사례를 보고 해당 사례가 어떤 <strong>기계학습 유형</strong>에 해당하는지 구분할 수 있는가?</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-4 cursor-pointer" onclick="toggleEval(this)">
+                        <div class="eval-checkbox w-8 h-8 rounded-lg border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-check text-white text-sm" style="display: none;"></i>
+                        </div>
+                        <p class="text-sm text-gray-700">기계학습을 유형별로 이해하고 <strong>차이를 이야기</strong>할 수 있는가?</p>
+                    </div>
+                </div>
+                <!-- Summary reference -->
+                <div class="mt-8 grid md:grid-cols-3 gap-4">
+                    <div class="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                        <div class="flex items-center gap-2 mb-2"><i class="fas fa-gamepad text-purple-600"></i><p class="font-bold text-purple-700 text-sm">강화학습</p></div>
+                        <p class="text-xs text-gray-600">보상/벌칙을 통한 시행착오 학습</p>
+                        <p class="text-xs text-purple-500 mt-1 font-medium">예: 알파 제로</p>
+                    </div>
+                    <div class="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
+                        <div class="flex items-center gap-2 mb-2"><i class="fas fa-chalkboard-teacher text-emerald-600"></i><p class="font-bold text-emerald-700 text-sm">지도학습</p></div>
+                        <p class="text-xs text-gray-600">레이블(정답) 있는 데이터로 학습</p>
+                        <p class="text-xs text-emerald-500 mt-1 font-medium">예: AI 감귤 선별</p>
+                    </div>
+                    <div class="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                        <div class="flex items-center gap-2 mb-2"><i class="fas fa-project-diagram text-amber-600"></i><p class="font-bold text-amber-700 text-sm">비지도학습</p></div>
+                        <p class="text-xs text-gray-600">레이블 없이 패턴/구조 발견</p>
+                        <p class="text-xs text-amber-500 mt-1 font-medium">예: 편의점 매출 분석</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../02_기계학습의 유형/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        <i class="fas fa-arrow-left"></i> 이전 페이지
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i> 목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../../03_기계학습의 모델과 구현/01_기계학습의 다양한 모델/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                        다음 페이지 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">IV. 인공지능 &gt; 02 기계학습의 개념 &gt; 선택활동 - 기계학습의 유형 구분하기</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // Reveal Answer
+        function revealAnswer(caseId) {
+            const answerPanel = document.getElementById(caseId + '-answer');
+            const btn = document.getElementById(caseId + '-btn');
+            if (answerPanel.classList.contains('open')) {
+                answerPanel.classList.remove('open');
+                btn.innerHTML = '<i class="fas fa-eye"></i> 정답 확인';
+            } else {
+                answerPanel.classList.add('open');
+                btn.innerHTML = '<i class="fas fa-eye-slash"></i> 정답 숨기기';
+            }
+        }
+
+        // Self-evaluation Toggle
+        function toggleEval(element) {
+            const checkbox = element.querySelector('.eval-checkbox');
+            checkbox.classList.toggle('checked');
+            const icon = checkbox.querySelector('i');
+            icon.style.display = checkbox.classList.contains('checked') ? 'block' : 'none';
+        }
+
+        // Fade-in animation on scroll
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.fade-in').forEach(el => fadeInObserver.observe(el));
+    </script>
+</body>
+</html>

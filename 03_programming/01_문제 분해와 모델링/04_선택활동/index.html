@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>선택활동 - 가장 영향력 있는 친구 찾기 | 정보</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'},
+                        accent: {50:'#fffbeb',100:'#fef3c7',200:'#fde68a',300:'#fcd34d',400:'#fbbf24',500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e',900:'#78350f'}
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        body { background-color: #fffaf5; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(234, 88, 12, 0.12);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #fb923c, #f59e0b, #fb923c, transparent);
+            border-radius: 2px;
+        }
+
+        .chain-arrow {
+            animation: pulse-arrow 2s ease-in-out infinite;
+        }
+        @keyframes pulse-arrow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .graph-node {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .graph-node:hover {
+            filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.5));
+        }
+
+        .winner-highlight {
+            animation: winner-glow 1.5s ease-in-out infinite;
+        }
+        @keyframes winner-glow {
+            0%, 100% { box-shadow: 0 0 8px rgba(249, 115, 22, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(249, 115, 22, 0.6); }
+        }
+
+        .table-input {
+            width: 48px;
+            height: 36px;
+            text-align: center;
+            border: 2px solid #fed7aa;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .table-input:focus {
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+        }
+        .table-input.correct {
+            border-color: #22c55e;
+            background-color: #f0fdf4;
+            color: #16a34a;
+        }
+        .table-input.incorrect {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+            color: #dc2626;
+        }
+        .table-input:disabled {
+            cursor: default;
+        }
+
+        .step-card {
+            border-left: 4px solid #f97316;
+            transition: all 0.3s ease;
+        }
+        .step-card:hover {
+            border-left-color: #ea580c;
+            background-color: #fff7ed;
+        }
+
+        .node-tooltip {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .graph-node:hover + .node-tooltip,
+        .graph-node:hover ~ .node-tooltip {
+            opacity: 1;
+        }
+
+        .assessment-radio {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fdba74;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .assessment-radio:checked {
+            border-color: #f97316;
+            background: radial-gradient(circle, #f97316 40%, transparent 41%);
+        }
+
+        .edge-label {
+            font-size: 11px;
+            fill: #9a3412;
+            font-weight: 500;
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+        }
+        .confetti-burst {
+            animation: confetti 1s ease-out forwards;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ea580c, #c2410c);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(234, 88, 12, 0.3);
+        }
+
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f97316, #f59e0b);
+            z-index: 100;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <svg width="100%" height="100%">
+                <defs>
+                    <pattern id="hero-pattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                        <circle cx="30" cy="30" r="2" fill="white" opacity="0.3"/>
+                        <line x1="10" y1="10" x2="50" y2="50" stroke="white" stroke-width="0.5" opacity="0.15"/>
+                        <line x1="50" y1="10" x2="10" y2="50" stroke="white" stroke-width="0.5" opacity="0.15"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#hero-pattern)"/>
+            </svg>
+        </div>
+        <div class="max-w-5xl mx-auto px-6 py-12 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center space-x-2 text-orange-200 text-sm mb-8">
+                <a href="../../../index.html" class="hover:text-white transition-colors">
+                    <i class="fas fa-home mr-1"></i>정보
+                </a>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span>III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span>01 문제 분해와 모델링</span>
+            </nav>
+
+            <!-- Title -->
+            <div class="flex items-start gap-5">
+                <div class="w-16 h-16 bg-white/15 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0 mt-1">
+                    <i class="fas fa-users text-2xl text-amber-300"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="inline-block bg-white/20 backdrop-blur-sm text-orange-100 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                        <i class="fas fa-star mr-1"></i>선택활동
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold mb-3 leading-tight">가장 영향력 있는 친구 찾기</h1>
+                    <p class="text-orange-100 text-lg font-light">6단계 분리 이론과 그래프 모델링을 활용한 문제 해결</p>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="mt-8 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="text-amber-300 font-bold text-sm mb-3">
+                    <i class="fas fa-bullseye mr-2"></i>학습 목표
+                </h3>
+                <div class="grid md:grid-cols-3 gap-3">
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-check-circle text-amber-400 mt-0.5 text-sm"></i>
+                        <span class="text-sm text-orange-50">6단계 분리 이론을 이해한다</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-check-circle text-amber-400 mt-0.5 text-sm"></i>
+                        <span class="text-sm text-orange-50">그래프 모델링으로 문제를 해결할 수 있다</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-check-circle text-amber-400 mt-0.5 text-sm"></i>
+                        <span class="text-sm text-orange-50">문제 분해와 모델링 과정을 종합적으로 적용할 수 있다</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-12">
+
+        <!-- Section 1: 6단계 분리 이론 -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-primary-50 to-accent-50 px-6 py-4 border-b border-orange-100">
+                    <h2 class="text-xl font-bold text-primary-800 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-globe text-white text-sm"></i>
+                        </div>
+                        6단계 분리 이론
+                    </h2>
+                </div>
+                <div class="p-6">
+                    <div class="bg-orange-50 rounded-xl p-5 mb-6 border border-orange-200">
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong class="text-primary-700">6단계 분리 이론</strong>은 미국의 사회학자
+                            <span class="font-semibold text-primary-800">스탠리 밀그램</span>이 발표한 이론으로,
+                            지구상의 모든 사람이 서로 <span class="bg-amber-200 px-1.5 py-0.5 rounded font-bold text-amber-900">6단계 이내</span>로
+                            연결되어 있다고 주장합니다.
+                        </p>
+                    </div>
+
+                    <!-- Kevin Bacon Example Chain -->
+                    <h3 class="font-bold text-primary-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-link text-primary-500"></i>
+                        예시: 아이유에서 케빈 베이컨까지
+                    </h3>
+                    <div class="flex flex-wrap items-center justify-center gap-2 md:gap-3 py-6 bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 rounded-xl border border-orange-200">
+                        <!-- IU -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center shadow-lg">
+                                <i class="fas fa-music text-white text-lg md:text-xl"></i>
+                            </div>
+                            <span class="text-xs md:text-sm font-bold text-primary-800 mt-2">아이유</span>
+                        </div>
+                        <!-- Arrow 1 -->
+                        <div class="flex flex-col items-center chain-arrow">
+                            <i class="fas fa-arrow-right text-primary-400 text-lg"></i>
+                            <span class="text-[10px] text-primary-600 mt-1">브로커</span>
+                        </div>
+                        <!-- Bae Doona -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center shadow-lg">
+                                <i class="fas fa-film text-white text-lg md:text-xl"></i>
+                            </div>
+                            <span class="text-xs md:text-sm font-bold text-amber-800 mt-2">배두나</span>
+                        </div>
+                        <!-- Arrow 2 -->
+                        <div class="flex flex-col items-center chain-arrow" style="animation-delay: 0.3s;">
+                            <i class="fas fa-arrow-right text-amber-400 text-lg"></i>
+                            <span class="text-[10px] text-amber-600 mt-1">클라우드 아틀라스</span>
+                        </div>
+                        <!-- Tom Hanks -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full flex items-center justify-center shadow-lg">
+                                <i class="fas fa-star text-white text-lg md:text-xl"></i>
+                            </div>
+                            <span class="text-xs md:text-sm font-bold text-primary-800 mt-2">톰 행크스</span>
+                        </div>
+                        <!-- Arrow 3 -->
+                        <div class="flex flex-col items-center chain-arrow" style="animation-delay: 0.6s;">
+                            <i class="fas fa-arrow-right text-primary-400 text-lg"></i>
+                            <span class="text-[10px] text-primary-600 mt-1">아폴로 13</span>
+                        </div>
+                        <!-- Kevin Bacon -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-accent-500 to-accent-700 rounded-full flex items-center justify-center shadow-lg">
+                                <i class="fas fa-award text-white text-lg md:text-xl"></i>
+                            </div>
+                            <span class="text-xs md:text-sm font-bold text-accent-800 mt-2">케빈 베이컨</span>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <span class="inline-block bg-primary-100 text-primary-800 text-sm font-bold px-4 py-2 rounded-full border border-primary-200">
+                            <i class="fas fa-route mr-1"></i> 총 3단계로 연결!
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider fade-in"></div>
+
+        <!-- Section 2: Activity 1 - 4명 예제 -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-primary-50 to-accent-50 px-6 py-4 border-b border-orange-100">
+                    <h2 class="text-xl font-bold text-primary-800 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">1</span>
+                        </div>
+                        활동 1: 4명의 친구 관계
+                        <span class="ml-auto text-xs bg-primary-100 text-primary-700 px-3 py-1 rounded-full font-medium">예제 풀이</span>
+                    </h2>
+                </div>
+                <div class="p-6 space-y-8">
+
+                    <!-- Step 1: Graph -->
+                    <div class="step-card bg-white rounded-xl p-5 pl-6 shadow-sm border border-orange-100">
+                        <h3 class="font-bold text-primary-800 mb-1 flex items-center gap-2">
+                            <span class="bg-primary-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">1</span>
+                            친구 관계를 그래프로 표현
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-4">입력: A C, A D, D C, C B</p>
+
+                        <div class="flex flex-col lg:flex-row gap-6 items-center">
+                            <!-- Graph SVG -->
+                            <div class="flex-1 flex justify-center">
+                                <svg id="graph4" width="320" height="280" viewBox="0 0 320 280" class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-200">
+                                    <!-- Edges -->
+                                    <line x1="160" y1="50" x2="60" y2="180" stroke="#fdba74" stroke-width="3" stroke-linecap="round"/>
+                                    <line x1="160" y1="50" x2="260" y2="180" stroke="#fdba74" stroke-width="3" stroke-linecap="round"/>
+                                    <line x1="260" y1="180" x2="60" y2="180" stroke="#fdba74" stroke-width="3" stroke-linecap="round"/>
+                                    <line x1="60" y1="180" x2="160" y2="240" stroke="#fdba74" stroke-width="3" stroke-linecap="round"/>
+                                    <!-- Edge labels -->
+                                    <text x="100" y="108" class="edge-label" text-anchor="middle">A-C</text>
+                                    <text x="220" y="108" class="edge-label" text-anchor="middle">A-D</text>
+                                    <text x="160" y="175" class="edge-label" text-anchor="middle">D-C</text>
+                                    <text x="100" y="220" class="edge-label" text-anchor="middle">C-B</text>
+                                    <!-- Node A -->
+                                    <circle cx="160" cy="50" r="28" fill="url(#grad-orange)" stroke="#c2410c" stroke-width="2.5" class="graph-node"/>
+                                    <text x="160" y="55" text-anchor="middle" fill="white" font-weight="bold" font-size="18">A</text>
+                                    <!-- Node C -->
+                                    <circle cx="60" cy="180" r="28" fill="url(#grad-amber)" stroke="#b45309" stroke-width="2.5" class="graph-node"/>
+                                    <text x="60" y="185" text-anchor="middle" fill="white" font-weight="bold" font-size="18">C</text>
+                                    <!-- Node D -->
+                                    <circle cx="260" cy="180" r="28" fill="url(#grad-orange)" stroke="#c2410c" stroke-width="2.5" class="graph-node"/>
+                                    <text x="260" y="185" text-anchor="middle" fill="white" font-weight="bold" font-size="18">D</text>
+                                    <!-- Node B -->
+                                    <circle cx="160" cy="240" r="28" fill="url(#grad-orange)" stroke="#c2410c" stroke-width="2.5" class="graph-node"/>
+                                    <text x="160" y="245" text-anchor="middle" fill="white" font-weight="bold" font-size="18">B</text>
+                                    <!-- Gradients -->
+                                    <defs>
+                                        <linearGradient id="grad-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#fb923c"/>
+                                            <stop offset="100%" style="stop-color:#ea580c"/>
+                                        </linearGradient>
+                                        <linearGradient id="grad-amber" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#fbbf24"/>
+                                            <stop offset="100%" style="stop-color:#d97706"/>
+                                        </linearGradient>
+                                        <linearGradient id="grad-green" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#4ade80"/>
+                                            <stop offset="100%" style="stop-color:#16a34a"/>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                            </div>
+                            <!-- Input info -->
+                            <div class="flex-1 space-y-3">
+                                <div class="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                                    <h4 class="text-sm font-bold text-primary-700 mb-2"><i class="fas fa-keyboard mr-1"></i> 입력 데이터</h4>
+                                    <div class="grid grid-cols-2 gap-2 text-sm">
+                                        <span class="bg-white px-3 py-1.5 rounded border border-orange-200 text-center font-mono font-semibold text-primary-800">A - C</span>
+                                        <span class="bg-white px-3 py-1.5 rounded border border-orange-200 text-center font-mono font-semibold text-primary-800">A - D</span>
+                                        <span class="bg-white px-3 py-1.5 rounded border border-orange-200 text-center font-mono font-semibold text-primary-800">D - C</span>
+                                        <span class="bg-white px-3 py-1.5 rounded border border-orange-200 text-center font-mono font-semibold text-primary-800">C - B</span>
+                                    </div>
+                                </div>
+                                <div class="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                                    <h4 class="text-sm font-bold text-accent-700 mb-1"><i class="fas fa-info-circle mr-1"></i> 노드와 간선</h4>
+                                    <p class="text-sm text-gray-600">노드: A, B, C, D (4명)</p>
+                                    <p class="text-sm text-gray-600">간선: 4개의 친구 관계</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Distance Table -->
+                    <div class="step-card bg-white rounded-xl p-5 pl-6 shadow-sm border border-orange-100">
+                        <h3 class="font-bold text-primary-800 mb-1 flex items-center gap-2">
+                            <span class="bg-primary-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">2</span>
+                            모든 친구 쌍에 대한 최소 친구 단계
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-4">BFS(너비 우선 탐색)로 각 쌍 사이의 최단 거리를 구합니다.</p>
+
+                        <div class="overflow-x-auto">
+                            <table class="mx-auto border-collapse">
+                                <thead>
+                                    <tr>
+                                        <th class="w-14 h-12 bg-primary-600 text-white font-bold text-sm rounded-tl-lg"></th>
+                                        <th class="w-14 h-12 bg-primary-600 text-white font-bold text-sm">A</th>
+                                        <th class="w-14 h-12 bg-primary-600 text-white font-bold text-sm">B</th>
+                                        <th class="w-14 h-12 bg-primary-600 text-white font-bold text-sm">C</th>
+                                        <th class="w-14 h-12 bg-primary-600 text-white font-bold text-sm rounded-tr-lg">D</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table4Body">
+                                    <tr>
+                                        <td class="bg-primary-500 text-white font-bold text-sm text-center py-2 px-3">A</td>
+                                        <td class="bg-gray-100 text-center py-2 px-3 text-gray-400 font-bold">&times;</td>
+                                        <td class="bg-orange-50 text-center py-2 px-3 font-bold text-primary-800">2</td>
+                                        <td class="bg-orange-50 text-center py-2 px-3 font-bold text-primary-800">1</td>
+                                        <td class="bg-orange-50 text-center py-2 px-3 font-bold text-primary-800">1</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-primary-500 text-white font-bold text-sm text-center py-2 px-3">B</td>
+                                        <td class="bg-orange-50 text-center py-2 px-3 font-bold text-primary-800">2</td>
+                                        <td class="bg-gray-100 text-center py-2 px-3 text-gray-400 font-bold">&times;</td>
+                                        <td class="bg-orange-50 text-center py-2 px-3 font-bold text-primary-800">1</td>
+                                        <td class="bg-orange-50 text-center py-2 px-3 font-bold text-primary-800">2</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-primary-500 text-white font-bold text-sm text-center py-2 px-3">C</td>
+                                        <td class="bg-amber-100 text-center py-2 px-3 font-bold text-accent-800">1</td>
+                                        <td class="bg-amber-100 text-center py-2 px-3 font-bold text-accent-800">1</td>
+                                        <td class="bg-gray-100 text-center py-2 px-3 text-gray-400 font-bold">&times;</td>
+                                        <td class="bg-amber-100 text-center py-2 px-3 font-bold text-accent-800">1</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-primary-500 text-white font-bold text-sm text-center py-2 px-3 rounded-bl-lg">D</td>
+                                        <td class="bg-orange-50 text-center py-2 px-3 font-bold text-primary-800">1</td>
+                                        <td class="bg-orange-50 text-center py-2 px-3 font-bold text-primary-800">2</td>
+                                        <td class="bg-orange-50 text-center py-2 px-3 font-bold text-primary-800">1</td>
+                                        <td class="bg-gray-100 text-center py-2 px-3 text-gray-400 font-bold rounded-br-lg">&times;</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 & 4: Sum & Result -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="step-card bg-white rounded-xl p-5 pl-6 shadow-sm border border-orange-100">
+                            <h3 class="font-bold text-primary-800 mb-3 flex items-center gap-2">
+                                <span class="bg-primary-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">3</span>
+                                개인별 친구 관계의 합
+                            </h3>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between bg-orange-50 rounded-lg px-4 py-2 border border-orange-200">
+                                    <span class="font-bold text-primary-800">A</span>
+                                    <span class="text-sm text-gray-600">2 + 1 + 1 =</span>
+                                    <span class="bg-primary-500 text-white font-bold px-3 py-1 rounded-lg text-sm">4</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-orange-50 rounded-lg px-4 py-2 border border-orange-200">
+                                    <span class="font-bold text-primary-800">B</span>
+                                    <span class="text-sm text-gray-600">2 + 1 + 2 =</span>
+                                    <span class="bg-primary-500 text-white font-bold px-3 py-1 rounded-lg text-sm">5</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-amber-100 rounded-lg px-4 py-2 border border-amber-300 winner-highlight">
+                                    <span class="font-bold text-accent-800">C</span>
+                                    <span class="text-sm text-gray-600">1 + 1 + 1 =</span>
+                                    <span class="bg-accent-500 text-white font-bold px-3 py-1 rounded-lg text-sm">3</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-orange-50 rounded-lg px-4 py-2 border border-orange-200">
+                                    <span class="font-bold text-primary-800">D</span>
+                                    <span class="text-sm text-gray-600">1 + 2 + 1 =</span>
+                                    <span class="bg-primary-500 text-white font-bold px-3 py-1 rounded-lg text-sm">4</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-card bg-white rounded-xl p-5 pl-6 shadow-sm border border-orange-100">
+                            <h3 class="font-bold text-primary-800 mb-3 flex items-center gap-2">
+                                <span class="bg-primary-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">4</span>
+                                결과: 가장 영향력 있는 사람
+                            </h3>
+                            <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border-2 border-amber-300 text-center">
+                                <div class="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                                    <span class="text-white text-3xl font-extrabold">C</span>
+                                </div>
+                                <p class="text-lg font-bold text-accent-800 mb-1">가장 영향력 있는 사람: C</p>
+                                <p class="text-sm text-gray-600">친구 관계의 합: <strong class="text-accent-700">3</strong> (최솟값)</p>
+                                <div class="mt-3 bg-white rounded-lg p-3 text-left border border-amber-200">
+                                    <p class="text-xs text-gray-600">
+                                        <i class="fas fa-lightbulb text-amber-500 mr-1"></i>
+                                        C는 모든 친구에게 평균적으로 가장 가까이 있으므로, 네트워크에서 가장 영향력이 큰 사람입니다.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider fade-in"></div>
+
+        <!-- Section 3: Activity 2 - 6명 Interactive Exercise -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-primary-50 to-accent-50 px-6 py-4 border-b border-orange-100">
+                    <h2 class="text-xl font-bold text-primary-800 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">2</span>
+                        </div>
+                        활동 2: 6명의 친구 관계
+                        <span class="ml-auto text-xs bg-accent-100 text-accent-700 px-3 py-1 rounded-full font-medium">
+                            <i class="fas fa-pencil-alt mr-1"></i>직접 풀어보기
+                        </span>
+                    </h2>
+                </div>
+                <div class="p-6 space-y-8">
+
+                    <!-- Problem Analysis -->
+                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                        <h3 class="font-bold text-primary-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-search-plus text-primary-500"></i>
+                            문제 분석
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 border border-orange-200">
+                                <h4 class="text-sm font-bold text-primary-700 mb-2"><i class="fas fa-clipboard-list mr-1"></i> 현재 상태</h4>
+                                <p class="text-sm text-gray-600">6명(A~F)의 친구 관계 데이터가 주어져 있다.</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border border-orange-200">
+                                <h4 class="text-sm font-bold text-primary-700 mb-2"><i class="fas fa-flag-checkered mr-1"></i> 목표 상태</h4>
+                                <p class="text-sm text-gray-600">가장 영향력 있는 친구를 찾는다.</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border border-orange-200">
+                                <h4 class="text-sm font-bold text-accent-700 mb-2"><i class="fas fa-tasks mr-1"></i> 요구 사항</h4>
+                                <p class="text-sm text-gray-600">그래프와 표로 모델링하여 친구 단계의 합이 최소인 사람을 구한다.</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border border-orange-200">
+                                <h4 class="text-sm font-bold text-accent-700 mb-2"><i class="fas fa-exclamation-triangle mr-1"></i> 제약 조건</h4>
+                                <p class="text-sm text-gray-600">친구 관계는 양방향이며, 최소 단계를 사용한다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Data -->
+                    <div class="bg-amber-50 rounded-xl p-5 border border-amber-200">
+                        <h3 class="font-bold text-accent-800 mb-3 flex items-center gap-2">
+                            <i class="fas fa-keyboard text-accent-500"></i>
+                            친구 관계 입력
+                        </h3>
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-300 text-sm font-mono font-semibold text-accent-800">A - B</span>
+                            <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-300 text-sm font-mono font-semibold text-accent-800">A - D</span>
+                            <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-300 text-sm font-mono font-semibold text-accent-800">B - F</span>
+                            <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-300 text-sm font-mono font-semibold text-accent-800">D - F</span>
+                            <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-300 text-sm font-mono font-semibold text-accent-800">C - F</span>
+                            <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-300 text-sm font-mono font-semibold text-accent-800">C - E</span>
+                            <span class="bg-white px-3 py-1.5 rounded-lg border border-amber-300 text-sm font-mono font-semibold text-accent-800">E - F</span>
+                        </div>
+                        <p class="text-xs text-gray-500"><i class="fas fa-info-circle mr-1"></i>노드: A, B, C, D, E, F (6명) / 간선: 7개의 친구 관계</p>
+                    </div>
+
+                    <!-- Graph Visualization -->
+                    <div class="step-card bg-white rounded-xl p-5 pl-6 shadow-sm border border-orange-100">
+                        <h3 class="font-bold text-primary-800 mb-4 flex items-center gap-2">
+                            <span class="bg-accent-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">1</span>
+                            그래프로 모델링
+                        </h3>
+                        <div class="flex justify-center">
+                            <svg id="graph6" width="420" height="350" viewBox="0 0 420 350" class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-200">
+                                <!-- Edges -->
+                                <!-- A-B -->
+                                <line x1="110" y1="70" x2="310" y2="70" stroke="#fdba74" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- A-D -->
+                                <line x1="110" y1="70" x2="110" y2="200" stroke="#fdba74" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- B-F -->
+                                <line x1="310" y1="70" x2="310" y2="200" stroke="#fdba74" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- D-F -->
+                                <line x1="110" y1="200" x2="310" y2="200" stroke="#fdba74" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- C-F -->
+                                <line x1="210" y1="300" x2="310" y2="200" stroke="#fdba74" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- C-E -->
+                                <line x1="210" y1="300" x2="110" y2="300" stroke="#fdba74" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- E-F -->
+                                <line x1="110" y1="300" x2="310" y2="200" stroke="#fdba74" stroke-width="2.5" stroke-linecap="round"/>
+
+                                <!-- Node A -->
+                                <circle cx="110" cy="70" r="26" fill="url(#grad-orange)" stroke="#c2410c" stroke-width="2.5" class="graph-node"/>
+                                <text x="110" y="76" text-anchor="middle" fill="white" font-weight="bold" font-size="17">A</text>
+                                <!-- Node B -->
+                                <circle cx="310" cy="70" r="26" fill="url(#grad-orange)" stroke="#c2410c" stroke-width="2.5" class="graph-node"/>
+                                <text x="310" y="76" text-anchor="middle" fill="white" font-weight="bold" font-size="17">B</text>
+                                <!-- Node D -->
+                                <circle cx="110" cy="200" r="26" fill="url(#grad-orange)" stroke="#c2410c" stroke-width="2.5" class="graph-node"/>
+                                <text x="110" y="206" text-anchor="middle" fill="white" font-weight="bold" font-size="17">D</text>
+                                <!-- Node F -->
+                                <circle cx="310" cy="200" r="26" fill="url(#grad-amber)" stroke="#b45309" stroke-width="2.5" class="graph-node"/>
+                                <text x="310" y="206" text-anchor="middle" fill="white" font-weight="bold" font-size="17">F</text>
+                                <!-- Node E -->
+                                <circle cx="110" cy="300" r="26" fill="url(#grad-orange)" stroke="#c2410c" stroke-width="2.5" class="graph-node"/>
+                                <text x="110" y="306" text-anchor="middle" fill="white" font-weight="bold" font-size="17">E</text>
+                                <!-- Node C -->
+                                <circle cx="210" cy="300" r="26" fill="url(#grad-orange)" stroke="#c2410c" stroke-width="2.5" class="graph-node"/>
+                                <text x="210" y="306" text-anchor="middle" fill="white" font-weight="bold" font-size="17">C</text>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Distance Table -->
+                    <div class="step-card bg-white rounded-xl p-5 pl-6 shadow-sm border border-orange-100">
+                        <h3 class="font-bold text-primary-800 mb-1 flex items-center gap-2">
+                            <span class="bg-accent-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">2</span>
+                            친구 단계 표 채우기
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-4">각 친구 쌍 사이의 최소 단계를 입력하세요. (대각선 제외)</p>
+
+                        <div class="overflow-x-auto">
+                            <table class="mx-auto border-collapse" id="interactiveTable">
+                                <thead>
+                                    <tr>
+                                        <th class="w-14 h-12 bg-accent-600 text-white font-bold text-sm rounded-tl-lg"></th>
+                                        <th class="w-16 h-12 bg-accent-600 text-white font-bold text-sm">A</th>
+                                        <th class="w-16 h-12 bg-accent-600 text-white font-bold text-sm">B</th>
+                                        <th class="w-16 h-12 bg-accent-600 text-white font-bold text-sm">C</th>
+                                        <th class="w-16 h-12 bg-accent-600 text-white font-bold text-sm">D</th>
+                                        <th class="w-16 h-12 bg-accent-600 text-white font-bold text-sm">E</th>
+                                        <th class="w-16 h-12 bg-accent-600 text-white font-bold text-sm rounded-tr-lg">F</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table6Body">
+                                    <!-- Generated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Sum Calculation -->
+                        <div class="mt-6 bg-orange-50 rounded-xl p-5 border border-orange-200" id="sumSection" style="display:none;">
+                            <h4 class="font-bold text-primary-800 mb-3 flex items-center gap-2">
+                                <i class="fas fa-calculator text-primary-500"></i>
+                                개인별 친구 관계의 합
+                            </h4>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3" id="sumCards">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Result -->
+                        <div class="mt-6 text-center" id="resultSection" style="display:none;">
+                            <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border-2 border-amber-300 inline-block">
+                                <div class="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg winner-highlight" id="resultAvatar">
+                                    <span class="text-white text-3xl font-extrabold" id="resultName">?</span>
+                                </div>
+                                <p class="text-lg font-bold text-accent-800" id="resultText">가장 영향력 있는 사람: ?</p>
+                                <p class="text-sm text-gray-600" id="resultSum">친구 관계의 합: ?</p>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="mt-6 flex flex-wrap gap-3 justify-center">
+                            <button onclick="checkAnswers()" class="btn-primary text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg flex items-center gap-2">
+                                <i class="fas fa-check-circle"></i>
+                                정답 확인
+                            </button>
+                            <button onclick="showHint()" class="bg-white text-primary-600 border-2 border-primary-300 px-6 py-3 rounded-xl font-bold text-sm hover:bg-primary-50 transition-all flex items-center gap-2">
+                                <i class="fas fa-lightbulb"></i>
+                                힌트 보기
+                            </button>
+                            <button onclick="resetTable()" class="bg-white text-gray-600 border-2 border-gray-300 px-6 py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition-all flex items-center gap-2">
+                                <i class="fas fa-redo"></i>
+                                초기화
+                            </button>
+                            <button onclick="revealAnswer()" class="bg-white text-accent-600 border-2 border-accent-300 px-6 py-3 rounded-xl font-bold text-sm hover:bg-accent-50 transition-all flex items-center gap-2">
+                                <i class="fas fa-eye"></i>
+                                정답 보기
+                            </button>
+                        </div>
+
+                        <!-- Hint Section -->
+                        <div id="hintSection" class="mt-4 bg-amber-50 rounded-xl p-4 border border-amber-200" style="display:none;">
+                            <h4 class="font-bold text-accent-700 mb-2"><i class="fas fa-lightbulb text-amber-500 mr-1"></i> 힌트</h4>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li><i class="fas fa-chevron-right text-amber-400 mr-1 text-xs"></i>직접 연결된 친구는 1단계입니다.</li>
+                                <li><i class="fas fa-chevron-right text-amber-400 mr-1 text-xs"></i>한 명을 거쳐야 하면 2단계입니다.</li>
+                                <li><i class="fas fa-chevron-right text-amber-400 mr-1 text-xs"></i>그래프에서 최단 경로를 찾으세요.</li>
+                                <li><i class="fas fa-chevron-right text-amber-400 mr-1 text-xs"></i>표는 대칭입니다 (A→B = B→A).</li>
+                            </ul>
+                        </div>
+
+                        <!-- Feedback Message -->
+                        <div id="feedbackMsg" class="mt-4 text-center" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider fade-in"></div>
+
+        <!-- Problem Decomposition Summary -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-primary-50 to-accent-50 px-6 py-4 border-b border-orange-100">
+                    <h2 class="text-xl font-bold text-primary-800 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-puzzle-piece text-white text-sm"></i>
+                        </div>
+                        문제 분해와 모델링 과정 정리
+                    </h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid md:grid-cols-5 gap-4">
+                        <div class="text-center">
+                            <div class="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center mx-auto mb-2 border border-primary-200">
+                                <i class="fas fa-search text-primary-600 text-xl"></i>
+                            </div>
+                            <h4 class="text-sm font-bold text-primary-800">문제 분석</h4>
+                            <p class="text-xs text-gray-500 mt-1">현재/목표 상태<br>요구/제약 조건</p>
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <i class="fas fa-arrow-right text-primary-300 text-lg hidden md:block"></i>
+                            <i class="fas fa-arrow-down text-primary-300 text-lg md:hidden"></i>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-14 h-14 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-2 border border-amber-200">
+                                <i class="fas fa-cut text-amber-600 text-xl"></i>
+                            </div>
+                            <h4 class="text-sm font-bold text-accent-800">문제 분해</h4>
+                            <p class="text-xs text-gray-500 mt-1">작은 문제로<br>나누기</p>
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <i class="fas fa-arrow-right text-amber-300 text-lg hidden md:block"></i>
+                            <i class="fas fa-arrow-down text-amber-300 text-lg md:hidden"></i>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center mx-auto mb-2 border border-primary-200">
+                                <i class="fas fa-project-diagram text-primary-600 text-xl"></i>
+                            </div>
+                            <h4 class="text-sm font-bold text-primary-800">모델링</h4>
+                            <p class="text-xs text-gray-500 mt-1">그래프와 표로<br>표현</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider fade-in"></div>
+
+        <!-- Self Assessment -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-accent-50 to-primary-50 px-6 py-4 border-b border-orange-100">
+                    <h2 class="text-xl font-bold text-accent-800 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-clipboard-check text-white text-sm"></i>
+                        </div>
+                        스스로 평가하기
+                    </h2>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <!-- Assessment Item 1 -->
+                        <div class="bg-orange-50 rounded-xl p-4 border border-orange-200">
+                            <p class="font-semibold text-primary-800 mb-3">복잡한 문제를 해결 가능한 작은 문제로 분해하고 모델링할 수 있는가?</p>
+                            <div class="flex gap-6">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess1" value="3" class="assessment-radio">
+                                    <span class="text-sm text-gray-700">매우 잘함 <span class="text-primary-500 font-bold">(3)</span></span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess1" value="2" class="assessment-radio">
+                                    <span class="text-sm text-gray-700">보통 <span class="text-amber-500 font-bold">(2)</span></span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess1" value="1" class="assessment-radio">
+                                    <span class="text-sm text-gray-700">노력 필요 <span class="text-red-400 font-bold">(1)</span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <!-- Assessment Item 2 -->
+                        <div class="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                            <p class="font-semibold text-accent-800 mb-3">6단계 분리 이론을 이해하고, 그래프를 활용하여 영향력 있는 사람을 찾을 수 있는가?</p>
+                            <div class="flex gap-6">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess2" value="3" class="assessment-radio">
+                                    <span class="text-sm text-gray-700">매우 잘함 <span class="text-primary-500 font-bold">(3)</span></span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess2" value="2" class="assessment-radio">
+                                    <span class="text-sm text-gray-700">보통 <span class="text-amber-500 font-bold">(2)</span></span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess2" value="1" class="assessment-radio">
+                                    <span class="text-sm text-gray-700">노력 필요 <span class="text-red-400 font-bold">(1)</span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <!-- Assessment Item 3 -->
+                        <div class="bg-orange-50 rounded-xl p-4 border border-orange-200">
+                            <p class="font-semibold text-primary-800 mb-3">문제 분해와 모델링 과정을 종합적으로 적용할 수 있는가?</p>
+                            <div class="flex gap-6">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess3" value="3" class="assessment-radio">
+                                    <span class="text-sm text-gray-700">매우 잘함 <span class="text-primary-500 font-bold">(3)</span></span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess3" value="2" class="assessment-radio">
+                                    <span class="text-sm text-gray-700">보통 <span class="text-amber-500 font-bold">(2)</span></span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess3" value="1" class="assessment-radio">
+                                    <span class="text-sm text-gray-700">노력 필요 <span class="text-red-400 font-bold">(1)</span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assessment Result -->
+                    <div class="mt-6 text-center">
+                        <button onclick="calculateAssessment()" class="btn-primary text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg">
+                            <i class="fas fa-chart-bar mr-2"></i>평가 결과 보기
+                        </button>
+                        <div id="assessmentResult" class="mt-4" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-primary-800 to-accent-900 text-white mt-12">
+        <div class="max-w-5xl mx-auto px-6 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-book-open text-orange-300"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-orange-200">III. 알고리즘과 프로그래밍</p>
+                        <p class="text-sm text-orange-300/70">01 문제 분해와 모델링 &gt; 선택활동</p>
+                    </div>
+                </div>
+                <a href="../../../index.html" class="bg-white/10 hover:bg-white/20 transition-colors text-orange-200 px-5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2">
+                    <i class="fas fa-home"></i>
+                    목차로 돌아가기
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // ===== Correct answers for 6-person problem =====
+    // Graph: A-B, A-D, B-F, D-F, C-F, C-E, E-F
+    const nodes6 = ['A', 'B', 'C', 'D', 'E', 'F'];
+    const edges6 = [
+        ['A', 'B'], ['A', 'D'], ['B', 'F'], ['D', 'F'],
+        ['C', 'F'], ['C', 'E'], ['E', 'F']
+    ];
+
+    // Build adjacency
+    function buildAdj(nodes, edges) {
+        const adj = {};
+        nodes.forEach(n => adj[n] = []);
+        edges.forEach(([a, b]) => {
+            adj[a].push(b);
+            adj[b].push(a);
+        });
+        return adj;
+    }
+
+    // BFS shortest distance
+    function bfs(adj, start, nodes) {
+        const dist = {};
+        nodes.forEach(n => dist[n] = Infinity);
+        dist[start] = 0;
+        const queue = [start];
+        while (queue.length > 0) {
+            const curr = queue.shift();
+            adj[curr].forEach(neighbor => {
+                if (dist[neighbor] === Infinity) {
+                    dist[neighbor] = dist[curr] + 1;
+                    queue.push(neighbor);
+                }
+            });
+        }
+        return dist;
+    }
+
+    // Compute all distances
+    const adj6 = buildAdj(nodes6, edges6);
+    const correctDist = {};
+    nodes6.forEach(n => {
+        correctDist[n] = bfs(adj6, n, nodes6);
+    });
+
+    // ===== Generate interactive table =====
+    function generateTable() {
+        const tbody = document.getElementById('table6Body');
+        tbody.innerHTML = '';
+        nodes6.forEach((row, ri) => {
+            const tr = document.createElement('tr');
+            // Row header
+            const th = document.createElement('td');
+            th.className = 'bg-accent-500 text-white font-bold text-sm text-center py-2 px-3';
+            if (ri === nodes6.length - 1) th.classList.add('rounded-bl-lg');
+            th.textContent = row;
+            tr.appendChild(th);
+
+            nodes6.forEach((col, ci) => {
+                const td = document.createElement('td');
+                td.className = 'text-center py-2 px-2';
+                if (ri === nodes6.length - 1 && ci === nodes6.length - 1) td.classList.add('rounded-br-lg');
+
+                if (row === col) {
+                    td.className += ' bg-gray-100 text-gray-400 font-bold';
+                    td.innerHTML = '&times;';
+                } else {
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.min = '1';
+                    input.max = '9';
+                    input.className = 'table-input';
+                    input.id = `cell-${row}-${col}`;
+                    input.setAttribute('data-row', row);
+                    input.setAttribute('data-col', col);
+                    input.addEventListener('input', function() {
+                        // Mirror value
+                        const mirror = document.getElementById(`cell-${col}-${row}`);
+                        if (mirror && mirror.value !== this.value) {
+                            mirror.value = this.value;
+                        }
+                        // Remove feedback classes
+                        this.classList.remove('correct', 'incorrect');
+                        if (mirror) mirror.classList.remove('correct', 'incorrect');
+                    });
+                    td.appendChild(input);
+                }
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+
+    // ===== Check Answers =====
+    function checkAnswers() {
+        let allCorrect = true;
+        let allFilled = true;
+        let correctCount = 0;
+        let totalCells = 0;
+
+        nodes6.forEach(row => {
+            nodes6.forEach(col => {
+                if (row === col) return;
+                totalCells++;
+                const input = document.getElementById(`cell-${row}-${col}`);
+                if (!input) return;
+                const val = parseInt(input.value);
+                const correct = correctDist[row][col];
+
+                if (isNaN(val) || input.value === '') {
+                    allFilled = false;
+                    input.classList.remove('correct', 'incorrect');
+                } else if (val === correct) {
+                    input.classList.add('correct');
+                    input.classList.remove('incorrect');
+                    correctCount++;
+                } else {
+                    input.classList.add('incorrect');
+                    input.classList.remove('correct');
+                    allCorrect = false;
+                }
+            });
+        });
+
+        const feedback = document.getElementById('feedbackMsg');
+        feedback.style.display = 'block';
+
+        if (!allFilled) {
+            feedback.innerHTML = `
+                <div class="bg-amber-50 border border-amber-300 rounded-xl p-4 inline-block">
+                    <i class="fas fa-exclamation-circle text-amber-500 mr-2"></i>
+                    <span class="text-amber-800 font-semibold">모든 칸을 채워주세요! (${correctCount}/${totalCells / 2} 쌍 완료)</span>
+                </div>`;
+            return;
+        }
+
+        if (allCorrect) {
+            feedback.innerHTML = `
+                <div class="bg-green-50 border border-green-300 rounded-xl p-4 inline-block">
+                    <i class="fas fa-check-circle text-green-500 mr-2 text-lg"></i>
+                    <span class="text-green-800 font-bold text-lg">정답입니다! 훌륭해요!</span>
+                </div>`;
+            showSumsAndResult();
+        } else {
+            // Count unique incorrect pairs
+            const incorrectPairs = new Set();
+            nodes6.forEach(row => {
+                nodes6.forEach(col => {
+                    if (row >= col) return;
+                    const input = document.getElementById(`cell-${row}-${col}`);
+                    if (!input) return;
+                    const val = parseInt(input.value);
+                    if (val !== correctDist[row][col]) {
+                        incorrectPairs.add(`${row}-${col}`);
+                    }
+                });
+            });
+            feedback.innerHTML = `
+                <div class="bg-red-50 border border-red-300 rounded-xl p-4 inline-block">
+                    <i class="fas fa-times-circle text-red-500 mr-2"></i>
+                    <span class="text-red-800 font-semibold">${incorrectPairs.size}개의 쌍이 틀렸습니다. 그래프를 다시 확인해보세요!</span>
+                </div>`;
+        }
+    }
+
+    // ===== Show Sums and Result =====
+    function showSumsAndResult() {
+        const sumSection = document.getElementById('sumSection');
+        const sumCards = document.getElementById('sumCards');
+        const resultSection = document.getElementById('resultSection');
+
+        // Calculate sums
+        const sums = {};
+        let minSum = Infinity;
+        let winner = '';
+
+        nodes6.forEach(n => {
+            let sum = 0;
+            nodes6.forEach(m => {
+                if (n !== m) sum += correctDist[n][m];
+            });
+            sums[n] = sum;
+            if (sum < minSum) {
+                minSum = sum;
+                winner = n;
+            }
+        });
+
+        // Generate sum cards
+        sumCards.innerHTML = '';
+        nodes6.forEach(n => {
+            const isWinner = n === winner;
+            const card = document.createElement('div');
+            card.className = `flex items-center justify-between rounded-lg px-4 py-2 border ${
+                isWinner ? 'bg-amber-100 border-amber-300 winner-highlight' : 'bg-orange-50 border-orange-200'
+            }`;
+            card.innerHTML = `
+                <span class="font-bold ${isWinner ? 'text-accent-800' : 'text-primary-800'}">${n}</span>
+                <span class="${isWinner ? 'bg-accent-500' : 'bg-primary-500'} text-white font-bold px-3 py-1 rounded-lg text-sm">${sums[n]}</span>
+            `;
+            sumCards.appendChild(card);
+        });
+
+        sumSection.style.display = 'block';
+
+        // Show result
+        document.getElementById('resultName').textContent = winner;
+        document.getElementById('resultText').textContent = `가장 영향력 있는 사람: ${winner}`;
+        document.getElementById('resultSum').textContent = `친구 관계의 합: ${minSum} (최솟값)`;
+        resultSection.style.display = 'block';
+
+        // Scroll to result
+        resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // ===== Show Hint =====
+    function showHint() {
+        const hint = document.getElementById('hintSection');
+        hint.style.display = hint.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // ===== Reset Table =====
+    function resetTable() {
+        nodes6.forEach(row => {
+            nodes6.forEach(col => {
+                if (row === col) return;
+                const input = document.getElementById(`cell-${row}-${col}`);
+                if (input) {
+                    input.value = '';
+                    input.classList.remove('correct', 'incorrect');
+                    input.disabled = false;
+                }
+            });
+        });
+        document.getElementById('sumSection').style.display = 'none';
+        document.getElementById('resultSection').style.display = 'none';
+        document.getElementById('feedbackMsg').style.display = 'none';
+        document.getElementById('hintSection').style.display = 'none';
+    }
+
+    // ===== Reveal Answer =====
+    function revealAnswer() {
+        nodes6.forEach(row => {
+            nodes6.forEach(col => {
+                if (row === col) return;
+                const input = document.getElementById(`cell-${row}-${col}`);
+                if (input) {
+                    input.value = correctDist[row][col];
+                    input.classList.add('correct');
+                    input.classList.remove('incorrect');
+                    input.disabled = true;
+                }
+            });
+        });
+        showSumsAndResult();
+        const feedback = document.getElementById('feedbackMsg');
+        feedback.style.display = 'block';
+        feedback.innerHTML = `
+            <div class="bg-blue-50 border border-blue-300 rounded-xl p-4 inline-block">
+                <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                <span class="text-blue-800 font-semibold">정답이 표시되었습니다. 초기화 후 다시 풀어보세요!</span>
+            </div>`;
+    }
+
+    // ===== Self Assessment =====
+    function calculateAssessment() {
+        const results = [];
+        for (let i = 1; i <= 3; i++) {
+            const selected = document.querySelector(`input[name="assess${i}"]:checked`);
+            if (selected) {
+                results.push(parseInt(selected.value));
+            }
+        }
+
+        const resultDiv = document.getElementById('assessmentResult');
+        resultDiv.style.display = 'block';
+
+        if (results.length < 3) {
+            resultDiv.innerHTML = `
+                <div class="bg-amber-50 border border-amber-300 rounded-xl p-4 inline-block">
+                    <i class="fas fa-exclamation-circle text-amber-500 mr-2"></i>
+                    <span class="text-amber-800 font-semibold">모든 항목을 평가해주세요.</span>
+                </div>`;
+            return;
+        }
+
+        const total = results.reduce((a, b) => a + b, 0);
+        let message, color, icon;
+
+        if (total >= 8) {
+            message = '훌륭합니다! 문제 분해와 모델링을 잘 이해하고 있습니다.';
+            color = 'green';
+            icon = 'trophy';
+        } else if (total >= 5) {
+            message = '잘하고 있어요! 조금 더 연습하면 완벽해질 거예요.';
+            color = 'amber';
+            icon = 'thumbs-up';
+        } else {
+            message = '기초부터 다시 복습해보세요. 포기하지 마세요!';
+            color = 'red';
+            icon = 'hand-holding-heart';
+        }
+
+        resultDiv.innerHTML = `
+            <div class="bg-${color}-50 border border-${color}-300 rounded-xl p-5 inline-block max-w-md">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fas fa-${icon} text-${color}-500 text-2xl"></i>
+                    <span class="text-2xl font-extrabold text-${color}-700">${total}/9</span>
+                </div>
+                <p class="text-${color}-800 font-semibold">${message}</p>
+            </div>`;
+    }
+
+    // ===== Intersection Observer for fade-in =====
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ===== Scroll Progress =====
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = (scrollTop / docHeight) * 100;
+        document.getElementById('scrollProgress').style.width = progress + '%';
+    });
+
+    // ===== Initialize =====
+    document.addEventListener('DOMContentLoaded', () => {
+        generateTable();
+    });
+    </script>
+</body>
+</html>

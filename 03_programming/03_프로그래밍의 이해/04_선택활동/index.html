@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>선택활동 - 다차원 데이터 구조를 이용한 이미지 표현하기 | 정보</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'},
+                        accent: {50:'#fffbeb',100:'#fef3c7',200:'#fde68a',300:'#fcd34d',400:'#fbbf24',500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e',900:'#78350f'}
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { font-family: 'Noto Sans KR', sans-serif; }
+        body { background-color: #fffaf5; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(234, 88, 12, 0.12);
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #fb923c, #f59e0b, #fb923c, transparent);
+            border-radius: 2px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ea580c, #c2410c);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(234, 88, 12, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(217, 119, 6, 0.3);
+        }
+
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f97316, #f59e0b);
+            z-index: 100;
+            transition: width 0.1s ease;
+        }
+
+        .assessment-radio {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fdba74;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .assessment-radio:checked {
+            border-color: #f97316;
+            background: radial-gradient(circle, #f97316 40%, transparent 41%);
+        }
+
+        /* Pixel grid styles */
+        .pixel-cell {
+            width: 48px;
+            height: 48px;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .pixel-cell:hover {
+            transform: scale(1.08);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .grayscale-cell {
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Color palette button */
+        .palette-btn {
+            width: 36px;
+            height: 36px;
+            border: 3px solid #d1d5db;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .palette-btn:hover {
+            transform: scale(1.15);
+        }
+        .palette-btn.active {
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Code block */
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .string { color: #86efac; }
+        .code-block .number { color: #fcd34d; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .function { color: #67e8f9; }
+        .code-block .bracket { color: #fb923c; }
+
+        /* RGB Slider */
+        .rgb-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+            transition: opacity 0.2s;
+        }
+        .rgb-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .rgb-slider.r-slider { background: linear-gradient(90deg, #000, #f00); }
+        .rgb-slider.r-slider::-webkit-slider-thumb { background: #ef4444; }
+        .rgb-slider.g-slider { background: linear-gradient(90deg, #000, #0f0); }
+        .rgb-slider.g-slider::-webkit-slider-thumb { background: #22c55e; }
+        .rgb-slider.b-slider { background: linear-gradient(90deg, #000, #00f); }
+        .rgb-slider.b-slider::-webkit-slider-thumb { background: #3b82f6; }
+
+        /* Generated code area */
+        .generated-code {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Grid size control */
+        .size-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 2px solid #fed7aa;
+            background: white;
+            font-weight: 700;
+            color: #9a3412;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .size-btn:hover {
+            background: #fff7ed;
+            border-color: #f97316;
+        }
+
+        /* Canvas preview */
+        .preview-canvas {
+            image-rendering: pixelated;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        /* Tooltip for pixel grid */
+        .grid-tooltip {
+            position: absolute;
+            background: #1e293b;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            pointer-events: none;
+            z-index: 50;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <svg width="100%" height="100%">
+                <defs>
+                    <pattern id="hero-pattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                        <circle cx="30" cy="30" r="2" fill="white" opacity="0.3"/>
+                        <rect x="10" y="10" width="8" height="8" fill="white" opacity="0.1"/>
+                        <rect x="42" y="42" width="8" height="8" fill="white" opacity="0.1"/>
+                        <rect x="10" y="42" width="8" height="8" fill="white" opacity="0.08"/>
+                        <rect x="42" y="10" width="8" height="8" fill="white" opacity="0.08"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#hero-pattern)"/>
+            </svg>
+        </div>
+        <div class="max-w-5xl mx-auto px-6 py-12 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center space-x-2 text-orange-200 text-sm mb-8 flex-wrap">
+                <a href="../../../index.html" class="hover:text-white transition-colors">
+                    <i class="fas fa-home mr-1"></i>정보
+                </a>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span>III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span>03 프로그래밍의 이해</span>
+                <i class="fas fa-chevron-right text-xs opacity-60"></i>
+                <span class="text-white font-semibold">선택활동</span>
+            </nav>
+
+            <!-- Title -->
+            <div class="flex items-start gap-5">
+                <div class="w-16 h-16 bg-white/15 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0 mt-1">
+                    <i class="fas fa-th text-2xl text-amber-300"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="inline-block bg-white/20 backdrop-blur-sm text-orange-100 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                        <i class="fas fa-star mr-1"></i>선택활동 (개발)
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold mb-3 leading-tight">다차원 데이터 구조를 이용한 이미지 표현하기</h1>
+                    <p class="text-orange-100 text-lg font-light">2차원, 3차원 리스트를 활용한 흑백/컬러 이미지 표현과 픽셀아트 제작</p>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="mt-8 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <h3 class="text-amber-300 font-bold text-sm mb-3">
+                    <i class="fas fa-bullseye mr-2"></i>학습 목표
+                </h3>
+                <div class="grid md:grid-cols-3 gap-3">
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-check-circle text-amber-400 mt-0.5 text-sm"></i>
+                        <span class="text-sm text-orange-50">2차원 리스트로 흑백 이미지를 표현할 수 있다</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-check-circle text-amber-400 mt-0.5 text-sm"></i>
+                        <span class="text-sm text-orange-50">3차원 리스트로 컬러 이미지를 표현할 수 있다</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-check-circle text-amber-400 mt-0.5 text-sm"></i>
+                        <span class="text-sm text-orange-50">다차원 데이터 구조를 활용하여 나만의 픽셀아트를 만들 수 있다</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-12">
+
+        <!-- ========== TASK 1: Grayscale Image ========== -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-primary-50 to-accent-50 px-6 py-4 border-b border-orange-100">
+                    <h2 class="text-xl font-bold text-primary-800 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                            <span class="text-white text-sm font-black">1</span>
+                        </div>
+                        흑백 이미지를 2차원 리스트로 표현하기
+                    </h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                        <p class="text-gray-700 leading-relaxed">
+                            다음 프로그램은 <strong class="text-primary-700">2차원 리스트</strong>를 사용하여 흑백 이미지를 표현합니다.
+                            프로그램을 실행하면 어떤 그림이 나오는지 아래 그리드에서 확인해 보세요.
+                            값이 <span class="bg-gray-800 text-white px-2 py-0.5 rounded font-mono text-sm">0</span>이면 검정,
+                            <span class="bg-gray-400 text-white px-2 py-0.5 rounded font-mono text-sm">128</span>이면 회색,
+                            <span class="bg-gray-100 text-gray-800 px-2 py-0.5 rounded font-mono text-sm border">255</span>이면 흰색입니다.
+                        </p>
+                    </div>
+
+                    <!-- Python Code -->
+                    <div class="code-block p-5">
+                        <div class="flex items-center gap-2 mb-3 pb-3 border-b border-slate-600">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="ml-2 text-slate-400 text-xs">grayscale_image.py</span>
+                        </div>
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+a = <span class="bracket">[[</span><span class="number">255</span>,   <span class="number">0</span>,   <span class="number">0</span>, <span class="number">255</span>,   <span class="number">0</span>,   <span class="number">0</span>, <span class="number">255</span><span class="bracket">]</span>,
+     <span class="bracket">[</span>  <span class="number">0</span>, <span class="number">128</span>, <span class="number">128</span>,   <span class="number">0</span>, <span class="number">255</span>, <span class="number">255</span>,   <span class="number">0</span><span class="bracket">]</span>,
+     <span class="bracket">[</span>  <span class="number">0</span>, <span class="number">128</span>, <span class="number">128</span>, <span class="number">128</span>, <span class="number">128</span>, <span class="number">255</span>,   <span class="number">0</span><span class="bracket">]</span>,
+     <span class="bracket">[</span>  <span class="number">0</span>, <span class="number">128</span>, <span class="number">128</span>, <span class="number">128</span>, <span class="number">128</span>, <span class="number">255</span>,   <span class="number">0</span><span class="bracket">]</span>,
+     <span class="bracket">[</span><span class="number">255</span>,   <span class="number">0</span>, <span class="number">128</span>, <span class="number">128</span>, <span class="number">255</span>,   <span class="number">0</span>, <span class="number">255</span><span class="bracket">]</span>,
+     <span class="bracket">[</span><span class="number">255</span>, <span class="number">255</span>,   <span class="number">0</span>, <span class="number">255</span>,   <span class="number">0</span>, <span class="number">255</span>, <span class="number">255</span><span class="bracket">]</span>,
+     <span class="bracket">[</span><span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>,   <span class="number">0</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span><span class="bracket">]]</span>
+plt.<span class="function">imshow</span>(a, cmap=<span class="string">'gray'</span>)
+                    </div>
+
+                    <!-- Interactive Grayscale Grid -->
+                    <div class="text-center">
+                        <h3 class="text-lg font-bold text-primary-800 mb-4">
+                            <i class="fas fa-eye mr-2 text-primary-500"></i>실행 결과 미리보기
+                        </h3>
+                        <div class="inline-block">
+                            <div id="grayscaleGrid" class="inline-grid gap-0 border-2 border-gray-300 rounded-lg overflow-hidden" style="grid-template-columns: repeat(7, 48px);"></div>
+                        </div>
+                        <div class="mt-4 flex justify-center gap-3 flex-wrap">
+                            <button onclick="toggleGrayscaleValues()" class="btn-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg">
+                                <i class="fas fa-eye mr-2"></i>값 보기/숨기기
+                            </button>
+                            <button onclick="renderGrayscaleCanvas()" class="btn-secondary text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg">
+                                <i class="fas fa-image mr-2"></i>이미지로 보기
+                            </button>
+                        </div>
+                        <div id="grayscaleCanvasWrap" class="mt-4" style="display:none;">
+                            <canvas id="grayscaleCanvas" class="preview-canvas mx-auto" width="140" height="140"></canvas>
+                            <p class="text-xs text-gray-400 mt-2">* 20x 확대 이미지</p>
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="flex justify-center gap-6 text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 bg-black rounded border"></div>
+                            <span class="text-gray-600">0 (검정)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded border" style="background:#808080;"></div>
+                            <span class="text-gray-600">128 (회색)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 bg-white rounded border"></div>
+                            <span class="text-gray-600">255 (흰색)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider fade-in"></div>
+
+        <!-- ========== TASK 2: Color Image ========== -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-accent-50 to-primary-50 px-6 py-4 border-b border-orange-100">
+                    <h2 class="text-xl font-bold text-accent-800 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center">
+                            <span class="text-white text-sm font-black">2</span>
+                        </div>
+                        컬러 이미지를 3차원 리스트로 표현하기
+                    </h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="bg-amber-50 rounded-xl p-5 border border-amber-200">
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong class="text-accent-700">RGB 색상표</strong>를 참고하여 아래 7x7 그리드에 색을 칠해 하트 모양을 완성해 보세요.
+                            3차원 리스트는 각 픽셀이 <span class="font-mono bg-amber-200 px-1.5 py-0.5 rounded text-sm">[R, G, B]</span> 값을 가집니다.
+                        </p>
+                    </div>
+
+                    <!-- RGB Color Table -->
+                    <div class="overflow-x-auto">
+                        <table class="mx-auto border-collapse">
+                            <thead>
+                                <tr class="bg-gradient-to-r from-primary-100 to-accent-100">
+                                    <th class="px-5 py-3 text-sm font-bold text-primary-800 border border-orange-200">색상</th>
+                                    <th class="px-5 py-3 text-sm font-bold text-red-600 border border-orange-200">R</th>
+                                    <th class="px-5 py-3 text-sm font-bold text-green-600 border border-orange-200">G</th>
+                                    <th class="px-5 py-3 text-sm font-bold text-blue-600 border border-orange-200">B</th>
+                                    <th class="px-5 py-3 text-sm font-bold text-primary-800 border border-orange-200">미리보기</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white">
+                                    <td class="px-5 py-2 border border-orange-200 font-semibold text-sm">흰색 (WT)</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">255</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">255</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">255</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center"><div class="w-6 h-6 mx-auto rounded border bg-white"></div></td>
+                                </tr>
+                                <tr class="bg-orange-50/50">
+                                    <td class="px-5 py-2 border border-orange-200 font-semibold text-sm">빨강 (R)</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">255</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">0</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">0</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center"><div class="w-6 h-6 mx-auto rounded" style="background:rgb(255,0,0)"></div></td>
+                                </tr>
+                                <tr class="bg-white">
+                                    <td class="px-5 py-2 border border-orange-200 font-semibold text-sm">초록 (G)</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">0</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">255</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">0</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center"><div class="w-6 h-6 mx-auto rounded" style="background:rgb(0,255,0)"></div></td>
+                                </tr>
+                                <tr class="bg-orange-50/50">
+                                    <td class="px-5 py-2 border border-orange-200 font-semibold text-sm">파랑 (B)</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">0</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">0</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">255</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center"><div class="w-6 h-6 mx-auto rounded" style="background:rgb(0,0,255)"></div></td>
+                                </tr>
+                                <tr class="bg-white">
+                                    <td class="px-5 py-2 border border-orange-200 font-semibold text-sm">검정 (BK)</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">0</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">0</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center font-mono text-sm">0</td>
+                                    <td class="px-5 py-2 border border-orange-200 text-center"><div class="w-6 h-6 mx-auto rounded bg-black"></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Python Code -->
+                    <div class="code-block p-5">
+                        <div class="flex items-center gap-2 mb-3 pb-3 border-b border-slate-600">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="ml-2 text-slate-400 text-xs">color_image.py</span>
+                        </div>
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+R  = <span class="bracket">[</span><span class="number">255</span>,   <span class="number">0</span>,   <span class="number">0</span><span class="bracket">]</span>  <span class="comment"># 빨강</span>
+G  = <span class="bracket">[</span>  <span class="number">0</span>, <span class="number">255</span>,   <span class="number">0</span><span class="bracket">]</span>  <span class="comment"># 초록</span>
+B  = <span class="bracket">[</span>  <span class="number">0</span>,   <span class="number">0</span>, <span class="number">255</span><span class="bracket">]</span>  <span class="comment"># 파랑</span>
+WT = <span class="bracket">[</span><span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span><span class="bracket">]</span>  <span class="comment"># 하양</span>
+BK = <span class="bracket">[</span>  <span class="number">0</span>,   <span class="number">0</span>,   <span class="number">0</span><span class="bracket">]</span>  <span class="comment"># 검정</span>
+
+a = <span class="bracket">[[</span>G, BK, BK, G, BK, BK, G<span class="bracket">]</span>,
+     <span class="comment"># ... 나머지 행을 완성하세요</span>
+     <span class="bracket">]</span>
+plt.<span class="function">imshow</span>(a)
+                    </div>
+
+                    <!-- Color palette selection -->
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-palette mr-2"></i>색상 팔레트 (클릭하여 선택)</p>
+                        <div class="flex gap-3 justify-center flex-wrap" id="task2Palette">
+                            <button class="palette-btn active" data-color="WT" style="background:rgb(255,255,255);" onclick="selectTask2Color(this,'WT')" title="흰색 (WT)"></button>
+                            <button class="palette-btn" data-color="R" style="background:rgb(255,0,0);" onclick="selectTask2Color(this,'R')" title="빨강 (R)"></button>
+                            <button class="palette-btn" data-color="G" style="background:rgb(0,255,0);" onclick="selectTask2Color(this,'G')" title="초록 (G)"></button>
+                            <button class="palette-btn" data-color="B" style="background:rgb(0,0,255);" onclick="selectTask2Color(this,'B')" title="파랑 (B)"></button>
+                            <button class="palette-btn" data-color="BK" style="background:rgb(0,0,0);" onclick="selectTask2Color(this,'BK')" title="검정 (BK)"></button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2 text-center">현재 선택: <span id="task2CurrentColor" class="font-bold text-primary-600">WT (흰색)</span></p>
+                    </div>
+
+                    <!-- Interactive Color Grid -->
+                    <div class="text-center">
+                        <h3 class="text-lg font-bold text-accent-800 mb-4">
+                            <i class="fas fa-paint-brush mr-2 text-accent-500"></i>컬러 하트 그리드 (클릭하여 색 칠하기)
+                        </h3>
+                        <div class="inline-block">
+                            <div id="colorGrid" class="inline-grid gap-0 border-2 border-gray-300 rounded-lg overflow-hidden" style="grid-template-columns: repeat(7, 48px);"></div>
+                        </div>
+                        <div class="mt-4 flex justify-center gap-3 flex-wrap">
+                            <button onclick="showColorHint()" class="bg-amber-100 hover:bg-amber-200 text-amber-800 px-4 py-2.5 rounded-xl font-bold text-sm transition-all">
+                                <i class="fas fa-lightbulb mr-2"></i>힌트 보기
+                            </button>
+                            <button onclick="renderColorCanvas()" class="btn-secondary text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg">
+                                <i class="fas fa-image mr-2"></i>이미지로 보기
+                            </button>
+                            <button onclick="resetColorGrid()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-bold text-sm transition-all">
+                                <i class="fas fa-undo mr-2"></i>초기화
+                            </button>
+                        </div>
+                        <div id="colorHint" class="mt-4" style="display:none;">
+                            <div class="bg-amber-50 border border-amber-300 rounded-xl p-4 inline-block text-left">
+                                <p class="text-amber-800 text-sm"><i class="fas fa-lightbulb text-amber-500 mr-2"></i>
+                                    <strong>힌트:</strong> 1번 과제의 흑백 하트 모양을 참고하세요. 검정(0) 부분을 다양한 색으로, 흰색(255) 부분은 흰색(WT)으로, 회색(128) 부분은 원하는 색으로 채워보세요.
+                                </p>
+                            </div>
+                        </div>
+                        <div id="colorCanvasWrap" class="mt-4" style="display:none;">
+                            <canvas id="colorCanvas" class="preview-canvas mx-auto" width="140" height="140"></canvas>
+                            <p class="text-xs text-gray-400 mt-2">* 20x 확대 이미지</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider fade-in"></div>
+
+        <!-- ========== TASK 3: Custom Pixel Art ========== -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-primary-50 to-accent-50 px-6 py-4 border-b border-orange-100">
+                    <h2 class="text-xl font-bold text-primary-800 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                            <span class="text-white text-sm font-black">3</span>
+                        </div>
+                        나만의 픽셀아트 만들기
+                    </h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="bg-orange-50 rounded-xl p-5 border border-orange-200">
+                        <p class="text-gray-700 leading-relaxed">
+                            2번 프로그램을 수정하여 <strong class="text-primary-700">나만의 픽셀아트</strong>를 만들어 보세요.
+                            그리드 크기를 조절하고 자유롭게 색을 칠한 후, Python 코드를 생성할 수 있습니다.
+                        </p>
+                    </div>
+
+                    <!-- Grid Size Control -->
+                    <div class="flex items-center justify-center gap-4 flex-wrap">
+                        <span class="text-sm font-bold text-gray-700">그리드 크기:</span>
+                        <div class="flex items-center gap-2">
+                            <button class="size-btn" onclick="changeCustomSize(-1)"><i class="fas fa-minus text-xs"></i></button>
+                            <span id="customSizeLabel" class="text-lg font-extrabold text-primary-700 w-16 text-center">7 x 7</span>
+                            <button class="size-btn" onclick="changeCustomSize(1)"><i class="fas fa-plus text-xs"></i></button>
+                        </div>
+                        <span class="text-xs text-gray-400">(3~16)</span>
+                    </div>
+
+                    <!-- Custom palette -->
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-palette mr-2"></i>색상 팔레트</p>
+                        <div class="flex gap-3 justify-center flex-wrap" id="task3Palette">
+                            <button class="palette-btn" data-color="WT" style="background:rgb(255,255,255);" onclick="selectTask3Color(this,'WT')" title="흰색 (WT)"></button>
+                            <button class="palette-btn active" data-color="R" style="background:rgb(255,0,0);" onclick="selectTask3Color(this,'R')" title="빨강 (R)"></button>
+                            <button class="palette-btn" data-color="G" style="background:rgb(0,255,0);" onclick="selectTask3Color(this,'G')" title="초록 (G)"></button>
+                            <button class="palette-btn" data-color="B" style="background:rgb(0,0,255);" onclick="selectTask3Color(this,'B')" title="파랑 (B)"></button>
+                            <button class="palette-btn" data-color="BK" style="background:rgb(0,0,0);" onclick="selectTask3Color(this,'BK')" title="검정 (BK)"></button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2 text-center">현재 선택: <span id="task3CurrentColor" class="font-bold text-primary-600">R (빨강)</span></p>
+                    </div>
+
+                    <!-- Custom Grid + Preview side by side -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="text-center">
+                            <h3 class="text-md font-bold text-gray-700 mb-3"><i class="fas fa-edit mr-2"></i>그리드 편집</h3>
+                            <div class="inline-block overflow-auto max-w-full">
+                                <div id="customGrid" class="inline-grid gap-0 border-2 border-gray-300 rounded-lg overflow-hidden"></div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-md font-bold text-gray-700 mb-3"><i class="fas fa-image mr-2"></i>실시간 미리보기</h3>
+                            <canvas id="customCanvas" class="preview-canvas mx-auto" width="210" height="210"></canvas>
+                            <p class="text-xs text-gray-400 mt-2">* 실시간으로 업데이트됩니다</p>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex justify-center gap-3 flex-wrap">
+                        <button onclick="fillAllCustom()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-bold text-sm transition-all">
+                            <i class="fas fa-fill-drip mr-2"></i>전체 채우기
+                        </button>
+                        <button onclick="resetCustomGrid()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-bold text-sm transition-all">
+                            <i class="fas fa-undo mr-2"></i>초기화
+                        </button>
+                        <button onclick="generateCode()" class="btn-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg">
+                            <i class="fas fa-code mr-2"></i>Python 코드 생성
+                        </button>
+                    </div>
+
+                    <!-- Generated Code -->
+                    <div id="generatedCodeWrap" style="display:none;">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-md font-bold text-gray-700"><i class="fas fa-file-code mr-2 text-primary-500"></i>생성된 Python 코드</h3>
+                            <button onclick="copyCode()" class="text-sm text-primary-600 hover:text-primary-800 font-semibold transition-colors">
+                                <i class="fas fa-copy mr-1"></i>복사하기
+                            </button>
+                        </div>
+                        <div class="generated-code p-4" id="generatedCode"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider fade-in"></div>
+
+        <!-- ========== RGB Color Mixer ========== -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-accent-50 to-primary-50 px-6 py-4 border-b border-orange-100">
+                    <h2 class="text-xl font-bold text-accent-800 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-sliders-h text-white text-sm"></i>
+                        </div>
+                        RGB 색상 혼합기
+                    </h2>
+                </div>
+                <div class="p-6">
+                    <div class="bg-amber-50 rounded-xl p-5 border border-amber-200 mb-6">
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong class="text-accent-700">RGB 색상 모델</strong>은 빨강(Red), 초록(Green), 파랑(Blue) 세 가지 빛의 강도를 조합하여 색을 표현합니다.
+                            각 값은 <span class="font-mono bg-amber-200 px-1.5 py-0.5 rounded text-sm">0~255</span> 범위이며, 세 슬라이더를 조절하여 색이 어떻게 혼합되는지 확인해 보세요.
+                        </p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <!-- Sliders -->
+                        <div class="space-y-5">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-sm font-bold text-red-600"><i class="fas fa-circle text-xs mr-1"></i>Red (R)</label>
+                                    <span id="rVal" class="font-mono text-sm font-bold text-red-600">128</span>
+                                </div>
+                                <input type="range" min="0" max="255" value="128" class="rgb-slider r-slider" id="rSlider" oninput="updateRGB()">
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-sm font-bold text-green-600"><i class="fas fa-circle text-xs mr-1"></i>Green (G)</label>
+                                    <span id="gVal" class="font-mono text-sm font-bold text-green-600">128</span>
+                                </div>
+                                <input type="range" min="0" max="255" value="128" class="rgb-slider g-slider" id="gSlider" oninput="updateRGB()">
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-sm font-bold text-blue-600"><i class="fas fa-circle text-xs mr-1"></i>Blue (B)</label>
+                                    <span id="bVal" class="font-mono text-sm font-bold text-blue-600">128</span>
+                                </div>
+                                <input type="range" min="0" max="255" value="128" class="rgb-slider b-slider" id="bSlider" oninput="updateRGB()">
+                            </div>
+                        </div>
+
+                        <!-- Preview -->
+                        <div class="text-center">
+                            <div id="rgbPreview" class="w-40 h-40 mx-auto rounded-2xl shadow-xl border-4 border-white transition-colors duration-150" style="background:rgb(128,128,128);"></div>
+                            <div class="mt-4 space-y-1">
+                                <p class="font-mono text-sm text-gray-600">RGB: <span id="rgbText" class="font-bold text-primary-700">(128, 128, 128)</span></p>
+                                <p class="font-mono text-sm text-gray-600">HEX: <span id="hexText" class="font-bold text-primary-700">#808080</span></p>
+                                <p class="font-mono text-sm text-gray-600">Python: <span id="pyText" class="font-bold text-primary-700">[128, 128, 128]</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider fade-in"></div>
+
+        <!-- ========== Self Assessment ========== -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-accent-50 to-primary-50 px-6 py-4 border-b border-orange-100">
+                    <h2 class="text-xl font-bold text-accent-800 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-clipboard-check text-white text-sm"></i>
+                        </div>
+                        스스로 평가하기
+                    </h2>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <!-- Assessment Item 1 -->
+                        <div class="bg-orange-50 rounded-xl p-4 border border-orange-200">
+                            <p class="font-semibold text-primary-800 mb-3">2차원 리스트를 사용하여 흑백 이미지를 표현하고 해석할 수 있는가?</p>
+                            <div class="flex gap-6 flex-wrap">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess1" value="3" class="assessment-radio">
+                                    <span class="text-sm text-gray-700"><i class="far fa-laugh-beam text-green-500 mr-1"></i>매우 잘함 <span class="text-primary-500 font-bold">(3)</span></span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess1" value="2" class="assessment-radio">
+                                    <span class="text-sm text-gray-700"><i class="far fa-smile text-amber-500 mr-1"></i>보통 <span class="text-amber-500 font-bold">(2)</span></span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess1" value="1" class="assessment-radio">
+                                    <span class="text-sm text-gray-700"><i class="far fa-meh text-red-400 mr-1"></i>노력 필요 <span class="text-red-400 font-bold">(1)</span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <!-- Assessment Item 2 -->
+                        <div class="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                            <p class="font-semibold text-accent-800 mb-3">3차원 리스트(RGB)를 활용하여 컬러 이미지를 저장하고 처리할 수 있는가?</p>
+                            <div class="flex gap-6 flex-wrap">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess2" value="3" class="assessment-radio">
+                                    <span class="text-sm text-gray-700"><i class="far fa-laugh-beam text-green-500 mr-1"></i>매우 잘함 <span class="text-primary-500 font-bold">(3)</span></span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess2" value="2" class="assessment-radio">
+                                    <span class="text-sm text-gray-700"><i class="far fa-smile text-amber-500 mr-1"></i>보통 <span class="text-amber-500 font-bold">(2)</span></span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess2" value="1" class="assessment-radio">
+                                    <span class="text-sm text-gray-700"><i class="far fa-meh text-red-400 mr-1"></i>노력 필요 <span class="text-red-400 font-bold">(1)</span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <!-- Assessment Item 3 -->
+                        <div class="bg-orange-50 rounded-xl p-4 border border-orange-200">
+                            <p class="font-semibold text-primary-800 mb-3">다차원 데이터 구조를 활용하여 나만의 픽셀아트를 설계하고 구현할 수 있는가?</p>
+                            <div class="flex gap-6 flex-wrap">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess3" value="3" class="assessment-radio">
+                                    <span class="text-sm text-gray-700"><i class="far fa-laugh-beam text-green-500 mr-1"></i>매우 잘함 <span class="text-primary-500 font-bold">(3)</span></span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess3" value="2" class="assessment-radio">
+                                    <span class="text-sm text-gray-700"><i class="far fa-smile text-amber-500 mr-1"></i>보통 <span class="text-amber-500 font-bold">(2)</span></span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="assess3" value="1" class="assessment-radio">
+                                    <span class="text-sm text-gray-700"><i class="far fa-meh text-red-400 mr-1"></i>노력 필요 <span class="text-red-400 font-bold">(1)</span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assessment Result -->
+                    <div class="mt-6 text-center">
+                        <button onclick="calculateAssessment()" class="btn-primary text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg">
+                            <i class="fas fa-chart-bar mr-2"></i>평가 결과 보기
+                        </button>
+                        <div id="assessmentResult" class="mt-4" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-primary-800 to-accent-900 text-white mt-12">
+        <div class="max-w-5xl mx-auto px-6 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-book-open text-orange-300"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-orange-200">III. 알고리즘과 프로그래밍</p>
+                        <p class="text-sm text-orange-300/70">03 프로그래밍의 이해 &gt; 선택활동</p>
+                    </div>
+                </div>
+                <a href="../../../index.html" class="bg-white/10 hover:bg-white/20 transition-colors text-orange-200 px-5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2">
+                    <i class="fas fa-home"></i>
+                    목차로 돌아가기
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // ====================================================================
+    // DATA
+    // ====================================================================
+    const grayscaleData = [
+        [255,   0,   0, 255,   0,   0, 255],
+        [  0, 128, 128,   0, 255, 255,   0],
+        [  0, 128, 128, 128, 128, 255,   0],
+        [  0, 128, 128, 128, 128, 255,   0],
+        [255,   0, 128, 128, 255,   0, 255],
+        [255, 255,   0, 255,   0, 255, 255],
+        [255, 255, 255,   0, 255, 255, 255]
+    ];
+
+    const COLOR_MAP = {
+        WT: [255, 255, 255],
+        R:  [255,   0,   0],
+        G:  [  0, 255,   0],
+        B:  [  0,   0, 255],
+        BK: [  0,   0,   0]
+    };
+
+    const COLOR_NAMES = {
+        WT: '흰색', R: '빨강', G: '초록', B: '파랑', BK: '검정'
+    };
+
+    // Task 2 state (7x7)
+    let task2Selected = 'WT';
+    let task2Grid = [];
+    // Pre-fill first row
+    const task2FirstRow = ['G','BK','BK','G','BK','BK','G'];
+
+    // Task 3 state
+    let task3Selected = 'R';
+    let task3Size = 7;
+    let task3Grid = [];
+    let task3Drawing = false;
+
+    let showGrayscaleValues = true;
+
+    // ====================================================================
+    // TASK 1: GRAYSCALE
+    // ====================================================================
+    function buildGrayscaleGrid() {
+        const container = document.getElementById('grayscaleGrid');
+        container.innerHTML = '';
+        for (let r = 0; r < 7; r++) {
+            for (let c = 0; c < 7; c++) {
+                const val = grayscaleData[r][c];
+                const cell = document.createElement('div');
+                cell.className = 'pixel-cell grayscale-cell';
+                cell.style.backgroundColor = `rgb(${val},${val},${val})`;
+                cell.style.color = val < 128 ? '#fff' : '#333';
+                cell.textContent = val;
+                cell.title = `(${r}, ${c}) = ${val}`;
+                container.appendChild(cell);
+            }
+        }
+    }
+
+    function toggleGrayscaleValues() {
+        showGrayscaleValues = !showGrayscaleValues;
+        const cells = document.getElementById('grayscaleGrid').querySelectorAll('.pixel-cell');
+        let i = 0;
+        for (let r = 0; r < 7; r++) {
+            for (let c = 0; c < 7; c++) {
+                cells[i].textContent = showGrayscaleValues ? grayscaleData[r][c] : '';
+                i++;
+            }
+        }
+    }
+
+    function renderGrayscaleCanvas() {
+        const wrap = document.getElementById('grayscaleCanvasWrap');
+        wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+        const canvas = document.getElementById('grayscaleCanvas');
+        const ctx = canvas.getContext('2d');
+        const scale = 20;
+        canvas.width = 7 * scale;
+        canvas.height = 7 * scale;
+        for (let r = 0; r < 7; r++) {
+            for (let c = 0; c < 7; c++) {
+                const v = grayscaleData[r][c];
+                ctx.fillStyle = `rgb(${v},${v},${v})`;
+                ctx.fillRect(c * scale, r * scale, scale, scale);
+            }
+        }
+    }
+
+    // ====================================================================
+    // TASK 2: COLOR GRID
+    // ====================================================================
+    function initTask2Grid() {
+        task2Grid = [];
+        for (let r = 0; r < 7; r++) {
+            const row = [];
+            for (let c = 0; c < 7; c++) {
+                if (r === 0) {
+                    row.push(task2FirstRow[c]);
+                } else {
+                    row.push('WT');
+                }
+            }
+            task2Grid.push(row);
+        }
+    }
+
+    function buildColorGrid() {
+        const container = document.getElementById('colorGrid');
+        container.innerHTML = '';
+        for (let r = 0; r < 7; r++) {
+            for (let c = 0; c < 7; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'pixel-cell';
+                cell.dataset.row = r;
+                cell.dataset.col = c;
+                const colorKey = task2Grid[r][c];
+                const rgb = COLOR_MAP[colorKey];
+                cell.style.backgroundColor = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+                cell.title = `(${r}, ${c}) = ${colorKey}`;
+
+                cell.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    paintTask2Cell(r, c);
+                    task3Drawing = true; // reuse flag
+                });
+                cell.addEventListener('mouseenter', (e) => {
+                    if (e.buttons === 1) paintTask2Cell(r, c);
+                });
+
+                container.appendChild(cell);
+            }
+        }
+    }
+
+    function paintTask2Cell(r, c) {
+        task2Grid[r][c] = task2Selected;
+        const rgb = COLOR_MAP[task2Selected];
+        const cells = document.getElementById('colorGrid').children;
+        const cell = cells[r * 7 + c];
+        cell.style.backgroundColor = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+        cell.title = `(${r}, ${c}) = ${task2Selected}`;
+    }
+
+    function selectTask2Color(btn, colorKey) {
+        document.querySelectorAll('#task2Palette .palette-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        task2Selected = colorKey;
+        document.getElementById('task2CurrentColor').textContent = `${colorKey} (${COLOR_NAMES[colorKey]})`;
+    }
+
+    function showColorHint() {
+        const hint = document.getElementById('colorHint');
+        hint.style.display = hint.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function renderColorCanvas() {
+        const wrap = document.getElementById('colorCanvasWrap');
+        wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+        const canvas = document.getElementById('colorCanvas');
+        const ctx = canvas.getContext('2d');
+        const scale = 20;
+        canvas.width = 7 * scale;
+        canvas.height = 7 * scale;
+        for (let r = 0; r < 7; r++) {
+            for (let c = 0; c < 7; c++) {
+                const rgb = COLOR_MAP[task2Grid[r][c]];
+                ctx.fillStyle = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+                ctx.fillRect(c * scale, r * scale, scale, scale);
+            }
+        }
+    }
+
+    function resetColorGrid() {
+        initTask2Grid();
+        buildColorGrid();
+        document.getElementById('colorCanvasWrap').style.display = 'none';
+        document.getElementById('colorHint').style.display = 'none';
+    }
+
+    // ====================================================================
+    // TASK 3: CUSTOM PIXEL ART
+    // ====================================================================
+    function initTask3Grid() {
+        task3Grid = [];
+        for (let r = 0; r < task3Size; r++) {
+            const row = [];
+            for (let c = 0; c < task3Size; c++) {
+                row.push('WT');
+            }
+            task3Grid.push(row);
+        }
+    }
+
+    function buildCustomGrid() {
+        const container = document.getElementById('customGrid');
+        const cellSize = task3Size <= 10 ? 40 : (task3Size <= 13 ? 32 : 26);
+        container.style.gridTemplateColumns = `repeat(${task3Size}, ${cellSize}px)`;
+        container.innerHTML = '';
+        for (let r = 0; r < task3Size; r++) {
+            for (let c = 0; c < task3Size; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'pixel-cell';
+                cell.style.width = cellSize + 'px';
+                cell.style.height = cellSize + 'px';
+                cell.dataset.row = r;
+                cell.dataset.col = c;
+                const colorKey = task3Grid[r][c];
+                const rgb = COLOR_MAP[colorKey];
+                cell.style.backgroundColor = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+
+                cell.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    task3Drawing = true;
+                    paintTask3Cell(r, c, cell);
+                });
+                cell.addEventListener('mouseenter', (e) => {
+                    if (e.buttons === 1) paintTask3Cell(r, c, cell);
+                });
+
+                container.appendChild(cell);
+            }
+        }
+        renderCustomCanvas();
+    }
+
+    function paintTask3Cell(r, c, cell) {
+        task3Grid[r][c] = task3Selected;
+        const rgb = COLOR_MAP[task3Selected];
+        cell.style.backgroundColor = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+        renderCustomCanvas();
+    }
+
+    document.addEventListener('mouseup', () => { task3Drawing = false; });
+
+    function selectTask3Color(btn, colorKey) {
+        document.querySelectorAll('#task3Palette .palette-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        task3Selected = colorKey;
+        document.getElementById('task3CurrentColor').textContent = `${colorKey} (${COLOR_NAMES[colorKey]})`;
+    }
+
+    function changeCustomSize(delta) {
+        const newSize = task3Size + delta;
+        if (newSize < 3 || newSize > 16) return;
+        task3Size = newSize;
+        document.getElementById('customSizeLabel').textContent = `${task3Size} x ${task3Size}`;
+        initTask3Grid();
+        buildCustomGrid();
+    }
+
+    function fillAllCustom() {
+        for (let r = 0; r < task3Size; r++) {
+            for (let c = 0; c < task3Size; c++) {
+                task3Grid[r][c] = task3Selected;
+            }
+        }
+        buildCustomGrid();
+    }
+
+    function resetCustomGrid() {
+        initTask3Grid();
+        buildCustomGrid();
+        document.getElementById('generatedCodeWrap').style.display = 'none';
+    }
+
+    function renderCustomCanvas() {
+        const canvas = document.getElementById('customCanvas');
+        const ctx = canvas.getContext('2d');
+        const maxPx = 210;
+        const scale = Math.floor(maxPx / task3Size);
+        canvas.width = task3Size * scale;
+        canvas.height = task3Size * scale;
+        for (let r = 0; r < task3Size; r++) {
+            for (let c = 0; c < task3Size; c++) {
+                const rgb = COLOR_MAP[task3Grid[r][c]];
+                ctx.fillStyle = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+                ctx.fillRect(c * scale, r * scale, scale, scale);
+            }
+        }
+    }
+
+    function generateCode() {
+        const wrap = document.getElementById('generatedCodeWrap');
+        wrap.style.display = 'block';
+        const codeEl = document.getElementById('generatedCode');
+
+        let code = 'import matplotlib.pyplot as plt\n\n';
+        code += 'R  = [255,   0,   0]  # 빨강\n';
+        code += 'G  = [  0, 255,   0]  # 초록\n';
+        code += 'B  = [  0,   0, 255]  # 파랑\n';
+        code += 'WT = [255, 255, 255]  # 하양\n';
+        code += 'BK = [  0,   0,   0]  # 검정\n\n';
+        code += 'a = [\n';
+        for (let r = 0; r < task3Size; r++) {
+            const rowStr = task3Grid[r].map(k => k.padStart(2)).join(', ');
+            code += '     [' + rowStr + ']';
+            if (r < task3Size - 1) code += ',';
+            code += '\n';
+        }
+        code += '    ]\n\n';
+        code += 'plt.imshow(a)\n';
+        code += 'plt.axis("off")\n';
+        code += 'plt.show()';
+
+        codeEl.textContent = code;
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function copyCode() {
+        const codeEl = document.getElementById('generatedCode');
+        const text = codeEl.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = event.currentTarget;
+            const origHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check mr-1"></i>복사 완료!';
+            btn.classList.add('text-green-600');
+            setTimeout(() => {
+                btn.innerHTML = origHTML;
+                btn.classList.remove('text-green-600');
+            }, 1500);
+        });
+    }
+
+    // ====================================================================
+    // RGB COLOR MIXER
+    // ====================================================================
+    function updateRGB() {
+        const r = parseInt(document.getElementById('rSlider').value);
+        const g = parseInt(document.getElementById('gSlider').value);
+        const b = parseInt(document.getElementById('bSlider').value);
+
+        document.getElementById('rVal').textContent = r;
+        document.getElementById('gVal').textContent = g;
+        document.getElementById('bVal').textContent = b;
+
+        const color = `rgb(${r},${g},${b})`;
+        document.getElementById('rgbPreview').style.backgroundColor = color;
+        document.getElementById('rgbText').textContent = `(${r}, ${g}, ${b})`;
+
+        const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+        document.getElementById('hexText').textContent = hex;
+        document.getElementById('pyText').textContent = `[${r}, ${g}, ${b}]`;
+    }
+
+    // ====================================================================
+    // SELF ASSESSMENT
+    // ====================================================================
+    function calculateAssessment() {
+        const results = [];
+        for (let i = 1; i <= 3; i++) {
+            const selected = document.querySelector(`input[name="assess${i}"]:checked`);
+            if (selected) {
+                results.push(parseInt(selected.value));
+            }
+        }
+
+        const resultDiv = document.getElementById('assessmentResult');
+        resultDiv.style.display = 'block';
+
+        if (results.length < 3) {
+            resultDiv.innerHTML = `
+                <div class="bg-amber-50 border border-amber-300 rounded-xl p-4 inline-block">
+                    <i class="fas fa-exclamation-circle text-amber-500 mr-2"></i>
+                    <span class="text-amber-800 font-semibold">모든 항목을 평가해주세요.</span>
+                </div>`;
+            return;
+        }
+
+        const total = results.reduce((a, b) => a + b, 0);
+        let message, color, icon;
+
+        if (total >= 8) {
+            message = '훌륭합니다! 다차원 데이터 구조를 활용한 이미지 표현을 잘 이해하고 있습니다.';
+            color = 'green';
+            icon = 'trophy';
+        } else if (total >= 5) {
+            message = '잘하고 있어요! 조금 더 연습하면 완벽해질 거예요.';
+            color = 'amber';
+            icon = 'thumbs-up';
+        } else {
+            message = '기초부터 다시 복습해보세요. 포기하지 마세요!';
+            color = 'red';
+            icon = 'hand-holding-heart';
+        }
+
+        resultDiv.innerHTML = `
+            <div class="bg-${color}-50 border border-${color}-300 rounded-xl p-5 inline-block max-w-md">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fas fa-${icon} text-${color}-500 text-2xl"></i>
+                    <span class="text-2xl font-extrabold text-${color}-700">${total}/9</span>
+                </div>
+                <p class="text-${color}-800 font-semibold">${message}</p>
+            </div>`;
+    }
+
+    // ====================================================================
+    // INTERSECTION OBSERVER (fade-in)
+    // ====================================================================
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ====================================================================
+    // SCROLL PROGRESS
+    // ====================================================================
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        document.getElementById('scrollProgress').style.width = progress + '%';
+    });
+
+    // ====================================================================
+    // INITIALIZE
+    // ====================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+        buildGrayscaleGrid();
+        initTask2Grid();
+        buildColorGrid();
+        initTask3Grid();
+        buildCustomGrid();
+        updateRGB();
+    });
+    </script>
+</body>
+</html>

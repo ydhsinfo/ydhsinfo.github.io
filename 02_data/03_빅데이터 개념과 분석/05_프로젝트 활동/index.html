@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로젝트 활동 - 스마트폰 센서 수집 및 시각화하기 | 정보</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        /* Activity card animation */
+        .activity-card {
+            transition: transform 0.2s ease;
+        }
+        .activity-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Step number styling */
+        .step-num {
+            flex-shrink: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, #059669, #0d9488);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        /* Sensor grid card */
+        .sensor-card {
+            transition: all 0.2s ease;
+        }
+        .sensor-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.15);
+        }
+
+        /* Status indicator */
+        .status-indicator {
+            transition: all 0.3s ease;
+        }
+        .status-indicator:hover {
+            transform: scale(1.03);
+        }
+
+        /* Algo step */
+        .algo-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+        }
+        .algo-step-num {
+            flex-shrink: 0;
+            width: 1.75rem;
+            height: 1.75rem;
+            background: linear-gradient(135deg, #059669, #0d9488);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* Table responsive wrapper */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .hero-section {
+                background: #059669 !important;
+                color: white !important;
+            }
+            nav, .action-buttons {
+                display: none !important;
+            }
+            .activity-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Scrollbar styling */
+        .table-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #d1fae5;
+            border-radius: 3px;
+        }
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: #34d399;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-sm border-b border-emerald-100 sticky top-0 z-50 no-print">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="../../../index.html" class="flex items-center gap-2 text-emerald-700 hover:text-emerald-900 transition-colors text-sm font-medium">
+                <i class="fas fa-arrow-left"></i>
+                <span>전체 단원</span>
+            </a>
+            <div class="flex items-center gap-2 text-sm text-emerald-600">
+                <i class="fas fa-book-open"></i>
+                <span class="hidden sm:inline">II. 데이터</span>
+                <span class="sm:hidden">데이터</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section text-white relative overflow-hidden" style="background: linear-gradient(135deg, #059669 0%, #0d9488 50%, #0891b2 100%);">
+        <!-- Decorative background elements -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-32 h-32 border-2 border-white rounded-full"></div>
+            <div class="absolute top-20 right-20 w-48 h-48 border border-white rounded-full"></div>
+            <div class="absolute bottom-10 left-1/3 w-24 h-24 border-2 border-white rounded-full"></div>
+            <div class="absolute -bottom-8 right-10 w-40 h-40 border border-white rounded-full"></div>
+        </div>
+
+        <div class="max-w-5xl mx-auto px-4 py-12 md:py-16 relative z-10">
+            <!-- Breadcrumb -->
+            <div class="flex items-center gap-2 text-emerald-200 text-sm mb-6 flex-wrap">
+                <span>정보</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span>II. 데이터</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span>03 빅데이터 개념과 분석</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span class="text-white font-medium">프로젝트 활동</span>
+            </div>
+
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-sm mb-5">
+                <i class="fas fa-mobile-screen-button text-lg"></i>
+                <span class="font-medium">데이터 수집 &middot; 분석 &middot; 시각화</span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 leading-tight">
+                프로젝트 활동
+            </h1>
+            <p class="text-xl md:text-2xl font-semibold text-emerald-100 mb-3">
+                스마트폰 센서 수집 및 시각화하기
+            </p>
+            <p class="text-emerald-200 text-base md:text-lg max-w-2xl leading-relaxed">
+                스마트폰의 가속도 센서를 활용하여 운동 데이터를 수집하고, 시각화 도구로 분석하여 나의 활동 패턴을 파악해 봅시다
+            </p>
+
+            <!-- Quick info -->
+            <div class="flex flex-wrap gap-4 mt-8 text-sm">
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                    <i class="fas fa-mobile-alt text-emerald-300"></i>
+                    <span>스마트폰 활용</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                    <i class="fas fa-chart-line text-emerald-300"></i>
+                    <span>데이터 시각화</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                    <i class="fas fa-person-running text-emerald-300"></i>
+                    <span>운동 활동 분석</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 py-10 space-y-10">
+
+        <!-- ============================================ -->
+        <!-- 문제 상황 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">문제 상황</h2>
+                    <p class="text-emerald-100 text-xs">프로젝트의 출발점</p>
+                </div>
+            </div>
+            <div class="p-6 md:p-8">
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-6 md:p-8">
+                    <div class="flex flex-col md:flex-row gap-6 items-center">
+                        <!-- Illustration area -->
+                        <div class="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-2xl flex items-center justify-center border-2 border-dashed border-emerald-300">
+                            <div class="text-center">
+                                <i class="fas fa-mobile-screen-button text-4xl text-emerald-500 mb-2"></i>
+                                <p class="text-xs text-emerald-600 font-medium">스마트폰 센서</p>
+                            </div>
+                        </div>
+                        <!-- Description text -->
+                        <div class="space-y-4 text-gray-700 leading-relaxed">
+                            <p class="text-base md:text-lg">
+                                스마트폰은 <strong class="text-emerald-700">동작, 환경, 위치</strong> 관련 센서로 기기의 움직임과 위치 정보를 모니터링하고 주변 환경의 변화를 감지한다.
+                            </p>
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0 w-6 h-6 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">?</div>
+                                <p class="text-emerald-700 font-semibold text-lg">스마트폰 센서 데이터를 어떻게 수집하고 분석할 수 있을까?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 스마트폰 센서 종류 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">스마트폰 센서 종류</h2>
+                    <p class="text-emerald-100 text-xs">다양한 센서의 역할과 기능</p>
+                </div>
+            </div>
+            <div class="p-6 md:p-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- 제스처 센서 -->
+                    <div class="sensor-card bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-emerald-500 text-white rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-hand"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-sm">제스처 센서</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">손의 움직임을 감지하여 터치 없이 조작 가능</p>
+                    </div>
+
+                    <!-- RGB 센서 -->
+                    <div class="sensor-card bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-teal-500 text-white rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-sm">RGB 센서</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">빛의 삼원색(Red, Green, Blue)을 측정</p>
+                    </div>
+
+                    <!-- 홀 센서 -->
+                    <div class="sensor-card bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-cyan-600 text-white rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-magnet"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-sm">홀 센서</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">자기장 감지로 커버 덮임 여부 확인</p>
+                    </div>
+
+                    <!-- 기압 센서 -->
+                    <div class="sensor-card bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-emerald-600 text-white rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-cloud-arrow-down"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-sm">기압 센서</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">기압 변화를 감지하여 높이(고도) 측정</p>
+                    </div>
+
+                    <!-- 온습도 센서 -->
+                    <div class="sensor-card bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-teal-600 text-white rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-temperature-half"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-sm">온습도 센서</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">주위 환경의 온도와 습도 측정</p>
+                    </div>
+
+                    <!-- 근접 센서 -->
+                    <div class="sensor-card bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-cyan-700 text-white rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-arrows-left-right-to-line"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-sm">근접 센서</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">물체 간의 거리를 측정 (통화 시 화면 끄기)</p>
+                    </div>
+
+                    <!-- 자이로 센서 -->
+                    <div class="sensor-card bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-emerald-500 text-white rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-rotate"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-sm">자이로 센서</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">회전 상태와 기울기를 감지</p>
+                    </div>
+
+                    <!-- 가속도 센서 -->
+                    <div class="sensor-card bg-gradient-to-br from-emerald-100 to-teal-100 border-2 border-emerald-400 rounded-xl p-4 relative">
+                        <div class="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                            실습 사용
+                        </div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-emerald-700 text-white rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-gauge-high"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-sm">가속도 센서</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">이동 상태(속도 변화)를 감지</p>
+                    </div>
+
+                    <!-- 지자기 센서 -->
+                    <div class="sensor-card bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-teal-700 text-white rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-compass"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800 text-sm">지자기 센서</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">자기장 세기를 측정하여 방위(나침반) 기능</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 단계 1: 문제 정의하기 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                    1
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">단계 1: 문제 정의하기</h2>
+                    <p class="text-emerald-100 text-sm mt-0.5"><i class="fas fa-search mr-1"></i> 문제 분석 및 정의</p>
+                </div>
+            </div>
+            <div class="p-6 md:p-8 space-y-6">
+                <div class="bg-emerald-50 border-l-4 border-emerald-400 rounded-r-lg p-4 md:p-5">
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">
+                        <i class="fas fa-lightbulb text-emerald-500 mr-1"></i>
+                        <strong class="text-emerald-700">스마트폰 센서를 활용하여 나의 운동 활동을 분석</strong>해 보자.
+                        스마트폰의 가속도 센서 데이터를 수집하고, 시각화 도구를 사용하여 걷기, 달리기, 정지 등의 활동 상태를 구분할 수 있다.
+                    </p>
+                </div>
+
+                <!-- 목표 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4 text-center">
+                        <div class="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-800 text-sm mb-1">데이터 수집</h4>
+                        <p class="text-xs text-gray-600">센서 앱으로 가속도 데이터를 CSV 파일로 저장</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-teal-50 to-cyan-50 border border-teal-200 rounded-xl p-4 text-center">
+                        <div class="w-12 h-12 bg-teal-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-800 text-sm mb-1">데이터 분석</h4>
+                        <p class="text-xs text-gray-600">시각화 도구로 가속도 변화 패턴 분석</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-cyan-50 to-emerald-50 border border-cyan-200 rounded-xl p-4 text-center">
+                        <div class="w-12 h-12 bg-cyan-600 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-800 text-sm mb-1">공유 및 평가</h4>
+                        <p class="text-xs text-gray-600">결과 해석 및 효과적인 운동 방법 토론</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 단계 2: 데이터 수집하기 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                    2
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">단계 2: 데이터 수집하기</h2>
+                    <p class="text-emerald-100 text-sm mt-0.5"><i class="fas fa-download mr-1"></i> 센서 앱으로 데이터 수집</p>
+                </div>
+            </div>
+            <div class="p-6 md:p-8 space-y-6">
+
+                <!-- 앱 소개 -->
+                <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-5 md:p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-wrench text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">Physics Toolbox Sensor Suite</h3>
+                            <p class="text-xs text-emerald-600">스마트폰 센서 데이터 수집 앱</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        이 앱을 사용하면 스마트폰의 다양한 센서 데이터를 실시간으로 측정하고 CSV 파일로 저장할 수 있습니다.
+                    </p>
+                </div>
+
+                <!-- 수집 절차 -->
+                <div>
+                    <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-list-ol text-emerald-500"></i>
+                        데이터 수집 절차
+                    </h3>
+                    <div class="space-y-4">
+                        <!-- 절차 1 -->
+                        <div class="flex items-start gap-4">
+                            <div class="algo-step-num mt-0.5">1</div>
+                            <div class="flex-1 bg-white border border-emerald-200 rounded-xl p-4 shadow-sm">
+                                <h4 class="font-bold text-gray-800 text-sm mb-1">앱 설치 및 실행</h4>
+                                <p class="text-xs text-gray-600 leading-relaxed">
+                                    <strong>Physics Toolbox Sensor Suite</strong> 앱을 스마트폰에 설치하고 실행합니다.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 절차 2 -->
+                        <div class="flex items-start gap-4">
+                            <div class="algo-step-num mt-0.5">2</div>
+                            <div class="flex-1 bg-white border border-emerald-200 rounded-xl p-4 shadow-sm">
+                                <h4 class="font-bold text-gray-800 text-sm mb-1">리니어 가속도 선택</h4>
+                                <p class="text-xs text-gray-600 leading-relaxed">
+                                    센서 목록에서 <strong class="text-emerald-700">리니어 가속도(Linear Acceleration)</strong> 측정을 선택합니다.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 절차 3 -->
+                        <div class="flex items-start gap-4">
+                            <div class="algo-step-num mt-0.5">3</div>
+                            <div class="flex-1 bg-white border border-emerald-200 rounded-xl p-4 shadow-sm">
+                                <h4 class="font-bold text-gray-800 text-sm mb-1">설정 조정</h4>
+                                <p class="text-xs text-gray-600 leading-relaxed">
+                                    X축을 <strong class="text-emerald-700">경과 시간(Elapsed Time)</strong>으로 설정하고, 측정 속도를 <strong class="text-emerald-700">Slowest</strong>로 설정합니다.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 절차 4 -->
+                        <div class="flex items-start gap-4">
+                            <div class="algo-step-num mt-0.5">4</div>
+                            <div class="flex-1 bg-white border border-emerald-200 rounded-xl p-4 shadow-sm">
+                                <h4 class="font-bold text-gray-800 text-sm mb-1">운동하며 데이터 수집</h4>
+                                <p class="text-xs text-gray-600 leading-relaxed">
+                                    운동을 시작할 때 <strong class="text-emerald-700">저장 버튼</strong>을 누르고, 걷기/달리기/정지 등 다양한 활동을 수행합니다.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- 절차 5 -->
+                        <div class="flex items-start gap-4">
+                            <div class="algo-step-num mt-0.5">5</div>
+                            <div class="flex-1 bg-white border border-emerald-200 rounded-xl p-4 shadow-sm">
+                                <h4 class="font-bold text-gray-800 text-sm mb-1">CSV 파일로 저장</h4>
+                                <p class="text-xs text-gray-600 leading-relaxed">
+                                    운동이 끝나면 저장을 중지하고, 수집된 데이터를 <strong class="text-emerald-700">CSV 파일</strong>로 저장합니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 참고 -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                    <div class="flex-shrink-0 w-8 h-8 bg-amber-400 text-white rounded-lg flex items-center justify-center mt-0.5">
+                        <i class="fas fa-lightbulb text-sm"></i>
+                    </div>
+                    <div class="text-sm text-gray-700 leading-relaxed">
+                        <strong class="text-amber-700">팁</strong> &mdash;
+                        걷기, 달리기, 정지 등 <strong>다양한 활동을 번갈아 수행</strong>하면 분석 결과가 더 명확하게 나타납니다.
+                        각 활동 사이에 잠시 멈추는 구간을 넣어 보세요.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 단계 3: 데이터 분석하기 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                    3
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">단계 3: 데이터 분석하기</h2>
+                    <p class="text-emerald-100 text-sm mt-0.5"><i class="fas fa-chart-area mr-1"></i> 코답(CODAP)으로 시각화 및 분석</p>
+                </div>
+            </div>
+            <div class="p-6 md:p-8 space-y-6">
+
+                <!-- CODAP 소개 -->
+                <div class="bg-gradient-to-br from-teal-50 to-cyan-50 border border-teal-200 rounded-xl p-5 md:p-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 bg-teal-600 text-white rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">코답(CODAP)</h3>
+                            <p class="text-xs text-teal-600">https://codap.concord.org/</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        코답(CODAP)은 웹 기반 데이터 분석 도구로, CSV 파일을 불러와 다양한 그래프를 손쉽게 만들 수 있습니다.
+                    </p>
+                </div>
+
+                <!-- 분석 절차 -->
+                <div>
+                    <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-magnifying-glass-chart text-teal-500"></i>
+                        분석 방법
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4">
+                            <div class="algo-step-num mt-0.5">1</div>
+                            <div class="flex-1 bg-white border border-teal-200 rounded-xl p-4 shadow-sm">
+                                <p class="text-sm text-gray-700 leading-relaxed">
+                                    코답 사이트에 접속하여 수집한 <strong class="text-teal-700">CSV 파일을 불러옵니다.</strong>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="algo-step-num mt-0.5">2</div>
+                            <div class="flex-1 bg-white border border-teal-200 rounded-xl p-4 shadow-sm">
+                                <p class="text-sm text-gray-700 leading-relaxed">
+                                    시간에 따른 <strong class="text-teal-700">총 가속도(a<sub>total</sub>) 변화를 선그래프</strong>로 나타냅니다.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="algo-step-num mt-0.5">3</div>
+                            <div class="flex-1 bg-white border border-teal-200 rounded-xl p-4 shadow-sm">
+                                <p class="text-sm text-gray-700 leading-relaxed">
+                                    그래프의 패턴을 관찰하여 <strong class="text-teal-700">걷기, 달리기, 정지</strong> 구간을 구별합니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 활동 상태 해석 가이드 -->
+                <div>
+                    <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-emerald-500"></i>
+                        가속도 데이터 해석 가이드
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- 달리기 -->
+                        <div class="status-indicator bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-300 rounded-xl p-5 text-center">
+                            <div class="w-16 h-16 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-person-running text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-red-700 text-base mb-2">달리는 중</h4>
+                            <div class="bg-white rounded-lg p-3 mb-2">
+                                <div class="flex items-center justify-center gap-2">
+                                    <i class="fas fa-arrow-up text-red-500"></i>
+                                    <span class="text-sm font-bold text-red-600">가속도 높음</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600 leading-relaxed">가속도 값의 변동 폭이 크고 높은 값을 나타냄</p>
+                        </div>
+
+                        <!-- 걷기 -->
+                        <div class="status-indicator bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-300 rounded-xl p-5 text-center">
+                            <div class="w-16 h-16 bg-yellow-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-person-walking text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-yellow-700 text-base mb-2">걷는 중</h4>
+                            <div class="bg-white rounded-lg p-3 mb-2">
+                                <div class="flex items-center justify-center gap-2">
+                                    <i class="fas fa-arrows-left-right text-yellow-500"></i>
+                                    <span class="text-sm font-bold text-yellow-600">가속도 낮음</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600 leading-relaxed">가속도 값의 변동 폭이 작고 낮은 값을 나타냄</p>
+                        </div>
+
+                        <!-- 정지 -->
+                        <div class="status-indicator bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-xl p-5 text-center">
+                            <div class="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-person text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-blue-700 text-base mb-2">움직임 없음</h4>
+                            <div class="bg-white rounded-lg p-3 mb-2">
+                                <div class="flex items-center justify-center gap-2">
+                                    <i class="fas fa-equals text-blue-500"></i>
+                                    <span class="text-sm font-bold text-blue-600">가속도 0</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600 leading-relaxed">가속도 값이 거의 0에 가까운 상태</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 그래프 해석 예시 -->
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 md:p-6">
+                    <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-chart-line text-emerald-500"></i>
+                        선그래프 해석 예시
+                    </h3>
+                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                        <!-- Simple visual representation of the graph concept -->
+                        <div class="flex items-end gap-0.5 h-32 mb-3" aria-label="가속도 변화 예시 그래프">
+                            <!-- 정지 구간 -->
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-blue-200 rounded-t" style="height: 10%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-blue-200 rounded-t" style="height: 8%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-blue-200 rounded-t" style="height: 12%;"></div>
+                            </div>
+                            <!-- 걷기 구간 -->
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-yellow-300 rounded-t" style="height: 25%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-yellow-300 rounded-t" style="height: 35%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-yellow-300 rounded-t" style="height: 28%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-yellow-300 rounded-t" style="height: 32%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-yellow-300 rounded-t" style="height: 30%;"></div>
+                            </div>
+                            <!-- 달리기 구간 -->
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-red-400 rounded-t" style="height: 70%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-red-400 rounded-t" style="height: 85%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-red-400 rounded-t" style="height: 95%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-red-400 rounded-t" style="height: 78%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-red-400 rounded-t" style="height: 90%;"></div>
+                            </div>
+                            <!-- 걷기 구간 -->
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-yellow-300 rounded-t" style="height: 30%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-yellow-300 rounded-t" style="height: 25%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-yellow-300 rounded-t" style="height: 33%;"></div>
+                            </div>
+                            <!-- 정지 구간 -->
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-blue-200 rounded-t" style="height: 5%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-blue-200 rounded-t" style="height: 8%;"></div>
+                            </div>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-full bg-blue-200 rounded-t" style="height: 6%;"></div>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-300 pt-2 flex justify-between text-xs text-gray-500">
+                            <span>0s</span>
+                            <span class="text-center">시간 (경과 시간)</span>
+                            <span>끝</span>
+                        </div>
+                        <!-- Legend -->
+                        <div class="flex flex-wrap justify-center gap-4 mt-3 text-xs">
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-3 h-3 bg-blue-200 rounded"></div>
+                                <span class="text-gray-600">정지</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-3 h-3 bg-yellow-300 rounded"></div>
+                                <span class="text-gray-600">걷기</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-3 h-3 bg-red-400 rounded"></div>
+                                <span class="text-gray-600">달리기</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-3 text-center">
+                        <i class="fas fa-arrow-up text-emerald-400 mr-1"></i>
+                        Y축: 총 가속도(a<sub>total</sub>) &nbsp;|&nbsp;
+                        <i class="fas fa-arrow-right text-emerald-400 mr-1"></i>
+                        X축: 경과 시간
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 단계 4: 공유 및 평가 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                    4
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">단계 4: 공유 및 평가</h2>
+                    <p class="text-emerald-100 text-sm mt-0.5"><i class="fas fa-users mr-1"></i> 결과 해석 및 토론</p>
+                </div>
+            </div>
+            <div class="p-6 md:p-8 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 분석 결과 공유 -->
+                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-5">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-emerald-500 text-white rounded-lg flex items-center justify-center">
+                                <i class="fas fa-share-nodes"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-800">분석 결과 공유</h3>
+                        </div>
+                        <ul class="space-y-3 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                                <span>친구들과 분석 결과를 비교하고 해석해 봅니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                                <span>각자의 운동 활동 패턴에서 공통점과 차이점을 찾아봅니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                                <span>그래프에서 특이한 구간이 있다면 원인을 분석해 봅니다.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 효과적인 운동 방법 -->
+                    <div class="bg-gradient-to-br from-teal-50 to-cyan-50 border border-teal-200 rounded-xl p-5">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-teal-500 text-white rounded-lg flex items-center justify-center">
+                                <i class="fas fa-heart-pulse"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-800">효과적인 운동 방법</h3>
+                        </div>
+                        <ul class="space-y-3 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-teal-500 mt-0.5 flex-shrink-0"></i>
+                                <span>데이터를 기반으로 효과적인 운동 방법에 대해 이야기해 봅니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-teal-500 mt-0.5 flex-shrink-0"></i>
+                                <span>운동 강도와 가속도의 관계를 논의합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-teal-500 mt-0.5 flex-shrink-0"></i>
+                                <span>센서 데이터 활용의 다른 가능성을 탐색합니다.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 생각해 보기 -->
+                <div class="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-5 md:p-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4 class="font-bold text-emerald-800">생각해 보기</h4>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-white/70 border border-emerald-100 rounded-lg p-4">
+                            <p class="text-sm text-gray-700 leading-relaxed mb-1">
+                                <i class="fas fa-question-circle text-emerald-500 mr-1"></i>
+                                가속도 센서 외에 다른 센서를 활용하면 어떤 데이터를 수집하고 분석할 수 있을까요?
+                            </p>
+                        </div>
+                        <div class="bg-white/70 border border-emerald-100 rounded-lg p-4">
+                            <p class="text-sm text-gray-700 leading-relaxed mb-1">
+                                <i class="fas fa-question-circle text-emerald-500 mr-1"></i>
+                                수집한 데이터의 양이 매우 크다면 어떤 방법으로 분석하는 것이 좋을까요?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 프로젝트 전체 흐름 요약 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
+                    <i class="fas fa-diagram-project"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">프로젝트 전체 흐름</h2>
+                    <p class="text-teal-100 text-xs">4단계 프로세스 요약</p>
+                </div>
+            </div>
+            <div class="p-6 md:p-8">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <!-- Step 1 -->
+                    <div class="flex-1 text-center bg-emerald-50 border border-emerald-200 rounded-xl p-4 min-w-0">
+                        <div class="w-10 h-10 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">1</div>
+                        <h4 class="font-bold text-emerald-800 text-sm mb-1">문제 정의</h4>
+                        <p class="text-xs text-gray-600">운동 활동 분석 목표 설정</p>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="hidden md:flex text-emerald-400 text-xl flex-shrink-0">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="md:hidden text-emerald-400 text-xl">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="flex-1 text-center bg-teal-50 border border-teal-200 rounded-xl p-4 min-w-0">
+                        <div class="w-10 h-10 bg-teal-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">2</div>
+                        <h4 class="font-bold text-teal-800 text-sm mb-1">데이터 수집</h4>
+                        <p class="text-xs text-gray-600">센서 앱으로 CSV 저장</p>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="hidden md:flex text-teal-400 text-xl flex-shrink-0">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="md:hidden text-teal-400 text-xl">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="flex-1 text-center bg-cyan-50 border border-cyan-200 rounded-xl p-4 min-w-0">
+                        <div class="w-10 h-10 bg-cyan-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">3</div>
+                        <h4 class="font-bold text-cyan-800 text-sm mb-1">데이터 분석</h4>
+                        <p class="text-xs text-gray-600">코답으로 시각화 및 해석</p>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="hidden md:flex text-cyan-400 text-xl flex-shrink-0">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="md:hidden text-cyan-400 text-xl">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="flex-1 text-center bg-emerald-50 border border-emerald-200 rounded-xl p-4 min-w-0">
+                        <div class="w-10 h-10 bg-emerald-700 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">4</div>
+                        <h4 class="font-bold text-emerald-800 text-sm mb-1">공유 및 평가</h4>
+                        <p class="text-xs text-gray-600">결과 토론 및 발전 방향</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex justify-start">
+                    <a href="../04_선택활동/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-th-list"></i>
+                        목록으로 돌아가기
+                    </a>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <a href="../../04_대단원 마무리/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+            <div class="text-center">
+                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
+                <p class="text-gray-500 text-xs mt-2">II. 데이터 &gt; 03 빅데이터 개념과 분석 &gt; 프로젝트활동</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll animation for activity cards
+        (function() {
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.activity-card').forEach(function(card) {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    observer.observe(card);
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

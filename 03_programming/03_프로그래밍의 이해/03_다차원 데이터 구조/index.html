@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>다차원 데이터 구조 - 정보 교과서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        orange: {
+                            50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',
+                            500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'
+                        },
+                        amber: {
+                            50:'#fffbeb',100:'#fef3c7',200:'#fde68a',300:'#fcd34d',400:'#fbbf24',
+                            500:'#f59e0b',600:'#d97706',700:'#b45309',800:'#92400e',900:'#78350f'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #c2410c 0%, #b45309 50%, #92400e 100%);
+        }
+
+        .hero-wave {
+            position: relative;
+        }
+        .hero-wave::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60'%3E%3Cpath fill='%23f9fafb' d='M0,32L80,37.3C160,43,320,53,480,53.3C640,53,800,43,960,37.3C1120,32,1280,32,1360,32L1440,32L1440,60L1360,60C1280,60,1120,60,960,60C800,60,640,60,480,60C320,60,160,60,80,60L0,60Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom center;
+            background-size: cover;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .info-card {
+            transition: all 0.3s ease;
+        }
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .section-number {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #ea580c, #d97706);
+            color: white;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        /* Code block styling */
+        .code-block {
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+        .code-header {
+            background: #334155;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .code-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+        }
+        .code-content {
+            padding: 16px 20px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+        .code-content .kw { color: #c084fc; }
+        .code-content .fn { color: #67e8f9; }
+        .code-content .str { color: #86efac; }
+        .code-content .num { color: #fdba74; }
+        .code-content .cm { color: #94a3b8; }
+        .code-content .op { color: #fbbf24; }
+        .code-content .br { color: #f472b6; }
+
+        .output-block {
+            background: #0f172a;
+            border-radius: 0 0 12px 12px;
+            padding: 12px 20px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.82rem;
+            color: #a3e635;
+            border-top: 1px solid #334155;
+        }
+
+        /* List cell */
+        .list-cell {
+            min-width: 52px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            transition: all 0.35s ease;
+            position: relative;
+            padding: 0 8px;
+        }
+        .list-cell.active {
+            border-color: #fb923c;
+            background: #fff7ed;
+            transform: scale(1.08);
+            box-shadow: 0 0 12px rgba(249,115,22,0.3);
+        }
+        .list-cell.highlight {
+            border-color: #16a34a;
+            background: #dcfce7;
+            box-shadow: 0 0 12px rgba(22,163,74,0.3);
+        }
+        .list-cell.sliced {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            box-shadow: 0 0 10px rgba(59,130,246,0.25);
+        }
+
+        /* Dimension cube */
+        .dim-container {
+            perspective: 800px;
+        }
+        .dim-cube {
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+        }
+
+        /* Pixel grid */
+        .pixel-cell {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 600;
+        }
+
+        /* Grid cell for 2D */
+        .grid-cell {
+            padding: 10px 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .grid-cell:hover {
+            background: #fff7ed;
+        }
+        .grid-cell.selected {
+            background: #ffedd5;
+            box-shadow: inset 0 0 0 2px #fb923c;
+            font-weight: 700;
+        }
+
+        /* Playlist visual */
+        .playlist-item {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 70px;
+            padding: 8px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: white;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.4s ease;
+        }
+        .playlist-item.added {
+            border-color: #16a34a;
+            background: #dcfce7;
+            animation: pop-in 0.4s ease;
+        }
+        .playlist-item.removed {
+            border-color: #ef4444;
+            background: #fef2f2;
+            animation: pop-out 0.4s ease forwards;
+        }
+
+        @keyframes pop-in {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes pop-out {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        /* Tab buttons */
+        .tab-btn {
+            padding: 8px 20px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .tab-btn.active {
+            background: #ea580c;
+            color: white;
+            border-color: #ea580c;
+        }
+        .tab-btn:not(.active) {
+            background: white;
+            color: #6b7280;
+            border-color: #e5e7eb;
+        }
+        .tab-btn:not(.active):hover {
+            border-color: #fb923c;
+            color: #ea580c;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .hero-gradient {
+                background: #c2410c !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            body { font-size: 12pt; }
+            section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-14">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-orange-700 transition-colors text-sm font-medium">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>전체 단원</span>
+                </a>
+                <span class="bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-orange-100">
+                    III. 알고리즘과 프로그래밍
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="bg-white border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
+            <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
+                <a href="../../../index.html" class="hover:text-orange-600 transition-colors">
+                    <i class="fas fa-home mr-1"></i>정보
+                </a>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-gray-600 font-medium">III. 알고리즘과 프로그래밍</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-gray-600 font-medium">03 프로그래밍의 이해</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-orange-700 font-semibold">다차원 데이터 구조</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-16 sm:py-20 hero-wave">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="max-w-3xl">
+                <span class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-6 border border-white/20">
+                    <i class="fas fa-cubes"></i>
+                    다차원 데이터 구조
+                </span>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
+                    다차원 데이터 구조
+                </h1>
+                <p class="text-lg sm:text-xl text-orange-100 font-medium mb-4">
+                    데이터를 행과 열, 여러 차원으로 저장하는 방법
+                </p>
+                <p class="text-orange-50/90 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                    컴퓨터에서 처리하는 자료는 다양한 형태로 존재하므로 특성에 맞는 데이터 구조를 선택해야 합니다. 다차원 데이터 구조의 개념과 파이썬 리스트를 활용하는 방법을 학습합니다.
+                </p>
+                <div class="flex flex-wrap gap-3 text-sm mb-8">
+                    <span class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-layer-group text-orange-200"></i>
+                        <span>차원의 개념</span>
+                    </span>
+                    <span class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-list text-orange-200"></i>
+                        <span>1차원 리스트</span>
+                    </span>
+                    <span class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-table text-orange-200"></i>
+                        <span>2차원 리스트</span>
+                    </span>
+                    <span class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-image text-orange-200"></i>
+                        <span>이미지와 RGB</span>
+                    </span>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/15">
+                    <h3 class="text-sm font-bold mb-3 flex items-center gap-2">
+                        <i class="fas fa-bullseye text-amber-300"></i>
+                        학습 목표
+                    </h3>
+                    <ul class="space-y-2 text-sm text-orange-50/95">
+                        <li class="flex items-start gap-2">
+                            <span class="bg-amber-400 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 flex-shrink-0">1</span>
+                            다차원 데이터 구조의 개념과 필요성을 설명할 수 있다.
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="bg-amber-400 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 flex-shrink-0">2</span>
+                            1차원 리스트의 생성, 인덱싱, 슬라이싱, 연산을 수행할 수 있다.
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="bg-amber-400 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 flex-shrink-0">3</span>
+                            2차원 리스트를 생성하고 행과 열로 데이터에 접근할 수 있다.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-16">
+
+        <!-- ==================== SECTION: 차원의 개념 ==================== -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
+                <div class="p-6 sm:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="section-number"><i class="fas fa-layer-group text-sm"></i></span>
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-900">차원의 개념</h2>
+                    </div>
+
+                    <p class="text-gray-600 leading-relaxed mb-6">
+                        컴퓨터에서 처리하는 자료는 다양한 형태로 존재하므로 특성에 맞는 데이터 구조를 선택해야 한다. 다차원 데이터 구조는 데이터를 행과 열, 또는 여러 차원으로 저장하는 방법이다.
+                    </p>
+
+                    <!-- Dimension Tabs -->
+                    <div class="flex flex-wrap gap-2 mb-6 no-print" id="dimTabs">
+                        <button class="tab-btn active" onclick="switchDimension(1)">1차원</button>
+                        <button class="tab-btn" onclick="switchDimension(2)">2차원</button>
+                        <button class="tab-btn" onclick="switchDimension(3)">3차원</button>
+                    </div>
+
+                    <!-- Dimension Visualization -->
+                    <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-6 border border-orange-100 mb-6">
+                        <div id="dimView1" class="dim-view">
+                            <h4 class="text-sm font-bold text-orange-800 mb-1">1차원: 한 줄 데이터</h4>
+                            <p class="text-xs text-gray-500 mb-4">한 학생의 성적 데이터를 한 줄로 저장</p>
+                            <div class="flex items-center gap-1 flex-wrap mb-3">
+                                <span class="text-xs text-gray-400 mr-2 font-mono">[</span>
+                                <div class="list-cell" style="border-color:#fb923c;background:#fff7ed;">
+                                    <div class="text-center">
+                                        <div class="text-[10px] text-gray-400">번호</div>
+                                        <div class="text-orange-700">1</div>
+                                    </div>
+                                </div>
+                                <div class="list-cell" style="border-color:#fb923c;background:#fff7ed;">
+                                    <div class="text-center">
+                                        <div class="text-[10px] text-gray-400">국어</div>
+                                        <div class="text-orange-700">80</div>
+                                    </div>
+                                </div>
+                                <div class="list-cell" style="border-color:#fb923c;background:#fff7ed;">
+                                    <div class="text-center">
+                                        <div class="text-[10px] text-gray-400">수학</div>
+                                        <div class="text-orange-700">100</div>
+                                    </div>
+                                </div>
+                                <div class="list-cell" style="border-color:#fb923c;background:#fff7ed;">
+                                    <div class="text-center">
+                                        <div class="text-[10px] text-gray-400">정보</div>
+                                        <div class="text-orange-700">90</div>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-gray-400 ml-2 font-mono">]</span>
+                            </div>
+                            <div class="text-xs text-gray-500 font-mono bg-white/60 rounded-lg px-3 py-2 inline-block">
+                                [1, 80, 100, 90]
+                            </div>
+                        </div>
+
+                        <div id="dimView2" class="dim-view hidden">
+                            <h4 class="text-sm font-bold text-orange-800 mb-1">2차원: 행과 열</h4>
+                            <p class="text-xs text-gray-500 mb-4">여러 학생의 성적표 - 행(학생)과 열(과목)로 구성</p>
+                            <div class="overflow-x-auto">
+                                <table class="text-sm border-collapse">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-3 py-2 bg-orange-100 text-orange-800 rounded-tl-lg font-bold text-xs"></th>
+                                            <th class="px-3 py-2 bg-orange-100 text-orange-800 font-bold text-xs">번호</th>
+                                            <th class="px-3 py-2 bg-orange-100 text-orange-800 font-bold text-xs">국어</th>
+                                            <th class="px-3 py-2 bg-orange-100 text-orange-800 font-bold text-xs">수학</th>
+                                            <th class="px-3 py-2 bg-orange-100 text-orange-800 rounded-tr-lg font-bold text-xs">정보</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td class="px-3 py-2 bg-amber-50 font-bold text-xs text-amber-700">학생1</td><td class="px-3 py-2 bg-white border border-orange-100 text-center">1</td><td class="px-3 py-2 bg-white border border-orange-100 text-center">80</td><td class="px-3 py-2 bg-white border border-orange-100 text-center">100</td><td class="px-3 py-2 bg-white border border-orange-100 text-center">90</td></tr>
+                                        <tr><td class="px-3 py-2 bg-amber-50 font-bold text-xs text-amber-700">학생2</td><td class="px-3 py-2 bg-white border border-orange-100 text-center">2</td><td class="px-3 py-2 bg-white border border-orange-100 text-center">95</td><td class="px-3 py-2 bg-white border border-orange-100 text-center">88</td><td class="px-3 py-2 bg-white border border-orange-100 text-center">76</td></tr>
+                                        <tr><td class="px-3 py-2 bg-amber-50 font-bold text-xs text-amber-700 rounded-bl-lg">학생3</td><td class="px-3 py-2 bg-white border border-orange-100 text-center">3</td><td class="px-3 py-2 bg-white border border-orange-100 text-center">72</td><td class="px-3 py-2 bg-white border border-orange-100 text-center">91</td><td class="px-3 py-2 bg-white border border-orange-100 text-center rounded-br-lg">85</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="flex gap-4 mt-3 text-xs text-gray-500">
+                                <span><i class="fas fa-arrows-alt-v text-orange-400 mr-1"></i>행 = 학생</span>
+                                <span><i class="fas fa-arrows-alt-h text-amber-400 mr-1"></i>열 = 과목</span>
+                            </div>
+                        </div>
+
+                        <div id="dimView3" class="dim-view hidden">
+                            <h4 class="text-sm font-bold text-orange-800 mb-1">3차원: 행, 열, 깊이</h4>
+                            <p class="text-xs text-gray-500 mb-4">여러 반의 성적표 - 행, 열에 깊이(반)가 추가</p>
+                            <div class="relative" style="height:220px;">
+                                <!-- Back layer (2반) -->
+                                <div class="absolute top-0 left-12 opacity-40">
+                                    <div class="bg-amber-100 rounded-lg p-3 border border-amber-200" style="width:200px;">
+                                        <div class="text-xs font-bold text-amber-700 mb-1">2반</div>
+                                        <div class="grid grid-cols-3 gap-1">
+                                            <div class="bg-white rounded px-2 py-1 text-center text-xs">75</div>
+                                            <div class="bg-white rounded px-2 py-1 text-center text-xs">82</div>
+                                            <div class="bg-white rounded px-2 py-1 text-center text-xs">90</div>
+                                            <div class="bg-white rounded px-2 py-1 text-center text-xs">88</div>
+                                            <div class="bg-white rounded px-2 py-1 text-center text-xs">79</div>
+                                            <div class="bg-white rounded px-2 py-1 text-center text-xs">95</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Front layer (1반) -->
+                                <div class="absolute top-10 left-0">
+                                    <div class="bg-orange-100 rounded-lg p-3 border-2 border-orange-300 shadow-lg" style="width:200px;">
+                                        <div class="text-xs font-bold text-orange-700 mb-1">1반</div>
+                                        <div class="grid grid-cols-3 gap-1">
+                                            <div class="bg-white rounded px-2 py-1 text-center text-xs font-semibold">80</div>
+                                            <div class="bg-white rounded px-2 py-1 text-center text-xs font-semibold">100</div>
+                                            <div class="bg-white rounded px-2 py-1 text-center text-xs font-semibold">90</div>
+                                            <div class="bg-white rounded px-2 py-1 text-center text-xs font-semibold">95</div>
+                                            <div class="bg-white rounded px-2 py-1 text-center text-xs font-semibold">88</div>
+                                            <div class="bg-white rounded px-2 py-1 text-center text-xs font-semibold">76</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Axis labels -->
+                                <div class="absolute bottom-4 left-0 text-xs text-gray-500">
+                                    <div class="flex items-center gap-4">
+                                        <span><i class="fas fa-arrows-alt-v text-orange-400 mr-1"></i>행(학생)</span>
+                                        <span><i class="fas fa-arrows-alt-h text-amber-400 mr-1"></i>열(과목)</span>
+                                        <span><i class="fas fa-cube text-red-400 mr-1"></i>깊이(반)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Score Table Example -->
+                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
+                        <div class="bg-gray-50 px-4 py-3 border-b border-gray-200">
+                            <h4 class="text-sm font-bold text-gray-700"><i class="fas fa-table text-orange-500 mr-2"></i>예시: 한 학생의 성적표</h4>
+                        </div>
+                        <div class="p-4">
+                            <table class="w-full max-w-md text-sm">
+                                <thead>
+                                    <tr class="bg-orange-50">
+                                        <th class="px-4 py-2 text-left font-bold text-orange-800">과목</th>
+                                        <th class="px-4 py-2 text-center font-bold text-orange-800">점수</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-100"><td class="px-4 py-2">국어</td><td class="px-4 py-2 text-center font-semibold text-orange-700">85</td></tr>
+                                    <tr class="border-b border-gray-100"><td class="px-4 py-2">수학</td><td class="px-4 py-2 text-center font-semibold text-orange-700">92</td></tr>
+                                    <tr class="border-b border-gray-100"><td class="px-4 py-2">정보</td><td class="px-4 py-2 text-center font-semibold text-orange-700">100</td></tr>
+                                    <tr><td class="px-4 py-2">영어</td><td class="px-4 py-2 text-center font-semibold text-orange-700">80</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Fun Story: Image Representation -->
+                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200">
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="bg-amber-400 text-amber-900 text-xs font-bold px-3 py-1 rounded-full">
+                                <i class="fas fa-lightbulb mr-1"></i>재미 이야기
+                            </span>
+                            <h4 class="text-sm font-bold text-amber-800">컴퓨터 이미지 표현 방법</h4>
+                        </div>
+
+                        <div class="space-y-4 text-sm text-gray-700">
+                            <div class="flex items-start gap-3">
+                                <span class="bg-gray-200 text-gray-700 text-xs font-bold px-2 py-1 rounded flex-shrink-0 mt-0.5">흑백</span>
+                                <p>0~255 정숫값의 <strong>2차원 구조</strong>로 표현. 0은 검정, 255는 흰색.</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="bg-gradient-to-r from-red-400 via-green-400 to-blue-400 text-white text-xs font-bold px-2 py-1 rounded flex-shrink-0 mt-0.5">컬러</span>
+                                <p>R(빨강), G(초록), B(파랑) 채널이 추가된 <strong>3차원 구조</strong>로 표현.</p>
+                            </div>
+                        </div>
+
+                        <!-- Interactive RGB Demo -->
+                        <div class="mt-6 no-print">
+                            <h5 class="text-xs font-bold text-amber-700 mb-3"><i class="fas fa-palette mr-1"></i>오렌지 이미지 RGB 예시 (4x4 픽셀)</h5>
+                            <div class="flex flex-wrap gap-2 mb-4" id="rgbTabs">
+                                <button class="tab-btn active text-xs" onclick="switchRGB('combined')">합성 이미지</button>
+                                <button class="tab-btn text-xs" onclick="switchRGB('r')">R (빨강)</button>
+                                <button class="tab-btn text-xs" onclick="switchRGB('g')">G (초록)</button>
+                                <button class="tab-btn text-xs" onclick="switchRGB('b')">B (파랑)</button>
+                            </div>
+                            <div id="rgbGrid" class="flex justify-center">
+                                <!-- Rendered by JS -->
+                            </div>
+                            <div id="rgbInfo" class="text-center text-xs text-gray-500 mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SECTION 1: 1차원 리스트 ==================== -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
+                <div class="p-6 sm:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="section-number">1</span>
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-900">1차원 리스트</h2>
+                    </div>
+
+                    <!-- Format -->
+                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 mb-6">
+                        <h4 class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-code text-orange-500 mr-2"></i>리스트 형식</h4>
+                        <div class="space-y-2 font-mono text-sm">
+                            <div class="bg-white rounded-lg px-4 py-2 border border-gray-100">
+                                <span class="text-purple-600">리스트명</span> = [<span class="text-orange-600">값1</span>, <span class="text-orange-600">값2</span>, <span class="text-orange-600">값3</span>, ...]
+                            </div>
+                            <div class="bg-white rounded-lg px-4 py-2 border border-gray-100">
+                                <span class="text-purple-600">리스트명</span>[<span class="text-blue-600">인덱스</span>]
+                            </div>
+                        </div>
+                        <div class="mt-3 space-y-1 text-xs text-gray-500">
+                            <p><i class="fas fa-info-circle text-orange-400 mr-1"></i>인덱스는 <strong>0부터 시작</strong>하여 1씩 증가합니다.</p>
+                            <p><i class="fas fa-info-circle text-orange-400 mr-1"></i>빈 리스트: <code class="bg-gray-100 px-1 rounded">c = []</code> / 0으로 초기화: <code class="bg-gray-100 px-1 rounded">d = [0] * 5</code></p>
+                        </div>
+                    </div>
+
+                    <!-- 예제 15 -->
+                    <div class="mb-8">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">예제 15</span>
+                            <span class="text-sm font-semibold text-gray-700">한 종류 자료형 리스트</span>
+                        </div>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-dot bg-red-400"></span>
+                                <span class="code-dot bg-yellow-400"></span>
+                                <span class="code-dot bg-green-400"></span>
+                                <span class="text-gray-400 text-xs ml-2">Python</span>
+                            </div>
+                            <div class="code-content text-white">
+                                <div>a = [<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>]</div>
+                                <div><span class="fn">print</span>(a, <span class="fn">type</span>(a))</div>
+                            </div>
+                            <div class="output-block">
+                                <span class="text-gray-400">>>> </span>[1, 3, 5] &lt;class 'list'&gt;
+                            </div>
+                        </div>
+
+                        <!-- Interactive Index Table -->
+                        <div class="mt-4 no-print">
+                            <p class="text-xs text-gray-500 mb-2"><i class="fas fa-hand-pointer text-orange-400 mr-1"></i>셀을 클릭하면 인덱스를 확인할 수 있습니다</p>
+                            <div id="indexDemo1" class="flex items-end gap-1">
+                                <!-- Rendered by JS -->
+                            </div>
+                            <div id="indexInfo1" class="text-sm text-gray-600 mt-2 h-6"></div>
+                        </div>
+                    </div>
+
+                    <!-- 예제 16 -->
+                    <div class="mb-8">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">예제 16</span>
+                            <span class="text-sm font-semibold text-gray-700">여러 종류 자료형 리스트</span>
+                        </div>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-dot bg-red-400"></span>
+                                <span class="code-dot bg-yellow-400"></span>
+                                <span class="code-dot bg-green-400"></span>
+                                <span class="text-gray-400 text-xs ml-2">Python</span>
+                            </div>
+                            <div class="code-content text-white">
+                                <div>b = [<span class="str">"B"</span>, <span class="num">1</span> <span class="op">></span> <span class="num">0</span>, <span class="num">2.4</span>]</div>
+                                <div><span class="fn">print</span>(b, <span class="fn">type</span>(b))</div>
+                            </div>
+                            <div class="output-block">
+                                <span class="text-gray-400">>>> </span>['B', True, 2.4] &lt;class 'list'&gt;
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 슬라이싱 -->
+                    <div class="mb-8">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-cut mr-1"></i>슬라이싱</span>
+                            <span class="text-sm font-semibold text-gray-700">리스트 부분 추출</span>
+                        </div>
+                        <div class="code-block mb-4">
+                            <div class="code-header">
+                                <span class="code-dot bg-red-400"></span>
+                                <span class="code-dot bg-yellow-400"></span>
+                                <span class="code-dot bg-green-400"></span>
+                                <span class="text-gray-400 text-xs ml-2">Python</span>
+                            </div>
+                            <div class="code-content text-white">
+                                <div>a = [<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>, <span class="num">7</span>]</div>
+                                <div><span class="fn">print</span>(a[<span class="num">1</span>:<span class="num">3</span>])   <span class="cm"># [3, 5]</span></div>
+                                <div><span class="fn">print</span>(a[<span class="num">1</span>:])    <span class="cm"># [3, 5, 7]</span></div>
+                                <div><span class="fn">print</span>(a[:<span class="num">3</span>])    <span class="cm"># [1, 3, 5]</span></div>
+                                <div><span class="fn">print</span>(a[:])     <span class="cm"># [1, 3, 5, 7]</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Slicing Playground -->
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100 no-print">
+                            <h4 class="text-sm font-bold text-blue-800 mb-3"><i class="fas fa-flask mr-1"></i>슬라이싱 놀이터</h4>
+                            <p class="text-xs text-gray-500 mb-3">슬라이스 표기법을 입력하고 결과를 확인해 보세요!</p>
+                            <div class="flex items-center gap-2 mb-4 flex-wrap">
+                                <span class="text-sm font-mono font-bold text-gray-700">a = [1, 3, 5, 7]</span>
+                                <span class="text-gray-400 mx-1">&rarr;</span>
+                                <span class="text-sm font-mono text-gray-600">a[</span>
+                                <input type="text" id="sliceStart" class="w-10 px-2 py-1 text-center font-mono text-sm border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-400" placeholder="" maxlength="2">
+                                <span class="text-sm font-mono text-gray-600">:</span>
+                                <input type="text" id="sliceEnd" class="w-10 px-2 py-1 text-center font-mono text-sm border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-400" placeholder="" maxlength="2">
+                                <span class="text-sm font-mono text-gray-600">]</span>
+                                <button onclick="doSlice()" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors">
+                                    실행
+                                </button>
+                            </div>
+                            <div id="sliceVisual" class="flex items-end gap-1 mb-3">
+                                <!-- Rendered by JS -->
+                            </div>
+                            <div id="sliceResult" class="text-sm font-mono text-blue-700 font-semibold h-6"></div>
+                            <div class="flex flex-wrap gap-2 mt-3">
+                                <button onclick="setSlice(1,3)" class="text-xs px-3 py-1 bg-white border border-blue-200 rounded-full text-blue-600 hover:bg-blue-50 transition-colors font-mono">a[1:3]</button>
+                                <button onclick="setSlice(1,'')" class="text-xs px-3 py-1 bg-white border border-blue-200 rounded-full text-blue-600 hover:bg-blue-50 transition-colors font-mono">a[1:]</button>
+                                <button onclick="setSlice('',3)" class="text-xs px-3 py-1 bg-white border border-blue-200 rounded-full text-blue-600 hover:bg-blue-50 transition-colors font-mono">a[:3]</button>
+                                <button onclick="setSlice('','')" class="text-xs px-3 py-1 bg-white border border-blue-200 rounded-full text-blue-600 hover:bg-blue-50 transition-colors font-mono">a[:]</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 예제 17 -->
+                    <div class="mb-8">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">예제 17</span>
+                            <span class="text-sm font-semibold text-gray-700">리스트 연산</span>
+                        </div>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-dot bg-red-400"></span>
+                                <span class="code-dot bg-yellow-400"></span>
+                                <span class="code-dot bg-green-400"></span>
+                                <span class="text-gray-400 text-xs ml-2">Python</span>
+                            </div>
+                            <div class="code-content text-white">
+                                <div>n = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>]</div>
+                                <div><span class="fn">print</span>(n[<span class="num">0</span>])      <span class="cm"># 10</span></div>
+                                <div><span class="fn">print</span>(n[<span class="num">-1</span>])     <span class="cm"># 50</span></div>
+                                <div>n[<span class="num">0</span>] = <span class="str">"hello"</span></div>
+                                <div><span class="fn">print</span>(n)         <span class="cm"># ['hello', 20, 30, 40, 50]</span></div>
+                                <div>n[<span class="num">3</span>] = n[<span class="num">1</span>] + n[<span class="num">2</span>]</div>
+                                <div><span class="fn">print</span>(n)         <span class="cm"># ['hello', 20, 30, 50, 50]</span></div>
+                                <div>n[<span class="num">1</span>] = n[<span class="num">2</span>] <span class="op">></span> n[<span class="num">3</span>]</div>
+                                <div><span class="fn">print</span>(n)         <span class="cm"># ['hello', False, 30, 50, 50]</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-step reveal -->
+                        <div class="mt-4 no-print">
+                            <div class="bg-orange-50 rounded-xl p-4 border border-orange-100">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h5 class="text-xs font-bold text-orange-700"><i class="fas fa-shoe-prints mr-1"></i>단계별 실행</h5>
+                                    <div class="flex gap-2">
+                                        <button onclick="ex17Prev()" id="ex17PrevBtn" class="px-3 py-1 bg-white border border-orange-200 rounded-lg text-xs font-bold text-orange-600 hover:bg-orange-50 transition-colors disabled:opacity-40" disabled>
+                                            <i class="fas fa-chevron-left mr-1"></i>이전
+                                        </button>
+                                        <button onclick="ex17Next()" id="ex17NextBtn" class="px-3 py-1 bg-orange-600 text-white rounded-lg text-xs font-bold hover:bg-orange-700 transition-colors">
+                                            다음<i class="fas fa-chevron-right ml-1"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="ex17Step" class="text-xs text-gray-600 mb-2 font-mono bg-white/60 rounded-lg px-3 py-1.5"></div>
+                                <div id="ex17Visual" class="flex items-end gap-1 flex-wrap"></div>
+                                <div id="ex17Output" class="text-sm font-mono text-green-700 mt-2 h-5"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 하나 더 알기: 리스트 명령어 -->
+                    <div class="mb-8">
+                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                    <i class="fas fa-plus-circle mr-1"></i>하나 더 알기
+                                </span>
+                                <h4 class="text-sm font-bold text-green-800">리스트 관련 명령어</h4>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border-collapse">
+                                    <thead>
+                                        <tr class="bg-green-100/70">
+                                            <th class="px-4 py-2.5 text-left font-bold text-green-800 rounded-tl-lg">명령어</th>
+                                            <th class="px-4 py-2.5 text-left font-bold text-green-800 rounded-tr-lg">설명</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-green-100"><td class="px-4 py-2 font-mono text-sm text-green-700">.append(값)</td><td class="px-4 py-2 text-gray-600">맨 뒤에 값 추가</td></tr>
+                                        <tr class="border-b border-green-100"><td class="px-4 py-2 font-mono text-sm text-green-700">.insert(인덱스, 값)</td><td class="px-4 py-2 text-gray-600">원하는 위치에 삽입</td></tr>
+                                        <tr class="border-b border-green-100"><td class="px-4 py-2 font-mono text-sm text-green-700">.remove(값)</td><td class="px-4 py-2 text-gray-600">일치하는 요소 삭제 (첫 번째)</td></tr>
+                                        <tr class="border-b border-green-100"><td class="px-4 py-2 font-mono text-sm text-green-700">.sort()</td><td class="px-4 py-2 text-gray-600">오름차순 정렬</td></tr>
+                                        <tr class="border-b border-green-100"><td class="px-4 py-2 font-mono text-sm text-green-700">.pop()</td><td class="px-4 py-2 text-gray-600">맨 뒤 요소 삭제</td></tr>
+                                        <tr><td class="px-4 py-2 font-mono text-sm text-green-700">len(리스트명)</td><td class="px-4 py-2 text-gray-600">데이터 개수 반환</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Playlist Demo -->
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-music mr-1"></i>실습</span>
+                            <span class="text-sm font-semibold text-gray-700">리스트 명령어 실행 (playlist)</span>
+                        </div>
+
+                        <div class="code-block mb-4">
+                            <div class="code-header">
+                                <span class="code-dot bg-red-400"></span>
+                                <span class="code-dot bg-yellow-400"></span>
+                                <span class="code-dot bg-green-400"></span>
+                                <span class="text-gray-400 text-xs ml-2">Python</span>
+                            </div>
+                            <div class="code-content text-white text-xs sm:text-sm" style="line-height:1.8;">
+                                <div>playlist = [<span class="str">'나비야'</span>, <span class="str">'작은별'</span>, <span class="str">'산토끼'</span>, <span class="str">'비행기'</span>]</div>
+                                <div>playlist.<span class="fn">append</span>(<span class="str">'산토끼'</span>)</div>
+                                <div>playlist.<span class="fn">insert</span>(<span class="num">0</span>, <span class="str">'아기 상어'</span>)</div>
+                                <div>playlist.<span class="fn">remove</span>(<span class="str">'산토끼'</span>)</div>
+                                <div>playlist.<span class="fn">sort</span>()</div>
+                                <div>playlist.<span class="fn">pop</span>()</div>
+                                <div><span class="fn">print</span>(<span class="fn">len</span>(playlist))</div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Playlist Steps -->
+                        <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-5 border border-purple-100 no-print">
+                            <div class="flex items-center justify-between mb-4">
+                                <h5 class="text-sm font-bold text-purple-800"><i class="fas fa-play-circle mr-1"></i>단계별 실행</h5>
+                                <div class="flex gap-2">
+                                    <button onclick="playlistPrev()" id="plPrevBtn" class="px-3 py-1.5 bg-white border border-purple-200 rounded-lg text-xs font-bold text-purple-600 hover:bg-purple-50 transition-colors disabled:opacity-40" disabled>
+                                        <i class="fas fa-step-backward mr-1"></i>이전
+                                    </button>
+                                    <button onclick="playlistNext()" id="plNextBtn" class="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-bold hover:bg-purple-700 transition-colors">
+                                        다음<i class="fas fa-step-forward ml-1"></i>
+                                    </button>
+                                    <button onclick="playlistReset()" class="px-3 py-1.5 bg-white border border-purple-200 rounded-lg text-xs font-bold text-gray-500 hover:bg-gray-50 transition-colors">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="plCode" class="text-xs font-mono text-purple-800 bg-white/60 rounded-lg px-3 py-2 mb-3"></div>
+                            <div id="plVisual" class="flex items-center gap-1 flex-wrap mb-3 min-h-[56px]"></div>
+                            <div id="plOutput" class="text-sm text-gray-600 h-5"></div>
+                            <div class="flex items-center gap-1 mt-2">
+                                <span class="text-[10px] text-gray-400">단계:</span>
+                                <div id="plProgress" class="flex gap-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SECTION 2: 2차원 리스트 ==================== -->
+        <section class="fade-in">
+            <div class="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
+                <div class="p-6 sm:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="section-number">2</span>
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-900">2차원 리스트</h2>
+                    </div>
+
+                    <!-- Format -->
+                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 mb-6">
+                        <h4 class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-code text-orange-500 mr-2"></i>2차원 리스트 형식</h4>
+                        <div class="space-y-2 font-mono text-sm">
+                            <div class="bg-white rounded-lg px-4 py-2 border border-gray-100">
+                                <span class="text-purple-600">리스트명</span> = [[<span class="text-orange-600">값</span>, ...], ..., [<span class="text-orange-600">값</span>, ...]]
+                            </div>
+                            <div class="bg-white rounded-lg px-4 py-2 border border-gray-100">
+                                <span class="text-purple-600">리스트명</span>[<span class="text-blue-600">행</span>][<span class="text-green-600">열</span>]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 예제 18 -->
+                    <div class="mb-8">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">예제 18</span>
+                            <span class="text-sm font-semibold text-gray-700">놀이기구 운행 정보</span>
+                        </div>
+
+                        <div class="code-block mb-4">
+                            <div class="code-header">
+                                <span class="code-dot bg-red-400"></span>
+                                <span class="code-dot bg-yellow-400"></span>
+                                <span class="code-dot bg-green-400"></span>
+                                <span class="text-gray-400 text-xs ml-2">Python</span>
+                            </div>
+                            <div class="code-content text-white text-xs sm:text-sm" style="line-height:1.8;">
+                                <div>a = [[<span class="str">'놀이기구'</span>, <span class="str">'키 제한'</span>, <span class="str">'탑승 인원'</span>, <span class="str">'대기 시간(분)'</span>],</div>
+                                <div>     [<span class="str">'범퍼카'</span>, <span class="str">'110cm 이상'</span>, <span class="num">30</span>, <span class="num">40</span>],</div>
+                                <div>     [<span class="str">'롤러코스터'</span>, <span class="str">'120cm 이상'</span>, <span class="num">60</span>, <span class="num">100</span>],</div>
+                                <div>     [<span class="str">'플룸라이드'</span>, <span class="str">'140cm 이상'</span>, <span class="num">8</span>, <span class="num">120</span>]]</div>
+                                <div></div>
+                                <div><span class="fn">print</span>(a[<span class="num">1</span>])     <span class="cm"># ['범퍼카', '110cm 이상', 30, 40]</span></div>
+                                <div><span class="fn">print</span>(a[<span class="num">2</span>][<span class="num">3</span>])  <span class="cm"># 100</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive 2D Grid -->
+                        <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-5 border border-orange-100 no-print">
+                            <h5 class="text-sm font-bold text-orange-800 mb-2"><i class="fas fa-th mr-1"></i>2차원 리스트 탐색기</h5>
+                            <p class="text-xs text-gray-500 mb-4">셀을 클릭하면 해당 요소의 인덱스를 확인할 수 있습니다.</p>
+                            <div class="overflow-x-auto">
+                                <table class="border-collapse" id="grid2D">
+                                    <!-- Rendered by JS -->
+                                </table>
+                            </div>
+                            <div id="gridInfo" class="mt-3 text-sm font-mono text-orange-700 font-semibold h-8 flex items-center">
+                                <span class="text-gray-400 text-xs">셀을 클릭해 보세요</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-6 border border-orange-200">
+                        <h4 class="text-sm font-bold text-orange-800 mb-3"><i class="fas fa-bookmark mr-1"></i>정리</h4>
+                        <div class="grid sm:grid-cols-2 gap-4 text-sm">
+                            <div class="bg-white rounded-lg p-4 border border-orange-100">
+                                <div class="font-bold text-orange-700 mb-1">1차원 리스트</div>
+                                <p class="text-gray-600 text-xs">데이터를 한 줄로 나열하여 저장. 인덱스 하나로 접근.</p>
+                                <code class="text-xs text-gray-500 font-mono block mt-1">a[인덱스]</code>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border border-orange-100">
+                                <div class="font-bold text-orange-700 mb-1">2차원 리스트</div>
+                                <p class="text-gray-600 text-xs">행과 열로 데이터를 저장. 행과 열 인덱스로 접근.</p>
+                                <code class="text-xs text-gray-500 font-mono block mt-1">a[행][열]</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Navigation -->
+        <div class="flex justify-between items-center pt-4 pb-8 fade-in">
+            <a href="../../../index.html" class="flex items-center gap-2 text-gray-500 hover:text-orange-600 transition-colors text-sm font-medium">
+                <i class="fas fa-arrow-left"></i>
+                <span>전체 단원</span>
+            </a>
+        </div>
+
+    </main>
+
+    <script>
+    // ===========================================
+    // SCROLL FADE-IN ANIMATION
+    // ===========================================
+    const fadeObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+
+    // ===========================================
+    // DIMENSION SWITCHER
+    // ===========================================
+    function switchDimension(dim) {
+        document.querySelectorAll('.dim-view').forEach(v => v.classList.add('hidden'));
+        document.getElementById('dimView' + dim).classList.remove('hidden');
+        document.querySelectorAll('#dimTabs .tab-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', i === dim - 1);
+        });
+    }
+
+    // ===========================================
+    // RGB DEMO
+    // ===========================================
+    const rgbR = [
+        [255, 255, 240, 200],
+        [255, 255, 245, 210],
+        [240, 245, 230, 180],
+        [200, 210, 180, 150]
+    ];
+    const rgbG = [
+        [165, 160, 140, 100],
+        [170, 165, 145, 110],
+        [140, 145, 120, 80],
+        [100, 110, 80, 60]
+    ];
+    const rgbB = [
+        [0, 10, 20, 30],
+        [5, 15, 25, 35],
+        [20, 25, 40, 50],
+        [30, 35, 50, 60]
+    ];
+
+    let rgbMode = 'combined';
+
+    function switchRGB(mode) {
+        rgbMode = mode;
+        document.querySelectorAll('#rgbTabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        renderRGBGrid();
+    }
+
+    function renderRGBGrid() {
+        const grid = document.getElementById('rgbGrid');
+        const info = document.getElementById('rgbInfo');
+        let html = '<div class="grid grid-cols-4 gap-1.5">';
+
+        for (let r = 0; r < 4; r++) {
+            for (let c = 0; c < 4; c++) {
+                let bg, text, val;
+                if (rgbMode === 'combined') {
+                    bg = `rgb(${rgbR[r][c]}, ${rgbG[r][c]}, ${rgbB[r][c]})`;
+                    text = rgbR[r][c] > 180 ? '#333' : '#fff';
+                    val = '';
+                } else if (rgbMode === 'r') {
+                    const v = rgbR[r][c];
+                    bg = `rgb(${v}, 0, 0)`;
+                    text = v > 150 ? '#300' : '#fcc';
+                    val = v;
+                } else if (rgbMode === 'g') {
+                    const v = rgbG[r][c];
+                    bg = `rgb(0, ${v}, 0)`;
+                    text = v > 120 ? '#030' : '#cfc';
+                    val = v;
+                } else {
+                    const v = rgbB[r][c];
+                    bg = `rgb(0, 0, ${v})`;
+                    text = v > 100 ? '#003' : '#ccf';
+                    val = v;
+                }
+                html += `<div class="pixel-cell" style="background:${bg};color:${text};"
+                    onclick="showPixelInfo(${r},${c})" title="[${r}][${c}]">${val}</div>`;
+            }
+        }
+        html += '</div>';
+        grid.innerHTML = html;
+        info.textContent = rgbMode === 'combined' ? '픽셀을 클릭하면 RGB 값을 확인할 수 있습니다' :
+            rgbMode === 'r' ? 'R(빨강) 채널 값' : rgbMode === 'g' ? 'G(초록) 채널 값' : 'B(파랑) 채널 값';
+    }
+
+    function showPixelInfo(r, c) {
+        const info = document.getElementById('rgbInfo');
+        info.innerHTML = `<span class="font-mono font-bold">[${r}][${c}]</span> &rarr; R: <span class="text-red-600 font-bold">${rgbR[r][c]}</span>, G: <span class="text-green-600 font-bold">${rgbG[r][c]}</span>, B: <span class="text-blue-600 font-bold">${rgbB[r][c]}</span> = <span class="inline-block w-4 h-4 rounded" style="background:rgb(${rgbR[r][c]},${rgbG[r][c]},${rgbB[r][c]});vertical-align:middle;"></span>`;
+    }
+
+    // ===========================================
+    // INDEX DEMO (예제 15)
+    // ===========================================
+    function renderIndexDemo() {
+        const data = [1, 3, 5];
+        const container = document.getElementById('indexDemo1');
+        let html = '';
+        data.forEach((v, i) => {
+            html += `<div class="text-center cursor-pointer" onclick="showIndex1(${i})">
+                <div class="list-cell" id="idx1_${i}">${v}</div>
+                <div class="text-[10px] text-gray-400 mt-1 font-mono">[${i}]</div>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function showIndex1(i) {
+        const data = [1, 3, 5];
+        document.querySelectorAll('#indexDemo1 .list-cell').forEach(c => c.classList.remove('active'));
+        document.getElementById('idx1_' + i).classList.add('active');
+        document.getElementById('indexInfo1').innerHTML = `<span class="font-mono">a[<span class="text-orange-600 font-bold">${i}</span>]</span> = <span class="font-bold text-orange-700">${data[i]}</span>`;
+    }
+
+    // ===========================================
+    // SLICING PLAYGROUND
+    // ===========================================
+    const sliceData = [1, 3, 5, 7];
+
+    function renderSliceVisual(start, end) {
+        const container = document.getElementById('sliceVisual');
+        let html = '';
+        sliceData.forEach((v, i) => {
+            const isSliced = (start !== null || end !== null) && i >= (start ?? 0) && i < (end ?? sliceData.length);
+            html += `<div class="text-center">
+                <div class="list-cell ${isSliced ? 'sliced' : ''}">${v}</div>
+                <div class="text-[10px] text-gray-400 mt-1 font-mono">[${i}]</div>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function doSlice() {
+        const s = document.getElementById('sliceStart').value.trim();
+        const e = document.getElementById('sliceEnd').value.trim();
+        const start = s === '' ? null : parseInt(s);
+        const end = e === '' ? null : parseInt(e);
+        const actualStart = start ?? 0;
+        const actualEnd = end ?? sliceData.length;
+        const result = sliceData.slice(actualStart, actualEnd);
+        renderSliceVisual(actualStart, actualEnd);
+        document.getElementById('sliceResult').textContent = `a[${s}:${e}] = [${result.join(', ')}]`;
+    }
+
+    function setSlice(s, e) {
+        document.getElementById('sliceStart').value = s;
+        document.getElementById('sliceEnd').value = e;
+        doSlice();
+    }
+
+    // ===========================================
+    // EXAMPLE 17 STEP-BY-STEP
+    // ===========================================
+    const ex17Steps = [
+        { code: 'n = [10, 20, 30, 40, 50]', state: [10, 20, 30, 40, 50], output: '', desc: '리스트 생성' },
+        { code: 'print(n[0])', state: [10, 20, 30, 40, 50], output: '10', highlight: [0], desc: 'n[0] 출력' },
+        { code: 'print(n[-1])', state: [10, 20, 30, 40, 50], output: '50', highlight: [4], desc: 'n[-1] = 마지막 요소 출력' },
+        { code: 'n[0] = "hello"', state: ['"hello"', 20, 30, 40, 50], output: '', highlight: [0], desc: 'n[0]을 "hello"로 변경' },
+        { code: 'print(n)', state: ['"hello"', 20, 30, 40, 50], output: "['hello', 20, 30, 40, 50]", desc: '전체 리스트 출력' },
+        { code: 'n[3] = n[1] + n[2]', state: ['"hello"', 20, 30, 50, 50], output: '', highlight: [1, 2, 3], desc: 'n[1]+n[2]=20+30=50을 n[3]에 저장' },
+        { code: 'print(n)', state: ['"hello"', 20, 30, 50, 50], output: "['hello', 20, 30, 50, 50]", desc: '전체 리스트 출력' },
+        { code: 'n[1] = n[2] > n[3]', state: ['"hello"', 'False', 30, 50, 50], output: '', highlight: [1, 2, 3], desc: 'n[2]>n[3] = 30>50 = False를 n[1]에 저장' },
+        { code: 'print(n)', state: ['"hello"', 'False', 30, 50, 50], output: "['hello', False, 30, 50, 50]", desc: '전체 리스트 출력' },
+    ];
+    let ex17Idx = 0;
+
+    function renderEx17() {
+        const step = ex17Steps[ex17Idx];
+        document.getElementById('ex17Step').innerHTML = `<span class="text-orange-600 font-semibold">Step ${ex17Idx + 1}/${ex17Steps.length}:</span> <span class="text-gray-700">${step.code}</span> <span class="text-gray-400 ml-2"># ${step.desc}</span>`;
+
+        let html = '<span class="text-xs text-gray-400 font-mono mr-1">n = [</span>';
+        step.state.forEach((v, i) => {
+            const hl = step.highlight && step.highlight.includes(i) ? 'active' : '';
+            html += `<div class="list-cell ${hl}">${v}</div>`;
+            if (i < step.state.length - 1) html += '<span class="text-gray-300 mx-0.5">,</span>';
+        });
+        html += '<span class="text-xs text-gray-400 font-mono ml-1">]</span>';
+        document.getElementById('ex17Visual').innerHTML = html;
+
+        document.getElementById('ex17Output').textContent = step.output ? '>>> ' + step.output : '';
+        document.getElementById('ex17PrevBtn').disabled = ex17Idx === 0;
+        document.getElementById('ex17NextBtn').disabled = ex17Idx === ex17Steps.length - 1;
+    }
+
+    function ex17Next() { if (ex17Idx < ex17Steps.length - 1) { ex17Idx++; renderEx17(); } }
+    function ex17Prev() { if (ex17Idx > 0) { ex17Idx--; renderEx17(); } }
+
+    // ===========================================
+    // PLAYLIST DEMO
+    // ===========================================
+    const plSteps = [
+        { code: "playlist = ['나비야', '작은별', '산토끼', '비행기']", state: ['나비야', '작은별', '산토끼', '비행기'], output: "['나비야', '작은별', '산토끼', '비행기']", desc: '초기 리스트 생성', added: -1, removed: -1 },
+        { code: "playlist.append('산토끼')", state: ['나비야', '작은별', '산토끼', '비행기', '산토끼'], output: "['나비야', '작은별', '산토끼', '비행기', '산토끼']", desc: "맨 뒤에 '산토끼' 추가", added: 4, removed: -1 },
+        { code: "playlist.insert(0, '아기 상어')", state: ['아기 상어', '나비야', '작은별', '산토끼', '비행기', '산토끼'], output: "['아기 상어', '나비야', '작은별', '산토끼', '비행기', '산토끼']", desc: "0번 위치에 '아기 상어' 삽입", added: 0, removed: -1 },
+        { code: "playlist.remove('산토끼')", state: ['아기 상어', '나비야', '작은별', '비행기', '산토끼'], output: "['아기 상어', '나비야', '작은별', '비행기', '산토끼']", desc: "첫 번째 '산토끼' 삭제", added: -1, removed: -1 },
+        { code: "playlist.sort()", state: ['나비야', '비행기', '산토끼', '아기 상어', '작은별'], output: "['나비야', '비행기', '산토끼', '아기 상어', '작은별']", desc: "오름차순 정렬", added: -1, removed: -1 },
+        { code: "playlist.pop()", state: ['나비야', '비행기', '산토끼', '아기 상어'], output: "['나비야', '비행기', '산토끼', '아기 상어']", desc: "맨 뒤 요소('작은별') 삭제", added: -1, removed: -1 },
+        { code: "len(playlist)", state: ['나비야', '비행기', '산토끼', '아기 상어'], output: "4", desc: "리스트 길이: 4", added: -1, removed: -1 },
+    ];
+    let plIdx = 0;
+
+    function renderPlaylist() {
+        const step = plSteps[plIdx];
+        document.getElementById('plCode').innerHTML = `<span class="text-purple-600 font-semibold">Step ${plIdx + 1}/${plSteps.length}:</span> ${step.code} <span class="text-gray-400 ml-2"># ${step.desc}</span>`;
+
+        let html = '';
+        step.state.forEach((v, i) => {
+            let cls = 'playlist-item';
+            if (i === step.added) cls += ' added';
+            html += `<div class="${cls}"><i class="fas fa-music text-purple-300 mr-1.5 text-[10px]"></i>${v}</div>`;
+        });
+        document.getElementById('plVisual').innerHTML = html;
+
+        document.getElementById('plOutput').innerHTML = step.output ? `<span class="font-mono text-xs text-green-700">>>> ${step.output}</span>` : '';
+
+        // Progress dots
+        let prog = '';
+        for (let i = 0; i < plSteps.length; i++) {
+            prog += `<div class="w-2 h-2 rounded-full transition-all ${i === plIdx ? 'bg-purple-500 scale-125' : i < plIdx ? 'bg-purple-300' : 'bg-gray-200'}"></div>`;
+        }
+        document.getElementById('plProgress').innerHTML = prog;
+
+        document.getElementById('plPrevBtn').disabled = plIdx === 0;
+        document.getElementById('plNextBtn').disabled = plIdx === plSteps.length - 1;
+    }
+
+    function playlistNext() { if (plIdx < plSteps.length - 1) { plIdx++; renderPlaylist(); } }
+    function playlistPrev() { if (plIdx > 0) { plIdx--; renderPlaylist(); } }
+    function playlistReset() { plIdx = 0; renderPlaylist(); }
+
+    // ===========================================
+    // 2D GRID (놀이기구)
+    // ===========================================
+    const gridData = [
+        ['놀이기구', '키 제한', '탑승 인원', '대기 시간(분)'],
+        ['범퍼카', '110cm 이상', 30, 40],
+        ['롤러코스터', '120cm 이상', 60, 100],
+        ['플룸라이드', '140cm 이상', 8, 120]
+    ];
+
+    function renderGrid2D() {
+        const table = document.getElementById('grid2D');
+        let html = '<thead><tr><th class="px-2 py-1.5 text-[10px] text-gray-400 font-mono"></th>';
+        for (let c = 0; c < gridData[0].length; c++) {
+            html += `<th class="px-2 py-1.5 text-[10px] text-orange-400 font-mono font-bold">열 ${c}</th>`;
+        }
+        html += '</tr></thead><tbody>';
+
+        for (let r = 0; r < gridData.length; r++) {
+            html += `<tr><td class="px-2 py-1.5 text-[10px] text-orange-400 font-mono font-bold">행 ${r}</td>`;
+            for (let c = 0; c < gridData[r].length; c++) {
+                const isHeader = r === 0;
+                html += `<td class="grid-cell ${isHeader ? 'bg-orange-50 font-bold text-orange-800' : 'bg-white'} border border-orange-100 rounded"
+                    onclick="selectGridCell(${r},${c})" id="cell_${r}_${c}">${gridData[r][c]}</td>`;
+            }
+            html += '</tr>';
+        }
+        html += '</tbody>';
+        table.innerHTML = html;
+    }
+
+    function selectGridCell(r, c) {
+        document.querySelectorAll('.grid-cell').forEach(cell => cell.classList.remove('selected'));
+        document.getElementById('cell_' + r + '_' + c).classList.add('selected');
+        const val = gridData[r][c];
+        document.getElementById('gridInfo').innerHTML = `a[<span class="text-blue-600 font-bold">${r}</span>][<span class="text-green-600 font-bold">${c}</span>] = <span class="text-orange-700 font-bold">${typeof val === 'string' ? "'" + val + "'" : val}</span>`;
+    }
+
+    // ===========================================
+    // INITIALIZATION
+    // ===========================================
+    document.addEventListener('DOMContentLoaded', () => {
+        renderRGBGrid();
+        renderIndexDemo();
+        renderSliceVisual(null, null);
+        renderEx17();
+        renderPlaylist();
+        renderGrid2D();
+    });
+    </script>
+
+</body>
+</html>
