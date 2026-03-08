@@ -936,6 +936,1132 @@
         </section>
 
         <!-- ============================================ -->
+        <!-- IP주소와 MAC주소 Section -->
+        <!-- ============================================ -->
+        <section class="mb-10">
+            <!-- Section Header -->
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-1.5 h-8 bg-gradient-to-b from-teal-400 to-teal-600 rounded-full"></div>
+                <h2 class="text-xl font-bold text-gray-800">IP 주소와 MAC 주소</h2>
+                <span class="ml-auto text-xs bg-teal-100 text-teal-700 font-semibold px-3 py-1 rounded-full">추가 학습</span>
+            </div>
+
+            <!-- IP주소 카드 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 bg-gradient-to-br from-teal-400 to-teal-600 rounded-xl flex items-center justify-center shadow-sm">
+                        <i class="fas fa-network-wired text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">IP 주소 (IP Address)</h3>
+                        <p class="text-xs text-teal-600 font-medium">Internet Protocol Address</p>
+                    </div>
+                </div>
+
+                <!-- 정의 -->
+                <div class="bg-teal-50 rounded-xl p-4 mb-4 border border-teal-100">
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        <strong class="text-teal-700">인터넷에서 컴퓨터나 기기를 식별하는 논리적 주소</strong>입니다.
+                        우편 주소처럼 데이터가 올바른 목적지에 전달될 수 있도록 합니다. 네트워크 관리자나 ISP(인터넷 서비스 제공자)에 의해 할당됩니다.
+                    </p>
+                </div>
+
+                <!-- IPv4 vs IPv6 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <!-- IPv4 -->
+                    <div class="rounded-xl border border-blue-100 overflow-hidden">
+                        <div class="bg-blue-500 px-4 py-2.5 flex items-center gap-2">
+                            <i class="fas fa-tag text-white text-xs"></i>
+                            <span class="text-white font-bold text-sm">IPv4</span>
+                        </div>
+                        <div class="p-4 bg-blue-50 space-y-2">
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-circle text-blue-400 text-xs mt-1.5 flex-shrink-0"></i>
+                                <p class="text-xs text-gray-700"><strong>32비트</strong> 구성, 약 43억 개의 주소</p>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-circle text-blue-400 text-xs mt-1.5 flex-shrink-0"></i>
+                                <p class="text-xs text-gray-700">0~255 범위의 숫자 <strong>4개</strong>를 점(.)으로 구분</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-2.5 border border-blue-200 mt-2">
+                                <p class="text-center font-mono text-blue-700 font-bold text-sm tracking-widest">192.168.0.1</p>
+                                <p class="text-center text-xs text-gray-400 mt-1">예시</p>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-exclamation-triangle text-orange-400 text-xs mt-1.5 flex-shrink-0"></i>
+                                <p class="text-xs text-gray-600">주소 고갈 문제로 IPv6로 전환 중</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- IPv6 -->
+                    <div class="rounded-xl border border-purple-100 overflow-hidden">
+                        <div class="bg-purple-500 px-4 py-2.5 flex items-center gap-2">
+                            <i class="fas fa-tag text-white text-xs"></i>
+                            <span class="text-white font-bold text-sm">IPv6</span>
+                        </div>
+                        <div class="p-4 bg-purple-50 space-y-2">
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-circle text-purple-400 text-xs mt-1.5 flex-shrink-0"></i>
+                                <p class="text-xs text-gray-700"><strong>128비트</strong> 구성, 사실상 무한한 주소</p>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-circle text-purple-400 text-xs mt-1.5 flex-shrink-0"></i>
+                                <p class="text-xs text-gray-700">16진수 8개 그룹을 콜론(:)으로 구분</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-2.5 border border-purple-200 mt-2">
+                                <p class="text-center font-mono text-purple-700 font-bold text-xs tracking-wide">2001:0db8:85a3::8a2e</p>
+                                <p class="text-center text-xs text-gray-400 mt-1">예시</p>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-green-400 text-xs mt-1.5 flex-shrink-0"></i>
+                                <p class="text-xs text-gray-600">보안, 속도, 효율성이 향상됨</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 공인 IP vs 사설 IP -->
+                <div class="mb-4">
+                    <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                        <i class="fas fa-exchange-alt text-teal-500 text-xs"></i> 공인 IP vs 사설 IP
+                    </h4>
+                    <div class="overflow-x-auto rounded-xl border border-gray-200">
+                        <table class="w-full text-xs">
+                            <thead>
+                                <tr class="bg-gray-800 text-white">
+                                    <th class="px-4 py-3 text-left font-semibold">구분</th>
+                                    <th class="px-4 py-3 text-left font-semibold">공인 IP</th>
+                                    <th class="px-4 py-3 text-left font-semibold">사설 IP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-100">
+                                    <td class="px-4 py-3 font-semibold text-gray-600 bg-gray-50">의미</td>
+                                    <td class="px-4 py-3 text-gray-700">인터넷에서 사용하는 전 세계 유일한 주소</td>
+                                    <td class="px-4 py-3 text-gray-700">내부 네트워크(가정, 회사)에서만 사용</td>
+                                </tr>
+                                <tr class="border-b border-gray-100">
+                                    <td class="px-4 py-3 font-semibold text-gray-600 bg-gray-50">할당</td>
+                                    <td class="px-4 py-3 text-gray-700">ISP(KT, SKT 등)에서 부여</td>
+                                    <td class="px-4 py-3 text-gray-700">공유기(라우터)에서 자동 부여</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-semibold text-gray-600 bg-gray-50">예시</td>
+                                    <td class="px-4 py-3"><span class="font-mono bg-blue-50 text-blue-700 px-2 py-0.5 rounded">203.0.113.5</span></td>
+                                    <td class="px-4 py-3"><span class="font-mono bg-green-50 text-green-700 px-2 py-0.5 rounded">192.168.0.x</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 정적 IP vs 동적 IP -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-amber-50 rounded-xl p-3.5 border border-amber-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-6 h-6 bg-amber-400 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-lock text-white text-xs"></i>
+                            </div>
+                            <span class="text-sm font-bold text-amber-800">정적 IP</span>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">항상 동일한 주소 유지. 서버 운영에 적합하지만 관리 비용이 높음</p>
+                    </div>
+                    <div class="bg-green-50 rounded-xl p-3.5 border border-green-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-6 h-6 bg-green-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-sync text-white text-xs"></i>
+                            </div>
+                            <span class="text-sm font-bold text-green-800">동적 IP</span>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">접속 시마다 주소가 변경될 수 있음. DHCP 서버가 자동 할당</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAC주소 카드 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-xl flex items-center justify-center shadow-sm">
+                        <i class="fas fa-microchip text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">MAC 주소 (MAC Address)</h3>
+                        <p class="text-xs text-indigo-600 font-medium">Media Access Control Address</p>
+                    </div>
+                </div>
+
+                <!-- 정의 -->
+                <div class="bg-indigo-50 rounded-xl p-4 mb-4 border border-indigo-100">
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        <strong class="text-indigo-700">네트워크 인터페이스 카드(NIC)에 제조 시 부여되는 고유한 물리적 주소</strong>입니다.
+                        전 세계에서 동일한 MAC 주소를 갖는 장치는 존재하지 않으며, 하드웨어에 영구적으로 기록됩니다.
+                    </p>
+                </div>
+
+                <!-- 구조 시각화 -->
+                <div class="mb-5">
+                    <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                        <i class="fas fa-puzzle-piece text-indigo-500 text-xs"></i> MAC 주소의 구조
+                    </h4>
+                    <div class="bg-gray-900 rounded-xl p-4 mb-3">
+                        <p class="text-center font-mono text-lg font-bold tracking-widest mb-1">
+                            <span class="text-yellow-300">00:1A:2B</span>
+                            <span class="text-white">:</span>
+                            <span class="text-teal-300">3C:4D:5E</span>
+                        </p>
+                        <div class="flex justify-center gap-8 mt-2">
+                            <span class="text-yellow-300 text-xs">제조사 코드 (OUI)</span>
+                            <span class="text-teal-300 text-xs">장치 고유 번호</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="bg-yellow-50 rounded-xl p-3 border border-yellow-100 flex items-start gap-3">
+                            <div class="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-industry text-white text-xs"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-yellow-800 mb-1">앞 24비트 — OUI (제조사 코드)</p>
+                                <p class="text-xs text-gray-600">IEEE에서 제조사별로 할당. 어떤 회사가 만들었는지 식별 가능</p>
+                            </div>
+                        </div>
+                        <div class="bg-teal-50 rounded-xl p-3 border border-teal-100 flex items-start gap-3">
+                            <div class="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-fingerprint text-white text-xs"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-teal-800 mb-1">뒤 24비트 — 장치 고유 번호</p>
+                                <p class="text-xs text-gray-600">제조사가 각 장치에 고유하게 부여하는 일련번호</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 특징 -->
+                <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                    <i class="fas fa-star text-indigo-500 text-xs"></i> 주요 특징
+                </h4>
+                <div class="space-y-2">
+                    <div class="flex items-start gap-3 bg-gray-50 rounded-lg p-3 border border-gray-100">
+                        <i class="fas fa-check-circle text-indigo-500 mt-0.5 text-sm flex-shrink-0"></i>
+                        <p class="text-xs text-gray-700"><strong>48비트(6바이트)</strong>로 구성, 16진수 12자리로 표현</p>
+                    </div>
+                    <div class="flex items-start gap-3 bg-gray-50 rounded-lg p-3 border border-gray-100">
+                        <i class="fas fa-check-circle text-indigo-500 mt-0.5 text-sm flex-shrink-0"></i>
+                        <p class="text-xs text-gray-700">콜론(:) 또는 하이픈(-)으로 2자리씩 구분하여 표기</p>
+                    </div>
+                    <div class="flex items-start gap-3 bg-gray-50 rounded-lg p-3 border border-gray-100">
+                        <i class="fas fa-check-circle text-indigo-500 mt-0.5 text-sm flex-shrink-0"></i>
+                        <p class="text-xs text-gray-700">같은 네트워크 내 통신 시 사용되는 <strong>데이터 링크 계층</strong>의 주소</p>
+                    </div>
+                    <div class="flex items-start gap-3 bg-gray-50 rounded-lg p-3 border border-gray-100">
+                        <i class="fas fa-check-circle text-indigo-500 mt-0.5 text-sm flex-shrink-0"></i>
+                        <p class="text-xs text-gray-700">원칙적으로 변경 불가하지만 소프트웨어로 임시 변경 가능</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IP주소 vs MAC주소 비교 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 bg-gradient-to-br from-rose-400 to-orange-500 rounded-xl flex items-center justify-center shadow-sm">
+                        <i class="fas fa-balance-scale text-white text-sm"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800">IP 주소 vs MAC 주소 비교</h3>
+                </div>
+                <div class="overflow-x-auto rounded-xl border border-gray-200">
+                    <table class="w-full text-xs">
+                        <thead>
+                            <tr class="bg-gray-800 text-white">
+                                <th class="px-4 py-3 text-left font-semibold">구분</th>
+                                <th class="px-4 py-3 text-center font-semibold text-teal-300">IP 주소</th>
+                                <th class="px-4 py-3 text-center font-semibold text-indigo-300">MAC 주소</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-100">
+                                <td class="px-4 py-3 font-semibold text-gray-600 bg-gray-50">종류</td>
+                                <td class="px-4 py-3 text-center text-gray-700">논리적(소프트웨어) 주소</td>
+                                <td class="px-4 py-3 text-center text-gray-700">물리적(하드웨어) 주소</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 bg-white">
+                                <td class="px-4 py-3 font-semibold text-gray-600 bg-gray-50">비트 수</td>
+                                <td class="px-4 py-3 text-center text-gray-700">32비트(IPv4) / 128비트(IPv6)</td>
+                                <td class="px-4 py-3 text-center text-gray-700">48비트</td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="px-4 py-3 font-semibold text-gray-600 bg-gray-50">변경 가능 여부</td>
+                                <td class="px-4 py-3 text-center"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded font-semibold">변경 가능</span></td>
+                                <td class="px-4 py-3 text-center"><span class="bg-red-100 text-red-700 px-2 py-0.5 rounded font-semibold">원칙적 불변</span></td>
+                            </tr>
+                            <tr class="border-b border-gray-100 bg-white">
+                                <td class="px-4 py-3 font-semibold text-gray-600 bg-gray-50">계층</td>
+                                <td class="px-4 py-3 text-center text-gray-700">네트워크 계층 (3계층)</td>
+                                <td class="px-4 py-3 text-center text-gray-700">데이터 링크 계층 (2계층)</td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="px-4 py-3 font-semibold text-gray-600 bg-gray-50">사용 범위</td>
+                                <td class="px-4 py-3 text-center text-gray-700">인터넷 전체 (라우터 간 전달)</td>
+                                <td class="px-4 py-3 text-center text-gray-700">동일 네트워크 내 통신</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-semibold text-gray-600 bg-gray-50">할당 주체</td>
+                                <td class="px-4 py-3 text-center text-gray-700">ISP · 공유기 · 관리자</td>
+                                <td class="px-4 py-3 text-center text-gray-700">하드웨어 제조사</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ARP 개념 카드 -->
+            <div class="bg-gradient-to-br from-teal-600 to-teal-800 rounded-2xl p-6 text-white">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-arrows-alt-h text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold">IP → MAC: ARP (주소 변환 프로토콜)</h3>
+                        <p class="text-teal-200 text-xs">Address Resolution Protocol</p>
+                    </div>
+                </div>
+                <p class="text-teal-100 text-sm leading-relaxed mb-4">
+                    실제 통신 시 IP 주소만으로는 부족합니다. 같은 네트워크 안에서 데이터를 전달하려면
+                    <strong class="text-white">MAC 주소</strong>가 필요합니다. <strong class="text-white">ARP</strong>는
+                    IP 주소를 이용해 해당 장치의 MAC 주소를 자동으로 찾아주는 프로토콜입니다.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center gap-2 bg-white/10 rounded-xl p-4">
+                    <div class="text-center px-4">
+                        <p class="text-xs text-teal-200 mb-1">목적지</p>
+                        <span class="font-mono text-yellow-300 font-bold text-sm">IP 주소 알고 있음</span>
+                    </div>
+                    <div class="flex items-center gap-1 text-teal-300">
+                        <i class="fas fa-long-arrow-alt-right text-xl"></i>
+                        <span class="text-xs font-semibold">ARP 요청</span>
+                        <i class="fas fa-long-arrow-alt-right text-xl"></i>
+                    </div>
+                    <div class="text-center px-4">
+                        <p class="text-xs text-teal-200 mb-1">획득</p>
+                        <span class="font-mono text-teal-300 font-bold text-sm">MAC 주소 확인</span>
+                    </div>
+                    <div class="flex items-center gap-1 text-teal-300">
+                        <i class="fas fa-long-arrow-alt-right text-xl"></i>
+                        <span class="text-xs font-semibold">통신</span>
+                        <i class="fas fa-long-arrow-alt-right text-xl"></i>
+                    </div>
+                    <div class="text-center px-4">
+                        <p class="text-xs text-teal-200 mb-1">결과</p>
+                        <span class="font-mono text-green-300 font-bold text-sm">데이터 전달 완료</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 통신 프로토콜 Section -->
+        <!-- ============================================ -->
+        <section class="mb-10">
+            <!-- Section Header -->
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-1.5 h-8 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full"></div>
+                <h2 class="text-xl font-bold text-gray-800">통신 프로토콜</h2>
+                <span class="ml-auto text-xs bg-blue-100 text-blue-700 font-semibold px-3 py-1 rounded-full">추가 학습</span>
+            </div>
+
+            <!-- 1. 프로토콜 정의 카드 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-sm">
+                        <i class="fas fa-book text-white text-sm"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800">1. 프로토콜의 정의</h3>
+                </div>
+
+                <div class="bg-blue-50 rounded-xl p-5 mb-5 border border-blue-100">
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        <strong class="text-blue-700">프로토콜(Protocol)</strong>이란 서로 다른 컴퓨터나 기기들이
+                        네트워크를 통해 <strong>올바르게 통신하기 위해 약속한 규칙과 절차의 집합</strong>입니다.
+                        언어가 다른 두 사람이 대화하려면 공통 언어가 필요하듯, 기기 간 통신에도 공통 규약이 필요합니다.
+                    </p>
+                </div>
+
+                <!-- 프로토콜의 3요소 -->
+                <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                    <i class="fas fa-cube text-blue-500 text-xs"></i> 프로토콜의 3요소
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+                    <div class="bg-blue-50 rounded-xl p-4 border border-blue-100 text-center">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-align-left text-white text-sm"></i>
+                        </div>
+                        <p class="font-bold text-blue-800 text-sm mb-1">구문 (Syntax)</p>
+                        <p class="text-xs text-gray-600">데이터의 형식, 부호화, 신호 레벨 등 <strong>어떻게 표현할지</strong>의 규칙</p>
+                    </div>
+                    <div class="bg-green-50 rounded-xl p-4 border border-green-100 text-center">
+                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-comments text-white text-sm"></i>
+                        </div>
+                        <p class="font-bold text-green-800 text-sm mb-1">의미 (Semantics)</p>
+                        <p class="text-xs text-gray-600">각 비트가 의미하는 내용, 오류 제어·흐름 제어 등 <strong>무엇을 뜻하는지</strong></p>
+                    </div>
+                    <div class="bg-purple-50 rounded-xl p-4 border border-purple-100 text-center">
+                        <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-clock text-white text-sm"></i>
+                        </div>
+                        <p class="font-bold text-purple-800 text-sm mb-1">타이밍 (Timing)</p>
+                        <p class="text-xs text-gray-600">데이터 전송 속도, 순서 등 <strong>언제·어떤 순서로</strong> 전송할지의 규칙</p>
+                    </div>
+                </div>
+
+                <!-- 프로토콜이 정하는 것 -->
+                <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                    <i class="fas fa-list-check text-blue-500 text-xs"></i> 프로토콜이 정의하는 것들
+                </h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <div class="flex items-center gap-2 bg-gray-50 rounded-lg p-2.5 border border-gray-100">
+                        <i class="fas fa-check text-blue-500 text-xs flex-shrink-0"></i>
+                        <span class="text-xs text-gray-700">데이터 형식</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 rounded-lg p-2.5 border border-gray-100">
+                        <i class="fas fa-check text-blue-500 text-xs flex-shrink-0"></i>
+                        <span class="text-xs text-gray-700">오류 처리</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 rounded-lg p-2.5 border border-gray-100">
+                        <i class="fas fa-check text-blue-500 text-xs flex-shrink-0"></i>
+                        <span class="text-xs text-gray-700">전송 순서</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 rounded-lg p-2.5 border border-gray-100">
+                        <i class="fas fa-check text-blue-500 text-xs flex-shrink-0"></i>
+                        <span class="text-xs text-gray-700">연결 방식</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 rounded-lg p-2.5 border border-gray-100">
+                        <i class="fas fa-check text-blue-500 text-xs flex-shrink-0"></i>
+                        <span class="text-xs text-gray-700">주소 지정</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 rounded-lg p-2.5 border border-gray-100">
+                        <i class="fas fa-check text-blue-500 text-xs flex-shrink-0"></i>
+                        <span class="text-xs text-gray-700">흐름 제어</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 rounded-lg p-2.5 border border-gray-100">
+                        <i class="fas fa-check text-blue-500 text-xs flex-shrink-0"></i>
+                        <span class="text-xs text-gray-700">암호화 방식</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 rounded-lg p-2.5 border border-gray-100">
+                        <i class="fas fa-check text-blue-500 text-xs flex-shrink-0"></i>
+                        <span class="text-xs text-gray-700">전송 속도</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 대표적인 프로토콜 종류 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-xl flex items-center justify-center shadow-sm">
+                        <i class="fas fa-layer-group text-white text-sm"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800">2. 대표적인 프로토콜 종류</h3>
+                </div>
+
+                <!-- TCP/IP -->
+                <div class="mb-4 rounded-xl border border-blue-200 overflow-hidden">
+                    <div class="bg-blue-600 px-5 py-3 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-sitemap text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-white font-bold text-sm">TCP / IP</span>
+                            <span class="ml-3 text-blue-200 text-xs">Transmission Control Protocol / Internet Protocol</span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-blue-50">
+                        <p class="text-xs text-gray-700 leading-relaxed mb-3">
+                            인터넷의 근간이 되는 핵심 프로토콜 묶음. <strong>IP</strong>가 주소를 지정하고 경로를 찾으면,
+                            <strong>TCP</strong>가 데이터를 분할하여 신뢰성 있게 전송하고 오류를 처리합니다.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="bg-white rounded-lg p-3 border border-blue-100">
+                                <p class="text-xs font-bold text-blue-700 mb-1.5">TCP 특징</p>
+                                <ul class="space-y-1">
+                                    <li class="text-xs text-gray-600 flex items-center gap-1.5"><i class="fas fa-circle text-blue-400 text-xs" style="font-size:5px"></i>연결 지향 (3-way handshake)</li>
+                                    <li class="text-xs text-gray-600 flex items-center gap-1.5"><i class="fas fa-circle text-blue-400 text-xs" style="font-size:5px"></i>데이터 전송 순서 보장</li>
+                                    <li class="text-xs text-gray-600 flex items-center gap-1.5"><i class="fas fa-circle text-blue-400 text-xs" style="font-size:5px"></i>오류 검출 및 재전송</li>
+                                    <li class="text-xs text-gray-600 flex items-center gap-1.5"><i class="fas fa-circle text-blue-400 text-xs" style="font-size:5px"></i>신뢰성 높음, 속도 다소 느림</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 border border-blue-100">
+                                <p class="text-xs font-bold text-blue-700 mb-1.5">IP 특징</p>
+                                <ul class="space-y-1">
+                                    <li class="text-xs text-gray-600 flex items-center gap-1.5"><i class="fas fa-circle text-blue-400 text-xs" style="font-size:5px"></i>비연결형, 최선 전달 방식</li>
+                                    <li class="text-xs text-gray-600 flex items-center gap-1.5"><i class="fas fa-circle text-blue-400 text-xs" style="font-size:5px"></i>패킷 경로 지정 (라우팅)</li>
+                                    <li class="text-xs text-gray-600 flex items-center gap-1.5"><i class="fas fa-circle text-blue-400 text-xs" style="font-size:5px"></i>IPv4 / IPv6 버전 존재</li>
+                                    <li class="text-xs text-gray-600 flex items-center gap-1.5"><i class="fas fa-circle text-blue-400 text-xs" style="font-size:5px"></i>오류 복구 기능 없음</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="mt-3 bg-blue-100 rounded-lg px-3 py-2 text-xs text-blue-800">
+                            <i class="fas fa-tag mr-1"></i><strong>사용 예:</strong> 웹 브라우징, 이메일, 파일 전송 등 데이터 정확성이 중요한 모든 인터넷 통신
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HTTP / HTTPS -->
+                <div class="mb-4 rounded-xl border border-orange-200 overflow-hidden">
+                    <div class="bg-orange-500 px-5 py-3 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-globe text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-white font-bold text-sm">HTTP / HTTPS</span>
+                            <span class="ml-3 text-orange-200 text-xs">HyperText Transfer Protocol (Secure)</span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-orange-50">
+                        <p class="text-xs text-gray-700 leading-relaxed mb-3">
+                            웹 브라우저와 웹 서버 사이에서 <strong>HTML 문서, 이미지 등 웹 데이터를 주고받는 프로토콜</strong>.
+                            HTTPS는 HTTP에 <strong>SSL/TLS 암호화</strong>를 추가하여 보안을 강화한 버전입니다.
+                        </p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-white rounded-lg p-3 border border-orange-100 text-center">
+                                <p class="font-mono text-orange-600 font-bold text-sm mb-1">HTTP</p>
+                                <p class="text-xs text-gray-500">포트 <strong>80</strong></p>
+                                <span class="inline-block mt-1 bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded">암호화 없음</span>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 border border-orange-100 text-center">
+                                <p class="font-mono text-green-600 font-bold text-sm mb-1">HTTPS</p>
+                                <p class="text-xs text-gray-500">포트 <strong>443</strong></p>
+                                <span class="inline-block mt-1 bg-green-100 text-green-600 text-xs px-2 py-0.5 rounded">SSL/TLS 암호화</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 bg-orange-100 rounded-lg px-3 py-2 text-xs text-orange-800">
+                            <i class="fas fa-tag mr-1"></i><strong>사용 예:</strong> 웹 사이트 접속 (주소창의 http:// 또는 https://)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FTP -->
+                <div class="mb-4 rounded-xl border border-green-200 overflow-hidden">
+                    <div class="bg-green-600 px-5 py-3 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-file-upload text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-white font-bold text-sm">FTP</span>
+                            <span class="ml-3 text-green-200 text-xs">File Transfer Protocol</span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-green-50">
+                        <p class="text-xs text-gray-700 leading-relaxed mb-3">
+                            클라이언트와 서버 간 <strong>파일을 업로드·다운로드하기 위한 프로토콜</strong>.
+                            제어 채널(명령)과 데이터 채널(전송)을 분리하여 운영합니다.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <div class="bg-white rounded-lg px-3 py-2 border border-green-100 text-xs text-gray-700 flex items-center gap-1.5">
+                                <i class="fas fa-plug text-green-500 text-xs"></i> 제어 포트: <strong>21</strong>
+                            </div>
+                            <div class="bg-white rounded-lg px-3 py-2 border border-green-100 text-xs text-gray-700 flex items-center gap-1.5">
+                                <i class="fas fa-exchange-alt text-green-500 text-xs"></i> 데이터 포트: <strong>20</strong>
+                            </div>
+                            <div class="bg-white rounded-lg px-3 py-2 border border-green-100 text-xs text-gray-700 flex items-center gap-1.5">
+                                <i class="fas fa-lock text-green-500 text-xs"></i> 보안 버전: <strong>SFTP / FTPS</strong>
+                            </div>
+                        </div>
+                        <div class="mt-3 bg-green-100 rounded-lg px-3 py-2 text-xs text-green-800">
+                            <i class="fas fa-tag mr-1"></i><strong>사용 예:</strong> 웹 서버에 파일 업로드, 대용량 파일 배포
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DNS -->
+                <div class="mb-4 rounded-xl border border-yellow-200 overflow-hidden">
+                    <div class="bg-yellow-500 px-5 py-3 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-search text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-white font-bold text-sm">DNS</span>
+                            <span class="ml-3 text-yellow-100 text-xs">Domain Name System</span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-yellow-50">
+                        <p class="text-xs text-gray-700 leading-relaxed mb-3">
+                            사람이 기억하기 쉬운 <strong>도메인 이름을 IP 주소로 변환</strong>해주는 프로토콜.
+                            인터넷의 전화번호부 역할을 합니다.
+                        </p>
+                        <div class="bg-gray-900 rounded-xl p-3 flex flex-col sm:flex-row items-center gap-2 justify-center">
+                            <span class="font-mono text-green-300 font-bold text-sm">www.google.com</span>
+                            <div class="flex items-center gap-1 text-gray-400">
+                                <i class="fas fa-long-arrow-alt-right"></i>
+                                <span class="text-xs">DNS 조회</span>
+                                <i class="fas fa-long-arrow-alt-right"></i>
+                            </div>
+                            <span class="font-mono text-yellow-300 font-bold text-sm">142.250.196.68</span>
+                        </div>
+                        <div class="mt-3 bg-yellow-100 rounded-lg px-3 py-2 text-xs text-yellow-800">
+                            <i class="fas fa-tag mr-1"></i><strong>사용 예:</strong> 웹 주소 입력 시 자동으로 IP 주소 변환 (포트 53 사용)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SMTP / POP3 / IMAP -->
+                <div class="mb-4 rounded-xl border border-pink-200 overflow-hidden">
+                    <div class="bg-pink-600 px-5 py-3 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-envelope text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-white font-bold text-sm">SMTP / POP3 / IMAP</span>
+                            <span class="ml-3 text-pink-200 text-xs">이메일 프로토콜</span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-pink-50">
+                        <p class="text-xs text-gray-700 leading-relaxed mb-3">
+                            이메일 <strong>송신과 수신</strong>을 담당하는 프로토콜 모음입니다.
+                        </p>
+                        <div class="space-y-2">
+                            <div class="bg-white rounded-lg p-3 border border-pink-100 flex items-start gap-3">
+                                <span class="font-mono text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded w-16 text-center flex-shrink-0">SMTP</span>
+                                <div>
+                                    <p class="text-xs font-semibold text-gray-700">이메일 발송 (포트 25 / 587)</p>
+                                    <p class="text-xs text-gray-500">클라이언트 → 서버, 서버 → 서버 메일 전송</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 border border-pink-100 flex items-start gap-3">
+                                <span class="font-mono text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded w-16 text-center flex-shrink-0">POP3</span>
+                                <div>
+                                    <p class="text-xs font-semibold text-gray-700">이메일 수신 (포트 110)</p>
+                                    <p class="text-xs text-gray-500">서버 메일을 로컬에 다운로드 후 서버에서 삭제</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 border border-pink-100 flex items-start gap-3">
+                                <span class="font-mono text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded w-16 text-center flex-shrink-0">IMAP</span>
+                                <div>
+                                    <p class="text-xs font-semibold text-gray-700">이메일 수신 및 동기화 (포트 143)</p>
+                                    <p class="text-xs text-gray-500">서버에 메일 보존, 여러 기기에서 동기화 가능</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UDP -->
+                <div class="mb-4 rounded-xl border border-red-200 overflow-hidden">
+                    <div class="bg-red-500 px-5 py-3 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-bolt text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-white font-bold text-sm">UDP</span>
+                            <span class="ml-3 text-red-200 text-xs">User Datagram Protocol</span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-red-50">
+                        <p class="text-xs text-gray-700 leading-relaxed mb-3">
+                            TCP와 달리 연결 설정 없이 <strong>빠르게 데이터를 전송</strong>하는 프로토콜.
+                            신뢰성보다 <strong>속도와 실시간성</strong>이 중요한 서비스에 사용됩니다.
+                        </p>
+                        <div class="overflow-x-auto rounded-xl border border-gray-200 mb-3">
+                            <table class="w-full text-xs">
+                                <thead>
+                                    <tr class="bg-gray-800 text-white">
+                                        <th class="px-3 py-2 text-left font-semibold">구분</th>
+                                        <th class="px-3 py-2 text-center font-semibold text-blue-300">TCP</th>
+                                        <th class="px-3 py-2 text-center font-semibold text-red-300">UDP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-100">
+                                        <td class="px-3 py-2 font-semibold text-gray-600 bg-gray-50">연결 방식</td>
+                                        <td class="px-3 py-2 text-center text-gray-700">연결형</td>
+                                        <td class="px-3 py-2 text-center text-gray-700">비연결형</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100 bg-white">
+                                        <td class="px-3 py-2 font-semibold text-gray-600 bg-gray-50">신뢰성</td>
+                                        <td class="px-3 py-2 text-center"><span class="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">높음</span></td>
+                                        <td class="px-3 py-2 text-center"><span class="bg-red-100 text-red-700 px-1.5 py-0.5 rounded text-xs">낮음</span></td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100">
+                                        <td class="px-3 py-2 font-semibold text-gray-600 bg-gray-50">전송 속도</td>
+                                        <td class="px-3 py-2 text-center"><span class="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded text-xs">느림</span></td>
+                                        <td class="px-3 py-2 text-center"><span class="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-xs">빠름</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2 font-semibold text-gray-600 bg-gray-50">사용 예</td>
+                                        <td class="px-3 py-2 text-center text-gray-700">웹, 이메일, 파일 전송</td>
+                                        <td class="px-3 py-2 text-center text-gray-700">스트리밍, 게임, VoIP</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="bg-red-100 rounded-lg px-3 py-2 text-xs text-red-800">
+                            <i class="fas fa-tag mr-1"></i><strong>사용 예:</strong> 유튜브 스트리밍, 온라인 게임, 화상통화(Zoom)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 프로토콜 요약 표 -->
+                <div class="overflow-x-auto rounded-xl border border-gray-200">
+                    <table class="w-full text-xs">
+                        <thead>
+                            <tr class="bg-gray-800 text-white">
+                                <th class="px-4 py-3 text-left font-semibold">프로토콜</th>
+                                <th class="px-4 py-3 text-left font-semibold">역할</th>
+                                <th class="px-4 py-3 text-center font-semibold">포트</th>
+                                <th class="px-4 py-3 text-left font-semibold">사용 예</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-100">
+                                <td class="px-4 py-3 font-mono font-bold text-blue-700">TCP/IP</td>
+                                <td class="px-4 py-3 text-gray-700">인터넷 기본 통신 규약</td>
+                                <td class="px-4 py-3 text-center text-gray-500">—</td>
+                                <td class="px-4 py-3 text-gray-700">모든 인터넷 통신</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 bg-gray-50">
+                                <td class="px-4 py-3 font-mono font-bold text-orange-600">HTTP</td>
+                                <td class="px-4 py-3 text-gray-700">웹 데이터 전송</td>
+                                <td class="px-4 py-3 text-center font-mono text-gray-600">80</td>
+                                <td class="px-4 py-3 text-gray-700">웹사이트 접속</td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="px-4 py-3 font-mono font-bold text-green-600">HTTPS</td>
+                                <td class="px-4 py-3 text-gray-700">암호화된 웹 통신</td>
+                                <td class="px-4 py-3 text-center font-mono text-gray-600">443</td>
+                                <td class="px-4 py-3 text-gray-700">인터넷 뱅킹, 쇼핑몰</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 bg-gray-50">
+                                <td class="px-4 py-3 font-mono font-bold text-green-700">FTP</td>
+                                <td class="px-4 py-3 text-gray-700">파일 전송</td>
+                                <td class="px-4 py-3 text-center font-mono text-gray-600">20/21</td>
+                                <td class="px-4 py-3 text-gray-700">서버 파일 업로드</td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="px-4 py-3 font-mono font-bold text-yellow-600">DNS</td>
+                                <td class="px-4 py-3 text-gray-700">도메인 → IP 변환</td>
+                                <td class="px-4 py-3 text-center font-mono text-gray-600">53</td>
+                                <td class="px-4 py-3 text-gray-700">웹 주소 입력 시</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 bg-gray-50">
+                                <td class="px-4 py-3 font-mono font-bold text-red-600">SMTP</td>
+                                <td class="px-4 py-3 text-gray-700">이메일 발송</td>
+                                <td class="px-4 py-3 text-center font-mono text-gray-600">25/587</td>
+                                <td class="px-4 py-3 text-gray-700">메일 보내기</td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="px-4 py-3 font-mono font-bold text-blue-600">POP3/IMAP</td>
+                                <td class="px-4 py-3 text-gray-700">이메일 수신</td>
+                                <td class="px-4 py-3 text-center font-mono text-gray-600">110/143</td>
+                                <td class="px-4 py-3 text-gray-700">메일 받기</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="px-4 py-3 font-mono font-bold text-red-500">UDP</td>
+                                <td class="px-4 py-3 text-gray-700">빠른 비연결형 전송</td>
+                                <td class="px-4 py-3 text-center text-gray-500">—</td>
+                                <td class="px-4 py-3 text-gray-700">스트리밍, 게임</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- OSI 7계층과의 관계 요약 배너 -->
+            <div class="bg-gradient-to-br from-slate-700 to-slate-900 rounded-2xl p-6 text-white">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-layer-group text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold">프로토콜과 OSI 7계층</h3>
+                        <p class="text-slate-300 text-xs">각 프로토콜은 특정 계층에서 동작합니다</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div class="bg-white/10 rounded-xl p-3 text-center">
+                        <p class="text-slate-300 text-xs mb-1">응용 계층 (7)</p>
+                        <p class="font-mono text-yellow-300 font-bold text-xs">HTTP · FTP · DNS · SMTP</p>
+                    </div>
+                    <div class="bg-white/10 rounded-xl p-3 text-center">
+                        <p class="text-slate-300 text-xs mb-1">전송 계층 (4)</p>
+                        <p class="font-mono text-blue-300 font-bold text-xs">TCP · UDP</p>
+                    </div>
+                    <div class="bg-white/10 rounded-xl p-3 text-center">
+                        <p class="text-slate-300 text-xs mb-1">네트워크 계층 (3)</p>
+                        <p class="font-mono text-green-300 font-bold text-xs">IP · ARP</p>
+                    </div>
+                    <div class="bg-white/10 rounded-xl p-3 text-center">
+                        <p class="text-slate-300 text-xs mb-1">데이터링크 계층 (2)</p>
+                        <p class="font-mono text-purple-300 font-bold text-xs">Ethernet · Wi-Fi</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- OSI 7 Layer Section -->
+        <!-- ============================================ -->
+        <section class="mb-10">
+            <!-- Section Header -->
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-1.5 h-8 bg-gradient-to-b from-violet-400 to-violet-600 rounded-full"></div>
+                <h2 class="text-xl font-bold text-gray-800">OSI 7 계층 모델</h2>
+                <span class="ml-auto text-xs bg-violet-100 text-violet-700 font-semibold px-3 py-1 rounded-full">추가 학습</span>
+            </div>
+
+            <!-- 정의 카드 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-violet-400 to-violet-600 rounded-xl flex items-center justify-center shadow-sm">
+                        <i class="fas fa-layer-group text-white text-sm"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800">OSI 모델이란?</h3>
+                </div>
+                <div class="bg-violet-50 rounded-xl p-4 mb-4 border border-violet-100">
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        <strong class="text-violet-700">OSI (Open Systems Interconnection) 모델</strong>은 서로 다른 시스템 간의
+                        통신을 표준화하기 위해 <strong>ISO(국제표준화기구)가 1984년에 제정한 7계층 참조 모델</strong>입니다.
+                        네트워크 통신 과정을 7단계로 나누어 각 계층이 독립적인 역할을 수행하도록 설계되어,
+                        문제 발생 시 해당 계층만 점검하면 됩니다.
+                    </p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="bg-gray-50 rounded-xl p-3 border border-gray-100 flex items-start gap-3">
+                        <div class="w-8 h-8 bg-violet-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-puzzle-piece text-white text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-700 mb-1">표준화</p>
+                            <p class="text-xs text-gray-500">제조사가 달라도 통신 가능한 공통 규격 제공</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-3 border border-gray-100 flex items-start gap-3">
+                        <div class="w-8 h-8 bg-violet-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-search text-white text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-700 mb-1">장애 진단</p>
+                            <p class="text-xs text-gray-500">문제가 발생한 계층을 빠르게 특정하여 해결</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-3 border border-gray-100 flex items-start gap-3">
+                        <div class="w-8 h-8 bg-violet-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-cubes text-white text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-700 mb-1">모듈화</p>
+                            <p class="text-xs text-gray-500">각 계층이 독립적으로 개발·교체 가능</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7계층 다이어그램 + 설명 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5">
+                <h3 class="text-base font-bold text-gray-800 mb-5 flex items-center gap-2">
+                    <i class="fas fa-stream text-violet-500 text-sm"></i> 7계층 구조와 역할
+                </h3>
+
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <!-- 계층 시각화 바 -->
+                    <div class="flex flex-col gap-1.5 min-w-[140px]">
+                        <div class="text-center text-xs text-gray-400 font-semibold mb-1">송신측 (데이터 전송)</div>
+                        <div class="bg-red-400 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">7. 응용 계층</div>
+                        <div class="bg-orange-400 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">6. 표현 계층</div>
+                        <div class="bg-yellow-400 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">5. 세션 계층</div>
+                        <div class="bg-green-500 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">4. 전송 계층</div>
+                        <div class="bg-teal-500 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">3. 네트워크 계층</div>
+                        <div class="bg-blue-500 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">2. 데이터링크 계층</div>
+                        <div class="bg-indigo-600 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">1. 물리 계층</div>
+                        <div class="flex justify-center mt-1">
+                            <div class="flex flex-col items-center">
+                                <i class="fas fa-arrow-down text-gray-400 text-base"></i>
+                                <span class="text-xs text-gray-400">물리 전송</span>
+                                <i class="fas fa-arrow-up text-gray-400 text-base"></i>
+                            </div>
+                        </div>
+                        <div class="bg-indigo-600 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">1. 물리 계층</div>
+                        <div class="bg-blue-500 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">2. 데이터링크 계층</div>
+                        <div class="bg-teal-500 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">3. 네트워크 계층</div>
+                        <div class="bg-green-500 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">4. 전송 계층</div>
+                        <div class="bg-yellow-400 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">5. 세션 계층</div>
+                        <div class="bg-orange-400 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">6. 표현 계층</div>
+                        <div class="bg-red-400 text-white text-xs font-bold text-center py-2.5 rounded-lg shadow-sm">7. 응용 계층</div>
+                        <div class="text-center text-xs text-gray-400 font-semibold mt-1">수신측 (데이터 수신)</div>
+                    </div>
+
+                    <!-- 각 계층 상세 설명 -->
+                    <div class="flex-1 space-y-2">
+                        <!-- 7계층 -->
+                        <div class="rounded-xl border border-red-200 overflow-hidden">
+                            <div class="bg-red-400 px-4 py-2 flex items-center gap-3">
+                                <span class="w-6 h-6 bg-white/30 rounded-full flex items-center justify-center text-white font-bold text-xs">7</span>
+                                <span class="text-white font-bold text-sm">응용 계층 (Application)</span>
+                                <span class="ml-auto text-red-100 text-xs font-mono">HTTP · FTP · DNS · SMTP</span>
+                            </div>
+                            <div class="bg-red-50 px-4 py-3">
+                                <p class="text-xs text-gray-700 leading-relaxed">사용자와 직접 상호작용하는 계층. 이메일, 파일 전송, 웹 브라우저 등 <strong>응용 프로그램에 네트워크 서비스를 제공</strong>합니다.</p>
+                                <div class="mt-2 flex flex-wrap gap-1.5">
+                                    <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded font-mono">HTTP/HTTPS</span>
+                                    <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded font-mono">FTP</span>
+                                    <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded font-mono">DNS</span>
+                                    <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded font-mono">SMTP</span>
+                                    <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded font-mono">Telnet</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 6계층 -->
+                        <div class="rounded-xl border border-orange-200 overflow-hidden">
+                            <div class="bg-orange-400 px-4 py-2 flex items-center gap-3">
+                                <span class="w-6 h-6 bg-white/30 rounded-full flex items-center justify-center text-white font-bold text-xs">6</span>
+                                <span class="text-white font-bold text-sm">표현 계층 (Presentation)</span>
+                                <span class="ml-auto text-orange-100 text-xs font-mono">SSL · JPEG · ASCII</span>
+                            </div>
+                            <div class="bg-orange-50 px-4 py-3">
+                                <p class="text-xs text-gray-700 leading-relaxed">데이터의 <strong>형식 변환, 암호화, 압축</strong>을 담당합니다. 서로 다른 시스템이 같은 형식으로 데이터를 이해할 수 있게 합니다.</p>
+                                <div class="mt-2 flex flex-wrap gap-1.5">
+                                    <span class="bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-mono">SSL/TLS</span>
+                                    <span class="bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-mono">JPEG</span>
+                                    <span class="bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-mono">ASCII</span>
+                                    <span class="bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-mono">MPEG</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 5계층 -->
+                        <div class="rounded-xl border border-yellow-200 overflow-hidden">
+                            <div class="bg-yellow-400 px-4 py-2 flex items-center gap-3">
+                                <span class="w-6 h-6 bg-white/30 rounded-full flex items-center justify-center text-white font-bold text-xs">5</span>
+                                <span class="text-white font-bold text-sm">세션 계층 (Session)</span>
+                                <span class="ml-auto text-yellow-100 text-xs font-mono">NetBIOS · RPC</span>
+                            </div>
+                            <div class="bg-yellow-50 px-4 py-3">
+                                <p class="text-xs text-gray-700 leading-relaxed">통신 기기 간의 <strong>연결(세션)을 생성·유지·종료</strong>하는 역할. 동기화 기능으로 데이터 복구 지점을 제공합니다.</p>
+                                <div class="mt-2 flex flex-wrap gap-1.5">
+                                    <span class="bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded font-mono">NetBIOS</span>
+                                    <span class="bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded font-mono">RPC</span>
+                                    <span class="bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded font-mono">SSH</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 4계층 -->
+                        <div class="rounded-xl border border-green-200 overflow-hidden">
+                            <div class="bg-green-500 px-4 py-2 flex items-center gap-3">
+                                <span class="w-6 h-6 bg-white/30 rounded-full flex items-center justify-center text-white font-bold text-xs">4</span>
+                                <span class="text-white font-bold text-sm">전송 계층 (Transport)</span>
+                                <span class="ml-auto text-green-100 text-xs font-mono">TCP · UDP</span>
+                            </div>
+                            <div class="bg-green-50 px-4 py-3">
+                                <p class="text-xs text-gray-700 leading-relaxed">종단 간(End-to-End) <strong>신뢰성 있는 데이터 전송</strong>을 담당. 데이터를 세그먼트로 분할하고, 포트 번호로 프로세스를 구분합니다.</p>
+                                <div class="mt-2 flex flex-wrap gap-1.5">
+                                    <span class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-mono">TCP</span>
+                                    <span class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-mono">UDP</span>
+                                </div>
+                                <div class="mt-2 bg-green-100 rounded-lg px-3 py-1.5 text-xs text-green-800">
+                                    <i class="fas fa-info-circle mr-1"></i> 데이터 단위: <strong>세그먼트(TCP)</strong> / <strong>데이터그램(UDP)</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 3계층 -->
+                        <div class="rounded-xl border border-teal-200 overflow-hidden">
+                            <div class="bg-teal-500 px-4 py-2 flex items-center gap-3">
+                                <span class="w-6 h-6 bg-white/30 rounded-full flex items-center justify-center text-white font-bold text-xs">3</span>
+                                <span class="text-white font-bold text-sm">네트워크 계층 (Network)</span>
+                                <span class="ml-auto text-teal-100 text-xs font-mono">IP · ICMP · ARP</span>
+                            </div>
+                            <div class="bg-teal-50 px-4 py-3">
+                                <p class="text-xs text-gray-700 leading-relaxed"><strong>IP 주소 기반 경로 설정(라우팅)</strong>과 패킷 전달을 담당. 서로 다른 네트워크 간 데이터를 전송합니다.</p>
+                                <div class="mt-2 flex flex-wrap gap-1.5">
+                                    <span class="bg-teal-100 text-teal-700 text-xs px-2 py-0.5 rounded font-mono">IP</span>
+                                    <span class="bg-teal-100 text-teal-700 text-xs px-2 py-0.5 rounded font-mono">ICMP</span>
+                                    <span class="bg-teal-100 text-teal-700 text-xs px-2 py-0.5 rounded font-mono">ARP</span>
+                                    <span class="bg-teal-100 text-teal-700 text-xs px-2 py-0.5 rounded font-mono">라우터</span>
+                                </div>
+                                <div class="mt-2 bg-teal-100 rounded-lg px-3 py-1.5 text-xs text-teal-800">
+                                    <i class="fas fa-info-circle mr-1"></i> 데이터 단위: <strong>패킷(Packet)</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 2계층 -->
+                        <div class="rounded-xl border border-blue-200 overflow-hidden">
+                            <div class="bg-blue-500 px-4 py-2 flex items-center gap-3">
+                                <span class="w-6 h-6 bg-white/30 rounded-full flex items-center justify-center text-white font-bold text-xs">2</span>
+                                <span class="text-white font-bold text-sm">데이터링크 계층 (Data Link)</span>
+                                <span class="ml-auto text-blue-100 text-xs font-mono">Ethernet · Wi-Fi</span>
+                            </div>
+                            <div class="bg-blue-50 px-4 py-3">
+                                <p class="text-xs text-gray-700 leading-relaxed"><strong>MAC 주소 기반</strong>으로 같은 네트워크 내 기기 간 데이터 전송을 담당. 오류 검출 및 흐름 제어를 수행합니다.</p>
+                                <div class="mt-2 flex flex-wrap gap-1.5">
+                                    <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded font-mono">Ethernet</span>
+                                    <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded font-mono">Wi-Fi(802.11)</span>
+                                    <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded font-mono">스위치</span>
+                                </div>
+                                <div class="mt-2 bg-blue-100 rounded-lg px-3 py-1.5 text-xs text-blue-800">
+                                    <i class="fas fa-info-circle mr-1"></i> 데이터 단위: <strong>프레임(Frame)</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 1계층 -->
+                        <div class="rounded-xl border border-indigo-200 overflow-hidden">
+                            <div class="bg-indigo-600 px-4 py-2 flex items-center gap-3">
+                                <span class="w-6 h-6 bg-white/30 rounded-full flex items-center justify-center text-white font-bold text-xs">1</span>
+                                <span class="text-white font-bold text-sm">물리 계층 (Physical)</span>
+                                <span class="ml-auto text-indigo-200 text-xs font-mono">케이블 · 허브 · 리피터</span>
+                            </div>
+                            <div class="bg-indigo-50 px-4 py-3">
+                                <p class="text-xs text-gray-700 leading-relaxed">실제 <strong>전기 신호, 빛, 전파 등 물리적 신호</strong>로 데이터를 전송하는 계층. 케이블, 핀 배열, 전압 등 하드웨어 규격을 정의합니다.</p>
+                                <div class="mt-2 flex flex-wrap gap-1.5">
+                                    <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded font-mono">UTP케이블</span>
+                                    <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded font-mono">광케이블</span>
+                                    <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded font-mono">허브</span>
+                                    <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded font-mono">리피터</span>
+                                </div>
+                                <div class="mt-2 bg-indigo-100 rounded-lg px-3 py-1.5 text-xs text-indigo-800">
+                                    <i class="fas fa-info-circle mr-1"></i> 데이터 단위: <strong>비트(Bit)</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 데이터 단위 흐름 요약 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5">
+                <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-exchange-alt text-violet-500 text-sm"></i> 계층별 데이터 단위 (PDU)
+                </h3>
+                <div class="flex flex-col sm:flex-row items-stretch gap-1.5">
+                    <div class="flex-1 bg-red-50 border border-red-200 rounded-xl p-3 text-center">
+                        <p class="text-xs text-red-600 font-semibold mb-1">7·6·5 계층</p>
+                        <p class="font-bold text-red-700 text-sm">메시지</p>
+                        <p class="text-xs text-gray-500 mt-1">Message</p>
+                    </div>
+                    <div class="flex items-center justify-center text-gray-300 text-lg">→</div>
+                    <div class="flex-1 bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+                        <p class="text-xs text-green-600 font-semibold mb-1">4 계층</p>
+                        <p class="font-bold text-green-700 text-sm">세그먼트</p>
+                        <p class="text-xs text-gray-500 mt-1">Segment</p>
+                    </div>
+                    <div class="flex items-center justify-center text-gray-300 text-lg">→</div>
+                    <div class="flex-1 bg-teal-50 border border-teal-200 rounded-xl p-3 text-center">
+                        <p class="text-xs text-teal-600 font-semibold mb-1">3 계층</p>
+                        <p class="font-bold text-teal-700 text-sm">패킷</p>
+                        <p class="text-xs text-gray-500 mt-1">Packet</p>
+                    </div>
+                    <div class="flex items-center justify-center text-gray-300 text-lg">→</div>
+                    <div class="flex-1 bg-blue-50 border border-blue-200 rounded-xl p-3 text-center">
+                        <p class="text-xs text-blue-600 font-semibold mb-1">2 계층</p>
+                        <p class="font-bold text-blue-700 text-sm">프레임</p>
+                        <p class="text-xs text-gray-500 mt-1">Frame</p>
+                    </div>
+                    <div class="flex items-center justify-center text-gray-300 text-lg">→</div>
+                    <div class="flex-1 bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
+                        <p class="text-xs text-indigo-600 font-semibold mb-1">1 계층</p>
+                        <p class="font-bold text-indigo-700 text-sm">비트</p>
+                        <p class="text-xs text-gray-500 mt-1">Bit (0/1)</p>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-400 text-center mt-3">송신 시 상위 → 하위 계층으로 캡슐화, 수신 시 하위 → 상위 계층으로 역캡슐화</p>
+            </div>
+
+            <!-- 계층 요약 표 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-5">
+                <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-table text-violet-500 text-sm"></i> OSI 7계층 한눈에 보기
+                </h3>
+                <div class="overflow-x-auto rounded-xl border border-gray-200">
+                    <table class="w-full text-xs">
+                        <thead>
+                            <tr class="bg-gray-800 text-white">
+                                <th class="px-3 py-3 text-center font-semibold w-10">계층</th>
+                                <th class="px-3 py-3 text-left font-semibold">이름</th>
+                                <th class="px-3 py-3 text-left font-semibold">핵심 역할</th>
+                                <th class="px-3 py-3 text-center font-semibold">데이터 단위</th>
+                                <th class="px-3 py-3 text-left font-semibold">장비 / 프로토콜</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-100">
+                                <td class="px-3 py-2.5 text-center"><span class="w-6 h-6 bg-red-400 text-white rounded-full flex items-center justify-center font-bold mx-auto">7</span></td>
+                                <td class="px-3 py-2.5 font-semibold text-red-600">응용 계층</td>
+                                <td class="px-3 py-2.5 text-gray-700">사용자 서비스 제공</td>
+                                <td class="px-3 py-2.5 text-center font-mono text-gray-600">메시지</td>
+                                <td class="px-3 py-2.5 text-gray-600">HTTP, FTP, DNS, SMTP</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 bg-gray-50">
+                                <td class="px-3 py-2.5 text-center"><span class="w-6 h-6 bg-orange-400 text-white rounded-full flex items-center justify-center font-bold mx-auto">6</span></td>
+                                <td class="px-3 py-2.5 font-semibold text-orange-600">표현 계층</td>
+                                <td class="px-3 py-2.5 text-gray-700">형식 변환·암호화·압축</td>
+                                <td class="px-3 py-2.5 text-center font-mono text-gray-600">메시지</td>
+                                <td class="px-3 py-2.5 text-gray-600">SSL/TLS, JPEG, ASCII</td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="px-3 py-2.5 text-center"><span class="w-6 h-6 bg-yellow-400 text-white rounded-full flex items-center justify-center font-bold mx-auto">5</span></td>
+                                <td class="px-3 py-2.5 font-semibold text-yellow-600">세션 계층</td>
+                                <td class="px-3 py-2.5 text-gray-700">연결 생성·유지·종료</td>
+                                <td class="px-3 py-2.5 text-center font-mono text-gray-600">메시지</td>
+                                <td class="px-3 py-2.5 text-gray-600">NetBIOS, RPC, SSH</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 bg-gray-50">
+                                <td class="px-3 py-2.5 text-center"><span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center font-bold mx-auto">4</span></td>
+                                <td class="px-3 py-2.5 font-semibold text-green-600">전송 계층</td>
+                                <td class="px-3 py-2.5 text-gray-700">신뢰성 있는 종단 간 전송</td>
+                                <td class="px-3 py-2.5 text-center font-mono text-gray-600">세그먼트</td>
+                                <td class="px-3 py-2.5 text-gray-600">TCP, UDP</td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="px-3 py-2.5 text-center"><span class="w-6 h-6 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold mx-auto">3</span></td>
+                                <td class="px-3 py-2.5 font-semibold text-teal-600">네트워크 계층</td>
+                                <td class="px-3 py-2.5 text-gray-700">IP 주소·라우팅</td>
+                                <td class="px-3 py-2.5 text-center font-mono text-gray-600">패킷</td>
+                                <td class="px-3 py-2.5 text-gray-600">IP, ICMP, ARP, 라우터</td>
+                            </tr>
+                            <tr class="border-b border-gray-100 bg-gray-50">
+                                <td class="px-3 py-2.5 text-center"><span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold mx-auto">2</span></td>
+                                <td class="px-3 py-2.5 font-semibold text-blue-600">데이터링크 계층</td>
+                                <td class="px-3 py-2.5 text-gray-700">MAC 주소·같은 네트워크 전송</td>
+                                <td class="px-3 py-2.5 text-center font-mono text-gray-600">프레임</td>
+                                <td class="px-3 py-2.5 text-gray-600">Ethernet, Wi-Fi, 스위치</td>
+                            </tr>
+                            <tr>
+                                <td class="px-3 py-2.5 text-center"><span class="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold mx-auto">1</span></td>
+                                <td class="px-3 py-2.5 font-semibold text-indigo-600">물리 계층</td>
+                                <td class="px-3 py-2.5 text-gray-700">물리적 신호 전송</td>
+                                <td class="px-3 py-2.5 text-center font-mono text-gray-600">비트</td>
+                                <td class="px-3 py-2.5 text-gray-600">케이블, 허브, 리피터</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 암기 팁 배너 -->
+            <div class="bg-gradient-to-br from-violet-600 to-purple-800 rounded-2xl p-6 text-white">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-lightbulb text-yellow-300 text-sm"></i>
+                    </div>
+                    <h3 class="text-base font-bold">암기 꿀팁</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white/10 rounded-xl p-4">
+                        <p class="text-violet-200 text-xs font-semibold mb-2">📤 상위 → 하위 (송신 순서)</p>
+                        <p class="text-white font-bold text-sm leading-relaxed tracking-wide">
+                            <span class="text-red-300">응</span>표<span class="text-yellow-300">세</span>전<span class="text-teal-300">네</span>데<span class="text-indigo-300">물</span>
+                        </p>
+                        <p class="text-violet-200 text-xs mt-2">응용 → 표현 → 세션 → 전송 → 네트워크 → 데이터링크 → 물리</p>
+                    </div>
+                    <div class="bg-white/10 rounded-xl p-4">
+                        <p class="text-violet-200 text-xs font-semibold mb-2">📥 하위 → 상위 (수신 순서)</p>
+                        <p class="text-white font-bold text-sm leading-relaxed tracking-wide">
+                            <span class="text-indigo-300">물</span>데<span class="text-teal-300">네</span>전<span class="text-yellow-300">세</span>표<span class="text-red-300">응</span>
+                        </p>
+                        <p class="text-violet-200 text-xs mt-2">물리 → 데이터링크 → 네트워크 → 전송 → 세션 → 표현 → 응용</p>
+                    </div>
+                </div>
+                <div class="mt-4 bg-white/10 rounded-xl p-3 text-center">
+                    <p class="text-yellow-200 text-xs font-semibold">영어 암기: "<span class="text-white font-bold">P</span>lease <span class="text-white font-bold">D</span>o <span class="text-white font-bold">N</span>ot <span class="text-white font-bold">T</span>hrow <span class="text-white font-bold">S</span>ausage <span class="text-white font-bold">P</span>izza <span class="text-white font-bold">A</span>way"</p>
+                    <p class="text-violet-200 text-xs mt-1">Physical · Data Link · Network · Transport · Session · Presentation · Application</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
         <!-- Navigation Button -->
         <!-- ============================================ -->
         <div class="text-center">
