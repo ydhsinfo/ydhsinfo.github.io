@@ -88,7 +88,7 @@
 
             <a href="../../../index.html" class="inline-flex items-center gap-2 text-orange-100 hover:text-white transition-colors mb-6 text-sm group no-print">
                 <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
-                목차로 돌아가기
+                전체 단원으로 돌아가기
             </a>
 
             <div class="flex items-start gap-5">
@@ -272,12 +272,6 @@
                 </div>
             </div>
 
-            <!-- Next Page Button -->
-            <div class="flex justify-end mt-8">
-                <button onclick="goToPage(1)" class="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-lg">
-                    다음: 데이터 수집하기 <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
         </div>
 
         <!-- ===================== PAGE 1: 데이터 수집하기 ===================== -->
@@ -392,14 +386,6 @@
                 </div>
             </div>
 
-            <div class="flex justify-between mt-8">
-                <button onclick="goToPage(0)" class="flex items-center gap-2 bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors">
-                    <i class="fas fa-arrow-left"></i> 이전
-                </button>
-                <button onclick="goToPage(2)" class="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-lg">
-                    다음: 데이터 분석하기 <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
         </div>
 
         <!-- ===================== PAGE 2: 데이터 분석하기 ===================== -->
@@ -736,14 +722,6 @@
                 </div>
             </div>
 
-            <div class="flex justify-between mt-8">
-                <button onclick="goToPage(1)" class="flex items-center gap-2 bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors">
-                    <i class="fas fa-arrow-left"></i> 이전
-                </button>
-                <button onclick="goToPage(3)" class="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-lg">
-                    다음: 문제 해결하기 <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
         </div>
 
         <!-- ===================== PAGE 3: 문제 해결하기 ===================== -->
@@ -880,14 +858,6 @@
                 </div>
             </div>
 
-            <div class="flex justify-between mt-8">
-                <button onclick="goToPage(2)" class="flex items-center gap-2 bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors">
-                    <i class="fas fa-arrow-left"></i> 이전
-                </button>
-                <button onclick="goToPage(4)" class="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-lg">
-                    다음: 모둠 활동 평가 <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
         </div>
 
         <!-- ===================== PAGE 4: 모둠 활동 평가하기 ===================== -->
@@ -950,31 +920,56 @@
                 </div>
             </div>
 
-            <div class="flex justify-between mt-8">
-                <button onclick="goToPage(3)" class="flex items-center gap-2 bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors">
-                    <i class="fas fa-arrow-left"></i> 이전
-                </button>
-                <a href="../../../index.html" class="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-lg">
-                    <i class="fas fa-home"></i> 목차로 돌아가기
-                </a>
-            </div>
         </div>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-gray-400 mt-16">
-        <div class="max-w-6xl mx-auto px-4 py-8">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-book text-white text-sm"></i>
-                    </div>
-                    <span class="text-sm">고등학교 정보 교과서</span>
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Page navigation -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <!-- 이전 페이지 -->
+                <div class="flex-1 flex flex-col items-start gap-1">
+                    <a href="../02_모듈과 라이브러리/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </a>
+                    <span class="text-gray-400 text-xs pl-1">모듈과 라이브러리</span>
                 </div>
-                <div class="text-xs text-center sm:text-right">
-                    <p>III. 알고리즘과 프로그래밍 > 05 함수와 라이브러리 > 선택활동</p>
+
+                <!-- 전체 단원으로 돌아가기 -->
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                       style="background: linear-gradient(135deg, #ff922b, #f76707);">
+                        <i class="fas fa-th-list"></i>
+                        전체 단원으로 돌아가기
+                    </a>
                 </div>
+
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex flex-col items-end gap-1">
+                    <a href="../../06_객체지향 프로그래밍/01_객체지향 프로그래밍의 이해/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <span class="text-gray-400 text-xs pr-1">객체지향 프로그래밍의 이해</span>
+                </div>
+            </div>
+
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    III. 알고리즘과 프로그래밍 &gt; 05 함수와 라이브러리 &gt; 선택활동
+                </p>
             </div>
         </div>
     </footer>

@@ -831,38 +831,39 @@
 
     </main>
 
-
-    <!-- ===== FOOTER ===== -->
-    <footer class="bg-gray-900 text-gray-400 mt-16">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
-            <!-- Navigation buttons -->
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Page navigation -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
                 <!-- 이전 페이지 -->
-                <div class="flex-1 flex justify-start">
+                <div class="flex-1 flex flex-col items-start gap-1">
                     <a href="../01_디지털 기술과 사회 변화/index.html"
-                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
                         <i class="fas fa-arrow-left"></i>
                         이전 페이지
                     </a>
+                    <span class="text-gray-400 text-xs pl-1">디지털 기술과 사회 변화</span>
                 </div>
 
-                <!-- 목록 -->
-                <div class="flex-shrink-0">
+                <!-- 전체 단원으로 돌아가기 -->
+                <div class="flex-1 flex justify-center">
                     <a href="../../../index.html"
-                       class="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 border border-gray-600">
-                        <i class="fas fa-list"></i>
-                        목록
+                       class="inline-flex items-center gap-2 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                       style="background: linear-gradient(135deg, #339af0, #1c7ed6);">
+                        <i class="fas fa-th-list"></i>
+                        전체 단원으로 돌아가기
                     </a>
                 </div>
 
                 <!-- 다음 페이지 -->
-                <div class="flex-1 flex justify-end">
+                <div class="flex-1 flex flex-col items-end gap-1">
                     <a href="../03_선택활동/index.html"
-                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
                         다음 페이지
                         <i class="fas fa-arrow-right"></i>
                     </a>
+                    <span class="text-gray-400 text-xs pr-1">선택활동</span>
                 </div>
             </div>
 

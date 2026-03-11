@@ -1200,64 +1200,54 @@
         </section>
 
 
-        <!-- ===================================================================== -->
-        <!-- BOTTOM NAVIGATION                                                      -->
-        <!-- ===================================================================== -->
-        <nav aria-label="페이지 네비게이션" class="fade-in no-print">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-2xl shadow-md border border-gray-100 p-4 md:p-5">
-                <!-- Previous (disabled) -->
-                <div class="flex-1 flex justify-start">
-                    <span class="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-gray-300 bg-gray-50 border border-gray-100 cursor-not-allowed select-none">
-                        <i class="fas fa-chevron-left"></i>
-                        이전
-                    </span>
-                </div>
-
-                <!-- List/Home -->
-                <div class="flex-shrink-0">
-                    <a href="../../../index.html"
-                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold text-primary-700 bg-primary-50 hover:bg-primary-100 border border-primary-200 transition-all duration-300 hover:shadow-md">
-                        <i class="fas fa-th-list"></i>
-                        목록
-                    </a>
-                </div>
-
-                <!-- Next -->
-                <div class="flex-1 flex justify-end">
-                    <a href="../02_암호화 활용 사례/index.html"
-                       class="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
-                        다음
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                </div>
-            </div>
-        </nav>
-
-    </main>
-
+</main>
 
     <!-- ===== FOOTER / NAVIGATION ===== -->
     <footer class="bg-gray-900 text-white mt-16">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Page navigation -->
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
-                <div class="flex-1 flex justify-start">
-                    <a href="../../01_디지털 데이터 압축/05_선택활동/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                <!-- 이전 페이지 -->
+                <div class="flex-1 flex flex-col items-start gap-1">
+                    <a href="../../01_디지털 데이터 압축/05_선택활동/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </a>
+                    <span class="text-gray-400 text-xs pl-1">선택활동</span>
                 </div>
+
+                <!-- 전체 단원으로 돌아가기 -->
                 <div class="flex-1 flex justify-center">
                     <a href="../../../index.html"
-                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                       class="inline-flex items-center gap-2 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                       style="background: linear-gradient(135deg, #20c997, #12b886);">
                         <i class="fas fa-th-list"></i>
-                        목록으로 돌아가기
+                        전체 단원으로 돌아가기
                     </a>
                 </div>
-                <div class="flex-1 flex justify-end">
-                    <a href="../02_암호화 활용 사례/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex flex-col items-end gap-1">
+                    <a href="../02_암호화 활용 사례/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <span class="text-gray-400 text-xs pr-1">암호화 활용 사례</span>
                 </div>
             </div>
+
             <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
             <div class="text-center">
-                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
-                <p class="text-gray-500 text-xs mt-2">II. 데이터 &gt; 02 디지털 데이터 암호화 &gt; 디지털 데이터 암호화의 이해</p>
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    II. 데이터 &gt; 02 디지털 데이터 암호화 &gt; 디지털 데이터 암호화의 이해
+                </p>
             </div>
         </div>
     </footer>

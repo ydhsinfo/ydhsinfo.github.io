@@ -79,7 +79,7 @@
                 <span class="text-white font-semibold">반복문</span>
             </div>
             <a href="../../../index.html" class="inline-flex items-center gap-2 text-orange-200 hover:text-white transition text-sm mb-6">
-                <i class="fas fa-arrow-left"></i> 목차로 돌아가기
+                <i class="fas fa-arrow-left"></i> 전체 단원으로 돌아가기
             </a>
             <div class="flex items-center gap-4 mt-2">
                 <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
@@ -916,23 +916,53 @@ s = <span class="number">0</span>
         </div>
     </main>
 
-    <!-- Page Navigation Bottom -->
-    <div class="max-w-6xl mx-auto px-6 pb-12">
-        <div class="flex justify-between items-center">
-            <button id="prevBtn" onclick="changePage(-1)" class="flex items-center gap-2 px-6 py-3 bg-white border-2 border-orange-300 text-orange-700 rounded-xl hover:bg-orange-50 transition font-semibold disabled:opacity-40 disabled:cursor-not-allowed">
-                <i class="fas fa-chevron-left"></i> 이전
-            </button>
-            <div id="pageIndicator" class="text-sm text-gray-500"></div>
-            <button id="nextBtn" onclick="changePage(1)" class="flex items-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition font-semibold disabled:opacity-40 disabled:cursor-not-allowed">
-                다음 <i class="fas fa-chevron-right"></i>
-            </button>
-        </div>
-    </div>
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Page navigation -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <!-- 이전 페이지 -->
+                <div class="flex-1 flex flex-col items-start gap-1">
+                    <a href="../01_조건문/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </a>
+                    <span class="text-gray-400 text-xs pl-1">조건문</span>
+                </div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-gray-400 py-8">
-        <div class="max-w-6xl mx-auto px-6 text-center">
-            <p class="text-sm">정보 교과서 &mdash; III. 알고리즘과 프로그래밍 > 04 제어 구조의 응용 > 반복문</p>
+                <!-- 전체 단원으로 돌아가기 -->
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                       style="background: linear-gradient(135deg, #ff922b, #f76707);">
+                        <i class="fas fa-th-list"></i>
+                        전체 단원으로 돌아가기
+                    </a>
+                </div>
+
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex flex-col items-end gap-1">
+                    <a href="../03_제어 구조 프로그래밍/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <span class="text-gray-400 text-xs pr-1">제어 구조 프로그래밍</span>
+                </div>
+            </div>
+
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    III. 알고리즘과 프로그래밍 &gt; 04 제어 구조의 응용 &gt; 반복문
+                </p>
+            </div>
         </div>
     </footer>
 

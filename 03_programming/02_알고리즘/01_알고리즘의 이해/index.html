@@ -714,7 +714,7 @@
                                class="w-24 px-3 py-2 border-2 border-accent-300 rounded-lg focus:outline-none focus:border-primary-500 text-center font-bold text-lg">
                         <span class="text-gray-500 text-sm">세</span>
                     </div>
-                    <button onclick="checkAge()" class="bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-6 py-2 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                    <button onclick="checkAge()" class="bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-6 py-2 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
                         <i class="fas fa-play mr-1"></i> 확인하기
                     </button>
                 </div>
@@ -869,7 +869,7 @@
                                class="w-28 px-3 py-2 border-2 border-accent-300 rounded-lg focus:outline-none focus:border-primary-500 text-center font-bold text-lg">
                         <span class="text-sm font-semibold text-gray-700">까지의 합</span>
                     </div>
-                    <button onclick="calculateEfficiency()" class="bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-6 py-2 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                    <button onclick="calculateEfficiency()" class="bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-6 py-2 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
                         <i class="fas fa-chart-bar mr-1"></i> 비교하기
                     </button>
                 </div>
@@ -1093,36 +1093,39 @@
 
     </main>
 
-
-    <!-- ===== FOOTER ===== -->
+    <!-- ===== FOOTER / NAVIGATION ===== -->
     <footer class="bg-gray-900 text-white mt-16">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <!-- Page navigation -->
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
-                <!-- 이전 페이지 (disabled - first page) -->
-                <div class="flex-1 flex justify-start">
-                    <span class="inline-flex items-center gap-2 bg-gray-700/50 text-gray-500 font-medium px-5 py-3 rounded-xl cursor-not-allowed">
+                <!-- 이전 페이지 -->
+                <div class="flex-1 flex flex-col items-start gap-1">
+                    <a href="../../01_문제 분해와 모델링/04_선택활동/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
                         <i class="fas fa-arrow-left"></i>
                         이전 페이지
-                    </span>
+                    </a>
+                    <span class="text-gray-400 text-xs pl-1">선택활동</span>
                 </div>
 
-                <!-- 목록으로 돌아가기 -->
+                <!-- 전체 단원으로 돌아가기 -->
                 <div class="flex-1 flex justify-center">
                     <a href="../../../index.html"
-                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                       class="inline-flex items-center gap-2 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                       style="background: linear-gradient(135deg, #ff922b, #f76707);">
                         <i class="fas fa-th-list"></i>
-                        목록으로 돌아가기
+                        전체 단원으로 돌아가기
                     </a>
                 </div>
 
                 <!-- 다음 페이지 -->
-                <div class="flex-1 flex justify-end">
+                <div class="flex-1 flex flex-col items-end gap-1">
                     <a href="../02_정렬 알고리즘/index.html"
                        class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
                         다음 페이지
                         <i class="fas fa-arrow-right"></i>
                     </a>
+                    <span class="text-gray-400 text-xs pr-1">정렬 알고리즘</span>
                 </div>
             </div>
 

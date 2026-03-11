@@ -867,71 +867,54 @@
 
         <!-- ============================================ -->
         <!-- NAVIGATION -->
-        <!-- ============================================ -->
-        <section class="fade-in no-print">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Previous -->
-                <a href="../01_디지털 데이터 압축의 이해/index.html"
-                   class="group flex items-center gap-4 bg-white rounded-2xl shadow-md border border-gray-100 p-5 hover:shadow-lg hover:border-primary-200 transition-all">
-                    <div class="w-10 h-10 bg-gray-100 group-hover:bg-primary-100 rounded-xl flex items-center justify-center transition-colors">
-                        <i class="fas fa-arrow-left text-gray-400 group-hover:text-primary-600 transition-colors"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs text-gray-400 font-medium">이전</div>
-                        <div class="text-sm font-bold text-gray-700 group-hover:text-primary-700 transition-colors">디지털 데이터 압축의 이해</div>
-                    </div>
-                </a>
-
-                <!-- Home -->
-                <a href="../../../index.html"
-                   class="group flex items-center justify-center gap-3 bg-white rounded-2xl shadow-md border border-gray-100 p-5 hover:shadow-lg hover:border-primary-200 transition-all">
-                    <div class="w-10 h-10 bg-gray-100 group-hover:bg-primary-100 rounded-xl flex items-center justify-center transition-colors">
-                        <i class="fas fa-th-large text-gray-400 group-hover:text-primary-600 transition-colors"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs text-gray-400 font-medium">목록</div>
-                        <div class="text-sm font-bold text-gray-700 group-hover:text-primary-700 transition-colors">전체 단원</div>
-                    </div>
-                </a>
-
-                <!-- Next -->
-                <a href="../03_이미지 압축/index.html"
-                   class="group flex items-center justify-end gap-4 bg-white rounded-2xl shadow-md border border-gray-100 p-5 hover:shadow-lg hover:border-primary-200 transition-all text-right">
-                    <div>
-                        <div class="text-xs text-gray-400 font-medium">다음</div>
-                        <div class="text-sm font-bold text-gray-700 group-hover:text-primary-700 transition-colors">이미지 압축</div>
-                    </div>
-                    <div class="w-10 h-10 bg-gray-100 group-hover:bg-primary-100 rounded-xl flex items-center justify-center transition-colors">
-                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-primary-600 transition-colors"></i>
-                    </div>
-                </a>
-            </div>
-        </section>
     </main>
-
 
     <!-- ===== FOOTER / NAVIGATION ===== -->
     <footer class="bg-gray-900 text-white mt-16">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Page navigation -->
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
-                <div class="flex-1 flex justify-start">
-                    <a href="../01_디지털 데이터 압축의 이해/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300"><i class="fas fa-arrow-left"></i> 이전 페이지</a>
+                <!-- 이전 페이지 -->
+                <div class="flex-1 flex flex-col items-start gap-1">
+                    <a href="../01_디지털 데이터 압축의 이해/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </a>
+                    <span class="text-gray-400 text-xs pl-1">디지털 데이터 압축의 이해</span>
                 </div>
+
+                <!-- 전체 단원으로 돌아가기 -->
                 <div class="flex-1 flex justify-center">
                     <a href="../../../index.html"
-                       class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-400 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                       class="inline-flex items-center gap-2 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                       style="background: linear-gradient(135deg, #20c997, #12b886);">
                         <i class="fas fa-th-list"></i>
-                        목록으로 돌아가기
+                        전체 단원으로 돌아가기
                     </a>
                 </div>
-                <div class="flex-1 flex justify-end">
-                    <a href="../03_이미지 압축/index.html" class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300">다음 페이지 <i class="fas fa-arrow-right"></i></a>
+
+                <!-- 다음 페이지 -->
+                <div class="flex-1 flex flex-col items-end gap-1">
+                    <a href="../03_이미지 압축/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <span class="text-gray-400 text-xs pr-1">이미지 압축</span>
                 </div>
             </div>
+
             <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
             <div class="text-center">
-                <p class="text-gray-400 text-sm"><i class="fas fa-school mr-1"></i> 영동고등학교 정보 수업 자료</p>
-                <p class="text-gray-500 text-xs mt-2">II. 데이터 &gt; 01 디지털 데이터 압축 &gt; 문자열 압축</p>
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    II. 데이터 &gt; 01 디지털 데이터 압축 &gt; 문자열 압축
+                </p>
             </div>
         </div>
     </footer>
