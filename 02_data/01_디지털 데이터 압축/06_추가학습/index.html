@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>추가학습 - 비트에서 가산기까지 | 정보</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        cyan: {
+                            50: '#ecfeff', 100: '#cffafe', 200: '#a5f3fc',
+                            300: '#67e8f9', 400: '#22d3ee', 500: '#06b6d4',
+                            600: '#0891b2', 700: '#0e7490', 800: '#155e75',
+                            900: '#164e63', 950: '#083344',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #4338ca 0%, #1e40af 50%, #312e81 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fade-in {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #0891b2, #0284c7, #0891b2);
+            border-radius: 2px;
+        }
+
+        /* Logic gate SVG styles */
+        .gate-box { transition: all 0.3s ease; cursor: pointer; }
+        .gate-box:hover { filter: drop-shadow(0 4px 8px rgba(8,145,178,0.3)); transform: scale(1.05); }
+
+        /* Simulator styles */
+        .sim-wire { stroke: #94a3b8; stroke-width: 2.5; fill: none; }
+        .sim-wire.active { stroke: #22d3ee; stroke-width: 3; filter: drop-shadow(0 0 4px rgba(34,211,238,0.5)); }
+        .sim-node { transition: all 0.3s ease; }
+        .sim-node.active { fill: #06b6d4; filter: drop-shadow(0 0 6px rgba(6,182,212,0.6)); }
+
+        .bit-btn {
+            width: 56px; height: 56px;
+            border-radius: 12px; font-size: 1.25rem; font-weight: 800;
+            border: 3px solid #a5f3fc;
+            background: #ecfeff; color: #0e7490;
+            cursor: pointer; transition: all 0.2s ease;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .bit-btn.on {
+            background: linear-gradient(135deg, #06b6d4, #0284c7);
+            color: #fff; border-color: #0891b2;
+            box-shadow: 0 4px 15px rgba(6,182,212,0.4);
+        }
+
+        .result-display {
+            font-size: 1.5rem; font-weight: 800;
+            background: linear-gradient(135deg, #ecfeff, #cffafe);
+            border: 3px solid #22d3ee; border-radius: 16px;
+            padding: 12px 24px; min-width: 60px; text-align: center;
+            color: #0e7490; transition: all 0.3s ease;
+        }
+        .result-display.active {
+            background: linear-gradient(135deg, #06b6d4, #0284c7);
+            color: #fff; border-color: #0891b2;
+            box-shadow: 0 4px 20px rgba(6,182,212,0.4);
+        }
+
+        /* Capacity bar animation */
+        .capacity-bar {
+            height: 32px; border-radius: 8px;
+            transition: width 1s ease-out;
+            position: relative; overflow: hidden;
+        }
+        .capacity-bar::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Truth table styles */
+        .truth-table th {
+            background: linear-gradient(135deg, #0e7490, #0891b2);
+            color: #fff; padding: 10px 16px; font-size: 0.85rem;
+        }
+        .truth-table td {
+            padding: 10px 16px; text-align: center; font-weight: 600;
+            font-size: 0.9rem; border-bottom: 1px solid #e0f2fe;
+        }
+        .truth-table tr:hover td { background: #ecfeff; }
+        .val-1 { color: #0891b2; }
+        .val-0 { color: #94a3b8; }
+
+        /* Print styles */
+        @media print {
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer, .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-14">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors text-sm font-medium">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>전체 단원</span>
+                </a>
+                <span class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-indigo-100">
+                    II. 데이터
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="bg-white border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
+            <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
+                <a href="../../../index.html" class="hover:text-indigo-600 transition-colors">
+                    <i class="fas fa-home mr-1"></i>전체
+                </a>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-gray-600 font-medium">II. 데이터</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-gray-600 font-medium">디지털 데이터 압축</span>
+                <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
+                <span class="text-indigo-700 font-semibold">추가학습</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-16 sm:py-20">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="max-w-3xl">
+                <span class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-6 border border-white/20">
+                    심화 · 탐구
+                </span>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
+                    추가학습
+                </h1>
+                <p class="text-lg sm:text-xl text-indigo-200 font-medium mb-4">
+                    비트에서 가산기까지
+                </p>
+                <p class="text-indigo-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                    컴퓨터가 0과 1만으로 어떻게 복잡한 계산을 해내는지, 비트의 개념부터 논리 게이트와 가산기까지 알아봅시다
+                </p>
+                <div class="flex flex-wrap gap-4 text-sm">
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-microchip text-cyan-300 text-indigo-300 text-indigo-300 text-indigo-300"></i>
+                        <span>비트와 바이트</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-hard-drive text-cyan-300 text-indigo-300 text-indigo-300 text-indigo-300"></i>
+                        <span>저장 용량 단위</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
+                        <i class="fas fa-sitemap text-cyan-300 text-indigo-300 text-indigo-300 text-indigo-300"></i>
+                        <span>논리 게이트 · 가산기</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<!-- ===== MAIN CONTENT ===== -->
+    <main class="max-w-5xl mx-auto px-4 py-10 space-y-12">
+
+        <!-- ============================================ -->
+        <!-- SECTION 1: 비트의 개념 -->
+        <!-- ============================================ -->
+        <section class="fade-in bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">01. 비트(bit)의 개념</h2>
+                    <p class="text-cyan-100 text-xs">컴퓨터가 정보를 표현하는 가장 작은 단위</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-6">
+                <!-- 비트란? -->
+                <div>
+                    <h3 class="text-lg font-bold text-cyan-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-circle-question text-cyan-500"></i>
+                        비트(bit)란 무엇인가?
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        <strong class="text-cyan-700">비트(bit)</strong>는 <strong>Binary Digit</strong>(이진 숫자)의 줄임말로,
+                        컴퓨터가 정보를 표현하는 <strong>가장 작은 단위</strong>입니다.
+                        하나의 비트는 <strong>0 또는 1</strong>, 단 두 가지 값만 가질 수 있습니다.
+                    </p>
+
+                    <!-- 비트 시각화 -->
+                    <div class="grid grid-cols-2 gap-4 max-w-md mx-auto mb-6">
+                        <div class="bg-gray-100 rounded-xl p-6 text-center border-2 border-gray-200">
+                            <div class="text-5xl font-black text-gray-400 mb-2">0</div>
+                            <p class="text-sm text-gray-500 font-medium">꺼짐 (OFF)</p>
+                            <p class="text-xs text-gray-400 mt-1">전기가 흐르지 않음</p>
+                        </div>
+                        <div class="bg-cyan-50 rounded-xl p-6 text-center border-2 border-cyan-300">
+                            <div class="text-5xl font-black text-cyan-600 mb-2">1</div>
+                            <p class="text-sm text-cyan-700 font-medium">켜짐 (ON)</p>
+                            <p class="text-xs text-cyan-500 mt-1">전기가 흐름</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                        <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600 flex-shrink-0 mt-0.5">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-amber-800 mb-1">비유로 이해하기</p>
+                            <p class="text-sm text-amber-700 leading-relaxed">
+                                방에 있는 <strong>전등 스위치</strong>를 떠올려 보세요.
+                                스위치는 "켜짐(1)" 또는 "꺼짐(0)" 두 가지 상태만 있죠?
+                                비트도 마찬가지입니다. 이 단순한 0과 1의 조합만으로 컴퓨터는 글자, 사진, 음악, 영상 등
+                                모든 것을 표현할 수 있습니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 비트 조합 예시 -->
+                <div>
+                    <h3 class="text-lg font-bold text-cyan-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-cubes text-cyan-500"></i>
+                        비트를 조합하면?
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        비트 1개로는 0과 1, 두 가지만 표현할 수 있습니다.
+                        하지만 비트를 여러 개 <strong>조합</strong>하면 표현할 수 있는 가짓수가 기하급수적으로 늘어납니다.
+                    </p>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse rounded-xl overflow-hidden">
+                            <thead>
+                                <tr>
+                                    <th class="bg-gradient-to-r from-cyan-700 to-cyan-600 text-white px-4 py-3 text-sm font-semibold text-center">비트 수</th>
+                                    <th class="bg-gradient-to-r from-cyan-700 to-cyan-600 text-white px-4 py-3 text-sm font-semibold text-center">표현 가능 수</th>
+                                    <th class="bg-gradient-to-r from-cyan-700 to-cyan-600 text-white px-4 py-3 text-sm font-semibold text-center">표현 가능한 값</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-cyan-100">
+                                    <td class="px-4 py-3 text-center font-bold text-cyan-800 bg-cyan-50">1비트</td>
+                                    <td class="px-4 py-3 text-center font-semibold">2<sup>1</sup> = <strong>2</strong>가지</td>
+                                    <td class="px-4 py-3 text-center text-sm"><code class="bg-gray-100 px-2 py-0.5 rounded">0</code>, <code class="bg-gray-100 px-2 py-0.5 rounded">1</code></td>
+                                </tr>
+                                <tr class="border-b border-cyan-100">
+                                    <td class="px-4 py-3 text-center font-bold text-cyan-800 bg-cyan-50">2비트</td>
+                                    <td class="px-4 py-3 text-center font-semibold">2<sup>2</sup> = <strong>4</strong>가지</td>
+                                    <td class="px-4 py-3 text-center text-sm"><code class="bg-gray-100 px-2 py-0.5 rounded">00</code> <code class="bg-gray-100 px-2 py-0.5 rounded">01</code> <code class="bg-gray-100 px-2 py-0.5 rounded">10</code> <code class="bg-gray-100 px-2 py-0.5 rounded">11</code></td>
+                                </tr>
+                                <tr class="border-b border-cyan-100">
+                                    <td class="px-4 py-3 text-center font-bold text-cyan-800 bg-cyan-50">4비트</td>
+                                    <td class="px-4 py-3 text-center font-semibold">2<sup>4</sup> = <strong>16</strong>가지</td>
+                                    <td class="px-4 py-3 text-center text-sm"><code class="bg-gray-100 px-2 py-0.5 rounded">0000</code> ~ <code class="bg-gray-100 px-2 py-0.5 rounded">1111</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 text-center font-bold text-cyan-800 bg-cyan-50">8비트</td>
+                                    <td class="px-4 py-3 text-center font-semibold">2<sup>8</sup> = <strong>256</strong>가지</td>
+                                    <td class="px-4 py-3 text-center text-sm"><code class="bg-gray-100 px-2 py-0.5 rounded">00000000</code> ~ <code class="bg-gray-100 px-2 py-0.5 rounded">11111111</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECTION 2: 컴퓨터는 왜 0과 1만 사용하는가? -->
+        <!-- ============================================ -->
+        <section class="fade-in bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
+                    <i class="fas fa-plug-circle-bolt"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">02. 컴퓨터는 왜 0과 1만 사용할까?</h2>
+                    <p class="text-cyan-100 text-xs">전기 신호와 이진법의 관계</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-6">
+                <p class="text-gray-700 leading-relaxed">
+                    우리 인간은 손가락이 10개이기 때문에 0~9까지 10개의 숫자를 사용하는 <strong>십진법</strong>에 익숙합니다.
+                    그런데 컴퓨터는 왜 0과 1, 단 두 가지 숫자만 사용할까요?
+                </p>
+
+                <!-- 이유 카드 3개 -->
+                <div class="grid md:grid-cols-3 gap-4">
+                    <!-- 이유1: 전기 신호 -->
+                    <div class="card-hover bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl p-5 border border-cyan-200">
+                        <div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600 text-xl mb-3">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4 class="font-bold text-cyan-800 mb-2">전기 신호의 특성</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            컴퓨터 내부에는 수십억 개의 <strong>트랜지스터</strong>라는 아주 작은 전자 스위치가 있습니다.
+                            이 스위치는 <strong>전기가 흐르거나(1), 흐르지 않거나(0)</strong>
+                            두 가지 상태만 가장 정확하게 구분할 수 있습니다.
+                        </p>
+                    </div>
+
+                    <!-- 이유2: 안정성 -->
+                    <div class="card-hover bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl p-5 border border-cyan-200">
+                        <div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600 text-xl mb-3">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <h4 class="font-bold text-cyan-800 mb-2">오류에 강함</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            만약 0~9까지 10단계로 전압을 나눈다면, 아주 작은 전기적 잡음에도
+                            3과 4를 헷갈릴 수 있습니다. 하지만 <strong>0과 1 두 가지</strong>만 구분하면
+                            잡음이 있어도 정확히 구분할 수 있어 <strong>오류가 거의 없습니다</strong>.
+                        </p>
+                    </div>
+
+                    <!-- 이유3: 논리 연산 -->
+                    <div class="card-hover bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl p-5 border border-cyan-200">
+                        <div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600 text-xl mb-3">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4 class="font-bold text-cyan-800 mb-2">논리 연산과 완벽한 궁합</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            우리가 일상에서 사용하는 "참/거짓", "예/아니오"도 두 가지 값이죠?
+                            컴퓨터의 모든 판단과 계산은 이런 <strong>논리 연산</strong>(AND, OR, NOT)의
+                            조합으로 이루어지며, 이진법과 완벽하게 맞아떨어집니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 트랜지스터 비유 -->
+                <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="inline-flex items-center gap-1.5 bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">
+                            <i class="fas fa-star"></i> 하나 더 알기
+                        </span>
+                        <span class="text-sm font-semibold text-indigo-800">트랜지스터의 수</span>
+                    </div>
+                    <p class="text-sm text-indigo-700 leading-relaxed">
+                        최신 스마트폰 칩에는 약 <strong>150억 개</strong> 이상의 트랜지스터가 들어있습니다.
+                        이 아주 작은 스위치들이 초당 수십억 번 0과 1을 바꾸면서 우리가 사용하는 앱, 게임, 영상 등을 처리합니다.
+                        손톱보다 작은 칩 안에 이렇게 많은 스위치가 있다니, 놀랍지 않나요?
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECTION 3: 바이트와 저장 용량 단위 -->
+        <!-- ============================================ -->
+        <section class="fade-in bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
+                    <i class="fas fa-hard-drive"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">03. 바이트와 저장 용량 단위</h2>
+                    <p class="text-cyan-100 text-xs">8비트 = 1바이트, 그리고 더 큰 단위들</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-6">
+                <!-- 8비트 = 1바이트 -->
+                <div>
+                    <h3 class="text-lg font-bold text-cyan-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-cubes text-cyan-500"></i>
+                        8비트가 모이면 1바이트
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        비트 하나만으로는 표현할 수 있는 정보가 너무 적습니다.
+                        그래서 비트 <strong>8개를 하나로 묶어</strong> <strong class="text-cyan-700">바이트(Byte)</strong>라는 단위를 사용합니다.
+                    </p>
+
+                    <!-- 8비트 시각화 -->
+                    <div class="bg-gray-50 rounded-xl p-6 mb-4">
+                        <p class="text-center text-sm font-semibold text-gray-500 mb-4">1바이트 = 8비트</p>
+                        <div class="flex items-center justify-center gap-1 md:gap-2 flex-wrap mb-4">
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-cyan-500 text-white rounded-lg flex items-center justify-center font-bold text-sm md:text-base">0</div>
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-cyan-600 text-white rounded-lg flex items-center justify-center font-bold text-sm md:text-base">1</div>
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-cyan-500 text-white rounded-lg flex items-center justify-center font-bold text-sm md:text-base">0</div>
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-cyan-600 text-white rounded-lg flex items-center justify-center font-bold text-sm md:text-base">0</div>
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-cyan-500 text-white rounded-lg flex items-center justify-center font-bold text-sm md:text-base">0</div>
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-cyan-600 text-white rounded-lg flex items-center justify-center font-bold text-sm md:text-base">0</div>
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-cyan-500 text-white rounded-lg flex items-center justify-center font-bold text-sm md:text-base">0</div>
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-cyan-600 text-white rounded-lg flex items-center justify-center font-bold text-sm md:text-base">1</div>
+                        </div>
+                        <p class="text-center text-sm text-gray-600">
+                            위 8비트(<code class="bg-gray-200 px-1.5 py-0.5 rounded text-xs">01000001</code>)는 영문자 <strong class="text-cyan-700 text-lg">'A'</strong>를 나타냅니다 (ASCII 코드 65)
+                        </p>
+                    </div>
+
+                    <div class="bg-cyan-50 border border-cyan-200 rounded-xl p-4">
+                        <p class="text-sm text-cyan-800 leading-relaxed">
+                            <i class="fas fa-info-circle text-cyan-500 mr-1"></i>
+                            1바이트(8비트)로는 2<sup>8</sup> = <strong>256가지</strong> 값을 표현할 수 있습니다.
+                            영문 알파벳 대소문자, 숫자, 특수기호를 모두 표현하기에 충분하죠!
+                            한글 한 글자는 보통 <strong>2~3바이트</strong>가 필요합니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 저장 용량 단위 -->
+                <div>
+                    <h3 class="text-lg font-bold text-cyan-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-database text-cyan-500"></i>
+                        저장 용량 단위
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        바이트를 기본으로, 더 큰 데이터를 나타내기 위해 다음과 같은 단위를 사용합니다.
+                    </p>
+
+                    <div class="overflow-x-auto mb-6">
+                        <table class="w-full border-collapse rounded-xl overflow-hidden">
+                            <thead>
+                                <tr>
+                                    <th class="bg-gradient-to-r from-cyan-700 to-cyan-600 text-white px-4 py-3 text-sm font-semibold text-center">단위</th>
+                                    <th class="bg-gradient-to-r from-cyan-700 to-cyan-600 text-white px-4 py-3 text-sm font-semibold text-center">크기</th>
+                                    <th class="bg-gradient-to-r from-cyan-700 to-cyan-600 text-white px-4 py-3 text-sm font-semibold text-center">실생활 예시</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-cyan-100">
+                                    <td class="px-4 py-3 text-center font-bold text-cyan-800 bg-cyan-50">1 B (바이트)</td>
+                                    <td class="px-4 py-3 text-center text-sm">8비트</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">영문자 1글자</td>
+                                </tr>
+                                <tr class="border-b border-cyan-100">
+                                    <td class="px-4 py-3 text-center font-bold text-cyan-800 bg-cyan-50">1 KB (킬로바이트)</td>
+                                    <td class="px-4 py-3 text-center text-sm">1,024 B</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">짧은 문자 메시지 1개</td>
+                                </tr>
+                                <tr class="border-b border-cyan-100">
+                                    <td class="px-4 py-3 text-center font-bold text-cyan-800 bg-cyan-50">1 MB (메가바이트)</td>
+                                    <td class="px-4 py-3 text-center text-sm">1,024 KB</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">MP3 음악 1곡 (약 3~5MB)</td>
+                                </tr>
+                                <tr class="border-b border-cyan-100">
+                                    <td class="px-4 py-3 text-center font-bold text-cyan-800 bg-cyan-50">1 GB (기가바이트)</td>
+                                    <td class="px-4 py-3 text-center text-sm">1,024 MB</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">HD 영화 1편 (약 1~2GB)</td>
+                                </tr>
+                                <tr class="border-b border-cyan-100">
+                                    <td class="px-4 py-3 text-center font-bold text-cyan-800 bg-cyan-50">1 TB (테라바이트)</td>
+                                    <td class="px-4 py-3 text-center text-sm">1,024 GB</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">HD 영화 약 500편</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 text-center font-bold text-cyan-800 bg-cyan-50">1 PB (페타바이트)</td>
+                                    <td class="px-4 py-3 text-center text-sm">1,024 TB</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">대형 데이터센터 규모</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 용량 비교 시각화 -->
+                    <div class="bg-gray-50 rounded-xl p-5">
+                        <p class="text-sm font-semibold text-gray-600 mb-4"><i class="fas fa-chart-bar text-cyan-500 mr-1"></i> 단위별 크기 비교 (로그 스케일)</p>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-bold text-gray-500 w-8 text-right">B</span>
+                                <div class="capacity-bar bg-cyan-200" style="width: 5%;"></div>
+                                <span class="text-xs text-gray-400">1</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-bold text-gray-500 w-8 text-right">KB</span>
+                                <div class="capacity-bar bg-cyan-300" style="width: 15%;"></div>
+                                <span class="text-xs text-gray-400">×1,024</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-bold text-gray-500 w-8 text-right">MB</span>
+                                <div class="capacity-bar bg-cyan-400" style="width: 30%;"></div>
+                                <span class="text-xs text-gray-400">×1,048,576</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-bold text-gray-500 w-8 text-right">GB</span>
+                                <div class="capacity-bar bg-cyan-500" style="width: 55%;"></div>
+                                <span class="text-xs text-gray-400">×약 10억</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-bold text-gray-500 w-8 text-right">TB</span>
+                                <div class="capacity-bar bg-cyan-600" style="width: 80%;"></div>
+                                <span class="text-xs text-gray-400">×약 1조</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-bold text-gray-500 w-8 text-right">PB</span>
+                                <div class="capacity-bar bg-cyan-700" style="width: 100%;"></div>
+                                <span class="text-xs text-gray-400">×약 1,000조</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECTION 4: 1TB가 윈도우에서 적게 표시되는 이유 -->
+        <!-- ============================================ -->
+        <section class="fade-in bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
+                    <i class="fab fa-windows"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">04. 1TB인데 왜 용량이 부족해 보일까?</h2>
+                    <p class="text-cyan-100 text-xs">제조사와 운영체제의 계산법 차이</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-6">
+                <p class="text-gray-700 leading-relaxed">
+                    "1TB SSD를 샀는데 윈도우에서 보니 <strong>931GB</strong>밖에 안 돼요!"
+                    이런 경험, 한 번쯤 해보셨죠? 속은 걸까요? 아닙니다.
+                    <strong>계산 방식의 차이</strong> 때문입니다.
+                </p>
+
+                <!-- 비교 카드 -->
+                <div class="grid md:grid-cols-2 gap-4">
+                    <!-- 제조사 -->
+                    <div class="bg-red-50 rounded-xl p-5 border border-red-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center text-red-500">
+                                <i class="fas fa-industry"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-red-800">저장장치 제조사</h4>
+                                <p class="text-xs text-red-500">SI 단위 (10진법)</p>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border border-red-100">
+                            <p class="text-sm text-gray-700 leading-relaxed mb-3">
+                                제조사는 <strong>1,000</strong>을 기준으로 계산합니다.
+                            </p>
+                            <div class="space-y-1 text-sm font-mono">
+                                <p>1 KB = <strong class="text-red-600">1,000</strong> B</p>
+                                <p>1 MB = <strong class="text-red-600">1,000</strong> KB</p>
+                                <p>1 GB = <strong class="text-red-600">1,000</strong> MB</p>
+                                <p>1 TB = <strong class="text-red-600">1,000</strong> GB</p>
+                            </div>
+                            <div class="mt-3 bg-red-50 rounded-lg p-3">
+                                <p class="text-sm font-bold text-red-700">
+                                    1TB = 1,000,000,000,000 B<br>
+                                    <span class="text-xs font-normal">(= 1조 바이트)</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 운영체제 -->
+                    <div class="bg-blue-50 rounded-xl p-5 border border-blue-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-500">
+                                <i class="fab fa-windows"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-blue-800">윈도우 운영체제</h4>
+                                <p class="text-xs text-blue-500">이진 단위 (2진법)</p>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border border-blue-100">
+                            <p class="text-sm text-gray-700 leading-relaxed mb-3">
+                                윈도우는 <strong>1,024</strong>를 기준으로 계산합니다.
+                            </p>
+                            <div class="space-y-1 text-sm font-mono">
+                                <p>1 KB = <strong class="text-blue-600">1,024</strong> B</p>
+                                <p>1 MB = <strong class="text-blue-600">1,024</strong> KB</p>
+                                <p>1 GB = <strong class="text-blue-600">1,024</strong> MB</p>
+                                <p>1 TB = <strong class="text-blue-600">1,024</strong> GB</p>
+                            </div>
+                            <div class="mt-3 bg-blue-50 rounded-lg p-3">
+                                <p class="text-sm font-bold text-blue-700">
+                                    1TB = 1,099,511,627,776 B<br>
+                                    <span class="text-xs font-normal">(= 약 1조 995억 바이트)</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 계산 과정 -->
+                <div class="bg-gradient-to-r from-gray-50 to-cyan-50 rounded-xl p-5 border border-cyan-200">
+                    <h4 class="font-bold text-cyan-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-calculator text-cyan-500"></i>
+                        직접 계산해 봅시다!
+                    </h4>
+                    <div class="bg-white rounded-lg p-4 font-mono text-sm leading-loose">
+                        <p class="text-gray-500">제조사가 말하는 1TB:</p>
+                        <p class="text-gray-800 ml-4"><strong>1,000,000,000,000</strong> 바이트</p>
+                        <p class="text-gray-500 mt-2">윈도우 기준으로 환산하면:</p>
+                        <p class="text-gray-800 ml-4">1,000,000,000,000 ÷ 1,024 ÷ 1,024 ÷ 1,024</p>
+                        <p class="text-cyan-700 ml-4 font-bold text-lg">= 약 931.32 GB</p>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+                        <i class="fas fa-arrow-right text-cyan-500 mr-1"></i>
+                        제조사 표기 1TB는 윈도우에서 약 <strong class="text-cyan-700">931GB</strong>로 표시됩니다.
+                        <strong>약 7%</strong> 정도 적어 보이게 되는 것이죠. 저장장치의 결함이 아닙니다!
+                    </p>
+                </div>
+
+                <!-- 용량별 차이 표 -->
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse rounded-xl overflow-hidden">
+                        <thead>
+                            <tr>
+                                <th class="bg-gradient-to-r from-cyan-700 to-cyan-600 text-white px-4 py-3 text-sm font-semibold text-center">제조사 표기</th>
+                                <th class="bg-gradient-to-r from-cyan-700 to-cyan-600 text-white px-4 py-3 text-sm font-semibold text-center">윈도우 표시</th>
+                                <th class="bg-gradient-to-r from-cyan-700 to-cyan-600 text-white px-4 py-3 text-sm font-semibold text-center">차이</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-cyan-100">
+                                <td class="px-4 py-3 text-center font-bold text-gray-700">128 GB</td>
+                                <td class="px-4 py-3 text-center font-semibold text-cyan-700">약 119 GB</td>
+                                <td class="px-4 py-3 text-center text-sm text-red-500 font-medium">-9 GB</td>
+                            </tr>
+                            <tr class="border-b border-cyan-100">
+                                <td class="px-4 py-3 text-center font-bold text-gray-700">256 GB</td>
+                                <td class="px-4 py-3 text-center font-semibold text-cyan-700">약 238 GB</td>
+                                <td class="px-4 py-3 text-center text-sm text-red-500 font-medium">-18 GB</td>
+                            </tr>
+                            <tr class="border-b border-cyan-100">
+                                <td class="px-4 py-3 text-center font-bold text-gray-700">512 GB</td>
+                                <td class="px-4 py-3 text-center font-semibold text-cyan-700">약 476 GB</td>
+                                <td class="px-4 py-3 text-center text-sm text-red-500 font-medium">-36 GB</td>
+                            </tr>
+                            <tr class="border-b border-cyan-100">
+                                <td class="px-4 py-3 text-center font-bold text-gray-700">1 TB</td>
+                                <td class="px-4 py-3 text-center font-semibold text-cyan-700">약 931 GB</td>
+                                <td class="px-4 py-3 text-center text-sm text-red-500 font-medium">-93 GB</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-center font-bold text-gray-700">2 TB</td>
+                                <td class="px-4 py-3 text-center font-semibold text-cyan-700">약 1,863 GB</td>
+                                <td class="px-4 py-3 text-center text-sm text-red-500 font-medium">-137 GB</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                    <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600 flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-amber-800 mb-1">참고</p>
+                        <p class="text-sm text-amber-700 leading-relaxed">
+                            macOS는 2009년부터 제조사와 같은 <strong>10진법 기준</strong>(1KB = 1,000B)을 사용하기 때문에
+                            Mac에서는 제조사 표기와 거의 동일한 용량이 표시됩니다.
+                            리눅스도 대부분의 배포판에서 10진법을 사용합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECTION 5: 논리 게이트 -->
+        <!-- ============================================ -->
+        <section class="fade-in bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
+                    <i class="fas fa-sitemap"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">05. 논리 게이트에서 가산기까지</h2>
+                    <p class="text-cyan-100 text-xs">0과 1로 덧셈을 하는 원리</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-8">
+                <!-- 논리 게이트 소개 -->
+                <div>
+                    <h3 class="text-lg font-bold text-cyan-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-puzzle-piece text-cyan-500"></i>
+                        논리 게이트란?
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        <strong class="text-cyan-700">논리 게이트(Logic Gate)</strong>는 0과 1의 입력을 받아
+                        특정 규칙에 따라 0 또는 1을 출력하는 <strong>기본적인 전자 회로</strong>입니다.
+                        레고 블록처럼, 이 간단한 게이트들을 조합하면 컴퓨터의 모든 계산을 수행할 수 있습니다.
+                    </p>
+                </div>
+
+                <!-- AND 게이트 -->
+                <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-200">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600 font-bold text-sm">AND</div>
+                        <div>
+                            <h4 class="font-bold text-emerald-800">AND 게이트 (그리고)</h4>
+                            <p class="text-xs text-emerald-600">두 입력이 <strong>모두 1</strong>일 때만 출력이 1</p>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-4">
+                            <p class="text-sm text-gray-600 mb-3 leading-relaxed">
+                                <i class="fas fa-quote-left text-emerald-300 mr-1"></i>
+                                "비가 오고 <strong>그리고</strong> 우산이 없으면 → 비를 맞는다"<br>
+                                두 조건이 <strong>모두 참</strong>이어야 결과가 참이 됩니다.
+                            </p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="truth-table w-full border-collapse rounded-lg overflow-hidden">
+                                <thead>
+                                    <tr>
+                                        <th class="rounded-tl-lg">입력 A</th>
+                                        <th>입력 B</th>
+                                        <th class="rounded-tr-lg">출력</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td class="val-0">0</td><td class="val-0">0</td><td class="val-0"><strong>0</strong></td></tr>
+                                    <tr><td class="val-0">0</td><td class="val-1">1</td><td class="val-0"><strong>0</strong></td></tr>
+                                    <tr><td class="val-1">1</td><td class="val-0">0</td><td class="val-0"><strong>0</strong></td></tr>
+                                    <tr><td class="val-1">1</td><td class="val-1">1</td><td class="val-1"><strong>1</strong></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OR 게이트 -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-bold text-sm">OR</div>
+                        <div>
+                            <h4 class="font-bold text-blue-800">OR 게이트 (또는)</h4>
+                            <p class="text-xs text-blue-600">두 입력 중 <strong>하나라도 1</strong>이면 출력이 1</p>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-4">
+                            <p class="text-sm text-gray-600 mb-3 leading-relaxed">
+                                <i class="fas fa-quote-left text-blue-300 mr-1"></i>
+                                "현금 <strong>또는</strong> 카드가 있으면 → 결제 가능"<br>
+                                둘 중 <strong>하나만 참</strong>이어도 결과가 참이 됩니다.
+                            </p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="truth-table w-full border-collapse rounded-lg overflow-hidden">
+                                <thead>
+                                    <tr>
+                                        <th class="rounded-tl-lg">입력 A</th>
+                                        <th>입력 B</th>
+                                        <th class="rounded-tr-lg">출력</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td class="val-0">0</td><td class="val-0">0</td><td class="val-0"><strong>0</strong></td></tr>
+                                    <tr><td class="val-0">0</td><td class="val-1">1</td><td class="val-1"><strong>1</strong></td></tr>
+                                    <tr><td class="val-1">1</td><td class="val-0">0</td><td class="val-1"><strong>1</strong></td></tr>
+                                    <tr><td class="val-1">1</td><td class="val-1">1</td><td class="val-1"><strong>1</strong></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- XOR 게이트 -->
+                <div class="bg-gradient-to-r from-purple-50 to-fuchsia-50 rounded-xl p-5 border border-purple-200">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 font-bold text-sm">XOR</div>
+                        <div>
+                            <h4 class="font-bold text-purple-800">XOR 게이트 (배타적 OR)</h4>
+                            <p class="text-xs text-purple-600">두 입력이 <strong>서로 다를 때</strong>만 출력이 1</p>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-4">
+                            <p class="text-sm text-gray-600 mb-3 leading-relaxed">
+                                <i class="fas fa-quote-left text-purple-300 mr-1"></i>
+                                "짜장면이나 짬뽕 <strong>둘 중 하나</strong>만 고를 수 있다"<br>
+                                두 값이 <strong>다를 때만</strong> 결과가 참이 됩니다.
+                            </p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="truth-table w-full border-collapse rounded-lg overflow-hidden">
+                                <thead>
+                                    <tr>
+                                        <th class="rounded-tl-lg">입력 A</th>
+                                        <th>입력 B</th>
+                                        <th class="rounded-tr-lg">출력</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td class="val-0">0</td><td class="val-0">0</td><td class="val-0"><strong>0</strong></td></tr>
+                                    <tr><td class="val-0">0</td><td class="val-1">1</td><td class="val-1"><strong>1</strong></td></tr>
+                                    <tr><td class="val-1">1</td><td class="val-0">0</td><td class="val-1"><strong>1</strong></td></tr>
+                                    <tr><td class="val-1">1</td><td class="val-1">1</td><td class="val-0"><strong>0</strong></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NOT 게이트 -->
+                <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-5 border border-orange-200">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 font-bold text-sm">NOT</div>
+                        <div>
+                            <h4 class="font-bold text-orange-800">NOT 게이트 (부정)</h4>
+                            <p class="text-xs text-orange-600">입력의 <strong>반대</strong>를 출력</p>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-4">
+                            <p class="text-sm text-gray-600 mb-3 leading-relaxed">
+                                <i class="fas fa-quote-left text-orange-300 mr-1"></i>
+                                "켜져 있으면 끄고, 꺼져 있으면 켠다"<br>
+                                입력을 <strong>뒤집어서</strong> 출력합니다.
+                            </p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="truth-table w-full border-collapse rounded-lg overflow-hidden">
+                                <thead>
+                                    <tr>
+                                        <th class="rounded-tl-lg">입력</th>
+                                        <th class="rounded-tr-lg">출력</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td class="val-0">0</td><td class="val-1"><strong>1</strong></td></tr>
+                                    <tr><td class="val-1">1</td><td class="val-0"><strong>0</strong></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 게이트 → 가산기 연결 -->
+                <div class="section-divider max-w-xs mx-auto"></div>
+
+                <!-- 반가산기 설명 -->
+                <div>
+                    <h3 class="text-lg font-bold text-cyan-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-plus text-cyan-500"></i>
+                        논리 게이트로 덧셈하기: 반가산기(Half Adder)
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        논리 게이트를 조합하면 <strong>이진수 덧셈</strong>을 할 수 있습니다.
+                        가장 간단한 형태가 <strong class="text-cyan-700">반가산기(Half Adder)</strong>로,
+                        1비트짜리 숫자 두 개를 더하는 회로입니다.
+                    </p>
+
+                    <!-- 이진수 덧셈 규칙 -->
+                    <div class="bg-gray-50 rounded-xl p-5 mb-6">
+                        <p class="text-sm font-semibold text-gray-700 mb-3">이진수 덧셈 규칙</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+                            <div class="bg-white rounded-lg p-3 border border-gray-200">
+                                <p class="font-mono font-bold text-lg text-gray-700">0 + 0</p>
+                                <p class="text-sm text-gray-500">= <strong class="text-cyan-600">0</strong></p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 border border-gray-200">
+                                <p class="font-mono font-bold text-lg text-gray-700">0 + 1</p>
+                                <p class="text-sm text-gray-500">= <strong class="text-cyan-600">1</strong></p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 border border-gray-200">
+                                <p class="font-mono font-bold text-lg text-gray-700">1 + 0</p>
+                                <p class="text-sm text-gray-500">= <strong class="text-cyan-600">1</strong></p>
+                            </div>
+                            <div class="bg-cyan-50 rounded-lg p-3 border-2 border-cyan-300">
+                                <p class="font-mono font-bold text-lg text-cyan-800">1 + 1</p>
+                                <p class="text-sm text-cyan-600">= <strong>10</strong> <span class="text-xs">(올림 1, 합 0)</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 반가산기 구조 설명 -->
+                    <div class="bg-cyan-50 rounded-xl p-5 border border-cyan-200 mb-4">
+                        <h4 class="font-bold text-cyan-800 mb-3">반가산기의 구조</h4>
+                        <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                            반가산기는 딱 <strong>2개의 논리 게이트</strong>로 만들 수 있습니다:
+                        </p>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 border border-cyan-100">
+                                <p class="font-bold text-purple-700 mb-1"><i class="fas fa-arrow-right text-purple-400 mr-1"></i> XOR 게이트</p>
+                                <p class="text-sm text-gray-600">
+                                    → <strong>합(Sum)</strong>을 계산합니다<br>
+                                    <span class="text-xs text-gray-400">두 비트가 다르면 1, 같으면 0</span>
+                                </p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border border-cyan-100">
+                                <p class="font-bold text-emerald-700 mb-1"><i class="fas fa-arrow-right text-emerald-400 mr-1"></i> AND 게이트</p>
+                                <p class="text-sm text-gray-600">
+                                    → <strong>올림(Carry)</strong>을 계산합니다<br>
+                                    <span class="text-xs text-gray-400">두 비트가 모두 1이면 올림 발생</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 반가산기 진리표 -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse rounded-xl overflow-hidden">
+                            <thead>
+                                <tr>
+                                    <th class="bg-gradient-to-r from-cyan-700 to-cyan-600 text-white px-4 py-3 text-sm font-semibold text-center" colspan="2">입력</th>
+                                    <th class="bg-gradient-to-r from-purple-600 to-purple-500 text-white px-4 py-3 text-sm font-semibold text-center">합 (XOR)</th>
+                                    <th class="bg-gradient-to-r from-emerald-600 to-emerald-500 text-white px-4 py-3 text-sm font-semibold text-center">올림 (AND)</th>
+                                    <th class="bg-gradient-to-r from-gray-600 to-gray-500 text-white px-4 py-3 text-sm font-semibold text-center">결과</th>
+                                </tr>
+                                <tr>
+                                    <th class="bg-cyan-100 px-4 py-2 text-xs text-cyan-800">A</th>
+                                    <th class="bg-cyan-100 px-4 py-2 text-xs text-cyan-800">B</th>
+                                    <th class="bg-purple-100 px-4 py-2 text-xs text-purple-800">S = A XOR B</th>
+                                    <th class="bg-emerald-100 px-4 py-2 text-xs text-emerald-800">C = A AND B</th>
+                                    <th class="bg-gray-100 px-4 py-2 text-xs text-gray-700">CS (2비트)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-100 text-center">
+                                    <td class="px-4 py-3 font-bold val-0">0</td>
+                                    <td class="px-4 py-3 font-bold val-0">0</td>
+                                    <td class="px-4 py-3 font-bold val-0">0</td>
+                                    <td class="px-4 py-3 font-bold val-0">0</td>
+                                    <td class="px-4 py-3 font-mono font-bold text-gray-700">00 <span class="text-xs text-gray-400">(= 0)</span></td>
+                                </tr>
+                                <tr class="border-b border-gray-100 text-center">
+                                    <td class="px-4 py-3 font-bold val-0">0</td>
+                                    <td class="px-4 py-3 font-bold val-1">1</td>
+                                    <td class="px-4 py-3 font-bold val-1">1</td>
+                                    <td class="px-4 py-3 font-bold val-0">0</td>
+                                    <td class="px-4 py-3 font-mono font-bold text-gray-700">01 <span class="text-xs text-gray-400">(= 1)</span></td>
+                                </tr>
+                                <tr class="border-b border-gray-100 text-center">
+                                    <td class="px-4 py-3 font-bold val-1">1</td>
+                                    <td class="px-4 py-3 font-bold val-0">0</td>
+                                    <td class="px-4 py-3 font-bold val-1">1</td>
+                                    <td class="px-4 py-3 font-bold val-0">0</td>
+                                    <td class="px-4 py-3 font-mono font-bold text-gray-700">01 <span class="text-xs text-gray-400">(= 1)</span></td>
+                                </tr>
+                                <tr class="text-center">
+                                    <td class="px-4 py-3 font-bold val-1">1</td>
+                                    <td class="px-4 py-3 font-bold val-1">1</td>
+                                    <td class="px-4 py-3 font-bold val-0">0</td>
+                                    <td class="px-4 py-3 font-bold val-1">1</td>
+                                    <td class="px-4 py-3 font-mono font-bold text-cyan-700">10 <span class="text-xs text-gray-400">(= 2)</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 전가산기 설명 -->
+                <div>
+                    <h3 class="text-lg font-bold text-cyan-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-layer-group text-cyan-500"></i>
+                        전가산기(Full Adder): 올림까지 처리하기
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        반가산기는 올림(Carry)을 입력으로 받을 수 없습니다. 여러 자리의 이진수를 더하려면
+                        이전 자리에서 발생한 올림도 함께 더해야 하죠.
+                        이를 위해 <strong>반가산기 2개와 OR 게이트 1개</strong>를 조합하여
+                        <strong class="text-cyan-700">전가산기(Full Adder)</strong>를 만듭니다.
+                    </p>
+
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-5 border border-indigo-200">
+                        <h4 class="font-bold text-indigo-800 mb-3">전가산기의 동작</h4>
+                        <div class="grid md:grid-cols-3 gap-3 text-center text-sm">
+                            <div class="bg-white rounded-lg p-3 border border-indigo-100">
+                                <p class="font-bold text-indigo-700">입력 3개</p>
+                                <p class="text-gray-500 mt-1">A, B, 이전 올림(C<sub>in</sub>)</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 border border-indigo-100">
+                                <p class="font-bold text-indigo-700">출력 2개</p>
+                                <p class="text-gray-500 mt-1">합(Sum), 올림(C<sub>out</sub>)</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 border border-indigo-100">
+                                <p class="font-bold text-indigo-700">조합 방법</p>
+                                <p class="text-gray-500 mt-1">반가산기 2개 + OR 1개</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-indigo-700 mt-4 leading-relaxed">
+                            <i class="fas fa-link text-indigo-400 mr-1"></i>
+                            전가산기를 <strong>여러 개 연결</strong>하면 4비트, 8비트, 32비트 등
+                            여러 자리 수의 덧셈이 가능합니다. 이것이 컴퓨터 CPU 내부 <strong>ALU(산술논리장치)</strong>의 핵심입니다!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SECTION 6: 가산기 시뮬레이터 -->
+        <!-- ============================================ -->
+        <section class="fade-in bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-cyan-700 to-blue-700 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white flex-shrink-0">
+                    <i class="fas fa-microchip text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">06. 가산기 시뮬레이터</h2>
+                    <p class="text-cyan-200 text-sm mt-0.5">직접 비트를 조작하며 이진수 덧셈을 체험해 봅시다</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-8">
+                <!-- 반가산기 시뮬레이터 -->
+                <div>
+                    <h3 class="text-lg font-bold text-cyan-800 mb-2 flex items-center gap-2">
+                        <i class="fas fa-play-circle text-cyan-500"></i>
+                        반가산기 시뮬레이터
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-4">입력 A, B 버튼을 클릭하여 0과 1을 전환해 보세요!</p>
+
+                    <div class="bg-gradient-to-br from-gray-50 to-cyan-50 rounded-xl p-6 border-2 border-cyan-200">
+                        <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10">
+                            <!-- 입력 -->
+                            <div class="flex flex-col items-center gap-3">
+                                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">입력</span>
+                                <div class="flex items-center gap-4">
+                                    <div class="text-center">
+                                        <p class="text-xs font-semibold text-gray-500 mb-2">A</p>
+                                        <button id="ha_inputA" class="bit-btn" onclick="toggleHalfAdder('A')">0</button>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-xs font-semibold text-gray-500 mb-2">B</p>
+                                        <button id="ha_inputB" class="bit-btn" onclick="toggleHalfAdder('B')">0</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 화살표 -->
+                            <div class="text-cyan-300 text-2xl">
+                                <i class="fas fa-arrow-right hidden md:inline"></i>
+                                <i class="fas fa-arrow-down md:hidden"></i>
+                            </div>
+
+                            <!-- 게이트 표시 -->
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">논리 게이트</span>
+                                <div class="flex gap-3">
+                                    <div class="bg-white rounded-lg px-4 py-3 border-2 border-purple-200 text-center">
+                                        <p class="text-xs text-gray-400">합</p>
+                                        <p class="font-bold text-purple-700">XOR</p>
+                                    </div>
+                                    <div class="bg-white rounded-lg px-4 py-3 border-2 border-emerald-200 text-center">
+                                        <p class="text-xs text-gray-400">올림</p>
+                                        <p class="font-bold text-emerald-700">AND</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 화살표 -->
+                            <div class="text-cyan-300 text-2xl">
+                                <i class="fas fa-arrow-right hidden md:inline"></i>
+                                <i class="fas fa-arrow-down md:hidden"></i>
+                            </div>
+
+                            <!-- 출력 -->
+                            <div class="flex flex-col items-center gap-3">
+                                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">출력</span>
+                                <div class="flex items-center gap-4">
+                                    <div class="text-center">
+                                        <p class="text-xs font-semibold text-gray-500 mb-2">올림 (C)</p>
+                                        <div id="ha_carry" class="result-display">0</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-xs font-semibold text-gray-500 mb-2">합 (S)</p>
+                                        <div id="ha_sum" class="result-display">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 계산 과정 표시 -->
+                        <div id="ha_explanation" class="mt-6 bg-white rounded-lg p-4 border border-cyan-100 text-center">
+                            <p class="text-sm text-gray-600">
+                                <span class="font-mono font-bold text-cyan-700" id="ha_expr">0 + 0</span>
+                                <span class="mx-2">=</span>
+                                <span class="font-mono font-bold text-cyan-800 text-lg" id="ha_result_text">0</span>
+                                <span class="text-xs text-gray-400 ml-2" id="ha_decimal">(십진수: 0)</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4비트 가산기 시뮬레이터 -->
+                <div>
+                    <h3 class="text-lg font-bold text-cyan-800 mb-2 flex items-center gap-2">
+                        <i class="fas fa-calculator text-cyan-500"></i>
+                        4비트 가산기 시뮬레이터
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-4">전가산기 4개를 연결하면 4비트(0~15) 숫자의 덧셈이 가능합니다. 각 비트를 클릭해 보세요!</p>
+
+                    <div class="bg-gradient-to-br from-gray-50 to-cyan-50 rounded-xl p-6 border-2 border-cyan-200">
+                        <!-- 입력 A (4비트) -->
+                        <div class="space-y-6">
+                            <div class="flex flex-col sm:flex-row items-center gap-4">
+                                <span class="text-sm font-bold text-gray-600 w-20 text-center sm:text-right">A =</span>
+                                <div class="flex gap-2" id="inputA_bits">
+                                    <button class="bit-btn" data-bit="3" data-input="A" onclick="toggle4bit(this)">0</button>
+                                    <button class="bit-btn" data-bit="2" data-input="A" onclick="toggle4bit(this)">0</button>
+                                    <button class="bit-btn" data-bit="1" data-input="A" onclick="toggle4bit(this)">0</button>
+                                    <button class="bit-btn" data-bit="0" data-input="A" onclick="toggle4bit(this)">0</button>
+                                </div>
+                                <span class="text-sm text-gray-400">=</span>
+                                <span id="decA" class="text-lg font-bold text-cyan-700 bg-white rounded-lg px-3 py-1 border border-cyan-200 min-w-[3rem] text-center">0</span>
+                            </div>
+
+                            <!-- 연산자 -->
+                            <div class="flex items-center justify-center">
+                                <div class="w-10 h-10 bg-cyan-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg">+</div>
+                            </div>
+
+                            <!-- 입력 B (4비트) -->
+                            <div class="flex flex-col sm:flex-row items-center gap-4">
+                                <span class="text-sm font-bold text-gray-600 w-20 text-center sm:text-right">B =</span>
+                                <div class="flex gap-2" id="inputB_bits">
+                                    <button class="bit-btn" data-bit="3" data-input="B" onclick="toggle4bit(this)">0</button>
+                                    <button class="bit-btn" data-bit="2" data-input="B" onclick="toggle4bit(this)">0</button>
+                                    <button class="bit-btn" data-bit="1" data-input="B" onclick="toggle4bit(this)">0</button>
+                                    <button class="bit-btn" data-bit="0" data-input="B" onclick="toggle4bit(this)">0</button>
+                                </div>
+                                <span class="text-sm text-gray-400">=</span>
+                                <span id="decB" class="text-lg font-bold text-cyan-700 bg-white rounded-lg px-3 py-1 border border-cyan-200 min-w-[3rem] text-center">0</span>
+                            </div>
+
+                            <!-- 구분선 -->
+                            <div class="border-t-4 border-cyan-300 mx-8"></div>
+
+                            <!-- 결과 -->
+                            <div class="flex flex-col sm:flex-row items-center gap-4">
+                                <span class="text-sm font-bold text-gray-600 w-20 text-center sm:text-right">결과 =</span>
+                                <div class="flex gap-2 items-center">
+                                    <div id="carry_out" class="result-display text-base" style="min-width: 48px; padding: 8px 12px;">0</div>
+                                    <div id="result_bit3" class="result-display text-base" style="min-width: 48px; padding: 8px 12px;">0</div>
+                                    <div id="result_bit2" class="result-display text-base" style="min-width: 48px; padding: 8px 12px;">0</div>
+                                    <div id="result_bit1" class="result-display text-base" style="min-width: 48px; padding: 8px 12px;">0</div>
+                                    <div id="result_bit0" class="result-display text-base" style="min-width: 48px; padding: 8px 12px;">0</div>
+                                </div>
+                                <span class="text-sm text-gray-400">=</span>
+                                <span id="decResult" class="text-xl font-bold text-cyan-800 bg-white rounded-lg px-4 py-1 border-2 border-cyan-300 min-w-[3rem] text-center">0</span>
+                            </div>
+                        </div>
+
+                        <!-- 연산 과정 표시 -->
+                        <div class="mt-6 bg-white rounded-lg p-4 border border-cyan-100">
+                            <p class="text-center text-sm text-gray-600" id="fourbit_expr">
+                                <span class="font-mono">0000</span> + <span class="font-mono">0000</span> = <span class="font-mono font-bold text-cyan-700">00000</span>
+                                <span class="ml-3 text-gray-400">(0 + 0 = 0)</span>
+                            </p>
+                        </div>
+
+                        <!-- 올림 과정 상세 -->
+                        <div class="mt-4 bg-cyan-50 rounded-lg p-4 border border-cyan-200">
+                            <p class="text-xs font-semibold text-cyan-700 mb-2"><i class="fas fa-eye mr-1"></i> 각 자리별 연산 과정 (전가산기 체인)</p>
+                            <div class="grid grid-cols-4 gap-2 text-center text-xs" id="carry_chain">
+                                <div class="bg-white rounded-lg p-2 border border-cyan-100">
+                                    <p class="text-gray-400 mb-1">3번째 비트</p>
+                                    <p class="font-mono" id="chain3">0+0+0=<strong>00</strong></p>
+                                </div>
+                                <div class="bg-white rounded-lg p-2 border border-cyan-100">
+                                    <p class="text-gray-400 mb-1">2번째 비트</p>
+                                    <p class="font-mono" id="chain2">0+0+0=<strong>00</strong></p>
+                                </div>
+                                <div class="bg-white rounded-lg p-2 border border-cyan-100">
+                                    <p class="text-gray-400 mb-1">1번째 비트</p>
+                                    <p class="font-mono" id="chain1">0+0+0=<strong>00</strong></p>
+                                </div>
+                                <div class="bg-white rounded-lg p-2 border border-cyan-100">
+                                    <p class="text-gray-400 mb-1">0번째 비트</p>
+                                    <p class="font-mono" id="chain0">0+0+0=<strong>00</strong></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 오버플로 경고 -->
+                        <div id="overflow_warning" class="mt-4 bg-red-50 border border-red-200 rounded-lg p-3 hidden">
+                            <p class="text-sm text-red-700 flex items-center gap-2">
+                                <i class="fas fa-exclamation-triangle text-red-500"></i>
+                                <strong>오버플로 발생!</strong> 4비트로 표현 가능한 최대값(15)을 초과했습니다.
+                                5번째 비트(올림)가 발생하여 실제 컴퓨터에서는 오류가 될 수 있습니다.
+                            </p>
+                        </div>
+
+                        <!-- 초기화 버튼 -->
+                        <div class="mt-4 text-center">
+                            <button onclick="reset4bit()" class="inline-flex items-center gap-2 px-5 py-2 bg-white border-2 border-cyan-300 text-cyan-700 rounded-xl font-semibold text-sm hover:bg-cyan-50 transition-all">
+                                <i class="fas fa-rotate-left"></i>
+                                초기화
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 더 알아보기 -->
+                <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="inline-flex items-center gap-1.5 bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">
+                            <i class="fas fa-star"></i> 더 알아보기
+                        </span>
+                        <span class="text-sm font-semibold text-indigo-800">실제 컴퓨터의 덧셈</span>
+                    </div>
+                    <p class="text-sm text-indigo-700 leading-relaxed">
+                        현대 컴퓨터의 CPU는 보통 <strong>64비트 가산기</strong>를 사용합니다.
+                        전가산기 64개가 연결된 형태이며, 속도를 높이기 위해 "올림 예측 가산기(Carry Lookahead Adder)" 등의
+                        최적화 기법을 사용합니다. 우리가 시뮬레이션한 4비트 가산기의 원리가 그대로 확장된 것이죠!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER / NAVIGATION ===== -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex-1 flex flex-col items-start gap-1">
+                    <a href="../05_선택활동/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        <i class="fas fa-arrow-left"></i>
+                        이전 페이지
+                    </a>
+                    <span class="text-gray-400 text-xs pl-1">선택활동</span>
+                </div>
+
+                <div class="flex-1 flex justify-center">
+                    <a href="../../../index.html"
+                       class="inline-flex items-center gap-2 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                       style="background: linear-gradient(135deg, #20c997, #12b886);">
+                        <i class="fas fa-th-list"></i>
+                        전체 단원으로 돌아가기
+                    </a>
+                </div>
+
+                <div class="flex-1 flex flex-col items-end gap-1">
+                    <a href="../../02_디지털 데이터 암호화/01_디지털 데이터 암호화의 이해/index.html"
+                       class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
+                        다음 페이지
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <span class="text-gray-400 text-xs pr-1">디지털 데이터 암호화의 이해</span>
+                </div>
+            </div>
+
+            <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
+
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-school mr-1"></i>
+                    영동고등학교 정보 수업 자료
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    II. 데이터 &gt; 01 디지털 데이터 압축 &gt; 추가학습
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== JavaScript ===== -->
+    <script>
+        // =============================================
+        // 반가산기 시뮬레이터
+        // =============================================
+        var haState = { A: 0, B: 0 };
+
+        function toggleHalfAdder(input) {
+            haState[input] = haState[input] === 0 ? 1 : 0;
+            var btn = document.getElementById('ha_input' + input);
+            btn.textContent = haState[input];
+            btn.classList.toggle('on', haState[input] === 1);
+            updateHalfAdder();
+        }
+
+        function updateHalfAdder() {
+            var a = haState.A, b = haState.B;
+            var sum = a ^ b;   // XOR
+            var carry = a & b; // AND
+
+            var sumEl = document.getElementById('ha_sum');
+            var carryEl = document.getElementById('ha_carry');
+
+            sumEl.textContent = sum;
+            carryEl.textContent = carry;
+            sumEl.classList.toggle('active', sum === 1);
+            carryEl.classList.toggle('active', carry === 1);
+
+            var result = carry * 2 + sum;
+            document.getElementById('ha_expr').textContent = a + ' + ' + b;
+            document.getElementById('ha_result_text').textContent = carry.toString() + sum.toString();
+            document.getElementById('ha_decimal').textContent = '(십진수: ' + result + ')';
+        }
+
+        // =============================================
+        // 4비트 가산기 시뮬레이터
+        // =============================================
+        var fourBit = { A: [0,0,0,0], B: [0,0,0,0] };
+
+        function toggle4bit(btn) {
+            var input = btn.getAttribute('data-input');
+            var bit = parseInt(btn.getAttribute('data-bit'));
+            var idx = 3 - bit; // 배열 인덱스 변환
+            fourBit[input][idx] = fourBit[input][idx] === 0 ? 1 : 0;
+            btn.textContent = fourBit[input][idx];
+            btn.classList.toggle('on', fourBit[input][idx] === 1);
+            update4bit();
+        }
+
+        function update4bit() {
+            var a = fourBit.A;
+            var b = fourBit.B;
+
+            // 각 비트별 전가산기 연산
+            var carry = 0;
+            var result = [0,0,0,0];
+            var chains = [];
+
+            for (var i = 3; i >= 0; i--) {
+                var ai = a[i], bi = b[i];
+                var total = ai + bi + carry;
+                result[i] = total % 2;
+                var newCarry = Math.floor(total / 2);
+                chains[i] = { a: ai, b: bi, cin: carry, sum: result[i], cout: newCarry };
+                carry = newCarry;
+            }
+
+            // 십진수 계산
+            var decA = a[0]*8 + a[1]*4 + a[2]*2 + a[3]*1;
+            var decB = b[0]*8 + b[1]*4 + b[2]*2 + b[3]*1;
+            var decResult = decA + decB;
+
+            document.getElementById('decA').textContent = decA;
+            document.getElementById('decB').textContent = decB;
+            document.getElementById('decResult').textContent = decResult;
+
+            // 결과 비트 표시
+            document.getElementById('carry_out').textContent = carry;
+            document.getElementById('carry_out').classList.toggle('active', carry === 1);
+
+            for (var j = 0; j < 4; j++) {
+                var el = document.getElementById('result_bit' + (3-j));
+                el.textContent = result[j];
+                el.classList.toggle('active', result[j] === 1);
+            }
+
+            // 연산식 표시
+            var binA = a.join('');
+            var binB = b.join('');
+            var binResult = carry.toString() + result.join('');
+            document.getElementById('fourbit_expr').innerHTML =
+                '<span class="font-mono">' + binA + '</span> + ' +
+                '<span class="font-mono">' + binB + '</span> = ' +
+                '<span class="font-mono font-bold text-cyan-700">' + binResult + '</span>' +
+                '<span class="ml-3 text-gray-400">(' + decA + ' + ' + decB + ' = ' + decResult + ')</span>';
+
+            // 올림 체인 표시
+            for (var k = 0; k < 4; k++) {
+                var c = chains[k];
+                var chainEl = document.getElementById('chain' + (3-k));
+                chainEl.innerHTML = c.a + '+' + c.b + '+' + c.cin + '=<strong>' + c.cout + '' + c.sum + '</strong>';
+            }
+
+            // 오버플로 경고
+            var warning = document.getElementById('overflow_warning');
+            if (carry === 1) {
+                warning.classList.remove('hidden');
+            } else {
+                warning.classList.add('hidden');
+            }
+        }
+
+        function reset4bit() {
+            fourBit = { A: [0,0,0,0], B: [0,0,0,0] };
+            document.querySelectorAll('#inputA_bits .bit-btn, #inputB_bits .bit-btn').forEach(function(btn) {
+                btn.textContent = '0';
+                btn.classList.remove('on');
+            });
+            update4bit();
+        }
+
+        // =============================================
+        // Scroll fade-in animation
+        // =============================================
+        (function() {
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.fade-in').forEach(function(el) {
+                    observer.observe(el);
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
