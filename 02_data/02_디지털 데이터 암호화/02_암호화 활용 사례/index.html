@@ -98,7 +98,7 @@
             transition: max-height 0.5s ease-out, padding 0.3s ease;
         }
         .accordion-content.open {
-            max-height: 2000px;
+            max-height: 8000px;
         }
 
         .fade-in {
@@ -694,99 +694,131 @@
                         <div class="px-6 pb-6 space-y-5">
                             <div class="section-divider w-full opacity-30"></div>
 
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                                        <i class="fas fa-info-circle text-primary-500"></i> 암호화 과정
-                                    </h4>
-                                    <div class="space-y-3">
-                                        <div class="flex items-start gap-3 bg-gray-50 rounded-lg p-3">
-                                            <span class="bg-gray-700 text-white rounded-full w-7 h-7 flex items-center justify-center flex-shrink-0 text-xs font-bold">1</span>
-                                            <div>
-                                                <strong class="text-gray-900 text-sm">키보드 입력</strong>
-                                                <p class="text-xs text-gray-500 mt-0.5">평문 문자를 키보드로 입력</p>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-start gap-3 bg-primary-50 rounded-lg p-3">
-                                            <span class="bg-primary-600 text-white rounded-full w-7 h-7 flex items-center justify-center flex-shrink-0 text-xs font-bold">2</span>
-                                            <div>
-                                                <strong class="text-primary-900 text-sm">배전반 1차 치환</strong>
-                                                <p class="text-xs text-gray-500 mt-0.5">배전반에서 문자를 1차로 변환</p>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-start gap-3 bg-accent-50 rounded-lg p-3">
-                                            <span class="bg-accent-600 text-white rounded-full w-7 h-7 flex items-center justify-center flex-shrink-0 text-xs font-bold">3</span>
-                                            <div>
-                                                <strong class="text-accent-900 text-sm">회전자 2차 치환</strong>
-                                                <p class="text-xs text-gray-500 mt-0.5">회전자를 통과하며 추가 변환</p>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-start gap-3 bg-amber-50 rounded-lg p-3">
-                                            <span class="bg-amber-600 text-white rounded-full w-7 h-7 flex items-center justify-center flex-shrink-0 text-xs font-bold">4</span>
-                                            <div>
-                                                <strong class="text-amber-900 text-sm">발광판 출력</strong>
-                                                <p class="text-xs text-gray-500 mt-0.5">암호화된 문자가 발광판에 표시</p>
-                                            </div>
-                                        </div>
+                            <!-- 에니그마 쉬운 설명 -->
+                            <div class="bg-amber-50 border border-amber-200 rounded-xl p-5">
+                                <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-lightbulb text-amber-500"></i> 에니그마, 쉽게 이해하기
+                                </h4>
+                                <p class="text-sm text-gray-700 leading-relaxed mb-3">
+                                    에니그마는 제2차 세계대전 때 독일군이 사용한 <strong>기계식 암호 장치</strong>입니다.
+                                    겉보기에는 타자기처럼 생겼지만, 내부에는 복잡한 전기 회로가 숨겨져 있습니다.
+                                </p>
+                                <p class="text-sm text-gray-700 leading-relaxed">
+                                    글자를 입력하면 <strong class="text-purple-700">배전반(플러그보드)</strong>에서 먼저 1차로 글자가 바뀌고,
+                                    이어서 <strong class="text-purple-700">회전자(로터)</strong>를 거치면서 2차, 3차로 계속 바뀝니다.
+                                    마치 <strong>자물쇠 비밀번호를 여러 번 돌리는 것</strong>처럼, 여러 단계를 거칠수록 해독이 어려워집니다.
+                                </p>
+                            </div>
+
+                            <!-- 에니그마 구조 설명 -->
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
+                                    <div class="bg-gray-700 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-keyboard text-white text-lg"></i>
+                                    </div>
+                                    <h5 class="font-bold text-gray-900 text-sm mb-1">1단계: 키보드</h5>
+                                    <p class="text-xs text-gray-600">암호화할 글자를<br>키보드로 누릅니다</p>
+                                    <div class="mt-2 bg-white rounded-lg px-3 py-1 border inline-block">
+                                        <span class="font-mono font-bold text-gray-800">H</span>
                                     </div>
                                 </div>
-
-                                <!-- Enigma SVG Diagram -->
-                                <div class="bg-gradient-to-br from-gray-50 to-primary-50 rounded-xl p-5 flex flex-col items-center justify-center">
-                                    <svg viewBox="0 0 300 220" class="w-full max-w-[300px]">
-                                        <!-- Keyboard -->
-                                        <rect x="20" y="10" width="80" height="40" rx="8" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.5"/>
-                                        <text x="60" y="26" text-anchor="middle" fill="#6b7280" font-size="8" font-weight="600">키보드</text>
-                                        <text x="60" y="40" text-anchor="middle" fill="#374151" font-size="14" font-weight="bold">A</text>
-
-                                        <!-- Arrow -->
-                                        <line x1="100" y1="30" x2="125" y2="30" stroke="#7c3aed" stroke-width="2" class="dash-animate"/>
-
-                                        <!-- Plugboard -->
-                                        <rect x="125" y="10" width="70" height="40" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
-                                        <text x="160" y="26" text-anchor="middle" fill="#7c3aed" font-size="8" font-weight="600">배전반</text>
-                                        <text x="160" y="40" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="bold">1차 치환</text>
-
-                                        <!-- Arrow down -->
-                                        <line x1="160" y1="50" x2="160" y2="75" stroke="#7c3aed" stroke-width="2" class="dash-animate"/>
-
-                                        <!-- Rotors -->
-                                        <g transform="translate(100, 80)">
-                                            <!-- Rotor 1 -->
-                                            <circle cx="30" cy="30" r="25" fill="#faf5ff" stroke="#9333ea" stroke-width="2" class="rotate-slow" style="transform-origin: 30px 30px;"/>
-                                            <circle cx="30" cy="30" r="15" fill="#e9d5ff" stroke="#9333ea" stroke-width="1"/>
-                                            <text x="30" y="34" text-anchor="middle" fill="#7e22ce" font-size="9" font-weight="bold">R1</text>
-
-                                            <!-- Rotor 2 -->
-                                            <circle cx="90" cy="30" r="25" fill="#faf5ff" stroke="#7c3aed" stroke-width="2" class="rotate-reverse" style="transform-origin: 90px 30px;"/>
-                                            <circle cx="90" cy="30" r="15" fill="#ddd6fe" stroke="#7c3aed" stroke-width="1"/>
-                                            <text x="90" y="34" text-anchor="middle" fill="#6d28d9" font-size="9" font-weight="bold">R2</text>
-
-                                            <!-- Connection -->
-                                            <line x1="55" y1="30" x2="65" y2="30" stroke="#7c3aed" stroke-width="2" class="dash-animate"/>
-                                        </g>
-                                        <text x="160" y="145" text-anchor="middle" fill="#7c3aed" font-size="8" font-weight="600">회전자 (2차 치환)</text>
-
-                                        <!-- Arrow down -->
-                                        <line x1="160" y1="150" x2="160" y2="170" stroke="#7c3aed" stroke-width="2" class="dash-animate"/>
-
-                                        <!-- Light panel output -->
-                                        <rect x="110" y="170" width="100" height="40" rx="8" fill="#fbbf24" stroke="#d97706" stroke-width="1.5"/>
-                                        <text x="160" y="186" text-anchor="middle" fill="#92400e" font-size="8" font-weight="600">발광판</text>
-                                        <text x="160" y="202" text-anchor="middle" fill="#78350f" font-size="16" font-weight="bold">X</text>
-                                    </svg>
+                                <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 text-center">
+                                    <div class="bg-purple-600 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-plug text-white text-lg"></i>
+                                    </div>
+                                    <h5 class="font-bold text-purple-900 text-sm mb-1">2단계: 배전반</h5>
+                                    <p class="text-xs text-gray-600">케이블 연결에 따라<br>글자가 <strong>1차 치환</strong>됩니다</p>
+                                    <div class="mt-2 bg-white rounded-lg px-3 py-1 border border-purple-300 inline-block">
+                                        <span class="font-mono text-gray-400 line-through mr-1">H</span>
+                                        <i class="fas fa-arrow-right text-purple-500 text-xs mx-1"></i>
+                                        <span class="font-mono font-bold text-purple-700">M</span>
+                                    </div>
+                                </div>
+                                <div class="bg-violet-50 border border-violet-200 rounded-xl p-4 text-center">
+                                    <div class="bg-violet-600 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-cog text-white text-lg"></i>
+                                    </div>
+                                    <h5 class="font-bold text-violet-900 text-sm mb-1">3단계: 회전자</h5>
+                                    <p class="text-xs text-gray-600">회전자를 통과하며<br><strong>2차, 3차 치환</strong>됩니다</p>
+                                    <div class="mt-2 bg-white rounded-lg px-3 py-1 border border-violet-300 inline-block">
+                                        <span class="font-mono text-gray-400 line-through mr-1">M</span>
+                                        <i class="fas fa-arrow-right text-violet-500 text-xs mx-1"></i>
+                                        <span class="font-mono font-bold text-violet-700">T</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Key fact -->
+                            <!-- 핵심 포인트 -->
+                            <div class="bg-gradient-to-r from-purple-100 to-violet-100 border border-purple-200 rounded-xl p-4">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-star text-purple-600 mt-0.5"></i>
+                                    <div class="text-sm text-gray-700">
+                                        <strong class="text-purple-800">핵심:</strong> 회전자는 글자를 하나 입력할 때마다 <strong>한 칸씩 회전</strong>합니다.
+                                        그래서 같은 글자 'L'을 두 번 입력해도 <strong class="text-purple-700">매번 다른 글자로 변환</strong>됩니다!
+                                        이것이 에니그마를 단순한 치환 암호와 구별 짓는 핵심 원리입니다.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 에니그마 시뮬레이터 -->
+                            <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 text-white">
+                                <h4 class="font-bold text-lg mb-1 flex items-center gap-2">
+                                    <i class="fas fa-flask text-amber-400"></i> 에니그마 시뮬레이터
+                                </h4>
+                                <p class="text-gray-400 text-xs mb-4">글자가 배전반과 회전자를 거쳐 어떻게 바뀌는지 직접 확인해보세요!</p>
+
+                                <!-- 입력 영역 -->
+                                <div class="flex flex-col sm:flex-row gap-3 mb-5">
+                                    <div class="flex-1">
+                                        <label class="text-xs text-gray-400 mb-1 block">평문 입력 (영문)</label>
+                                        <input type="text" id="enigmaInput" value="HELLO" maxlength="10"
+                                            class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white font-mono text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-purple-500 uppercase"
+                                            placeholder="HELLO" oninput="runEnigma()">
+                                    </div>
+                                    <div class="flex items-end">
+                                        <button onclick="runEnigma()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2">
+                                            <i class="fas fa-cog"></i> 암호화
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 변환 과정 시각화 -->
+                                <div id="enigmaProcess" class="space-y-3">
+                                </div>
+
+                                <!-- 최종 결과 -->
+                                <div class="mt-5 bg-amber-500/20 border border-amber-500/40 rounded-xl p-4 text-center">
+                                    <div class="text-xs text-amber-300 mb-1"><i class="fas fa-lightbulb mr-1"></i> 발광판 출력 (최종 암호문)</div>
+                                    <div id="enigmaOutput" class="font-mono text-3xl font-bold text-amber-400 tracking-[0.3em]">-----</div>
+                                </div>
+                            </div>
+
+                            <!-- 경우의 수 -->
                             <div class="bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl p-5 text-white">
                                 <div class="flex items-center gap-3 mb-2">
                                     <i class="fas fa-calculator text-amber-400 text-lg"></i>
-                                    <h4 class="font-bold">경우의 수</h4>
+                                    <h4 class="font-bold">왜 해독이 어려웠을까?</h4>
                                 </div>
-                                <p class="text-gray-300 text-sm leading-relaxed">
-                                    회전자 1개로도 경우의 수가 <strong class="text-amber-400 text-lg">676개</strong> (26 x 26)에 달합니다.
-                                    에니그마는 여러 개의 회전자와 배전반을 조합하여 사실상 해독이 불가능에 가까운 수준의 암호화를 구현했습니다.
+                                <p class="text-gray-300 text-sm leading-relaxed mb-3">
+                                    에니그마의 가능한 설정 조합 수는 약 <strong class="text-amber-400 text-xl">158,962,555,217,826,360,000</strong>가지!
+                                </p>
+                                <div class="grid grid-cols-3 gap-3 text-center">
+                                    <div class="bg-white/10 rounded-lg p-3">
+                                        <div class="text-amber-400 font-bold text-lg">3개</div>
+                                        <div class="text-gray-400 text-xs">회전자 선택</div>
+                                    </div>
+                                    <div class="bg-white/10 rounded-lg p-3">
+                                        <div class="text-amber-400 font-bold text-lg">26<sup>3</sup></div>
+                                        <div class="text-gray-400 text-xs">회전자 초기 위치</div>
+                                    </div>
+                                    <div class="bg-white/10 rounded-lg p-3">
+                                        <div class="text-amber-400 font-bold text-lg">10쌍</div>
+                                        <div class="text-gray-400 text-xs">배전반 케이블 연결</div>
+                                    </div>
+                                </div>
+                                <p class="text-gray-400 text-xs mt-3">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    영국의 수학자 앨런 튜링이 '봄브(Bombe)'라는 기계를 만들어 에니그마 해독에 성공했고, 이것이 전쟁의 흐름을 바꿨습니다.
                                 </p>
                             </div>
                         </div>
@@ -948,138 +980,174 @@
                         <div class="px-6 pb-6 space-y-5">
                             <div class="section-divider w-full opacity-30"></div>
 
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                                        <i class="fas fa-info-circle text-blue-500"></i> 디지털 서명 과정
-                                    </h4>
-                                    <div class="space-y-4">
-                                        <div>
-                                            <h5 class="font-semibold text-blue-800 text-sm mb-2 flex items-center gap-2">
-                                                <i class="fas fa-paper-plane text-blue-500 text-xs"></i> 송신자 (서명 생성)
-                                            </h5>
-                                            <ol class="space-y-2 text-sm text-gray-700 ml-5">
-                                                <li class="flex items-start gap-2">
-                                                    <span class="bg-blue-100 text-blue-700 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">1</span>
-                                                    <span>원본 메시지에 해시 함수를 적용하여 <strong>해시값 생성</strong></span>
-                                                </li>
-                                                <li class="flex items-start gap-2">
-                                                    <span class="bg-blue-100 text-blue-700 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">2</span>
-                                                    <span>송신자의 <strong>개인키(Private Key)</strong>로 해시값을 암호화</span>
-                                                </li>
-                                                <li class="flex items-start gap-2">
-                                                    <span class="bg-blue-100 text-blue-700 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">3</span>
-                                                    <span>암호화된 해시값 = <strong>디지털 서명</strong></span>
-                                                </li>
-                                            </ol>
+                            <!-- 디지털 서명 쉬운 설명 -->
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-5">
+                                <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-lightbulb text-blue-500"></i> 디지털 서명, 쉽게 이해하기
+                                </h4>
+                                <p class="text-sm text-gray-700 leading-relaxed mb-3">
+                                    우리가 계약서에 서명하면 "이 계약서는 내가 쓴 것"이라는 증거가 됩니다.
+                                    <strong>디지털 서명</strong>도 마찬가지로, <strong class="text-blue-700">"이 메시지는 정말 내가 보낸 것"</strong>을 증명하는 기술입니다.
+                                </p>
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <div class="flex-1 bg-white rounded-lg p-3 border border-blue-200">
+                                        <div class="text-center mb-2">
+                                            <i class="fas fa-pen-fancy text-blue-600 text-xl"></i>
                                         </div>
-                                        <div>
-                                            <h5 class="font-semibold text-indigo-800 text-sm mb-2 flex items-center gap-2">
-                                                <i class="fas fa-inbox text-indigo-500 text-xs"></i> 수신자 (서명 검증)
-                                            </h5>
-                                            <ol class="space-y-2 text-sm text-gray-700 ml-5">
-                                                <li class="flex items-start gap-2">
-                                                    <span class="bg-indigo-100 text-indigo-700 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">1</span>
-                                                    <span>송신자의 <strong>공개키(Public Key)</strong>로 디지털 서명을 복호화</span>
-                                                </li>
-                                                <li class="flex items-start gap-2">
-                                                    <span class="bg-indigo-100 text-indigo-700 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">2</span>
-                                                    <span>수신한 메시지에 같은 해시 함수를 적용하여 <strong>해시값 비교</strong></span>
-                                                </li>
-                                                <li class="flex items-start gap-2">
-                                                    <span class="bg-indigo-100 text-indigo-700 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">3</span>
-                                                    <span>두 해시값이 일치하면 <strong>송신자 신원 확인 완료</strong></span>
-                                                </li>
-                                            </ol>
+                                        <p class="text-xs text-gray-600 text-center">실생활의 <strong>서명/도장</strong>은<br>누구나 모양을 볼 수 있지만<br>만들 수 있는 건 본인뿐</p>
+                                    </div>
+                                    <div class="flex items-center justify-center text-blue-400">
+                                        <i class="fas fa-arrows-left-right"></i>
+                                    </div>
+                                    <div class="flex-1 bg-white rounded-lg p-3 border border-blue-200">
+                                        <div class="text-center mb-2">
+                                            <i class="fas fa-file-signature text-indigo-600 text-xl"></i>
+                                        </div>
+                                        <p class="text-xs text-gray-600 text-center"><strong>공개키</strong>로 누구나 검증 가능<br>하지만 서명을 만들 수 있는 건<br><strong>개인키</strong> 소유자뿐</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 송신자 과정 -->
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-paper-plane text-blue-500"></i> 송신자: 서명 만들기
+                                </h4>
+                                <div class="relative">
+                                    <div class="absolute left-[27px] top-8 bottom-4 w-0.5 bg-blue-200"></div>
+                                    <div class="space-y-4">
+                                        <div class="flex items-start gap-4 relative">
+                                            <div class="bg-blue-600 text-white rounded-full w-14 h-14 flex flex-col items-center justify-center flex-shrink-0 z-10 shadow-md">
+                                                <i class="fas fa-envelope text-sm"></i>
+                                                <span class="text-[10px] font-bold">STEP 1</span>
+                                            </div>
+                                            <div class="bg-blue-50 rounded-xl p-4 flex-1 border border-blue-200">
+                                                <strong class="text-blue-900 text-sm">원본 메시지 준비</strong>
+                                                <p class="text-xs text-gray-600 mt-1">보내고 싶은 메시지를 준비합니다.</p>
+                                                <div class="mt-2 bg-white rounded-lg p-2 font-mono text-sm text-center border">"100만원을 입금합니다"</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start gap-4 relative">
+                                            <div class="bg-blue-600 text-white rounded-full w-14 h-14 flex flex-col items-center justify-center flex-shrink-0 z-10 shadow-md">
+                                                <i class="fas fa-hashtag text-sm"></i>
+                                                <span class="text-[10px] font-bold">STEP 2</span>
+                                            </div>
+                                            <div class="bg-blue-50 rounded-xl p-4 flex-1 border border-blue-200">
+                                                <strong class="text-blue-900 text-sm">해시값 생성</strong>
+                                                <p class="text-xs text-gray-600 mt-1"><strong>해시 함수</strong>로 메시지를 짧은 고정 길이 값으로 변환합니다. (메시지의 '지문' 같은 역할)</p>
+                                                <div class="mt-2 bg-white rounded-lg p-2 font-mono text-xs text-center border text-blue-700">해시값: <strong>a3f2b8c1</strong></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start gap-4 relative">
+                                            <div class="bg-blue-700 text-white rounded-full w-14 h-14 flex flex-col items-center justify-center flex-shrink-0 z-10 shadow-md">
+                                                <i class="fas fa-key text-sm"></i>
+                                                <span class="text-[10px] font-bold">STEP 3</span>
+                                            </div>
+                                            <div class="bg-indigo-50 rounded-xl p-4 flex-1 border border-indigo-200">
+                                                <strong class="text-indigo-900 text-sm">개인키로 해시값 암호화 = 디지털 서명!</strong>
+                                                <p class="text-xs text-gray-600 mt-1">나만 가지고 있는 <strong class="text-indigo-700">개인키(Private Key)</strong>로 해시값을 암호화합니다.</p>
+                                                <div class="mt-2 flex items-center justify-center gap-2 flex-wrap">
+                                                    <span class="bg-white rounded-lg px-3 py-1.5 font-mono text-xs border text-blue-700">a3f2b8c1</span>
+                                                    <span class="text-indigo-500 font-bold">+</span>
+                                                    <span class="bg-indigo-600 text-white rounded-lg px-3 py-1.5 text-xs font-bold"><i class="fas fa-key mr-1"></i>개인키</span>
+                                                    <span class="text-indigo-500 font-bold">=</span>
+                                                    <span class="bg-indigo-100 border-2 border-indigo-400 border-dashed rounded-lg px-3 py-1.5 font-mono text-xs text-indigo-700 font-bold">x9k2m4p7</span>
+                                                </div>
+                                                <p class="text-[11px] text-indigo-600 mt-2 text-center font-semibold"><i class="fas fa-signature mr-1"></i> 이 암호화된 값이 바로 "디지털 서명"입니다</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Digital Signature SVG -->
-                                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 flex items-center justify-center">
-                                    <svg viewBox="0 0 320 240" class="w-full max-w-[320px]">
-                                        <!-- Sender side -->
-                                        <text x="80" y="15" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">송신자</text>
+                            <!-- 전송 표시 -->
+                            <div class="flex items-center justify-center gap-3 py-2">
+                                <div class="h-px bg-purple-300 flex-1"></div>
+                                <div class="bg-purple-100 text-purple-700 rounded-full px-4 py-2 text-sm font-bold flex items-center gap-2">
+                                    <i class="fas fa-share"></i> 원본 메시지 + 디지털 서명을 함께 전송
+                                </div>
+                                <div class="h-px bg-purple-300 flex-1"></div>
+                            </div>
 
-                                        <!-- Message -->
-                                        <rect x="15" y="22" width="55" height="30" rx="5" fill="#fff" stroke="#3b82f6" stroke-width="1.5"/>
-                                        <text x="42" y="35" text-anchor="middle" fill="#6b7280" font-size="7">메시지</text>
-                                        <text x="42" y="46" text-anchor="middle" fill="#1e40af" font-size="9" font-weight="bold">Hello</text>
+                            <!-- 수신자 과정 -->
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-inbox text-indigo-500"></i> 수신자: 서명 검증하기
+                                </h4>
+                                <div class="relative">
+                                    <div class="absolute left-[27px] top-8 bottom-4 w-0.5 bg-indigo-200"></div>
+                                    <div class="space-y-4">
+                                        <div class="flex items-start gap-4 relative">
+                                            <div class="bg-indigo-600 text-white rounded-full w-14 h-14 flex flex-col items-center justify-center flex-shrink-0 z-10 shadow-md">
+                                                <i class="fas fa-lock-open text-sm"></i>
+                                                <span class="text-[10px] font-bold">STEP 1</span>
+                                            </div>
+                                            <div class="bg-indigo-50 rounded-xl p-4 flex-1 border border-indigo-200">
+                                                <strong class="text-indigo-900 text-sm">공개키로 디지털 서명 복호화</strong>
+                                                <p class="text-xs text-gray-600 mt-1">송신자의 <strong class="text-indigo-700">공개키(Public Key)</strong>로 디지털 서명을 복호화하여 해시값을 꺼냅니다.</p>
+                                                <div class="mt-2 flex items-center justify-center gap-2 flex-wrap">
+                                                    <span class="bg-indigo-100 border-2 border-indigo-400 border-dashed rounded-lg px-3 py-1.5 font-mono text-xs text-indigo-700">x9k2m4p7</span>
+                                                    <span class="text-indigo-500 font-bold">+</span>
+                                                    <span class="bg-teal-600 text-white rounded-lg px-3 py-1.5 text-xs font-bold"><i class="fas fa-lock-open mr-1"></i>공개키</span>
+                                                    <span class="text-indigo-500 font-bold">=</span>
+                                                    <span class="bg-white rounded-lg px-3 py-1.5 font-mono text-xs border text-blue-700">a3f2b8c1</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start gap-4 relative">
+                                            <div class="bg-indigo-600 text-white rounded-full w-14 h-14 flex flex-col items-center justify-center flex-shrink-0 z-10 shadow-md">
+                                                <i class="fas fa-hashtag text-sm"></i>
+                                                <span class="text-[10px] font-bold">STEP 2</span>
+                                            </div>
+                                            <div class="bg-indigo-50 rounded-xl p-4 flex-1 border border-indigo-200">
+                                                <strong class="text-indigo-900 text-sm">수신 메시지에도 같은 해시 함수 적용</strong>
+                                                <p class="text-xs text-gray-600 mt-1">받은 메시지에 같은 해시 함수를 적용하여 해시값을 직접 계산합니다.</p>
+                                                <div class="mt-2 bg-white rounded-lg p-2 font-mono text-xs text-center border text-blue-700">해시값: <strong>a3f2b8c1</strong></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start gap-4 relative">
+                                            <div class="bg-green-600 text-white rounded-full w-14 h-14 flex flex-col items-center justify-center flex-shrink-0 z-10 shadow-md">
+                                                <i class="fas fa-check-double text-sm"></i>
+                                                <span class="text-[10px] font-bold">STEP 3</span>
+                                            </div>
+                                            <div class="bg-green-50 rounded-xl p-4 flex-1 border border-green-200">
+                                                <strong class="text-green-900 text-sm">두 해시값 비교</strong>
+                                                <p class="text-xs text-gray-600 mt-1">두 해시값이 <strong class="text-green-700">일치하면</strong> &#10140; 이 메시지는 정말 송신자가 보낸 것이고, 중간에 변조되지 않았음!</p>
+                                                <div class="mt-2 flex items-center justify-center gap-3 flex-wrap">
+                                                    <div class="text-center">
+                                                        <div class="text-[10px] text-gray-500 mb-1">복호화한 해시값</div>
+                                                        <span class="bg-white rounded-lg px-3 py-1.5 font-mono text-xs border text-blue-700 inline-block">a3f2b8c1</span>
+                                                    </div>
+                                                    <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">=</div>
+                                                    <div class="text-center">
+                                                        <div class="text-[10px] text-gray-500 mb-1">직접 계산한 해시값</div>
+                                                        <span class="bg-white rounded-lg px-3 py-1.5 font-mono text-xs border text-blue-700 inline-block">a3f2b8c1</span>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3 bg-green-100 rounded-lg p-2 text-center">
+                                                    <span class="text-green-800 font-bold text-sm"><i class="fas fa-shield-halved mr-1"></i> 신원 확인 + 위변조 방지 완료!</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                                        <!-- Arrow to hash -->
-                                        <line x1="70" y1="37" x2="85" y2="37" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
-
-                                        <!-- Hash -->
-                                        <rect x="85" y="22" width="50" height="30" rx="5" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
-                                        <text x="110" y="35" text-anchor="middle" fill="#1e40af" font-size="7" font-weight="600">해시함수</text>
-                                        <text x="110" y="46" text-anchor="middle" fill="#1e40af" font-size="9" font-weight="bold">H(m)</text>
-
-                                        <!-- Arrow to encrypt -->
-                                        <line x1="110" y1="52" x2="110" y2="72" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
-
-                                        <!-- Private Key encrypt -->
-                                        <rect x="70" y="72" width="80" height="35" rx="6" fill="#1e40af" stroke="#1e3a8a" stroke-width="1"/>
-                                        <text x="110" y="86" text-anchor="middle" fill="#93c5fd" font-size="7">개인키 암호화</text>
-                                        <i class="fas fa-key"></i>
-                                        <text x="110" y="100" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">
-                                            <tspan fill="#fbbf24" font-size="9">&#x1F511;</tspan> Private Key
-                                        </text>
-
-                                        <!-- Arrow down to signature -->
-                                        <line x1="110" y1="107" x2="110" y2="125" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
-
-                                        <!-- Digital Signature -->
-                                        <rect x="60" y="125" width="100" height="28" rx="6" fill="#eef2ff" stroke="#6366f1" stroke-width="2" stroke-dasharray="4,2"/>
-                                        <text x="110" y="143" text-anchor="middle" fill="#4f46e5" font-size="10" font-weight="bold">&#x270D; 디지털 서명</text>
-
-                                        <!-- Transfer arrow -->
-                                        <path d="M160 139 L180 139" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowPurple3)"/>
-                                        <text x="170" y="133" text-anchor="middle" fill="#7c3aed" font-size="7">전송</text>
-
-                                        <!-- Receiver side -->
-                                        <text x="250" y="15" text-anchor="middle" fill="#4f46e5" font-size="10" font-weight="bold">수신자</text>
-
-                                        <!-- Received signature -->
-                                        <rect x="190" y="125" width="80" height="28" rx="6" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
-                                        <text x="230" y="143" text-anchor="middle" fill="#4f46e5" font-size="8" font-weight="bold">디지털 서명</text>
-
-                                        <!-- Arrow up to decrypt -->
-                                        <line x1="230" y1="125" x2="230" y2="107" stroke="#4f46e5" stroke-width="1.5" marker-end="url(#arrowIndigo)"/>
-
-                                        <!-- Public Key decrypt -->
-                                        <rect x="190" y="72" width="80" height="35" rx="6" fill="#4f46e5" stroke="#3730a3" stroke-width="1"/>
-                                        <text x="230" y="86" text-anchor="middle" fill="#c7d2fe" font-size="7">공개키 복호화</text>
-                                        <text x="230" y="100" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">
-                                            <tspan fill="#a5f3fc" font-size="9">&#x1F513;</tspan> Public Key
-                                        </text>
-
-                                        <!-- Arrow up to compare -->
-                                        <line x1="230" y1="72" x2="230" y2="52" stroke="#4f46e5" stroke-width="1.5" marker-end="url(#arrowIndigo)"/>
-
-                                        <!-- Compare -->
-                                        <rect x="195" y="22" width="70" height="30" rx="5" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
-                                        <text x="230" y="35" text-anchor="middle" fill="#065f46" font-size="7" font-weight="600">해시값 비교</text>
-                                        <text x="230" y="48" text-anchor="middle" fill="#059669" font-size="14" font-weight="bold">&#x2713;</text>
-
-                                        <!-- Result -->
-                                        <rect x="170" y="170" width="120" height="25" rx="12" fill="#d1fae5" stroke="#10b981" stroke-width="1.5"/>
-                                        <text x="230" y="187" text-anchor="middle" fill="#047857" font-size="9" font-weight="bold">&#x2705; 신원 확인 완료</text>
-
-                                        <!-- Connect result -->
-                                        <line x1="230" y1="153" x2="230" y2="170" stroke="#10b981" stroke-width="1.5" stroke-dasharray="3,2"/>
-
-                                        <defs>
-                                            <marker id="arrowBlue" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto">
-                                                <polygon points="0 0, 6 2.5, 0 5" fill="#3b82f6"/>
-                                            </marker>
-                                            <marker id="arrowIndigo" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto">
-                                                <polygon points="0 0, 6 2.5, 0 5" fill="#4f46e5"/>
-                                            </marker>
-                                            <marker id="arrowPurple3" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto">
-                                                <polygon points="0 0, 6 2.5, 0 5" fill="#7c3aed"/>
-                                            </marker>
-                                        </defs>
-                                    </svg>
+                            <!-- 디지털 서명이 보장하는 것 -->
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i class="fas fa-user-check text-blue-600"></i>
+                                        <strong class="text-blue-900 text-sm">인증 (Authentication)</strong>
+                                    </div>
+                                    <p class="text-xs text-gray-600">개인키는 송신자만 가지고 있으므로, 서명이 유효하면 <strong>진짜 그 사람이 보낸 것</strong>이 증명됩니다.</p>
+                                </div>
+                                <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i class="fas fa-shield-halved text-indigo-600"></i>
+                                        <strong class="text-indigo-900 text-sm">무결성 (Integrity)</strong>
+                                    </div>
+                                    <p class="text-xs text-gray-600">메시지가 조금이라도 바뀌면 해시값이 달라지므로, <strong>중간에 변조되지 않았음</strong>이 보장됩니다.</p>
                                 </div>
                             </div>
                         </div>
@@ -1109,105 +1177,230 @@
                         <div class="px-6 pb-6 space-y-5">
                             <div class="section-divider w-full opacity-30"></div>
 
-                            <!-- HTTPS Lock Animation -->
-                            <div class="flex justify-center mb-4">
-                                <div class="relative" id="httpsLockContainer">
-                                    <svg viewBox="0 0 400 120" class="w-full max-w-[420px]">
-                                        <!-- Browser -->
-                                        <rect x="10" y="20" width="110" height="80" rx="10" fill="#f9fafb" stroke="#d1d5db" stroke-width="2"/>
-                                        <rect x="10" y="20" width="110" height="22" rx="10" fill="#e5e7eb"/>
-                                        <rect x="12" y="35" width="106" height="7" rx="3.5" fill="#d1d5db"/>
-                                        <!-- Address bar -->
-                                        <rect x="18" y="25" width="80" height="12" rx="4" fill="#fff" stroke="#d1d5db" stroke-width="0.5"/>
-                                        <!-- Lock icon in address bar -->
-                                        <g class="lock-pulse">
-                                            <rect x="21" y="28" width="6" height="5" rx="1" fill="#10b981"/>
-                                            <path d="M22 28 L22 27 C22 25.5 23 25 24 25 C25 25 26 25.5 26 27 L26 28" stroke="#10b981" stroke-width="0.8" fill="none"/>
-                                        </g>
-                                        <text x="30" y="34" fill="#10b981" font-size="5" font-weight="600">https://</text>
-                                        <text x="52" y="34" fill="#374151" font-size="5">example.com</text>
-                                        <!-- Browser content placeholder -->
-                                        <rect x="18" y="48" width="94" height="6" rx="2" fill="#e5e7eb"/>
-                                        <rect x="18" y="58" width="74" height="6" rx="2" fill="#e5e7eb"/>
-                                        <rect x="18" y="68" width="84" height="6" rx="2" fill="#e5e7eb"/>
-                                        <rect x="18" y="78" width="60" height="6" rx="2" fill="#e5e7eb"/>
+                            <!-- HTTPS 쉬운 설명 -->
+                            <div class="bg-purple-50 border border-purple-200 rounded-xl p-5">
+                                <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-lightbulb text-purple-500"></i> HTTPS, 쉽게 이해하기
+                                </h4>
+                                <p class="text-sm text-gray-700 leading-relaxed mb-3">
+                                    인터넷 쇼핑을 할 때 카드 번호를 입력하면, 그 정보가 인터넷을 통해 서버로 전달됩니다.
+                                    만약 이 정보가 <strong class="text-red-600">암호화 없이</strong> 전송된다면? 누군가 중간에서 엿볼 수 있겠죠!
+                                </p>
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <div class="flex-1 bg-red-50 rounded-lg p-3 border border-red-200 text-center">
+                                        <div class="font-bold text-red-700 text-sm mb-1"><i class="fas fa-lock-open mr-1"></i>HTTP (암호화 X)</div>
+                                        <p class="text-xs text-gray-600">"카드번호: 1234-5678"이<br>그대로 전송 <i class="fas fa-triangle-exclamation text-red-500"></i></p>
+                                    </div>
+                                    <div class="flex items-center justify-center">
+                                        <i class="fas fa-arrow-right text-gray-400 text-lg sm:block hidden"></i>
+                                        <i class="fas fa-arrow-down text-gray-400 text-lg sm:hidden block"></i>
+                                    </div>
+                                    <div class="flex-1 bg-green-50 rounded-lg p-3 border border-green-200 text-center">
+                                        <div class="font-bold text-green-700 text-sm mb-1"><i class="fas fa-lock mr-1"></i>HTTPS (암호화 O)</div>
+                                        <p class="text-xs text-gray-600">"x7#kQ!9m2$pL"처럼<br>암호화되어 전송 <i class="fas fa-shield-halved text-green-500"></i></p>
+                                    </div>
+                                </div>
+                            </div>
 
-                                        <text x="65" y="112" text-anchor="middle" fill="#6b7280" font-size="9" font-weight="600">웹 브라우저</text>
+                            <!-- 큰 다이어그램: TLS 핸드셰이크 -->
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                    <i class="fas fa-handshake text-purple-500"></i> HTTPS 연결 과정 (TLS 핸드셰이크)
+                                </h4>
+                                <div class="bg-gradient-to-br from-gray-50 to-purple-50 rounded-2xl p-5 border border-purple-200">
+                                    <svg viewBox="0 0 700 420" class="w-full">
+                                        <defs>
+                                            <marker id="httpsArrowR" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                                <polygon points="0 0, 8 3, 0 6" fill="#7c3aed"/>
+                                            </marker>
+                                            <marker id="httpsArrowL" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+                                                <polygon points="8 0, 0 3, 8 6" fill="#7c3aed"/>
+                                            </marker>
+                                            <marker id="httpsArrowG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                                <polygon points="0 0, 8 3, 0 6" fill="#10b981"/>
+                                            </marker>
+                                        </defs>
 
-                                        <!-- Encrypted connection -->
+                                        <!-- 브라우저 -->
+                                        <rect x="20" y="10" width="140" height="60" rx="12" fill="#fff" stroke="#6b7280" stroke-width="2"/>
+                                        <rect x="20" y="10" width="140" height="20" rx="12" fill="#e5e7eb"/>
+                                        <rect x="22" y="25" width="136" height="5" rx="2.5" fill="#d1d5db"/>
+                                        <rect x="30" y="14" width="100" height="12" rx="5" fill="#fff" stroke="#d1d5db" stroke-width="0.8"/>
                                         <g>
-                                            <line x1="130" y1="60" x2="270" y2="60" stroke="#7c3aed" stroke-width="2.5" class="dash-animate"/>
-                                            <!-- Shield on connection -->
-                                            <g transform="translate(185, 38)">
-                                                <path d="M15 0 L28 7 L28 17 C28 25 22 30 15 33 C8 30 2 25 2 17 L2 7 Z" fill="#7c3aed" opacity="0.9"/>
-                                                <path d="M15 4 L24 9 L24 17 C24 23 20 27 15 29 C10 27 6 23 6 17 L6 9 Z" fill="#5b21b6"/>
-                                                <text x="15" y="22" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">&#x1F512;</text>
-                                            </g>
+                                            <rect x="34" y="17" width="5" height="4" rx="1" fill="#10b981"/>
+                                            <path d="M35 17 L35 16 C35 14.8 36 14 36.5 14 C37 14 38 14.8 38 16 L38 17" stroke="#10b981" stroke-width="0.7" fill="none"/>
                                         </g>
-                                        <text x="200" y="82" text-anchor="middle" fill="#7c3aed" font-size="8" font-weight="600">암호화된 통신</text>
+                                        <text x="42" y="23" fill="#10b981" font-size="5.5" font-weight="600">https://</text>
+                                        <text x="66" y="23" fill="#374151" font-size="5.5">bank.com</text>
+                                        <rect x="30" y="38" width="120" height="4" rx="1.5" fill="#e5e7eb"/>
+                                        <rect x="30" y="46" width="90" height="4" rx="1.5" fill="#e5e7eb"/>
+                                        <rect x="30" y="54" width="110" height="4" rx="1.5" fill="#e5e7eb"/>
+                                        <text x="90" y="88" text-anchor="middle" fill="#374151" font-size="13" font-weight="bold">&#x1F310; 웹 브라우저</text>
 
-                                        <!-- Server -->
-                                        <rect x="280" y="25" width="110" height="70" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
-                                        <rect x="310" y="35" width="50" height="35" rx="5" fill="#ede9fe" stroke="#a78bfa" stroke-width="1"/>
-                                        <circle cx="335" cy="47" r="4" fill="#7c3aed"/>
-                                        <circle cx="335" cy="57" r="4" fill="#a78bfa"/>
-                                        <!-- Server LED lights -->
-                                        <rect x="316" y="42" width="4" height="4" rx="1" fill="#10b981"/>
-                                        <rect x="316" y="52" width="4" height="4" rx="1" fill="#fbbf24"/>
-                                        <text x="335" y="112" text-anchor="middle" fill="#6b7280" font-size="9" font-weight="600">웹 서버</text>
+                                        <!-- 서버 -->
+                                        <rect x="540" y="10" width="140" height="60" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+                                        <rect x="575" y="20" width="70" height="40" rx="6" fill="#ede9fe" stroke="#a78bfa" stroke-width="1"/>
+                                        <circle cx="610" cy="35" r="5" fill="#7c3aed"/>
+                                        <circle cx="610" cy="48" r="5" fill="#a78bfa"/>
+                                        <rect x="582" y="31" width="6" height="6" rx="1.5" fill="#10b981"/>
+                                        <rect x="582" y="43" width="6" height="6" rx="1.5" fill="#fbbf24"/>
+                                        <text x="610" y="88" text-anchor="middle" fill="#374151" font-size="13" font-weight="bold">&#x1F5A5; 웹 서버</text>
+
+                                        <!-- STEP 1 -->
+                                        <rect x="0" y="105" width="36" height="36" rx="18" fill="#7c3aed"/>
+                                        <text x="18" y="128" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">1</text>
+                                        <text x="44" y="118" fill="#5b21b6" font-size="11" font-weight="bold">브라우저: "안전하게 통신하고 싶어요!"</text>
+                                        <line x1="170" y1="130" x2="530" y2="130" stroke="#7c3aed" stroke-width="2" marker-end="url(#httpsArrowR)"/>
+                                        <text x="350" y="148" text-anchor="middle" fill="#6b7280" font-size="10">Client Hello (지원하는 암호화 방식 목록 전송)</text>
+
+                                        <!-- STEP 2 -->
+                                        <rect x="664" y="165" width="36" height="36" rx="18" fill="#7c3aed"/>
+                                        <text x="682" y="188" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">2</text>
+                                        <text x="656" y="178" text-anchor="end" fill="#5b21b6" font-size="11" font-weight="bold">서버: "이 인증서를 확인하세요!"</text>
+                                        <line x1="530" y1="190" x2="170" y2="190" stroke="#7c3aed" stroke-width="2" marker-end="url(#httpsArrowL)"/>
+                                        <rect x="250" y="198" width="200" height="24" rx="6" fill="#ede9fe" stroke="#a78bfa" stroke-width="1"/>
+                                        <text x="350" y="214" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="600">&#x1F4DC; SSL 인증서 + 서버 공개키 전송</text>
+
+                                        <!-- STEP 3 -->
+                                        <rect x="0" y="235" width="36" height="36" rx="18" fill="#7c3aed"/>
+                                        <text x="18" y="258" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">3</text>
+                                        <text x="44" y="248" fill="#5b21b6" font-size="11" font-weight="bold">브라우저: 인증서 검증 + 대칭키 전달</text>
+                                        <text x="44" y="262" fill="#6b7280" font-size="9">인증기관(CA)의 공개키로 인증서 진위 확인 &#x2192; 대칭키를 서버 공개키로 암호화하여 전송</text>
+                                        <line x1="170" y1="275" x2="530" y2="275" stroke="#7c3aed" stroke-width="2" marker-end="url(#httpsArrowR)"/>
+                                        <rect x="270" y="279" width="160" height="22" rx="6" fill="#ddd6fe" stroke="#7c3aed" stroke-width="1"/>
+                                        <text x="350" y="294" text-anchor="middle" fill="#5b21b6" font-size="9" font-weight="600">&#x1F511; 암호화된 대칭키 전송</text>
+
+                                        <!-- STEP 4 -->
+                                        <rect x="664" y="310" width="36" height="36" rx="18" fill="#10b981"/>
+                                        <text x="682" y="333" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">4</text>
+                                        <text x="656" y="323" text-anchor="end" fill="#065f46" font-size="11" font-weight="bold">서버: 개인키로 대칭키 복호화</text>
+
+                                        <!-- 안전한 통신 -->
+                                        <rect x="100" y="360" width="500" height="50" rx="14" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+                                        <text x="350" y="382" text-anchor="middle" fill="#065f46" font-size="13" font-weight="bold">&#x2705; 이제부터 양쪽 모두 같은 대칭키로 빠르고 안전하게 데이터를 주고받습니다!</text>
+                                        <text x="350" y="400" text-anchor="middle" fill="#6b7280" font-size="10">공개키 암호화(느리지만 안전) &#x2192; 대칭키 공유 &#x2192; 대칭키 암호화(빠름)로 전환</text>
                                     </svg>
                                 </div>
                             </div>
 
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                                        <i class="fas fa-info-circle text-primary-500"></i> HTTPS 작동 원리
-                                    </h4>
-                                    <div class="space-y-3 text-sm text-gray-700">
-                                        <div class="flex items-start gap-3 bg-primary-50 rounded-lg p-3">
-                                            <span class="bg-primary-600 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 text-xs font-bold">1</span>
-                                            <div>
-                                                <strong class="text-primary-900">공개키 암호화로 인증기관 확인</strong>
-                                                <p class="text-xs text-gray-500 mt-0.5">웹 사이트의 SSL 인증서를 인증기관(CA)의 공개키로 검증</p>
+                            <!-- 핵심 포인트 -->
+                            <div class="bg-gradient-to-r from-purple-100 to-violet-100 border border-purple-200 rounded-xl p-4">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-star text-purple-600 mt-0.5"></i>
+                                    <div class="text-sm text-gray-700">
+                                        <strong class="text-purple-800">HTTPS의 핵심 아이디어:</strong>
+                                        공개키 암호화는 안전하지만 느리고, 대칭키 암호화는 빠르지만 키를 안전하게 전달하기 어렵습니다.
+                                        그래서 HTTPS는 <strong class="text-purple-700">처음에만 공개키 암호화로 대칭키를 안전하게 전달</strong>하고,
+                                        그 후에는 <strong class="text-purple-700">대칭키 암호화로 빠르게 데이터를 전송</strong>합니다.
+                                        <strong>두 방식의 장점만 조합</strong>한 것이죠!
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SSL 인증서 시각화 -->
+                            <div>
+                                <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-lock text-green-500"></i> 자물쇠를 클릭하면? - SSL 인증서 확인
+                                </h4>
+                                <p class="text-sm text-gray-600 mb-4">브라우저 주소창의 자물쇠 아이콘을 클릭하면 해당 웹사이트의 SSL 인증서 정보를 확인할 수 있습니다.</p>
+
+                                <div class="flex flex-col lg:flex-row gap-6 items-start">
+                                    <!-- 브라우저 주소창 시뮬레이션 -->
+                                    <div class="flex-1">
+                                        <div class="bg-white rounded-xl border-2 border-gray-300 overflow-hidden shadow-lg max-w-md mx-auto">
+                                            <div class="bg-gray-200 px-3 py-2 flex items-center gap-2">
+                                                <div class="flex gap-1.5">
+                                                    <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                                                    <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                                                    <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                                                </div>
+                                                <div class="bg-white rounded-md px-3 py-1 flex-1 flex items-center gap-2 text-sm">
+                                                    <button onclick="toggleSSLPopup()" class="flex items-center gap-1 hover:bg-green-50 rounded px-1 py-0.5 transition-colors cursor-pointer" title="인증서 정보 보기">
+                                                        <i class="fas fa-lock text-green-600 text-xs"></i>
+                                                    </button>
+                                                    <span class="text-green-700 font-mono text-xs font-semibold">https://</span>
+                                                    <span class="text-gray-800 font-mono text-xs">www.bank.com</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="flex items-start gap-3 bg-accent-50 rounded-lg p-3">
-                                            <span class="bg-accent-600 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 text-xs font-bold">2</span>
-                                            <div>
-                                                <strong class="text-accent-900">대칭키 암호화로 데이터 전송</strong>
-                                                <p class="text-xs text-gray-500 mt-0.5">인증 완료 후, 대칭키를 공유하여 빠르고 안전하게 데이터 전송</p>
+                                            <div class="p-4 bg-gray-50 relative min-h-[120px]">
+                                                <div class="space-y-2">
+                                                    <div class="h-3 bg-gray-200 rounded w-3/4"></div>
+                                                    <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+                                                    <div class="h-3 bg-gray-200 rounded w-2/3"></div>
+                                                </div>
+                                                <p class="text-xs text-gray-400 text-center mt-4"><i class="fas fa-arrow-up mr-1"></i> 자물쇠를 클릭해보세요!</p>
+
+                                                <div id="sslPopup" class="hidden absolute top-0 left-2 right-2 bg-white rounded-xl shadow-2xl border border-gray-200 z-10 p-4 transition-all">
+                                                    <div class="flex items-center justify-between mb-3">
+                                                        <div class="flex items-center gap-2">
+                                                            <i class="fas fa-shield-halved text-green-500"></i>
+                                                            <span class="font-bold text-sm text-gray-900">연결이 안전합니다</span>
+                                                        </div>
+                                                        <button onclick="toggleSSLPopup()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+                                                    </div>
+                                                    <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+                                                        <div class="flex items-center gap-2 mb-1">
+                                                            <i class="fas fa-lock text-green-600 text-xs"></i>
+                                                            <span class="text-xs font-semibold text-green-800">인증서 (유효)</span>
+                                                        </div>
+                                                        <p class="text-xs text-green-700">이 사이트는 유효한 인증서를 가지고 있으며,<br>신뢰할 수 있는 기관에서 발급했습니다.</p>
+                                                    </div>
+                                                    <div class="space-y-2 text-xs">
+                                                        <div class="flex justify-between border-b border-gray-100 pb-1.5">
+                                                            <span class="text-gray-500 font-medium">발급 대상</span>
+                                                            <span class="text-gray-800 font-semibold">www.bank.com</span>
+                                                        </div>
+                                                        <div class="flex justify-between border-b border-gray-100 pb-1.5">
+                                                            <span class="text-gray-500 font-medium">발급 기관 (CA)</span>
+                                                            <span class="text-gray-800 font-semibold">DigiCert Inc</span>
+                                                        </div>
+                                                        <div class="flex justify-between border-b border-gray-100 pb-1.5">
+                                                            <span class="text-gray-500 font-medium">유효 기간</span>
+                                                            <span class="text-gray-800">2025.01.01 ~ 2026.12.31</span>
+                                                        </div>
+                                                        <div class="flex justify-between border-b border-gray-100 pb-1.5">
+                                                            <span class="text-gray-500 font-medium">암호화 방식</span>
+                                                            <span class="text-gray-800">RSA 2048-bit</span>
+                                                        </div>
+                                                        <div class="flex justify-between">
+                                                            <span class="text-gray-500 font-medium">지문 (SHA-256)</span>
+                                                            <span class="text-gray-800 font-mono text-[10px]">A3:F2:B8:C1:...</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div>
-                                    <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                                        <i class="fas fa-user-check text-primary-500"></i> 사용자 확인 방법
-                                    </h4>
-                                    <div class="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-4 border border-primary-200">
-                                        <div class="flex items-center gap-3 mb-3">
-                                            <div class="bg-white rounded-lg px-3 py-1.5 shadow-sm border border-gray-200 flex items-center gap-2">
-                                                <i class="fas fa-lock text-green-500 text-sm"></i>
-                                                <span class="font-mono text-sm text-gray-700">https://</span>
-                                                <span class="font-mono text-sm text-gray-900 font-bold">example.com</span>
-                                            </div>
+                                    <!-- SSL 인증서 설명 -->
+                                    <div class="flex-1 space-y-3">
+                                        <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                                            <h5 class="font-bold text-sm text-gray-900 mb-2 flex items-center gap-2">
+                                                <i class="fas fa-certificate text-amber-500"></i> SSL 인증서란?
+                                            </h5>
+                                            <p class="text-xs text-gray-600 leading-relaxed">
+                                                웹사이트의 <strong>신분증</strong>과 같습니다. 신뢰할 수 있는 <strong class="text-purple-700">인증기관(CA)</strong>이 발급하며,
+                                                "이 웹사이트는 진짜입니다"를 보증합니다.
+                                            </p>
                                         </div>
-                                        <ul class="space-y-2 text-sm text-gray-700">
-                                            <li class="flex items-start gap-2">
-                                                <i class="fas fa-check-circle text-green-500 mt-0.5 text-xs"></i>
-                                                <span>사이트 주소가 <strong class="text-primary-700">'https'</strong>로 시작하는지 확인</span>
-                                            </li>
-                                            <li class="flex items-start gap-2">
-                                                <i class="fas fa-check-circle text-green-500 mt-0.5 text-xs"></i>
-                                                <span>브라우저 주소창에 <strong class="text-primary-700">자물쇠 아이콘</strong>이 표시되는지 확인</span>
-                                            </li>
-                                            <li class="flex items-start gap-2">
-                                                <i class="fas fa-check-circle text-green-500 mt-0.5 text-xs"></i>
-                                                <span>자물쇠 클릭 시 <strong class="text-primary-700">SSL 인증서 정보</strong>를 확인 가능</span>
-                                            </li>
-                                        </ul>
+                                        <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                                            <h5 class="font-bold text-sm text-gray-900 mb-2 flex items-center gap-2">
+                                                <i class="fas fa-building text-blue-500"></i> 인증기관(CA)이란?
+                                            </h5>
+                                            <p class="text-xs text-gray-600 leading-relaxed">
+                                                주민등록증을 <strong>정부</strong>가 발급하듯, SSL 인증서는 <strong class="text-blue-700">인증기관</strong>이 발급합니다.
+                                                DigiCert, Let's Encrypt 등이 대표적인 인증기관입니다.
+                                            </p>
+                                        </div>
+                                        <div class="bg-red-50 rounded-xl p-4 border border-red-200">
+                                            <h5 class="font-bold text-sm text-red-800 mb-2 flex items-center gap-2">
+                                                <i class="fas fa-triangle-exclamation text-red-500"></i> 주의! 이런 경고가 뜨면?
+                                            </h5>
+                                            <p class="text-xs text-gray-600 leading-relaxed">
+                                                "이 연결은 비공개가 아닙니다" 경고가 뜨면 인증서가 만료되었거나 위조 사이트일 수 있습니다.
+                                                <strong class="text-red-700">개인정보를 절대 입력하지 마세요!</strong>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1229,8 +1422,8 @@
                                         <tbody>
                                             <tr class="border-t border-gray-200">
                                                 <td class="px-4 py-2.5 font-medium text-gray-800 bg-white">용도</td>
-                                                <td class="px-4 py-2.5 text-gray-700 bg-white">인증기관 확인 (신뢰성)</td>
-                                                <td class="px-4 py-2.5 text-gray-700 bg-white">데이터 전송 (속도)</td>
+                                                <td class="px-4 py-2.5 text-gray-700 bg-white">인증서 검증 + 대칭키 전달</td>
+                                                <td class="px-4 py-2.5 text-gray-700 bg-white">실제 데이터 전송</td>
                                             </tr>
                                             <tr class="border-t border-gray-200">
                                                 <td class="px-4 py-2.5 font-medium text-gray-800 bg-gray-50">키</td>
@@ -1238,9 +1431,14 @@
                                                 <td class="px-4 py-2.5 text-gray-700 bg-gray-50">동일한 키 1개 공유</td>
                                             </tr>
                                             <tr class="border-t border-gray-200">
-                                                <td class="px-4 py-2.5 font-medium text-gray-800 bg-white rounded-bl-lg">특징</td>
-                                                <td class="px-4 py-2.5 text-gray-700 bg-white">보안성 높음, 속도 느림</td>
-                                                <td class="px-4 py-2.5 text-gray-700 bg-white rounded-br-lg">속도 빠름, 키 배포 문제</td>
+                                                <td class="px-4 py-2.5 font-medium text-gray-800 bg-white">사용 시점</td>
+                                                <td class="px-4 py-2.5 text-gray-700 bg-white">처음 연결할 때만 (핸드셰이크)</td>
+                                                <td class="px-4 py-2.5 text-gray-700 bg-white">핸드셰이크 이후 데이터 전송</td>
+                                            </tr>
+                                            <tr class="border-t border-gray-200">
+                                                <td class="px-4 py-2.5 font-medium text-gray-800 bg-gray-50 rounded-bl-lg">특징</td>
+                                                <td class="px-4 py-2.5 text-gray-700 bg-gray-50">보안성 높음, 속도 느림</td>
+                                                <td class="px-4 py-2.5 text-gray-700 bg-gray-50 rounded-br-lg">속도 빠름, 대량 데이터에 적합</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -1405,6 +1603,86 @@
             if (e.key === 'Enter') caesarEncrypt();
         });
         document.getElementById('caesarKey').addEventListener('change', caesarEncrypt);
+
+        // ===== ENIGMA SIMULATOR =====
+        const ENIGMA_PLUGBOARD = {
+            'A':'Q','Q':'A','B':'W','W':'B','C':'E','E':'C','D':'R','R':'D',
+            'F':'T','T':'F','G':'Z','Z':'G','H':'M','M':'H','I':'N','N':'I',
+            'J':'O','O':'J','K':'P','P':'K'
+        };
+        const ENIGMA_ROTORS = [
+            'EKMFLGDQVZNTOWYHXUSPAIBRCJ',
+            'AJDKSIRUXBLHWTMCQGZNPYFVOE',
+            'BDFHJLCPRTXVZNYEIWGAKMUSQO'
+        ];
+        let rotorPositions = [0, 0, 0];
+
+        function enigmaPlugboard(ch) {
+            return ENIGMA_PLUGBOARD[ch] || ch;
+        }
+        function enigmaRotor(ch, rotorIdx) {
+            const pos = rotorPositions[rotorIdx];
+            const shifted = (ch.charCodeAt(0) - 65 + pos) % 26;
+            return ENIGMA_ROTORS[rotorIdx].charAt(shifted);
+        }
+        function enigmaStepRotors() {
+            rotorPositions[0] = (rotorPositions[0] + 1) % 26;
+            if (rotorPositions[0] === 0) {
+                rotorPositions[1] = (rotorPositions[1] + 1) % 26;
+                if (rotorPositions[1] === 0) {
+                    rotorPositions[2] = (rotorPositions[2] + 1) % 26;
+                }
+            }
+        }
+        function runEnigma() {
+            const input = document.getElementById('enigmaInput').value.toUpperCase().replace(/[^A-Z]/g, '');
+            if (!input) {
+                document.getElementById('enigmaOutput').textContent = '-----';
+                document.getElementById('enigmaProcess').innerHTML = '';
+                return;
+            }
+            rotorPositions = [0, 0, 0];
+            let finalOutput = '';
+            let processHTML = '';
+            for (let i = 0; i < input.length; i++) {
+                const original = input[i];
+                const afterPlug = enigmaPlugboard(original);
+                const afterR1 = enigmaRotor(afterPlug, 0);
+                const afterR2 = enigmaRotor(afterR1, 1);
+                const afterR3 = enigmaRotor(afterR2, 2);
+                finalOutput += afterR3;
+                enigmaStepRotors();
+                processHTML += `
+                <div class="flex items-center gap-2 flex-wrap text-sm">
+                    <span class="text-gray-400 text-xs w-6 text-right">${i+1}.</span>
+                    <span class="bg-white/20 rounded px-2 py-1 font-mono font-bold text-white">${original}</span>
+                    <span class="text-purple-400 text-xs"><i class="fas fa-arrow-right"></i></span>
+                    <span class="text-xs text-gray-400">배전반</span>
+                    <span class="bg-purple-600/50 rounded px-2 py-1 font-mono font-bold text-purple-200">${afterPlug}</span>
+                    <span class="text-purple-400 text-xs"><i class="fas fa-arrow-right"></i></span>
+                    <span class="text-xs text-gray-400">R1</span>
+                    <span class="bg-violet-600/50 rounded px-2 py-1 font-mono font-bold text-violet-200">${afterR1}</span>
+                    <span class="text-purple-400 text-xs"><i class="fas fa-arrow-right"></i></span>
+                    <span class="text-xs text-gray-400">R2</span>
+                    <span class="bg-violet-700/50 rounded px-2 py-1 font-mono font-bold text-violet-200">${afterR2}</span>
+                    <span class="text-purple-400 text-xs"><i class="fas fa-arrow-right"></i></span>
+                    <span class="text-xs text-gray-400">R3</span>
+                    <span class="bg-amber-500/30 rounded px-2 py-1 font-mono font-bold text-amber-300">${afterR3}</span>
+                </div>`;
+            }
+            document.getElementById('enigmaProcess').innerHTML = processHTML;
+            const outputEl = document.getElementById('enigmaOutput');
+            outputEl.textContent = finalOutput;
+            outputEl.style.animation = 'none';
+            outputEl.offsetHeight;
+            outputEl.style.animation = 'fadeSlideIn 0.4s ease-out forwards';
+        }
+        runEnigma();
+
+        // ===== SSL POPUP =====
+        function toggleSSLPopup() {
+            document.getElementById('sslPopup').classList.toggle('hidden');
+        }
 
         // Fade-in animation on scroll
         const fadeInObserver = new IntersectionObserver((entries) => {
