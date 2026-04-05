@@ -50,11 +50,8 @@
         * { font-family: 'Noto Sans KR', sans-serif; }
 
         .hero-gradient {
-            background: linear-gradient(135deg, #4338ca 0%, #1e40af 50%, #312e81 100%);
+            background: linear-gradient(135deg, #0e7490 0%, #0891b2 30%, #0284c7 100%);
         }
-
-        
-
         .card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -185,6 +182,8 @@
             .no-print { display: none !important; }
             body { font-size: 12pt; }
             .wave-bar { animation: none !important; }
+        
+            .hero-gradient { background: #0e7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
 
         @media (max-width: 768px) {
@@ -197,11 +196,11 @@
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-14">
-                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors text-sm font-medium">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-cyan-700 transition-colors text-sm font-medium">
                     <i class="fas fa-arrow-left"></i>
                     <span>전체 단원</span>
                 </a>
-                <span class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-indigo-100">
+                <span class="bg-cyan-50 text-cyan-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-cyan-100">
                     II. 데이터
                 </span>
             </div>
@@ -212,7 +211,7 @@
     <div class="bg-white border-b border-gray-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
             <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
-                <a href="../../../index.html" class="hover:text-indigo-600 transition-colors">
+                <a href="../../../index.html" class="hover:text-cyan-600 transition-colors">
                     <i class="fas fa-home mr-1"></i>전체
                 </a>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
@@ -220,7 +219,7 @@
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
                 <span class="text-gray-600 font-medium">디지털 데이터 압축</span>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
-                <span class="text-indigo-700 font-semibold">소리 압축</span>
+                <span class="text-cyan-700 font-semibold">소리 압축</span>
             </nav>
         </div>
     </div>
@@ -235,20 +234,20 @@
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
                     소리 압축
                 </h1>
-                <p class="text-indigo-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                <p class="text-cyan-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
                     아날로그 소리를 디지털로 변환하는 과정과 다양한 소리 압축 방식을 이해해 봅시다
                 </p>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-wave-square text-indigo-300"></i>
+                        <i class="fas fa-wave-square text-cyan-300"></i>
                         <span>WAV 파일</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-compress-alt text-indigo-300"></i>
+                        <i class="fas fa-compress-alt text-cyan-300"></i>
                         <span>손실/비손실 압축</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-headphones text-indigo-300"></i>
+                        <i class="fas fa-headphones text-cyan-300"></i>
                         <span>MP3 / AAC / FLAC</span>
                     </div>
                 </div>
@@ -1162,7 +1161,7 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-white">주기 (Period)</h3>
-                        <p class="text-indigo-100 text-xs">단위: 초(s) — 파동 1회 반복에 걸리는 시간</p>
+                        <p class="text-cyan-100 text-xs">단위: 초(s) — 파동 1회 반복에 걸리는 시간</p>
                     </div>
                 </div>
                 <div class="p-6 space-y-4">
@@ -1179,11 +1178,11 @@
                             <p class="text-xs text-indigo-500 mt-1">T: 주기(초), f: 주파수(Hz)</p>
                         </div>
                         <div class="grid grid-cols-2 gap-3 text-center text-sm">
-                            <div class="bg-white rounded-lg p-3 border border-indigo-100">
+                            <div class="bg-white rounded-lg p-3 border border-cyan-100">
                                 <p class="font-bold text-indigo-700">440Hz</p>
                                 <p class="text-gray-500">주기 = 1/440 ≈ <strong>0.00227초</strong></p>
                             </div>
-                            <div class="bg-white rounded-lg p-3 border border-indigo-100">
+                            <div class="bg-white rounded-lg p-3 border border-cyan-100">
                                 <p class="font-bold text-indigo-700">100Hz</p>
                                 <p class="text-gray-500">주기 = 1/100 = <strong>0.01초</strong></p>
                             </div>

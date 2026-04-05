@@ -50,11 +50,8 @@
         * { font-family: 'Noto Sans KR', sans-serif; }
 
         .hero-gradient {
-            background: linear-gradient(135deg, #4338ca 0%, #1e40af 50%, #312e81 100%);
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 30%, #5b21b6 100%);
         }
-
-        
-
         .card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -154,6 +151,8 @@
             body { font-size: 12pt; }
             .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
             a { text-decoration: underline; }
+        
+            .hero-gradient { background: #7c3aed !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -162,11 +161,11 @@
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-14">
-                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors text-sm font-medium">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-violet-700 transition-colors text-sm font-medium">
                     <i class="fas fa-arrow-left"></i>
                     <span>전체 단원</span>
                 </a>
-                <span class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-indigo-100">
+                <span class="bg-violet-50 text-violet-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-violet-100">
                     IV. 인공지능
                 </span>
             </div>
@@ -177,7 +176,7 @@
     <div class="bg-white border-b border-gray-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
             <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
-                <a href="../../../index.html" class="hover:text-indigo-600 transition-colors">
+                <a href="../../../index.html" class="hover:text-violet-600 transition-colors">
                     <i class="fas fa-home mr-1"></i>전체
                 </a>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
@@ -185,7 +184,7 @@
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
                 <span class="text-gray-600 font-medium">기계학습의 모델과 구현</span>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
-                <span class="text-indigo-700 font-semibold">기계학습의 구현</span>
+                <span class="text-violet-700 font-semibold">기계학습의 구현</span>
             </nav>
         </div>
     </div>
@@ -200,24 +199,24 @@
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
                     기계학습의 구현
                 </h1>
-                <p class="text-indigo-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                <p class="text-violet-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
                     기계학습의 구현 과정을 이해하고, 오렌지3(Orange3)를 활용하여 회귀와 분류 문제를 실습합니다
                 </p>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-cogs text-indigo-300"></i>
+                        <i class="fas fa-cogs text-violet-300"></i>
                         <span>기계학습 구현</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-cubes text-indigo-300"></i>
+                        <i class="fas fa-cubes text-violet-300"></i>
                         <span>오렌지3</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-database text-indigo-300"></i>
+                        <i class="fas fa-database text-violet-300"></i>
                         <span>데이터 전처리</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-bullseye text-indigo-300 text-indigo-300 text-indigo-300"></i>
+                        <i class="fas fa-bullseye text-violet-300 text-violet-300 text-violet-300"></i>
                         <span>학습 목표
                 
                     1</span>
@@ -258,7 +257,7 @@
                     <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-lg"><span class="text-white text-xl font-extrabold">3</span></div>
                     <h4 class="font-bold text-gray-900 mb-2">모델 선정 및 학습</h4>
                     <p class="text-gray-600 text-xs leading-relaxed"><strong>분류/회귀/군집화</strong> 중 적합한 모델을 선택하고 훈련/테스트 데이터로 학습합니다.</p>
-                    <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 z-10 step-pulse"><i class="fas fa-chevron-right text-indigo-300"></i></div>
+                    <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 z-10 step-pulse"><i class="fas fa-chevron-right text-violet-300"></i></div>
                 </div>
                 <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
                     <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-fuchsia-400 to-fuchsia-600 flex items-center justify-center shadow-lg"><span class="text-white text-xl font-extrabold">4</span></div>
@@ -424,7 +423,7 @@
                         <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow"><span class="text-white font-bold text-sm">3</span></div><div><h4 class="font-bold text-gray-900 text-sm">모델 선정 및 학습</h4><p class="text-xs text-gray-500">Linear Regression 모델로 학습</p></div></div>
                         <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="rs3-icon"></i>
                     </button>
-                    <div class="accordion-content" id="rs3"><div class="px-5 pb-4"><div class="bg-indigo-50 rounded-xl p-4 border border-indigo-100"><p class="text-sm text-gray-700 mb-2">연속적인 값을 예측하는 <strong>회귀 문제</strong>이므로, <strong>Linear Regression(선형 회귀)</strong> 모델을 사용합니다.</p><div class="bg-white rounded-lg p-3 border border-indigo-200"><p class="text-xs text-gray-600"><i class="fas fa-cog mr-1 text-indigo-500"></i> File &rarr; Data Table &rarr; Select Columns &rarr; Linear Regression &rarr; Predictions</p></div></div></div></div>
+                    <div class="accordion-content" id="rs3"><div class="px-5 pb-4"><div class="bg-indigo-50 rounded-xl p-4 border border-violet-100"><p class="text-sm text-gray-700 mb-2">연속적인 값을 예측하는 <strong>회귀 문제</strong>이므로, <strong>Linear Regression(선형 회귀)</strong> 모델을 사용합니다.</p><div class="bg-white rounded-lg p-3 border border-indigo-200"><p class="text-xs text-gray-600"><i class="fas fa-cog mr-1 text-indigo-500"></i> File &rarr; Data Table &rarr; Select Columns &rarr; Linear Regression &rarr; Predictions</p></div></div></div></div>
                 </div>
                 <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
                     <button onclick="toggleAccordion('rs4')" class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors">

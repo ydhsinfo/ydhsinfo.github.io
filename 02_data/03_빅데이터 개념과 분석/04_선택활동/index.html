@@ -25,6 +25,10 @@
             font-family: 'Noto Sans KR', sans-serif;
         }
 
+        .hero-gradient {
+            background: linear-gradient(135deg, #0e7490 0%, #0891b2 30%, #0284c7 100%);
+        }
+
         /* Fillable input/textarea styling */
         .activity-input {
             width: 100%;
@@ -135,10 +139,6 @@
                 border: 3px solid #059669 !important;
                 background: #ecfdf5 !important;
             }
-            .hero-gradient {
-            background: linear-gradient(135deg, #4338ca 0%, #1e40af 50%, #312e81 100%);
-        }
-
         .hero-section {
                 background: #059669 !important;
                 color: white !important;
@@ -150,6 +150,8 @@
                 break-inside: avoid;
                 page-break-inside: avoid;
             }
+        
+            .hero-gradient { background: #0e7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
 
         /* Scrollbar styling */
@@ -171,11 +173,11 @@
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-14">
-                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors text-sm font-medium">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-cyan-700 transition-colors text-sm font-medium">
                     <i class="fas fa-arrow-left"></i>
                     <span>전체 단원</span>
                 </a>
-                <span class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-indigo-100">
+                <span class="bg-cyan-50 text-cyan-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-cyan-100">
                     II. 데이터
                 </span>
             </div>
@@ -186,7 +188,7 @@
     <div class="bg-white border-b border-gray-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
             <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
-                <a href="../../../index.html" class="hover:text-indigo-600 transition-colors">
+                <a href="../../../index.html" class="hover:text-cyan-600 transition-colors">
                     <i class="fas fa-home mr-1"></i>전체
                 </a>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
@@ -194,7 +196,7 @@
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
                 <span class="text-gray-600 font-medium">빅데이터 개념과 분석</span>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
-                <span class="text-indigo-700 font-semibold">선택활동</span>
+                <span class="text-cyan-700 font-semibold">선택활동</span>
             </nav>
         </div>
     </div>
@@ -209,23 +211,23 @@
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
                     선택활동
                 </h1>
-                <p class="text-lg sm:text-xl text-indigo-200 font-medium mb-4">
+                <p class="text-lg sm:text-xl text-cyan-200 font-medium mb-4">
                     빅데이터 분석 경험하기
                 </p>
-                <p class="text-indigo-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                <p class="text-cyan-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
                     검색어 트렌드, 어획량 데이터 분석을 통해 빅데이터의 가치를 체험하고, 활용 과정의 문제점을 탐구해 봅시다
                 </p>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-chart-line text-emerald-300 text-indigo-300 text-indigo-300 text-indigo-300"></i>
+                        <i class="fas fa-chart-line text-emerald-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
                         <span>데이터 분석</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-magnifying-glass-chart text-emerald-300 text-indigo-300 text-indigo-300 text-indigo-300"></i>
+                        <i class="fas fa-magnifying-glass-chart text-emerald-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
                         <span>트렌드 탐구</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-triangle-exclamation text-emerald-300 text-indigo-300 text-indigo-300 text-indigo-300"></i>
+                        <i class="fas fa-triangle-exclamation text-emerald-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
                         <span>문제점 분석</span>
                     </div>
                 </div>

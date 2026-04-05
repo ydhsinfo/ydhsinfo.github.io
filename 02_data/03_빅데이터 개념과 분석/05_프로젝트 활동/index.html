@@ -25,6 +25,10 @@
             font-family: 'Noto Sans KR', sans-serif;
         }
 
+        .hero-gradient {
+            background: linear-gradient(135deg, #0e7490 0%, #0891b2 30%, #0284c7 100%);
+        }
+
         /* Activity card animation */
         .activity-card {
             transition: transform 0.2s ease;
@@ -102,10 +106,6 @@
             .no-print {
                 display: none !important;
             }
-            .hero-gradient {
-            background: linear-gradient(135deg, #4338ca 0%, #1e40af 50%, #312e81 100%);
-        }
-
         .hero-section {
                 background: #059669 !important;
                 color: white !important;
@@ -117,6 +117,8 @@
                 break-inside: avoid;
                 page-break-inside: avoid;
             }
+        
+            .hero-gradient { background: #0e7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
 
         /* Scrollbar styling */
@@ -138,11 +140,11 @@
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-14">
-                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors text-sm font-medium">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-cyan-700 transition-colors text-sm font-medium">
                     <i class="fas fa-arrow-left"></i>
                     <span>전체 단원</span>
                 </a>
-                <span class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-indigo-100">
+                <span class="bg-cyan-50 text-cyan-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-cyan-100">
                     II. 데이터
                 </span>
             </div>
@@ -153,7 +155,7 @@
     <div class="bg-white border-b border-gray-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
             <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
-                <a href="../../../index.html" class="hover:text-indigo-600 transition-colors">
+                <a href="../../../index.html" class="hover:text-cyan-600 transition-colors">
                     <i class="fas fa-home mr-1"></i>전체
                 </a>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
@@ -161,7 +163,7 @@
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
                 <span class="text-gray-600 font-medium">빅데이터 개념과 분석</span>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
-                <span class="text-indigo-700 font-semibold">프로젝트 활동</span>
+                <span class="text-cyan-700 font-semibold">프로젝트 활동</span>
             </nav>
         </div>
     </div>
@@ -176,23 +178,23 @@
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
                     프로젝트 활동
                 </h1>
-                <p class="text-lg sm:text-xl text-indigo-200 font-medium mb-4">
+                <p class="text-lg sm:text-xl text-cyan-200 font-medium mb-4">
                     스마트폰 센서 수집 및 시각화하기
                 </p>
-                <p class="text-indigo-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                <p class="text-cyan-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
                     스마트폰의 가속도 센서를 활용하여 운동 데이터를 수집하고, 시각화 도구로 분석하여 나의 활동 패턴을 파악해 봅시다
                 </p>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-mobile-alt text-emerald-300 text-indigo-300 text-indigo-300 text-indigo-300"></i>
+                        <i class="fas fa-mobile-alt text-emerald-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
                         <span>스마트폰 활용</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-chart-line text-emerald-300 text-indigo-300 text-indigo-300 text-indigo-300"></i>
+                        <i class="fas fa-chart-line text-emerald-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
                         <span>데이터 시각화</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-person-running text-emerald-300 text-indigo-300 text-indigo-300 text-indigo-300"></i>
+                        <i class="fas fa-person-running text-emerald-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
                         <span>운동 활동 분석</span>
                     </div>
                 </div>

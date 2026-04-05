@@ -50,11 +50,8 @@
         * { font-family: 'Noto Sans KR', sans-serif; }
 
         .hero-gradient {
-            background: linear-gradient(135deg, #4338ca 0%, #1e40af 50%, #312e81 100%);
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 30%, #5b21b6 100%);
         }
-
-        
-
         .card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -166,6 +163,8 @@
             body { font-size: 12pt; }
             .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
             a { text-decoration: underline; }
+        
+            .hero-gradient { background: #7c3aed !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -174,11 +173,11 @@
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-14">
-                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors text-sm font-medium">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-violet-700 transition-colors text-sm font-medium">
                     <i class="fas fa-arrow-left"></i>
                     <span>전체 단원</span>
                 </a>
-                <span class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-indigo-100">
+                <span class="bg-violet-50 text-violet-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-violet-100">
                     IV. 인공지능
                 </span>
             </div>
@@ -189,7 +188,7 @@
     <div class="bg-white border-b border-gray-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
             <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
-                <a href="../../../index.html" class="hover:text-indigo-600 transition-colors">
+                <a href="../../../index.html" class="hover:text-violet-600 transition-colors">
                     <i class="fas fa-home mr-1"></i>전체
                 </a>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
@@ -197,7 +196,7 @@
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
                 <span class="text-gray-600 font-medium">인공지능과 지능 에이전트</span>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
-                <span class="text-indigo-700 font-semibold">에이전트와 지능 에이전트</span>
+                <span class="text-violet-700 font-semibold">에이전트와 지능 에이전트</span>
             </nav>
         </div>
     </div>
@@ -212,20 +211,20 @@
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
                     에이전트와 지능 에이전트
                 </h1>
-                <p class="text-indigo-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                <p class="text-violet-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
                     에이전트와 지능 에이전트의 개념을 이해하고, 실생활에서 활용되는 다양한 지능 에이전트 사례와 생성형 AI를 탐구합니다
                 </p>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-cube text-indigo-300"></i>
+                        <i class="fas fa-cube text-violet-300"></i>
                         <span>에이전트</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-brain text-indigo-300"></i>
+                        <i class="fas fa-brain text-violet-300"></i>
                         <span>지능 에이전트</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-microchip text-indigo-300"></i>
+                        <i class="fas fa-microchip text-violet-300"></i>
                         <span>인공지능 시스템</span>
                     </div>
                 </div>
@@ -366,7 +365,7 @@
                         <p class="text-sm font-bold text-violet-700">판매원</p>
                         <p class="text-xs text-gray-500 mt-1">고객의 요구를 파악하고 적절한 상품을 추천</p>
                     </div>
-                    <div class="bg-white rounded-xl p-4 border border-indigo-100 shadow-sm text-center">
+                    <div class="bg-white rounded-xl p-4 border border-violet-100 shadow-sm text-center">
                         <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-indigo-100 flex items-center justify-center">
                             <i class="fas fa-chart-line text-indigo-600 text-lg"></i>
                         </div>
@@ -524,7 +523,7 @@
                         <p class="text-xs font-bold text-violet-700 mb-1"><i class="fas fa-bullseye mr-1"></i> 목적성</p>
                         <p class="text-xs text-gray-600">방 전체를 깨끗하게 청소하는 것이 목표</p>
                     </div>
-                    <div class="bg-white rounded-xl p-3 border border-indigo-100 shadow-sm">
+                    <div class="bg-white rounded-xl p-3 border border-violet-100 shadow-sm">
                         <p class="text-xs font-bold text-indigo-700 mb-1"><i class="fas fa-sync-alt mr-1"></i> 적응성</p>
                         <p class="text-xs text-gray-600">장애물을 감지하면 경로를 자동 변경</p>
                     </div>

@@ -50,11 +50,8 @@
         * { font-family: 'Noto Sans KR', sans-serif; }
 
         .hero-gradient {
-            background: linear-gradient(135deg, #4338ca 0%, #1e40af 50%, #312e81 100%);
+            background: linear-gradient(135deg, #0e7490 0%, #0891b2 30%, #0284c7 100%);
         }
-
-        
-
         .card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -146,6 +143,8 @@
             .card-hover:hover { transform: none; box-shadow: none; }
             footer { break-before: auto; }
             section { break-inside: avoid; }
+        
+            .hero-gradient { background: #0e7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
 
         @media (max-width: 768px) {
@@ -158,11 +157,11 @@
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-14">
-                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors text-sm font-medium">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-cyan-700 transition-colors text-sm font-medium">
                     <i class="fas fa-arrow-left"></i>
                     <span>전체 단원</span>
                 </a>
-                <span class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-indigo-100">
+                <span class="bg-cyan-50 text-cyan-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-cyan-100">
                     II. 데이터
                 </span>
             </div>
@@ -173,7 +172,7 @@
     <div class="bg-white border-b border-gray-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
             <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
-                <a href="../../../index.html" class="hover:text-indigo-600 transition-colors">
+                <a href="../../../index.html" class="hover:text-cyan-600 transition-colors">
                     <i class="fas fa-home mr-1"></i>전체
                 </a>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
@@ -181,7 +180,7 @@
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
                 <span class="text-gray-600 font-medium">빅데이터 개념과 분석</span>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
-                <span class="text-indigo-700 font-semibold">빅데이터 활용 분야</span>
+                <span class="text-cyan-700 font-semibold">빅데이터 활용 분야</span>
             </nav>
         </div>
     </div>
@@ -196,20 +195,20 @@
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
                     빅데이터 활용 분야
                 </h1>
-                <p class="text-indigo-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                <p class="text-cyan-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
                     정치사회, 의료보건, 경제산업 등 다양한 분야에서 빅데이터가 어떻게 활용되는지 알아봅시다
                 </p>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-landmark text-indigo-300"></i>
+                        <i class="fas fa-landmark text-cyan-300"></i>
                         <span>정치와 사회</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-heartbeat text-indigo-300"></i>
+                        <i class="fas fa-heartbeat text-cyan-300"></i>
                         <span>의료와 보건</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-industry text-indigo-300"></i>
+                        <i class="fas fa-industry text-cyan-300"></i>
                         <span>경제와 산업</span>
                     </div>
                 </div>

@@ -34,9 +34,8 @@
         body { font-family: 'Noto Sans KR', sans-serif; }
 
         .hero-gradient {
-            background: linear-gradient(135deg, #4338ca 0%, #1e40af 50%, #312e81 100%);
+            background: linear-gradient(135deg, #c2410c 0%, #b45309 30%, #92400e 100%);
         }
-
         .hero-wave {
             position: relative;
         }
@@ -161,12 +160,11 @@
 
         @media print {
             .no-print { display: none !important; }
-            .hero-gradient {
-            background: linear-gradient(135deg, #4338ca 0%, #1e40af 50%, #312e81 100%);
-        }
             .fade-in { opacity: 1 !important; transform: none !important; }
             body { font-size: 12pt; }
             section { page-break-inside: avoid; }
+        
+            .hero-gradient { background: #c2410c !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -175,11 +173,11 @@
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-14">
-                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors text-sm font-medium">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-orange-700 transition-colors text-sm font-medium">
                     <i class="fas fa-arrow-left"></i>
                     <span>전체 단원</span>
                 </a>
-                <span class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-indigo-100">
+                <span class="bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-orange-100">
                     III. 알고리즘과 프로그래밍
                 </span>
             </div>
@@ -190,7 +188,7 @@
     <div class="bg-white border-b border-gray-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
             <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
-                <a href="../../../index.html" class="hover:text-indigo-600 transition-colors">
+                <a href="../../../index.html" class="hover:text-orange-600 transition-colors">
                     <i class="fas fa-home mr-1"></i>전체
                 </a>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
@@ -198,7 +196,7 @@
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
                 <span class="text-gray-600 font-medium">프로그래밍의 이해</span>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
-                <span class="text-indigo-700 font-semibold">표준입출력과파일입출력</span>
+                <span class="text-orange-700 font-semibold">표준입출력과 파일입출력</span>
             </nav>
         </div>
     </div>
@@ -211,9 +209,9 @@
                     프로그래밍의 이해
                 </span>
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
-                    표준입출력과파일입출력
+                    표준입출력과 파일입출력
                 </h1>
-                <p class="text-indigo-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                <p class="text-orange-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
                     컴퓨터 프로그램은 사용자로부터 데이터를 입력받아 처리하고 결과를 출력하는 단계로 진행된다.
                     키보드와 모니터를 이용하는 표준입출력과 파일을 읽고 쓰는
                     파일입출력을 학습한다.

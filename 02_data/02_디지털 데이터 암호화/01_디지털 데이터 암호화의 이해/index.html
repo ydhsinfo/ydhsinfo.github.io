@@ -50,11 +50,8 @@
         * { font-family: 'Noto Sans KR', sans-serif; }
 
         .hero-gradient {
-            background: linear-gradient(135deg, #4338ca 0%, #1e40af 50%, #312e81 100%);
+            background: linear-gradient(135deg, #0e7490 0%, #0891b2 30%, #0284c7 100%);
         }
-
-        
-
         .card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -196,6 +193,8 @@
             nav[aria-label="페이지 네비게이션"] { display: none; }
             body { font-size: 11pt; }
             .no-print { display: none !important; }
+        
+            .hero-gradient { background: #0e7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
 
         @media (max-width: 768px) {
@@ -208,11 +207,11 @@
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-14">
-                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-indigo-700 transition-colors text-sm font-medium">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-cyan-700 transition-colors text-sm font-medium">
                     <i class="fas fa-arrow-left"></i>
                     <span>전체 단원</span>
                 </a>
-                <span class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-indigo-100">
+                <span class="bg-cyan-50 text-cyan-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-cyan-100">
                     II. 데이터
                 </span>
             </div>
@@ -223,7 +222,7 @@
     <div class="bg-white border-b border-gray-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
             <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
-                <a href="../../../index.html" class="hover:text-indigo-600 transition-colors">
+                <a href="../../../index.html" class="hover:text-cyan-600 transition-colors">
                     <i class="fas fa-home mr-1"></i>전체
                 </a>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
@@ -231,7 +230,7 @@
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
                 <span class="text-gray-600 font-medium">디지털 데이터 암호화</span>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
-                <span class="text-indigo-700 font-semibold">디지털 데이터 암호화의 이해</span>
+                <span class="text-cyan-700 font-semibold">디지털 데이터 암호화의 이해</span>
             </nav>
         </div>
     </div>
@@ -246,20 +245,20 @@
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
                     디지털 데이터 암호화의 이해
                 </h1>
-                <p class="text-indigo-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                <p class="text-cyan-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
                     데이터를 안전하게 보호하는 암호화의 원리와 다양한 방식을 이해해 봅시다
                 </p>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-key text-indigo-300"></i>
+                        <i class="fas fa-key text-cyan-300"></i>
                         <span>암호화/복호화</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-exchange-alt text-indigo-300"></i>
+                        <i class="fas fa-exchange-alt text-cyan-300"></i>
                         <span>대칭키/공개키</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-shield-alt text-indigo-300"></i>
+                        <i class="fas fa-shield-alt text-cyan-300"></i>
                         <span>카이사르 암호</span>
                     </div>
                 </div>
