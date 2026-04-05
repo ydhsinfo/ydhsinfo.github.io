@@ -28,6 +28,38 @@
         .hero-gradient {
             background: linear-gradient(135deg, #c2410c 0%, #b45309 30%, #92400e 100%);
         }
+        /* Hero SVG animations */
+        @keyframes heroFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes heroPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes heroFlow {
+            to { stroke-dashoffset: -24; }
+        }
+        @keyframes heroGlow {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.08); }
+        }
+        @keyframes heroBlink {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        @keyframes heroSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes heroWave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.3); }
+        }
+        .hero-icon-wrap {
+            animation: heroFloat 6s ease-in-out infinite;
+        }
+
         .page-dot { transition: all 0.3s ease; }
         .page-dot.active { background-color: #f97316; transform: scale(1.3); }
         .page-content { animation: fadeInUp 0.5s ease-out; }
@@ -127,7 +159,7 @@
                 </div>
                 </div>
                 <!-- Hero Icon -->
-                <div class="hidden md:block flex-shrink-0">
+                <div class="hidden md:block flex-shrink-0 hero-icon-wrap">
                     <svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="65" y="25" width="90" height="55" rx="8" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
                         <line x1="65" y1="45" x2="155" y2="45" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
@@ -136,11 +168,11 @@
                         <line x1="80" y1="80" x2="55" y2="110" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
                         <line x1="140" y1="80" x2="165" y2="110" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
                         <rect x="20" y="110" width="70" height="50" rx="8" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
-                        <line x1="20" y1="130" x2="90" y2="130" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="20" y1="130" x2="90" y2="130" stroke="rgba(255,255,255,0.15)" stroke-width="1" style="animation: heroPulse 2s ease-in-out 0.2s infinite"/>
                         <text x="55" y="125" text-anchor="middle" fill="rgba(255,255,255,0.45)" font-size="10" font-weight="bold">Dog</text>
                         <text x="55" y="148" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="9" font-family="monospace">bark()</text>
                         <rect x="130" y="110" width="70" height="50" rx="8" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
-                        <line x1="130" y1="130" x2="200" y2="130" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="130" y1="130" x2="200" y2="130" stroke="rgba(255,255,255,0.15)" stroke-width="1" style="animation: heroPulse 2s ease-in-out 0.0s infinite"/>
                         <text x="165" y="125" text-anchor="middle" fill="rgba(255,255,255,0.45)" font-size="10" font-weight="bold">Cat</text>
                         <text x="165" y="148" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="9" font-family="monospace">meow()</text>
                     </svg>

@@ -52,6 +52,38 @@
         .hero-gradient {
             background: linear-gradient(135deg, #0e7490 0%, #0891b2 30%, #0284c7 100%);
         }
+        /* Hero SVG animations */
+        @keyframes heroFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes heroPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes heroFlow {
+            to { stroke-dashoffset: -24; }
+        }
+        @keyframes heroGlow {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.08); }
+        }
+        @keyframes heroBlink {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        @keyframes heroSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes heroWave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.3); }
+        }
+        .hero-icon-wrap {
+            animation: heroFloat 6s ease-in-out infinite;
+        }
+
         .card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -254,16 +286,16 @@
                 </div>
                 </div>
                 <!-- Hero Icon -->
-                <div class="hidden md:block flex-shrink-0">
+                <div class="hidden md:block flex-shrink-0 hero-icon-wrap">
                     <svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="65" cy="110" r="20" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <circle cx="65" cy="110" r="20" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="2" style="animation: heroGlow 3s ease-in-out infinite; transform-origin: center; transform-box: fill-box"/>
                         <circle cx="65" cy="110" r="8" fill="rgba(255,255,255,0.2)"/>
-                        <path d="M95 80 Q100 110 95 140" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M110 65 Q118 110 110 155" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M125 50 Q136 110 125 170" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M140 40 Q154 110 140 180" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M95 80 Q100 110 95 140" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-linecap="round" style="animation: heroPulse 2s ease-in-out 0.8999999999999999s infinite; transform-origin: left center"/>
+                        <path d="M110 65 Q118 110 110 155" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-linecap="round" style="animation: heroPulse 2s ease-in-out 0.6s infinite; transform-origin: left center"/>
+                        <path d="M125 50 Q136 110 125 170" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-linecap="round" style="animation: heroPulse 2s ease-in-out 0.3s infinite; transform-origin: left center"/>
+                        <path d="M140 40 Q154 110 140 180" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" stroke-linecap="round" style="animation: heroPulse 2s ease-in-out 0.0s infinite; transform-origin: left center"/>
                         <rect x="155" y="85" width="35" height="50" rx="6" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-                        <polyline points="160,100 165,108 170,95 175,112 180,98 185,105" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="160,100 165,108 170,95 175,112 180,98 185,105" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="animation: heroBlink 1.5s ease-in-out infinite"/>
                     </svg>
                 </div>
             </div>
