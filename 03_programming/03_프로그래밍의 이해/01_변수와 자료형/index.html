@@ -294,6 +294,10 @@
             .code-body { font-size: 12px; }
             .index-table-wrapper { overflow-x: auto; }
         }
+
+        .quiz-option.disabled { pointer-events: none; opacity: 0.7; }
+        .quiz-option.correct { border-color: #22c55e !important; background: #f0fdf4 !important; }
+        .quiz-option.incorrect { border-color: #ef4444 !important; background: #fef2f2 !important; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -1253,6 +1257,101 @@ False</pre>
             </div>
         </section>
 
+        <!-- ===== 스스로 점검하기 ===== -->
+        <section class="fade-in" id="section-quiz">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">스스로 점검하기</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Self-Check Quiz</p>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz1">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">1</span>
+                        <p class="text-gray-900 font-semibold text-lg leading-relaxed">Python에서 <code class="bg-gray-100 px-1 rounded text-sm">x = "100"</code>일 때, x의 자료형은?</p>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-3" id="quiz1-options">
+                        <button onclick="checkAnswer('quiz1', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">A</span>
+                            <span>int (정수)</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz1', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">B</span>
+                            <span>float (실수)</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz1', this, true)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">C</span>
+                            <span>str (문자열)</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz1', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">D</span>
+                            <span>bool (논리)</span>
+                        </button>
+                    </div>
+                    <div id="quiz1-feedback" class="mt-3 hidden"></div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz2">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">2</span>
+                        <p class="text-gray-900 font-semibold text-lg leading-relaxed">Python에서 <code class="bg-gray-100 px-1 rounded text-sm">17 // 5</code>의 결과는?</p>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-3" id="quiz2-options">
+                        <button onclick="checkAnswer('quiz2', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">A</span>
+                            <span>3.4</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz2', this, true)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">B</span>
+                            <span>3</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz2', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">C</span>
+                            <span>2</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz2', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">D</span>
+                            <span>4</span>
+                        </button>
+                    </div>
+                    <div id="quiz2-feedback" class="mt-3 hidden"></div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz3">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">3</span>
+                        <p class="text-gray-900 font-semibold text-lg leading-relaxed">변수에 대한 설명으로 올바른 것은?</p>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-3" id="quiz3-options">
+                        <button onclick="checkAnswer('quiz3', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">A</span>
+                            <span>한 번 값을 저장하면 변경할 수 없다</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz3', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">B</span>
+                            <span>변수 이름은 숫자로 시작할 수 있다</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz3', this, false)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">C</span>
+                            <span>Python에서 변수를 사용하려면 반드시 자료형을 선언해야 한다</span>
+                        </button>
+                        <button onclick="checkAnswer('quiz3', this, true)" class="quiz-option border-2 border-gray-200 rounded-xl p-3 text-left flex items-center gap-3 text-sm">
+                            <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">D</span>
+                            <span>변수는 데이터를 저장하는 메모리 공간에 붙인 이름이다</span>
+                        </button>
+                    </div>
+                    <div id="quiz3-feedback" class="mt-3 hidden"></div>
+                </div>
+            </div>
+            <div id="quiz-results" class="hidden mt-6 bg-gradient-to-r from-primary-500 to-accent-500 rounded-2xl p-6 text-white text-center">
+                <i class="fas fa-trophy text-4xl mb-3 opacity-90"></i>
+                <h4 class="text-xl font-bold mb-1">퀴즈 완료!</h4>
+                <p id="quiz-score" class="text-white/90"></p>
+            </div>
+        </section>
+
     </main>
 
     <!-- ===== FOOTER / NAVIGATION ===== -->
@@ -1536,6 +1635,45 @@ False</pre>
                 }
             });
         });
+
+        // ============================
+        // Quiz
+        // ============================
+        let quizTotal = 3, quizAnswered = 0, quizCorrect = 0;
+        function checkAnswer(quizId, btn, isCorrect) {
+            const container = document.getElementById(quizId + '-options');
+            const feedback = document.getElementById(quizId + '-feedback');
+            if (container.classList.contains('answered')) return;
+            container.classList.add('answered');
+            container.querySelectorAll('.quiz-option').forEach(opt => opt.classList.add('disabled'));
+            if (isCorrect) {
+                btn.classList.add('correct');
+                btn.querySelector('span:first-child').classList.remove('bg-gray-100', 'text-gray-600');
+                btn.querySelector('span:first-child').classList.add('bg-green-500', 'text-white');
+                feedback.innerHTML = '<div class="bg-green-50 border border-green-200 rounded-xl p-3 text-green-700 text-sm flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i> <strong>정답입니다!</strong></div>';
+                quizCorrect++;
+            } else {
+                btn.classList.add('incorrect');
+                btn.querySelector('span:first-child').classList.remove('bg-gray-100', 'text-gray-600');
+                btn.querySelector('span:first-child').classList.add('bg-red-500', 'text-white');
+                container.querySelectorAll('.quiz-option').forEach(opt => {
+                    if (opt.onclick && opt.onclick.toString().includes('true')) {
+                        opt.classList.add('correct');
+                        opt.querySelector('span:first-child').classList.remove('bg-gray-100', 'text-gray-600');
+                        opt.querySelector('span:first-child').classList.add('bg-green-500', 'text-white');
+                    }
+                });
+                feedback.innerHTML = '<div class="bg-red-50 border border-red-200 rounded-xl p-3 text-red-700 text-sm flex items-center gap-2"><i class="fas fa-times-circle text-red-500"></i> <strong>오답입니다.</strong> 정답을 확인해보세요.</div>';
+            }
+            feedback.classList.remove('hidden');
+            quizAnswered++;
+            if (quizAnswered === quizTotal) {
+                const results = document.getElementById('quiz-results');
+                document.getElementById('quiz-score').textContent = quizTotal + '문제 중 ' + quizCorrect + '문제를 맞혔습니다!';
+                results.classList.remove('hidden');
+                results.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
     </script>
 
 </body>
