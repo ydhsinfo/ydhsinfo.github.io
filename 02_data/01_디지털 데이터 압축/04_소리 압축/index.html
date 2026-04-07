@@ -345,7 +345,7 @@
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-8 mb-8">
                 <div class="grid md:grid-cols-3 gap-6 md:gap-8">
                     <!-- Step 1: 표본화 -->
-                    <div class="process-connector">
+                    <div class="process-connector flex flex-col">
                         <div class="text-center mb-4">
                             <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white text-xl font-bold shadow-lg mb-3">1</div>
                             <h4 class="text-lg font-bold text-gray-900">표본화</h4>
@@ -353,30 +353,38 @@
                         </div>
                         <!-- SVG diagram for sampling -->
                         <div class="bg-gray-50 rounded-xl p-4 mb-3">
-                            <svg viewBox="0 0 280 140" class="w-full" style="max-height: 140px;">
-                                <!-- Analog wave -->
-                                <path d="M20 100 Q50 20, 80 70 Q110 120, 140 50 Q170 -20, 200 70 Q230 120, 260 60"
-                                      stroke="#0891b2" stroke-width="2" fill="none" opacity="0.4"/>
-                                <!-- Sample points -->
-                                <line x1="50" y1="10" x2="50" y2="130" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
-                                <line x1="95" y1="10" x2="95" y2="130" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
-                                <line x1="140" y1="10" x2="140" y2="130" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
-                                <line x1="185" y1="10" x2="185" y2="130" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
-                                <line x1="230" y1="10" x2="230" y2="130" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
-                                <!-- Sample dots -->
-                                <circle cx="50" cy="42" r="5" fill="#0891b2"/>
-                                <circle cx="95" cy="85" r="5" fill="#0891b2"/>
-                                <circle cx="140" cy="50" r="5" fill="#0891b2"/>
-                                <circle cx="185" cy="38" r="5" fill="#0891b2"/>
-                                <circle cx="230" cy="80" r="5" fill="#0891b2"/>
+                            <svg viewBox="0 0 280 150" class="w-full" style="max-height: 150px;">
+                                <!-- Analog wave: smooth sine curve -->
+                                <!-- y값 계산: 중심=75, 진폭=40 -->
+                                <!-- x=50→y=35, x=95→y=82, x=140→y=53, x=185→y=37, x=230→y=78 -->
+                                <path d="M 20 70 C 32 45, 42 32, 50 35 C 62 40, 78 90, 95 82 C 108 76, 125 45, 140 53 C 152 58, 170 30, 185 37 C 198 43, 216 86, 230 78 C 242 72, 254 58, 260 60"
+                                      stroke="#0891b2" stroke-width="2.5" fill="none" opacity="0.35"/>
+                                <!-- Vertical dashed sample lines -->
+                                <line x1="50" y1="12" x2="50" y2="130" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>
+                                <line x1="95" y1="12" x2="95" y2="130" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>
+                                <line x1="140" y1="12" x2="140" y2="130" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>
+                                <line x1="185" y1="12" x2="185" y2="130" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>
+                                <line x1="230" y1="12" x2="230" y2="130" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,3"/>
+                                <!-- Sample dots ON the wave -->
+                                <circle cx="50" cy="35" r="5.5" fill="#0891b2"/>
+                                <circle cx="95" cy="82" r="5.5" fill="#0891b2"/>
+                                <circle cx="140" cy="53" r="5.5" fill="#0891b2"/>
+                                <circle cx="185" cy="37" r="5.5" fill="#0891b2"/>
+                                <circle cx="230" cy="78" r="5.5" fill="#0891b2"/>
+                                <!-- White dot centers for emphasis -->
+                                <circle cx="50" cy="35" r="2" fill="white"/>
+                                <circle cx="95" cy="82" r="2" fill="white"/>
+                                <circle cx="140" cy="53" r="2" fill="white"/>
+                                <circle cx="185" cy="37" r="2" fill="white"/>
+                                <circle cx="230" cy="78" r="2" fill="white"/>
                                 <!-- Labels -->
-                                <text x="140" y="135" text-anchor="middle" fill="#6b7280" font-size="10">시간 →</text>
+                                <text x="140" y="146" text-anchor="middle" fill="#6b7280" font-size="10">시간 →</text>
                             </svg>
                         </div>
-                        <p class="text-sm text-gray-600 leading-relaxed text-center">
+                        <p class="text-sm text-gray-600 leading-relaxed text-center flex-grow">
                             아날로그 소리 파형을 <strong class="text-primary-700">일정 간격</strong>으로 나누어 샘플 신호의 값을 측정합니다.
                         </p>
-                        <div class="mt-2 tooltip-container inline-block w-full text-center">
+                        <div class="mt-3 tooltip-container inline-block w-full text-center">
                             <span class="inline-flex items-center gap-1 text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full cursor-help">
                                 <i class="fas fa-info-circle"></i> 핵심 용어
                             </span>
@@ -385,7 +393,7 @@
                     </div>
 
                     <!-- Step 2: 양자화 -->
-                    <div class="process-connector">
+                    <div class="process-connector flex flex-col">
                         <div class="text-center mb-4">
                             <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-cyan-400 to-accent-500 text-white text-xl font-bold shadow-lg mb-3">2</div>
                             <h4 class="text-lg font-bold text-gray-900">양자화</h4>
@@ -393,46 +401,65 @@
                         </div>
                         <!-- SVG diagram for quantization -->
                         <div class="bg-gray-50 rounded-xl p-4 mb-3">
-                            <svg viewBox="0 0 280 140" class="w-full" style="max-height: 140px;">
-                                <!-- Grid lines (quantization levels) -->
-                                <line x1="20" y1="20" x2="260" y2="20" stroke="#e5e7eb" stroke-width="1"/>
-                                <text x="15" y="24" text-anchor="end" fill="#9ca3af" font-size="9">7</text>
-                                <line x1="20" y1="40" x2="260" y2="40" stroke="#e5e7eb" stroke-width="1"/>
-                                <text x="15" y="44" text-anchor="end" fill="#9ca3af" font-size="9">6</text>
-                                <line x1="20" y1="60" x2="260" y2="60" stroke="#e5e7eb" stroke-width="1"/>
-                                <text x="15" y="64" text-anchor="end" fill="#9ca3af" font-size="9">5</text>
-                                <line x1="20" y1="80" x2="260" y2="80" stroke="#e5e7eb" stroke-width="1"/>
-                                <text x="15" y="84" text-anchor="end" fill="#9ca3af" font-size="9">4</text>
-                                <line x1="20" y1="100" x2="260" y2="100" stroke="#e5e7eb" stroke-width="1"/>
-                                <text x="15" y="104" text-anchor="end" fill="#9ca3af" font-size="9">3</text>
-                                <line x1="20" y1="120" x2="260" y2="120" stroke="#e5e7eb" stroke-width="1"/>
-                                <text x="15" y="124" text-anchor="end" fill="#9ca3af" font-size="9">2</text>
-                                <!-- Original points (faded) -->
-                                <circle cx="50" cy="42" r="4" fill="#0891b2" opacity="0.3"/>
-                                <circle cx="95" cy="85" r="4" fill="#0891b2" opacity="0.3"/>
-                                <circle cx="140" cy="50" r="4" fill="#0891b2" opacity="0.3"/>
-                                <circle cx="185" cy="38" r="4" fill="#0891b2" opacity="0.3"/>
-                                <circle cx="230" cy="80" r="4" fill="#0891b2" opacity="0.3"/>
-                                <!-- Quantized points (snapped to grid) -->
-                                <circle cx="50" cy="40" r="5" fill="#2563eb"/>
-                                <circle cx="95" cy="80" r="5" fill="#2563eb"/>
-                                <circle cx="140" cy="60" r="5" fill="#2563eb"/>
-                                <circle cx="185" cy="40" r="5" fill="#2563eb"/>
-                                <circle cx="230" cy="80" r="5" fill="#2563eb"/>
-                                <!-- Arrows showing snapping -->
-                                <line x1="50" y1="42" x2="50" y2="40" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowQ)"/>
-                                <line x1="140" y1="50" x2="140" y2="60" stroke="#f59e0b" stroke-width="1.5"/>
+                            <svg viewBox="0 0 280 150" class="w-full" style="max-height: 150px;">
                                 <defs>
-                                    <marker id="arrowQ" markerWidth="6" markerHeight="4" refX="3" refY="2" orient="auto">
-                                        <path d="M0,0 L6,2 L0,4" fill="#f59e0b"/>
+                                    <marker id="arrowQDown" markerWidth="6" markerHeight="5" refX="3" refY="5" orient="auto">
+                                        <path d="M0,0 L3,5 L6,0" fill="#f59e0b"/>
+                                    </marker>
+                                    <marker id="arrowQUp" markerWidth="6" markerHeight="5" refX="3" refY="0" orient="auto">
+                                        <path d="M0,5 L3,0 L6,5" fill="#f59e0b"/>
                                     </marker>
                                 </defs>
+                                <!-- Grid lines (quantization levels) -->
+                                <line x1="22" y1="20" x2="260" y2="20" stroke="#e5e7eb" stroke-width="1"/>
+                                <text x="16" y="24" text-anchor="end" fill="#9ca3af" font-size="9">7</text>
+                                <line x1="22" y1="40" x2="260" y2="40" stroke="#e5e7eb" stroke-width="1"/>
+                                <text x="16" y="44" text-anchor="end" fill="#2563eb" font-size="9" font-weight="600">6</text>
+                                <line x1="22" y1="60" x2="260" y2="60" stroke="#e5e7eb" stroke-width="1"/>
+                                <text x="16" y="64" text-anchor="end" fill="#2563eb" font-size="9" font-weight="600">5</text>
+                                <line x1="22" y1="80" x2="260" y2="80" stroke="#e5e7eb" stroke-width="1"/>
+                                <text x="16" y="84" text-anchor="end" fill="#2563eb" font-size="9" font-weight="600">4</text>
+                                <line x1="22" y1="100" x2="260" y2="100" stroke="#e5e7eb" stroke-width="1"/>
+                                <text x="16" y="104" text-anchor="end" fill="#9ca3af" font-size="9">3</text>
+                                <line x1="22" y1="120" x2="260" y2="120" stroke="#e5e7eb" stroke-width="1"/>
+                                <text x="16" y="124" text-anchor="end" fill="#9ca3af" font-size="9">2</text>
+                                <!-- Original points (faded) - same y as 표본화 -->
+                                <circle cx="50" cy="35" r="4" fill="#0891b2" opacity="0.3"/>
+                                <circle cx="95" cy="82" r="4" fill="#0891b2" opacity="0.3"/>
+                                <circle cx="140" cy="53" r="4" fill="#0891b2" opacity="0.3"/>
+                                <circle cx="185" cy="37" r="4" fill="#0891b2" opacity="0.3"/>
+                                <circle cx="230" cy="78" r="4" fill="#0891b2" opacity="0.3"/>
+                                <!-- Snap arrows (original → quantized) -->
+                                <!-- 35→40: down 5px -->
+                                <line x1="50" y1="36" x2="50" y2="39" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowQDown)"/>
+                                <!-- 82→80: up 2px -->
+                                <line x1="95" y1="81" x2="95" y2="76" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowQUp)"/>
+                                <!-- 53→60: down 7px -->
+                                <line x1="140" y1="54" x2="140" y2="59" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowQDown)"/>
+                                <!-- 37→40: down 3px -->
+                                <line x1="185" y1="38" x2="185" y2="39" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowQDown)"/>
+                                <!-- 78→80: down 2px -->
+                                <line x1="230" y1="79" x2="230" y2="79" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowQDown)"/>
+                                <!-- Quantized points (snapped to grid) -->
+                                <circle cx="50" cy="40" r="5.5" fill="#2563eb"/>
+                                <circle cx="95" cy="80" r="5.5" fill="#2563eb"/>
+                                <circle cx="140" cy="60" r="5.5" fill="#2563eb"/>
+                                <circle cx="185" cy="40" r="5.5" fill="#2563eb"/>
+                                <circle cx="230" cy="80" r="5.5" fill="#2563eb"/>
+                                <!-- Quantized value labels -->
+                                <text x="50" y="44" text-anchor="middle" fill="white" font-size="7" font-weight="bold">6</text>
+                                <text x="95" y="84" text-anchor="middle" fill="white" font-size="7" font-weight="bold">4</text>
+                                <text x="140" y="64" text-anchor="middle" fill="white" font-size="7" font-weight="bold">5</text>
+                                <text x="185" y="44" text-anchor="middle" fill="white" font-size="7" font-weight="bold">6</text>
+                                <text x="230" y="84" text-anchor="middle" fill="white" font-size="7" font-weight="bold">4</text>
+                                <!-- Connecting line through quantized points -->
+                                <polyline points="50,40 95,80 140,60 185,40 230,80" stroke="#2563eb" stroke-width="1.5" fill="none" stroke-dasharray="4,2" opacity="0.4"/>
                             </svg>
                         </div>
-                        <p class="text-sm text-gray-600 leading-relaxed text-center">
+                        <p class="text-sm text-gray-600 leading-relaxed text-center flex-grow">
                             소리의 크기를 <strong class="text-accent-700">가까운 정숫값</strong>으로 표현합니다.
                         </p>
-                        <div class="mt-2 tooltip-container inline-block w-full text-center">
+                        <div class="mt-3 tooltip-container inline-block w-full text-center">
                             <span class="inline-flex items-center gap-1 text-xs bg-accent-100 text-accent-700 px-2 py-1 rounded-full cursor-help">
                                 <i class="fas fa-info-circle"></i> 핵심 용어
                             </span>
@@ -441,7 +468,7 @@
                     </div>
 
                     <!-- Step 3: 부호화 -->
-                    <div>
+                    <div class="flex flex-col">
                         <div class="text-center mb-4">
                             <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-accent-500 to-accent-700 text-white text-xl font-bold shadow-lg mb-3">3</div>
                             <h4 class="text-lg font-bold text-gray-900">부호화</h4>
@@ -449,45 +476,43 @@
                         </div>
                         <!-- SVG diagram for encoding -->
                         <div class="bg-gray-50 rounded-xl p-4 mb-3">
-                            <svg viewBox="0 0 280 140" class="w-full" style="max-height: 140px;">
-                                <!-- Integer values with arrows to binary -->
-                                <g transform="translate(30, 15)">
-                                    <!-- Value 6 -->
-                                    <rect x="0" y="0" width="40" height="28" rx="6" fill="#dbeafe"/>
-                                    <text x="20" y="19" text-anchor="middle" fill="#1e40af" font-size="13" font-weight="bold">6</text>
-                                    <text x="65" y="19" text-anchor="middle" fill="#9ca3af" font-size="14">→</text>
-                                    <rect x="80" y="0" width="70" height="28" rx="6" fill="#1e40af"/>
-                                    <text x="115" y="19" text-anchor="middle" fill="white" font-size="12" font-family="monospace">110</text>
+                            <svg viewBox="0 0 280 150" class="w-full" style="max-height: 150px;">
+                                <!-- Row 1: 6 → 110 -->
+                                <g transform="translate(20, 12)">
+                                    <rect x="0" y="0" width="42" height="30" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                                    <text x="21" y="20" text-anchor="middle" fill="#1e40af" font-size="15" font-weight="bold">6</text>
+                                    <text x="62" y="20" text-anchor="middle" fill="#9ca3af" font-size="16">→</text>
+                                    <rect x="78" y="0" width="72" height="30" rx="8" fill="#1e40af"/>
+                                    <text x="114" y="20" text-anchor="middle" fill="white" font-size="14" font-family="monospace" font-weight="600">110</text>
+                                    <text x="175" y="20" fill="#60a5fa" font-size="11" opacity="0.5" font-family="monospace">0110</text>
                                 </g>
-                                <g transform="translate(30, 50)">
-                                    <!-- Value 4 -->
-                                    <rect x="0" y="0" width="40" height="28" rx="6" fill="#dbeafe"/>
-                                    <text x="20" y="19" text-anchor="middle" fill="#1e40af" font-size="13" font-weight="bold">4</text>
-                                    <text x="65" y="19" text-anchor="middle" fill="#9ca3af" font-size="14">→</text>
-                                    <rect x="80" y="0" width="70" height="28" rx="6" fill="#1e40af"/>
-                                    <text x="115" y="19" text-anchor="middle" fill="white" font-size="12" font-family="monospace">100</text>
+                                <!-- Row 2: 4 → 100 -->
+                                <g transform="translate(20, 52)">
+                                    <rect x="0" y="0" width="42" height="30" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                                    <text x="21" y="20" text-anchor="middle" fill="#1e40af" font-size="15" font-weight="bold">4</text>
+                                    <text x="62" y="20" text-anchor="middle" fill="#9ca3af" font-size="16">→</text>
+                                    <rect x="78" y="0" width="72" height="30" rx="8" fill="#1e40af"/>
+                                    <text x="114" y="20" text-anchor="middle" fill="white" font-size="14" font-family="monospace" font-weight="600">100</text>
+                                    <text x="175" y="20" fill="#60a5fa" font-size="11" opacity="0.5" font-family="monospace">0100</text>
                                 </g>
-                                <g transform="translate(30, 85)">
-                                    <!-- Value 5 -->
-                                    <rect x="0" y="0" width="40" height="28" rx="6" fill="#dbeafe"/>
-                                    <text x="20" y="19" text-anchor="middle" fill="#1e40af" font-size="13" font-weight="bold">5</text>
-                                    <text x="65" y="19" text-anchor="middle" fill="#9ca3af" font-size="14">→</text>
-                                    <rect x="80" y="0" width="70" height="28" rx="6" fill="#1e40af"/>
-                                    <text x="115" y="19" text-anchor="middle" fill="white" font-size="12" font-family="monospace">101</text>
+                                <!-- Row 3: 5 → 101 -->
+                                <g transform="translate(20, 92)">
+                                    <rect x="0" y="0" width="42" height="30" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                                    <text x="21" y="20" text-anchor="middle" fill="#1e40af" font-size="15" font-weight="bold">5</text>
+                                    <text x="62" y="20" text-anchor="middle" fill="#9ca3af" font-size="16">→</text>
+                                    <rect x="78" y="0" width="72" height="30" rx="8" fill="#1e40af"/>
+                                    <text x="114" y="20" text-anchor="middle" fill="white" font-size="14" font-family="monospace" font-weight="600">101</text>
+                                    <text x="175" y="20" fill="#60a5fa" font-size="11" opacity="0.5" font-family="monospace">0101</text>
                                 </g>
-                                <!-- Label -->
-                                <text x="50" y="135" fill="#6b7280" font-size="10">정숫값</text>
-                                <text x="145" y="135" fill="#6b7280" font-size="10">이진수</text>
-                                <!-- Decorative: 0 and 1 floating -->
-                                <text x="200" y="30" fill="#0891b2" font-size="11" opacity="0.4" font-family="monospace">0 1 1 0</text>
-                                <text x="195" y="65" fill="#0891b2" font-size="11" opacity="0.3" font-family="monospace">1 0 0 1</text>
-                                <text x="205" y="100" fill="#0891b2" font-size="11" opacity="0.2" font-family="monospace">1 0 1 0</text>
+                                <!-- Labels -->
+                                <text x="41" y="145" text-anchor="middle" fill="#6b7280" font-size="10">정숫값</text>
+                                <text x="134" y="145" text-anchor="middle" fill="#6b7280" font-size="10">이진수</text>
                             </svg>
                         </div>
-                        <p class="text-sm text-gray-600 leading-relaxed text-center">
+                        <p class="text-sm text-gray-600 leading-relaxed text-center flex-grow">
                             각 정수를 <strong class="text-accent-800">0과 1의 디지털값</strong>으로 표현합니다.
                         </p>
-                        <div class="mt-2 tooltip-container inline-block w-full text-center">
+                        <div class="mt-3 tooltip-container inline-block w-full text-center">
                             <span class="inline-flex items-center gap-1 text-xs bg-accent-100 text-accent-700 px-2 py-1 rounded-full cursor-help">
                                 <i class="fas fa-info-circle"></i> 핵심 용어
                             </span>
