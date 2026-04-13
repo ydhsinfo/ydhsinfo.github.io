@@ -9,6 +9,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Noto Sans KR', 'sans-serif'] },
+                    colors: {
+                        primary: { 50:'#ecfeff',100:'#cffafe',200:'#a5f3fc',300:'#67e8f9',400:'#22d3ee',500:'#06b6d4',600:'#0891b2',700:'#0e7490',800:'#155e75',900:'#164e63' },
+                        accent: { 50:'#f0f9ff',100:'#e0f2fe',200:'#bae6fd',300:'#7dd3fc',400:'#38bdf8',500:'#0ea5e9',600:'#0284c7',700:'#0369a1',800:'#075985',900:'#0c4a6e' }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         * { font-family: 'Noto Sans KR', sans-serif; }
 
@@ -47,107 +60,33 @@
             animation: heroFloat 6s ease-in-out infinite;
         }
 
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
-        }
-
-        .quiz-option {
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .quiz-option:hover {
-            background-color: #f1f5f9;
-            border-color: #94a3b8;
-        }
-        .quiz-option.selected {
-            background-color: #e2e8f0;
-            border-color: #475569;
-            font-weight: 500;
-        }
-        .quiz-option.correct {
-            background-color: #dcfce7 !important;
-            border-color: #22c55e !important;
-            color: #166534;
-        }
-        .quiz-option.incorrect {
-            background-color: #fee2e2 !important;
-            border-color: #ef4444 !important;
-            color: #991b1b;
-        }
-        .quiz-option.correct-answer {
-            background-color: #dcfce7 !important;
-            border-color: #22c55e !important;
-            color: #166534;
-        }
-
-        .star-btn {
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .star-btn:hover {
-            transform: scale(1.1);
-        }
-        .star-btn.active {
-            color: #f59e0b;
-        }
-        .star-btn.inactive {
-            color: #d1d5db;
-        }
-
-        .result-correct {
-            background-color: #f0fdf4;
-            border-left: 4px solid #22c55e;
-        }
-        .result-incorrect {
-            background-color: #fef2f2;
-            border-left: 4px solid #ef4444;
-        }
-
-        .activity-input {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 0.75rem;
-            font-size: 0.875rem;
-            font-family: 'Noto Sans KR', sans-serif;
-            transition: all 0.2s ease;
-        }
-        .activity-input:focus {
-            outline: none;
-            border-color: #475569;
-            box-shadow: 0 0 0 3px rgba(71, 85, 105, 0.15);
-        }
-
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15); }
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .section-divider { height: 4px; background: linear-gradient(90deg, #22d3ee, #0891b2, #22d3ee); border-radius: 2px; }
+        .breadcrumb-item + .breadcrumb-item::before { content: '>'; margin: 0 0.5rem; color: rgba(255,255,255,0.6); }
+        .quiz-option { transition: all 0.2s ease; cursor: pointer; }
+        .quiz-option:hover { transform: translateX(4px); }
+        .quiz-option.correct { background-color: #dcfce7 !important; border-color: #22c55e !important; }
+        .quiz-option.wrong { background-color: #fef2f2 !important; border-color: #ef4444 !important; }
+        .star-rating .star { cursor: pointer; transition: all 0.2s ease; color: #d1d5db; }
+        .star-rating .star.active { color: #f59e0b; }
+        .star-rating .star:hover { transform: scale(1.2); }
         @media print {
-            .no-print { display: none !important; }
-            body { font-size: 12px; }
-            .quiz-option.correct {
-                background-color: #dcfce7 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            .print-break { page-break-before: always; }
-        
-            .hero-gradient { background: #0e7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        }
 
-        .section-number {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-weight: 700;
-            font-size: 0.875rem;
+            .fade-in { opacity: 1 !important; transform: none !important; }
+            .card-hover:hover { transform: none; box-shadow: none; }
+            footer { display: none; }
+            .no-print { display: none !important; }
+            body { font-size: 12pt; }
+            .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
+
+            .hero-gradient { background: #0e7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
     <!-- Top Navigation -->
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
@@ -186,25 +125,22 @@
             <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
                 <div class="flex-1">
                 <span class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-6 border border-white/20">
-                    정리 &middot; 평가
+                    📘 II. 데이터 &gt; 대단원 마무리
                 </span>
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
                     대단원 마무리
                 </h1>
-                <p class="text-lg sm:text-xl text-cyan-200 font-medium mb-4">
-                    II. 데이터
-                </p>
                 <p class="text-cyan-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
                     디지털 데이터 압축, 암호화, 빅데이터에 대해 배운 내용을 정리하고 실력을 확인해 봅시다
                 </p>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-book-open text-slate-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
-                        <span>개념 정리 3개 단원</span>
+                        <i class="fas fa-book text-cyan-300"></i>
+                        <span>개념 정리</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-clipboard-check text-slate-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
-                        <span>실력 확인 10문제</span>
+                        <i class="fas fa-check-double text-cyan-300"></i>
+                        <span>실력 확인</span>
                     </div>
                 </div>
                 </div>
@@ -228,758 +164,476 @@
             </div>
         </div>
     </section>
-<!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-12">
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
 
-        <!-- ============================================ -->
-        <!-- Student Info Section -->
-        <!-- ============================================ -->
-        <section class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-            <div class="bg-slate-700 px-6 py-4 flex items-center gap-3">
-                <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-white text-sm flex-shrink-0">
-                    <i class="fas fa-user-pen"></i>
+        <!-- ===== SECTION 1: 개념 정리 ===== -->
+        <section class="fade-in" id="section-concept">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-book-open"></i>
                 </div>
                 <div>
-                    <h2 class="text-base font-bold text-white">학생 정보</h2>
-                    <p class="text-slate-300 text-xs">답안 제출을 위해 정보를 입력하세요</p>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">개념 정리</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Key Concepts Summary</p>
                 </div>
             </div>
-            <div class="p-6 space-y-5">
-                <!-- Google Sheet URL -->
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">
-                        <i class="fas fa-table text-green-500 mr-1"></i>구글 시트 URL <span class="text-red-400">*</span>
-                    </label>
-                    <div class="flex gap-2">
-                        <input type="url" id="sheetUrl" class="activity-input flex-1"
-                               placeholder="선생님이 공유한 구글 시트 주소를 붙여넣으세요"
-                               style="border-color: #86efac; background-color: #f0fdf4;">
-                        <button type="button" onclick="validateSheetUrl()"
-                                class="flex-shrink-0 px-4 py-2 bg-green-100 border-2 border-green-300 text-green-700 rounded-xl text-sm font-medium hover:bg-green-200 transition-all"
-                                title="URL 확인">
-                            <i class="fas fa-link-slash" id="sheetUrlIcon"></i>
-                        </button>
+
+            <!-- 01 디지털 데이터 압축 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6">
+                <h3 class="font-bold text-lg text-gray-900 mb-5 flex items-center gap-2">
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-700 text-white text-sm font-bold shadow">01</span>
+                    디지털 데이터 압축
+                </h3>
+                <div class="grid md:grid-cols-2 gap-5 mb-5">
+                    <div class="bg-gradient-to-r from-cyan-50 to-sky-50 rounded-xl p-5 border border-cyan-100">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow">
+                                <i class="fas fa-compress-alt text-white text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-cyan-800">데이터 압축</h4>
+                        </div>
+                        <p class="text-gray-700 text-sm leading-relaxed">한정된 저장 공간에 데이터를 <strong class="text-cyan-700">효율적으로 기록</strong>하기 위한 기술</p>
                     </div>
-                    <p class="text-xs text-gray-400 mt-1.5">
-                        <i class="fas fa-circle-info mr-1"></i>
-                        예: https://docs.google.com/spreadsheets/d/abc123.../edit
-                    </p>
+                    <div class="bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl p-5 border border-sky-100">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center shadow">
+                                <i class="fas fa-code-branch text-white text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-sky-800">압축 방식</h4>
+                        </div>
+                        <p class="text-gray-700 text-sm leading-relaxed"><strong class="text-sky-700">손실 압축</strong>과 <strong class="text-sky-700">비손실 압축</strong></p>
+                    </div>
                 </div>
-                <!-- Student Info Fields -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">학년 <span class="text-red-400">*</span></label>
-                        <select id="grade" class="activity-input" style="padding: 10px 12px;">
-                            <option value="">선택</option>
-                            <option value="1">1학년</option>
-                            <option value="2">2학년</option>
-                            <option value="3">3학년</option>
-                        </select>
+                <div class="space-y-3">
+                    <div class="bg-gradient-to-r from-cyan-50 to-sky-50 rounded-xl p-4 border border-cyan-100">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-cyan-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fas fa-font text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-cyan-800 mb-1">문자열 압축</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">런-렝스 인코딩, 렘펠-지브 인코딩</p>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">반 <span class="text-red-400">*</span></label>
-                        <input type="number" id="classNum" class="activity-input" placeholder="예: 3" min="1" max="20">
+                    <div class="bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl p-4 border border-sky-100">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-sky-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fas fa-image text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sky-800 mb-1">이미지 압축</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">BMP, GIF, PNG, JPEG</p>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">번호 <span class="text-red-400">*</span></label>
-                        <input type="number" id="number" class="activity-input" placeholder="예: 15" min="1" max="50">
+                    <div class="bg-gradient-to-r from-cyan-50 to-sky-50 rounded-xl p-4 border border-cyan-100">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-cyan-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fas fa-music text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-cyan-800 mb-1">소리 압축</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">WAV, FLAC, MP3, AAC</p>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">이름 <span class="text-red-400">*</span></label>
-                        <input type="text" id="name" class="activity-input" placeholder="이름 입력">
+                </div>
+            </div>
+
+            <!-- 02 디지털 데이터 암호화 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6">
+                <h3 class="font-bold text-lg text-gray-900 mb-5 flex items-center gap-2">
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-700 text-white text-sm font-bold shadow">02</span>
+                    디지털 데이터 암호화
+                </h3>
+                <div class="grid md:grid-cols-2 gap-5 mb-5">
+                    <div class="bg-gradient-to-r from-cyan-50 to-sky-50 rounded-xl p-5 border border-cyan-100">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow">
+                                <i class="fas fa-lock text-white text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-cyan-800">데이터 암호화</h4>
+                        </div>
+                        <p class="text-gray-700 text-sm leading-relaxed">권한이 없는 사람이 데이터를 <strong class="text-cyan-700">알아볼 수 없게 변환</strong>하는 기술</p>
+                    </div>
+                    <div class="bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl p-5 border border-sky-100">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center shadow">
+                                <i class="fas fa-key text-white text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-sky-800">핵심 개념</h4>
+                        </div>
+                        <p class="text-gray-700 text-sm leading-relaxed">암호화와 복호화, <strong class="text-sky-700">평문 / 암호문 / 암호 알고리즘 / 키</strong></p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="bg-gradient-to-r from-cyan-50 to-sky-50 rounded-xl p-4 border border-cyan-100">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-cyan-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fas fa-scroll text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-cyan-800 mb-1">고대 &middot; 근대 암호</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">전치 암호, 치환 암호</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl p-4 border border-sky-100">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-sky-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fas fa-shield-halved text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sky-800 mb-1">현대 암호</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">컴퓨터 프로그램 기반 암호 기술</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 03 빅데이터 개념과 분석 -->
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <h3 class="font-bold text-lg text-gray-900 mb-5 flex items-center gap-2">
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-700 text-white text-sm font-bold shadow">03</span>
+                    빅데이터 개념과 분석
+                </h3>
+                <div class="grid md:grid-cols-2 gap-5 mb-5">
+                    <div class="bg-gradient-to-r from-cyan-50 to-sky-50 rounded-xl p-5 border border-cyan-100">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow">
+                                <i class="fas fa-database text-white text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-cyan-800">빅데이터</h4>
+                        </div>
+                        <p class="text-gray-700 text-sm leading-relaxed">대규모 데이터를 <strong class="text-cyan-700">저장 &middot; 분석</strong>하여 가치를 추출</p>
+                    </div>
+                    <div class="bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl p-5 border border-sky-100">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center shadow">
+                                <i class="fas fa-globe text-white text-sm"></i>
+                            </div>
+                            <h4 class="font-bold text-sky-800">활용 범위</h4>
+                        </div>
+                        <p class="text-gray-700 text-sm leading-relaxed"><strong class="text-sky-700">사회 전 영역</strong>에서 활용</p>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-r from-cyan-50 to-sky-50 rounded-xl p-4 border border-cyan-100">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-cyan-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-diagram-project text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-cyan-800 mb-1">분석 4단계</h4>
+                            <p class="text-gray-700 text-sm leading-relaxed">문제 정의 &rarr; 데이터 수집 &rarr; 데이터 분석 &rarr; 공유 &middot; 평가</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ============================================ -->
-        <!-- 개념 정리 Section -->
-        <!-- ============================================ -->
-        <section>
-            <div class="flex items-center gap-3 mb-6">
-                <div class="bg-slate-700 text-white rounded-xl w-10 h-10 flex items-center justify-center">
-                    <i class="fas fa-book-open text-sm"></i>
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== SECTION 2: 실력 확인 ===== -->
+        <section class="fade-in" id="section-quiz">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-check-double"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800">개념 정리</h2>
-                    <p class="text-sm text-slate-500">핵심 내용을 요약하여 정리합니다</p>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">실력 확인</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Check Your Understanding</p>
                 </div>
             </div>
 
             <div class="space-y-6">
 
-                <!-- Card 01: 디지털 데이터 압축 -->
-                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden">
-                    <div class="bg-slate-50 border-b border-gray-200 px-6 py-4 flex items-center gap-3">
-                        <div class="section-number bg-slate-700 text-white">01</div>
-                        <h3 class="text-lg font-bold text-slate-800">디지털 데이터 압축</h3>
-                    </div>
-                    <div class="p-6 space-y-3">
-                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                            <div class="mt-0.5 text-slate-400"><i class="fas fa-compress-alt"></i></div>
-                            <div>
-                                <span class="font-semibold text-slate-700">데이터 압축:</span>
-                                <span class="text-slate-600"> 한정된 저장 공간에 데이터를 효율적으로 기록하기 위한 기술</span>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                            <div class="mt-0.5 text-slate-400"><i class="fas fa-code-branch"></i></div>
-                            <div>
-                                <span class="font-semibold text-slate-700">압축 방식:</span>
-                                <span class="text-slate-600"> 손실 압축, 비손실 압축</span>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                            <div class="mt-0.5 text-slate-400"><i class="fas fa-font"></i></div>
-                            <div>
-                                <span class="font-semibold text-slate-700">문자열 압축:</span>
-                                <span class="text-slate-600"> 런-렝스 인코딩, 렘펠-지브 인코딩</span>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                            <div class="mt-0.5 text-slate-400"><i class="fas fa-image"></i></div>
-                            <div>
-                                <span class="font-semibold text-slate-700">이미지 압축:</span>
-                                <span class="text-slate-600"> BMP, GIF, PNG, JPEG</span>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                            <div class="mt-0.5 text-slate-400"><i class="fas fa-music"></i></div>
-                            <div>
-                                <span class="font-semibold text-slate-700">소리 압축:</span>
-                                <span class="text-slate-600"> WAV, FLAC, MP3, AAC</span>
-                            </div>
+                <!-- Q1 (주관식 - 빈칸) -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz1-container">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white text-sm font-bold flex-shrink-0">1</span>
+                        <div>
+                            <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">주관식</span>
+                            <p class="font-bold text-gray-900 mt-2">데이터 압축에서 원래의 데이터를 더 작은 크기로 변환하는 <strong>(㉠)</strong> 과정과 압축된 데이터를 원래의 데이터로 복원하는 <strong>(㉡)</strong> 과정이 있다. ㉠과 ㉡에 들어갈 용어를 순서대로 쓰시오.</p>
                         </div>
                     </div>
+                    <div class="ml-11">
+                        <div class="flex items-center gap-3">
+                            <label class="text-sm font-semibold text-gray-600">답:</label>
+                            <input type="text" id="q1-input" placeholder="㉠, ㉡ (쉼표로 구분)" class="flex-1 max-w-md border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all">
+                            <button onclick="checkShortAnswer()" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-medium px-4 py-2.5 rounded-xl transition-all text-sm shadow-sm">
+                                <i class="fas fa-check"></i> 확인
+                            </button>
+                        </div>
+                    </div>
+                    <div id="quiz1-result" class="hidden mt-4 ml-11"></div>
                 </div>
 
-                <!-- Card 02: 디지털 데이터 암호화 -->
-                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden">
-                    <div class="bg-slate-50 border-b border-gray-200 px-6 py-4 flex items-center gap-3">
-                        <div class="section-number bg-slate-700 text-white">02</div>
-                        <h3 class="text-lg font-bold text-slate-800">디지털 데이터 암호화</h3>
+                <!-- Q2 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz2-container">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white text-sm font-bold flex-shrink-0">2</span>
+                        <p class="font-bold text-gray-900">디지털 데이터 압축에 대한 설명 중 <u>옳은 것</u>은?</p>
                     </div>
-                    <div class="p-6 space-y-3">
-                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                            <div class="mt-0.5 text-slate-400"><i class="fas fa-lock"></i></div>
-                            <div>
-                                <span class="font-semibold text-slate-700">데이터 암호화:</span>
-                                <span class="text-slate-600"> 권한이 없는 사람이 데이터를 알아볼 수 없게 변환하는 기술</span>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                            <div class="mt-0.5 text-slate-400"><i class="fas fa-key"></i></div>
-                            <div>
-                                <span class="font-semibold text-slate-700">핵심 개념:</span>
-                                <span class="text-slate-600"> 암호화와 복호화, 평문 / 암호문 / 암호 알고리즘 / 키</span>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                            <div class="mt-0.5 text-slate-400"><i class="fas fa-scroll"></i></div>
-                            <div>
-                                <span class="font-semibold text-slate-700">고대 &middot; 근대 암호:</span>
-                                <span class="text-slate-600"> 전치 암호, 치환 암호</span>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                            <div class="mt-0.5 text-slate-400"><i class="fas fa-shield-halved"></i></div>
-                            <div>
-                                <span class="font-semibold text-slate-700">현대 암호:</span>
-                                <span class="text-slate-600"> 컴퓨터 프로그램 기반 암호 기술</span>
-                            </div>
-                        </div>
+                    <div class="space-y-2 ml-11">
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz2',this,true)"><span class="font-bold text-primary-600 mr-2">&#9312;</span> MP3는 손실 압축 방식이다.</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz2',this,false)"><span class="font-bold text-primary-600 mr-2">&#9313;</span> PNG는 손실 압축 방식이다.</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz2',this,false)"><span class="font-bold text-primary-600 mr-2">&#9314;</span> AAC는 MP3보다 품질이 떨어진다.</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz2',this,false)"><span class="font-bold text-primary-600 mr-2">&#9315;</span> 문자열은 압축이 불가능하다.</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz2',this,false)"><span class="font-bold text-primary-600 mr-2">&#9316;</span> GIF는 256색 이상을 표현할 수 있다.</div>
                     </div>
+                    <div id="quiz2-result" class="hidden mt-4 ml-11"></div>
                 </div>
 
-                <!-- Card 03: 빅데이터 개념과 분석 -->
-                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden">
-                    <div class="bg-slate-50 border-b border-gray-200 px-6 py-4 flex items-center gap-3">
-                        <div class="section-number bg-slate-700 text-white">03</div>
-                        <h3 class="text-lg font-bold text-slate-800">빅데이터 개념과 분석</h3>
+                <!-- Q3 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz3-container">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white text-sm font-bold flex-shrink-0">3</span>
+                        <p class="font-bold text-gray-900">사람의 눈이 인식하지 못하는 범위의 정보를 제거하여 이미지 크기를 줄인 형식은?</p>
                     </div>
-                    <div class="p-6 space-y-3">
-                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                            <div class="mt-0.5 text-slate-400"><i class="fas fa-database"></i></div>
-                            <div>
-                                <span class="font-semibold text-slate-700">빅데이터:</span>
-                                <span class="text-slate-600"> 대규모 데이터를 저장 &middot; 분석하여 가치를 추출</span>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                            <div class="mt-0.5 text-slate-400"><i class="fas fa-globe"></i></div>
-                            <div>
-                                <span class="font-semibold text-slate-700">활용 범위:</span>
-                                <span class="text-slate-600"> 사회 전 영역에서 활용</span>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 bg-gray-50 rounded-xl p-4">
-                            <div class="mt-0.5 text-slate-400"><i class="fas fa-diagram-project"></i></div>
-                            <div>
-                                <span class="font-semibold text-slate-700">분석 4단계:</span>
-                                <span class="text-slate-600"> 문제 정의 &rarr; 데이터 수집 &rarr; 데이터 분석 &rarr; 공유 &middot; 평가</span>
-                            </div>
-                        </div>
+                    <div class="space-y-2 ml-11">
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz3',this,false)"><span class="font-bold text-primary-600 mr-2">&#9312;</span> BMP</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz3',this,false)"><span class="font-bold text-primary-600 mr-2">&#9313;</span> GIF</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz3',this,false)"><span class="font-bold text-primary-600 mr-2">&#9314;</span> PNG</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz3',this,false)"><span class="font-bold text-primary-600 mr-2">&#9315;</span> WAV</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz3',this,true)"><span class="font-bold text-primary-600 mr-2">&#9316;</span> JPEG</div>
                     </div>
+                    <div id="quiz3-result" class="hidden mt-4 ml-11"></div>
                 </div>
 
+                <!-- Q4 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz4-container">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white text-sm font-bold flex-shrink-0">4</span>
+                        <p class="font-bold text-gray-900">권한이 없는 사람이 데이터에 접근하지 못하도록 데이터를 변환하는 기술은?</p>
+                    </div>
+                    <div class="space-y-2 ml-11">
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz4',this,false)"><span class="font-bold text-primary-600 mr-2">&#9312;</span> 데이터 압축</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz4',this,false)"><span class="font-bold text-primary-600 mr-2">&#9313;</span> 데이터 복호화</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz4',this,false)"><span class="font-bold text-primary-600 mr-2">&#9314;</span> 데이터 인코딩</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz4',this,true)"><span class="font-bold text-primary-600 mr-2">&#9315;</span> 데이터 암호화</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz4',this,false)"><span class="font-bold text-primary-600 mr-2">&#9316;</span> 데이터 마이닝</div>
+                    </div>
+                    <div id="quiz4-result" class="hidden mt-4 ml-11"></div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz5-container">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white text-sm font-bold flex-shrink-0">5</span>
+                        <p class="font-bold text-gray-900">암호 알고리즘에서 평문을 암호문으로 변경할 때 사용하는 문자열은?</p>
+                    </div>
+                    <div class="space-y-2 ml-11">
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz5',this,true)"><span class="font-bold text-primary-600 mr-2">&#9312;</span> 키</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz5',this,false)"><span class="font-bold text-primary-600 mr-2">&#9313;</span> 평문</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz5',this,false)"><span class="font-bold text-primary-600 mr-2">&#9314;</span> 암호문</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz5',this,false)"><span class="font-bold text-primary-600 mr-2">&#9315;</span> 해시</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz5',this,false)"><span class="font-bold text-primary-600 mr-2">&#9316;</span> 복호화</div>
+                    </div>
+                    <div id="quiz5-result" class="hidden mt-4 ml-11"></div>
+                </div>
+
+                <!-- Q6 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz6-container">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white text-sm font-bold flex-shrink-0">6</span>
+                        <p class="font-bold text-gray-900">평문의 알파벳을 키만큼 평행 이동한 알파벳으로 치환하는 암호는?</p>
+                    </div>
+                    <div class="space-y-2 ml-11">
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz6',this,false)"><span class="font-bold text-primary-600 mr-2">&#9312;</span> 전치 암호</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz6',this,false)"><span class="font-bold text-primary-600 mr-2">&#9313;</span> 대칭키 암호</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz6',this,false)"><span class="font-bold text-primary-600 mr-2">&#9314;</span> 공개키 암호</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz6',this,false)"><span class="font-bold text-primary-600 mr-2">&#9315;</span> 해시 암호</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz6',this,true)"><span class="font-bold text-primary-600 mr-2">&#9316;</span> 카이사르 암호</div>
+                    </div>
+                    <div id="quiz6-result" class="hidden mt-4 ml-11"></div>
+                </div>
+
+                <!-- Q7 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz7-container">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white text-sm font-bold flex-shrink-0">7</span>
+                        <div>
+                            <p class="font-bold text-gray-900 mb-3">다음 설명에 해당하는 암호 알고리즘을 바르게 짝지은 것은?</p>
+                            <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-700 border border-gray-200 space-y-2 leading-relaxed">
+                                <p><strong class="text-primary-700">(가)</strong> 데이터를 고정된 길이의 값으로 변환하며, 원본 복원이 불가능</p>
+                                <p><strong class="text-primary-700">(나)</strong> 암호화와 복호화에 서로 다른 키를 사용</p>
+                                <p><strong class="text-primary-700">(다)</strong> 암호화와 복호화에 같은 키를 사용</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 ml-11">
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz7',this,false)"><span class="font-bold text-primary-600 mr-2">&#9312;</span> (가) 대칭키 (나) 해시함수 (다) 공개키</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz7',this,false)"><span class="font-bold text-primary-600 mr-2">&#9313;</span> (가) 공개키 (나) 대칭키 (다) 해시함수</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz7',this,false)"><span class="font-bold text-primary-600 mr-2">&#9314;</span> (가) 대칭키 (나) 공개키 (다) 해시함수</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz7',this,true)"><span class="font-bold text-primary-600 mr-2">&#9315;</span> (가) 해시함수 (나) 공개키 (다) 대칭키</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz7',this,false)"><span class="font-bold text-primary-600 mr-2">&#9316;</span> (가) 공개키 (나) 해시함수 (다) 대칭키</div>
+                    </div>
+                    <div id="quiz7-result" class="hidden mt-4 ml-11"></div>
+                </div>
+
+                <!-- Q8 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz8-container">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white text-sm font-bold flex-shrink-0">8</span>
+                        <p class="font-bold text-gray-900">다음 중 데이터 유형이 <u>다른 하나</u>는?</p>
+                    </div>
+                    <div class="space-y-2 ml-11">
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz8',this,false)"><span class="font-bold text-primary-600 mr-2">&#9312;</span> 사진</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz8',this,false)"><span class="font-bold text-primary-600 mr-2">&#9313;</span> 영상</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz8',this,true)"><span class="font-bold text-primary-600 mr-2">&#9314;</span> CSV 파일</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz8',this,false)"><span class="font-bold text-primary-600 mr-2">&#9315;</span> PDF</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz8',this,false)"><span class="font-bold text-primary-600 mr-2">&#9316;</span> SNS 게시글</div>
+                    </div>
+                    <div id="quiz8-result" class="hidden mt-4 ml-11"></div>
+                </div>
+
+                <!-- Q9 (서술형) -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz9-container">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white text-sm font-bold flex-shrink-0">9</span>
+                        <div>
+                            <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">서술형</span>
+                            <p class="font-bold text-gray-900 mt-2">대규모 데이터를 저장 &middot; 분석하여 가치를 추출하고 다양한 분야에서 활용하는 개념을 무엇이라 하는가?</p>
+                        </div>
+                    </div>
+                    <div class="ml-11">
+                        <div class="flex items-center gap-3">
+                            <label class="text-sm font-semibold text-gray-600">답:</label>
+                            <input type="text" id="q9-input" placeholder="답을 입력하세요" class="flex-1 max-w-xs border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all">
+                            <button onclick="checkShortAnswer9()" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-medium px-4 py-2.5 rounded-xl transition-all text-sm shadow-sm">
+                                <i class="fas fa-check"></i> 확인
+                            </button>
+                        </div>
+                    </div>
+                    <div id="quiz9-result" class="hidden mt-4 ml-11"></div>
+                </div>
+
+                <!-- Q10 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6" id="quiz10-container">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white text-sm font-bold flex-shrink-0">10</span>
+                        <div>
+                            <p class="font-bold text-gray-900 mb-3">빅데이터 분석 과정을 <u>올바른 순서</u>로 나열한 것은?</p>
+                            <div class="bg-gray-50 rounded-xl p-4 text-sm text-gray-600 leading-relaxed grid grid-cols-2 sm:grid-cols-4 gap-2 text-center border border-gray-200">
+                                <span class="bg-white border border-gray-200 rounded-lg px-3 py-2"><strong>ㄱ.</strong> 데이터 분석</span>
+                                <span class="bg-white border border-gray-200 rounded-lg px-3 py-2"><strong>ㄴ.</strong> 데이터 수집</span>
+                                <span class="bg-white border border-gray-200 rounded-lg px-3 py-2"><strong>ㄷ.</strong> 문제 정의</span>
+                                <span class="bg-white border border-gray-200 rounded-lg px-3 py-2"><strong>ㄹ.</strong> 공유 &middot; 평가</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 ml-11">
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz10',this,false)"><span class="font-bold text-primary-600 mr-2">&#9312;</span> ㄱ &rarr; ㄴ &rarr; ㄷ &rarr; ㄹ</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz10',this,false)"><span class="font-bold text-primary-600 mr-2">&#9313;</span> ㄴ &rarr; ㄷ &rarr; ㄱ &rarr; ㄹ</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz10',this,false)"><span class="font-bold text-primary-600 mr-2">&#9314;</span> ㄷ &rarr; ㄱ &rarr; ㄴ &rarr; ㄹ</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz10',this,false)"><span class="font-bold text-primary-600 mr-2">&#9315;</span> ㄹ &rarr; ㄷ &rarr; ㄴ &rarr; ㄱ</div>
+                        <div class="quiz-option border border-gray-200 rounded-xl px-4 py-3 text-sm" onclick="checkQuiz('quiz10',this,true)"><span class="font-bold text-primary-600 mr-2">&#9316;</span> ㄷ &rarr; ㄴ &rarr; ㄱ &rarr; ㄹ</div>
+                    </div>
+                    <div id="quiz10-result" class="hidden mt-4 ml-11"></div>
+                </div>
+
+            </div>
+
+            <!-- Quiz Score Summary -->
+            <div class="mt-8 bg-gradient-to-r from-primary-50 to-accent-50 rounded-2xl p-6 border border-primary-100" id="quiz-summary">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center shadow-lg"><i class="fas fa-chart-bar text-white text-xl"></i></div>
+                        <div>
+                            <h3 class="font-bold text-gray-900">나의 점수</h3>
+                            <p class="text-sm text-gray-500">10문제 중 <span id="score-count" class="font-bold text-primary-600">0</span>문제 정답</p>
+                        </div>
+                    </div>
+                    <button onclick="resetAllQuiz()" class="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-medium px-4 py-2 rounded-xl border border-gray-200 transition-all text-sm shadow-sm">
+                        <i class="fas fa-redo"></i> 다시 풀기
+                    </button>
+                </div>
+                <div class="mt-4 w-full bg-gray-200 rounded-full h-3">
+                    <div id="score-bar" class="bg-gradient-to-r from-primary-400 to-accent-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div id="score-message" class="mt-3 text-sm text-gray-600 hidden"></div>
             </div>
         </section>
 
-        <!-- ============================================ -->
-        <!-- 실력 확인 Section -->
-        <!-- ============================================ -->
-        <section class="print-break">
-            <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="bg-slate-700 text-white rounded-xl w-10 h-10 flex items-center justify-center">
-                        <i class="fas fa-clipboard-check text-sm"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-800">실력 확인</h2>
-                        <p class="text-sm text-slate-500">배운 내용을 문제로 확인해 봅시다</p>
-                    </div>
-                </div>
-                <div class="flex gap-2 no-print">
-                    <button onclick="resetQuiz()" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-slate-600 hover:bg-gray-50 transition-colors">
-                        <i class="fas fa-redo-alt"></i> 초기화
-                    </button>
-                    <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-slate-600 hover:bg-gray-50 transition-colors">
-                        <i class="fas fa-print"></i> 인쇄
-                    </button>
-                </div>
-            </div>
+        <div class="section-divider max-w-md mx-auto"></div>
 
-            <!-- Score Display -->
-            <div id="scoreDisplay" class="hidden mb-6 bg-white rounded-2xl border border-gray-200 p-6 text-center">
-                <div class="text-4xl font-extrabold text-slate-800 mb-1" id="scoreValue"></div>
-                <p class="text-slate-500 text-sm" id="scoreText"></p>
-            </div>
-
-            <div class="space-y-6" id="quizContainer">
-
-                <!-- 문제 1 (주관식 - 빈칸) -->
-                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q1_div">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 1</span>
-                        <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">주관식</span>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-slate-700 leading-relaxed mb-5">
-                            데이터 압축에서 원래의 데이터를 더 작은 크기로 변환하는 <strong class="text-slate-800">(㉠)</strong> 과정과 압축된 데이터를 원래의 데이터로 복원하는 <strong class="text-slate-800">(㉡)</strong> 과정이 있다. ㉠과 ㉡에 들어갈 용어를 순서대로 쓰시오.
-                        </p>
-                        <div class="flex items-center gap-3">
-                            <label class="text-sm font-semibold text-slate-600">답:</label>
-                            <input type="text" id="q1_answer" placeholder="㉠, ㉡ (쉼표로 구분)" class="flex-1 max-w-md border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition-all">
-                        </div>
-                        <div id="q1-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
-                    </div>
-                </div>
-
-                <!-- 문제 2 -->
-                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q2_div">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 2</span>
-                        <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">객관식</span>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-slate-700 leading-relaxed mb-5">
-                            디지털 데이터 압축에 대한 설명 중 <strong class="text-slate-800">옳은 것</strong>은?
-                        </p>
-                        <div class="space-y-2" id="q2-options">
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="2" data-value="1">
-                                <input type="radio" name="q2" value="1" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9312;</span>
-                                <span>MP3는 손실 압축 방식이다.</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="2" data-value="2">
-                                <input type="radio" name="q2" value="2" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9313;</span>
-                                <span>PNG는 손실 압축 방식이다.</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="2" data-value="3">
-                                <input type="radio" name="q2" value="3" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9314;</span>
-                                <span>AAC는 MP3보다 품질이 떨어진다.</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="2" data-value="4">
-                                <input type="radio" name="q2" value="4" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9315;</span>
-                                <span>문자열은 압축이 불가능하다.</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="2" data-value="5">
-                                <input type="radio" name="q2" value="5" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9316;</span>
-                                <span>GIF는 256색 이상을 표현할 수 있다.</span>
-                            </label>
-                        </div>
-                        <div id="q2-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
-                    </div>
-                </div>
-
-                <!-- 문제 3 -->
-                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q3_div">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 3</span>
-                        <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">객관식</span>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-slate-700 leading-relaxed mb-5">
-                            사람의 눈이 인식하지 못하는 범위의 정보를 제거하여 이미지 크기를 줄인 형식은?
-                        </p>
-                        <div class="space-y-2" id="q3-options">
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="3" data-value="1">
-                                <input type="radio" name="q3" value="1" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9312;</span>
-                                <span>BMP</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="3" data-value="2">
-                                <input type="radio" name="q3" value="2" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9313;</span>
-                                <span>GIF</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="3" data-value="3">
-                                <input type="radio" name="q3" value="3" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9314;</span>
-                                <span>PNG</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="3" data-value="4">
-                                <input type="radio" name="q3" value="4" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9315;</span>
-                                <span>WAV</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="3" data-value="5">
-                                <input type="radio" name="q3" value="5" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9316;</span>
-                                <span>JPEG</span>
-                            </label>
-                        </div>
-                        <div id="q3-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
-                    </div>
-                </div>
-
-                <!-- 문제 4 -->
-                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q4_div">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 4</span>
-                        <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">객관식</span>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-slate-700 leading-relaxed mb-5">
-                            권한이 없는 사람이 데이터에 접근하지 못하도록 데이터를 변환하는 기술은?
-                        </p>
-                        <div class="space-y-2" id="q4-options">
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="4" data-value="1">
-                                <input type="radio" name="q4" value="1" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9312;</span>
-                                <span>데이터 압축</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="4" data-value="2">
-                                <input type="radio" name="q4" value="2" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9313;</span>
-                                <span>데이터 복호화</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="4" data-value="3">
-                                <input type="radio" name="q4" value="3" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9314;</span>
-                                <span>데이터 인코딩</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="4" data-value="4">
-                                <input type="radio" name="q4" value="4" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9315;</span>
-                                <span>데이터 암호화</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="4" data-value="5">
-                                <input type="radio" name="q4" value="5" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9316;</span>
-                                <span>데이터 마이닝</span>
-                            </label>
-                        </div>
-                        <div id="q4-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
-                    </div>
-                </div>
-
-                <!-- 문제 5 -->
-                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q5_div">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 5</span>
-                        <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">객관식</span>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-slate-700 leading-relaxed mb-5">
-                            암호 알고리즘에서 평문을 암호문으로 변경할 때 사용하는 문자열은?
-                        </p>
-                        <div class="space-y-2" id="q5-options">
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="5" data-value="1">
-                                <input type="radio" name="q5" value="1" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9312;</span>
-                                <span>키</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="5" data-value="2">
-                                <input type="radio" name="q5" value="2" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9313;</span>
-                                <span>평문</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="5" data-value="3">
-                                <input type="radio" name="q5" value="3" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9314;</span>
-                                <span>암호문</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="5" data-value="4">
-                                <input type="radio" name="q5" value="4" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9315;</span>
-                                <span>해시</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="5" data-value="5">
-                                <input type="radio" name="q5" value="5" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9316;</span>
-                                <span>복호화</span>
-                            </label>
-                        </div>
-                        <div id="q5-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
-                    </div>
-                </div>
-
-                <!-- 문제 6 -->
-                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q6_div">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 6</span>
-                        <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">객관식</span>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-slate-700 leading-relaxed mb-5">
-                            평문의 알파벳을 키만큼 평행 이동한 알파벳으로 치환하는 암호는?
-                        </p>
-                        <div class="space-y-2" id="q6-options">
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="6" data-value="1">
-                                <input type="radio" name="q6" value="1" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9312;</span>
-                                <span>전치 암호</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="6" data-value="2">
-                                <input type="radio" name="q6" value="2" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9313;</span>
-                                <span>대칭키 암호</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="6" data-value="3">
-                                <input type="radio" name="q6" value="3" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9314;</span>
-                                <span>공개키 암호</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="6" data-value="4">
-                                <input type="radio" name="q6" value="4" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9315;</span>
-                                <span>해시 암호</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="6" data-value="5">
-                                <input type="radio" name="q6" value="5" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9316;</span>
-                                <span>카이사르 암호</span>
-                            </label>
-                        </div>
-                        <div id="q6-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
-                    </div>
-                </div>
-
-                <!-- 문제 7 -->
-                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q7_div">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 7</span>
-                        <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">객관식</span>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-slate-700 leading-relaxed mb-4">
-                            다음 설명에 해당하는 암호 알고리즘을 바르게 짝지은 것은?
-                        </p>
-                        <div class="bg-slate-50 rounded-xl p-4 mb-5 space-y-2.5 text-sm text-slate-600 leading-relaxed">
-                            <p><strong class="text-slate-700">(가)</strong> 데이터를 고정된 길이의 값으로 변환하며, 원본 복원이 불가능</p>
-                            <p><strong class="text-slate-700">(나)</strong> 암호화와 복호화에 서로 다른 키를 사용</p>
-                            <p><strong class="text-slate-700">(다)</strong> 암호화와 복호화에 같은 키를 사용</p>
-                        </div>
-                        <div class="space-y-2" id="q7-options">
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="7" data-value="1">
-                                <input type="radio" name="q7" value="1" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9312;</span>
-                                <span>(가) 대칭키 (나) 해시함수 (다) 공개키</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="7" data-value="2">
-                                <input type="radio" name="q7" value="2" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9313;</span>
-                                <span>(가) 공개키 (나) 대칭키 (다) 해시함수</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="7" data-value="3">
-                                <input type="radio" name="q7" value="3" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9314;</span>
-                                <span>(가) 대칭키 (나) 공개키 (다) 해시함수</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="7" data-value="4">
-                                <input type="radio" name="q7" value="4" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9315;</span>
-                                <span>(가) 해시함수 (나) 공개키 (다) 대칭키</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="7" data-value="5">
-                                <input type="radio" name="q7" value="5" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9316;</span>
-                                <span>(가) 공개키 (나) 해시함수 (다) 대칭키</span>
-                            </label>
-                        </div>
-                        <div id="q7-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
-                    </div>
-                </div>
-
-                <!-- 문제 8 -->
-                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q8_div">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 8</span>
-                        <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">객관식</span>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-slate-700 leading-relaxed mb-5">
-                            다음 중 데이터 유형이 <strong class="text-slate-800">다른 하나</strong>는?
-                        </p>
-                        <div class="space-y-2" id="q8-options">
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="8" data-value="1">
-                                <input type="radio" name="q8" value="1" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9312;</span>
-                                <span>사진</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="8" data-value="2">
-                                <input type="radio" name="q8" value="2" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9313;</span>
-                                <span>영상</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="8" data-value="3">
-                                <input type="radio" name="q8" value="3" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9314;</span>
-                                <span>CSV 파일</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="8" data-value="4">
-                                <input type="radio" name="q8" value="4" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9315;</span>
-                                <span>PDF</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="8" data-value="5">
-                                <input type="radio" name="q8" value="5" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9316;</span>
-                                <span>SNS 게시글</span>
-                            </label>
-                        </div>
-                        <div id="q8-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
-                    </div>
-                </div>
-
-                <!-- 문제 9 (서술형) -->
-                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q9_div">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 9</span>
-                        <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">서술형</span>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-slate-700 leading-relaxed mb-5">
-                            대규모 데이터를 저장 &middot; 분석하여 가치를 추출하고 다양한 분야에서 활용하는 개념을 무엇이라 하는가?
-                        </p>
-                        <div class="flex items-center gap-3">
-                            <label class="text-sm font-semibold text-slate-600">답:</label>
-                            <input type="text" id="q9_answer" placeholder="답을 입력하세요" class="flex-1 max-w-xs border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition-all">
-                        </div>
-                        <div id="q9-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
-                    </div>
-                </div>
-
-                <!-- 문제 10 -->
-                <div class="bg-white rounded-2xl border border-gray-200 card-hover overflow-hidden" id="q10_div">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                        <span class="bg-slate-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">문제 10</span>
-                        <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">객관식</span>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-slate-700 leading-relaxed mb-4">
-                            빅데이터 분석 과정을 <strong class="text-slate-800">올바른 순서</strong>로 나열한 것은?
-                        </p>
-                        <div class="bg-slate-50 rounded-xl p-4 mb-5 text-sm text-slate-600 leading-relaxed grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                            <span class="bg-white border border-gray-200 rounded-lg px-3 py-2"><strong>ㄱ.</strong> 데이터 분석</span>
-                            <span class="bg-white border border-gray-200 rounded-lg px-3 py-2"><strong>ㄴ.</strong> 데이터 수집</span>
-                            <span class="bg-white border border-gray-200 rounded-lg px-3 py-2"><strong>ㄷ.</strong> 문제 정의</span>
-                            <span class="bg-white border border-gray-200 rounded-lg px-3 py-2"><strong>ㄹ.</strong> 공유 &middot; 평가</span>
-                        </div>
-                        <div class="space-y-2" id="q10-options">
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="10" data-value="1">
-                                <input type="radio" name="q10" value="1" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9312;</span>
-                                <span>ㄱ &rarr; ㄴ &rarr; ㄷ &rarr; ㄹ</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="10" data-value="2">
-                                <input type="radio" name="q10" value="2" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9313;</span>
-                                <span>ㄴ &rarr; ㄷ &rarr; ㄱ &rarr; ㄹ</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="10" data-value="3">
-                                <input type="radio" name="q10" value="3" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9314;</span>
-                                <span>ㄷ &rarr; ㄱ &rarr; ㄴ &rarr; ㄹ</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="10" data-value="4">
-                                <input type="radio" name="q10" value="4" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9315;</span>
-                                <span>ㄹ &rarr; ㄷ &rarr; ㄴ &rarr; ㄱ</span>
-                            </label>
-                            <label class="quiz-option flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3" data-question="10" data-value="5">
-                                <input type="radio" name="q10" value="5" class="hidden">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0">&#9316;</span>
-                                <span>ㄷ &rarr; ㄴ &rarr; ㄱ &rarr; ㄹ</span>
-                            </label>
-                        </div>
-                        <div id="q10-result" class="mt-4 hidden rounded-xl p-4 text-sm font-medium"></div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Check Answers Button (hidden until submission) -->
-            <div class="mt-8 text-center no-print" id="checkBtnArea" style="display: none;">
-                <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-5 mb-4 inline-block">
-                    <p class="text-emerald-700 text-sm font-semibold mb-3">
-                        <i class="fas fa-circle-check mr-1.5"></i>답안 제출이 완료되었습니다. 이제 정답을 확인할 수 있습니다.
-                    </p>
-                    <button onclick="checkAllAnswers()" id="checkBtn" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors text-base shadow-lg shadow-emerald-200">
-                        <i class="fas fa-check-circle"></i> 정답 확인하기
-                    </button>
-                </div>
-            </div>
-            <div id="quizResult" style="display:none;" class="mt-4"></div>
-        </section>
-
-        <!-- ============================================ -->
-        <!-- 평가하기 Section -->
-        <!-- ============================================ -->
-        <section class="print-break">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="bg-slate-700 text-white rounded-xl w-10 h-10 flex items-center justify-center">
-                    <i class="fas fa-star text-sm"></i>
-                </div>
+        <!-- ===== SECTION 3: 평가하기 ===== -->
+        <section class="fade-in" id="section-evaluation">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg"><i class="fas fa-star"></i></div>
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800">평가하기</h2>
-                    <p class="text-sm text-slate-500">스스로 학습 성과를 평가해 봅시다</p>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">평가하기</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Self Evaluation</p>
                 </div>
             </div>
-
-            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-gray-200">
-                                <th class="text-left px-6 py-4 font-semibold text-slate-700 w-16">번호</th>
-                                <th class="text-left px-6 py-4 font-semibold text-slate-700">평가 항목</th>
-                                <th class="text-center px-4 py-4 font-semibold text-slate-700 w-28">
-                                    <span class="text-amber-500">&#9733;&#9733;&#9733;</span><br><span class="text-xs text-slate-500">상</span>
-                                </th>
-                                <th class="text-center px-4 py-4 font-semibold text-slate-700 w-28">
-                                    <span class="text-amber-500">&#9733;&#9733;</span><span class="text-gray-300">&#9733;</span><br><span class="text-xs text-slate-500">중</span>
-                                </th>
-                                <th class="text-center px-4 py-4 font-semibold text-slate-700 w-28">
-                                    <span class="text-amber-500">&#9733;</span><span class="text-gray-300">&#9733;&#9733;</span><br><span class="text-xs text-slate-500">하</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-5 text-slate-500 font-bold">1</td>
-                                <td class="px-6 py-5 text-slate-700">디지털 데이터 압축의 개념과 문자열, 이미지, 소리 압축 방식을 이해하였는가?</td>
-                                <td class="text-center px-4 py-5">
-                                    <label class="star-btn text-2xl inactive cursor-pointer">
-                                        <input type="radio" name="eval1" value="상" class="hidden">
-                                        <span class="text-amber-400">&#9733;&#9733;&#9733;</span>
-                                    </label>
-                                </td>
-                                <td class="text-center px-4 py-5">
-                                    <label class="star-btn text-2xl inactive cursor-pointer">
-                                        <input type="radio" name="eval1" value="중" class="hidden">
-                                        <span class="text-amber-400">&#9733;&#9733;</span><span class="text-gray-300">&#9733;</span>
-                                    </label>
-                                </td>
-                                <td class="text-center px-4 py-5">
-                                    <label class="star-btn text-2xl inactive cursor-pointer">
-                                        <input type="radio" name="eval1" value="하" class="hidden">
-                                        <span class="text-amber-400">&#9733;</span><span class="text-gray-300">&#9733;&#9733;</span>
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-5 text-slate-500 font-bold">2</td>
-                                <td class="px-6 py-5 text-slate-700">디지털 데이터 암호화의 개념과 활용 사례를 설명할 수 있는가?</td>
-                                <td class="text-center px-4 py-5">
-                                    <label class="star-btn text-2xl inactive cursor-pointer">
-                                        <input type="radio" name="eval2" value="상" class="hidden">
-                                        <span class="text-amber-400">&#9733;&#9733;&#9733;</span>
-                                    </label>
-                                </td>
-                                <td class="text-center px-4 py-5">
-                                    <label class="star-btn text-2xl inactive cursor-pointer">
-                                        <input type="radio" name="eval2" value="중" class="hidden">
-                                        <span class="text-amber-400">&#9733;&#9733;</span><span class="text-gray-300">&#9733;</span>
-                                    </label>
-                                </td>
-                                <td class="text-center px-4 py-5">
-                                    <label class="star-btn text-2xl inactive cursor-pointer">
-                                        <input type="radio" name="eval2" value="하" class="hidden">
-                                        <span class="text-amber-400">&#9733;</span><span class="text-gray-300">&#9733;&#9733;</span>
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-5 text-slate-500 font-bold">3</td>
-                                <td class="px-6 py-5 text-slate-700">빅데이터 개념과 분석 과정을 설명할 수 있는가?</td>
-                                <td class="text-center px-4 py-5">
-                                    <label class="star-btn text-2xl inactive cursor-pointer">
-                                        <input type="radio" name="eval3" value="상" class="hidden">
-                                        <span class="text-amber-400">&#9733;&#9733;&#9733;</span>
-                                    </label>
-                                </td>
-                                <td class="text-center px-4 py-5">
-                                    <label class="star-btn text-2xl inactive cursor-pointer">
-                                        <input type="radio" name="eval3" value="중" class="hidden">
-                                        <span class="text-amber-400">&#9733;&#9733;</span><span class="text-gray-300">&#9733;</span>
-                                    </label>
-                                </td>
-                                <td class="text-center px-4 py-5">
-                                    <label class="star-btn text-2xl inactive cursor-pointer">
-                                        <input type="radio" name="eval3" value="하" class="hidden">
-                                        <span class="text-amber-400">&#9733;</span><span class="text-gray-300">&#9733;&#9733;</span>
-                                    </label>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <p class="text-gray-600 mb-6 text-sm">이번 단원에서 학습한 내용을 스스로 평가해 봅시다. 각 항목에 대해 자신의 이해 수준을 별점으로 표시하세요.</p>
+                <div class="space-y-6">
+                    <!-- Eval 1 -->
+                    <div class="bg-gradient-to-r from-cyan-50 to-sky-50 rounded-xl p-5 border border-cyan-100">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-cyan-500 flex items-center justify-center flex-shrink-0"><span class="text-white text-sm font-bold">1</span></div>
+                                <p class="font-medium text-gray-800 text-sm">디지털 데이터 압축의 개념과 문자열, 이미지, 소리 압축 방식을 이해하였는가?</p>
+                            </div>
+                            <div class="star-rating flex gap-1 flex-shrink-0" data-rating="eval1">
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval1',1)"></i>
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval1',2)"></i>
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval1',3)"></i>
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval1',4)"></i>
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval1',5)"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Eval 2 -->
+                    <div class="bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl p-5 border border-sky-100">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center flex-shrink-0"><span class="text-white text-sm font-bold">2</span></div>
+                                <p class="font-medium text-gray-800 text-sm">디지털 데이터 암호화의 개념과 활용 사례를 설명할 수 있는가?</p>
+                            </div>
+                            <div class="star-rating flex gap-1 flex-shrink-0" data-rating="eval2">
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval2',1)"></i>
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval2',2)"></i>
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval2',3)"></i>
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval2',4)"></i>
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval2',5)"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Eval 3 -->
+                    <div class="bg-gradient-to-r from-accent-50 to-cyan-50 rounded-xl p-5 border border-accent-100">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-accent-500 flex items-center justify-center flex-shrink-0"><span class="text-white text-sm font-bold">3</span></div>
+                                <p class="font-medium text-gray-800 text-sm">빅데이터 개념과 분석 과정을 설명할 수 있는가?</p>
+                            </div>
+                            <div class="star-rating flex gap-1 flex-shrink-0" data-rating="eval3">
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval3',1)"></i>
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval3',2)"></i>
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval3',3)"></i>
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval3',4)"></i>
+                                <i class="fas fa-star text-xl star" onclick="setRating('eval3',5)"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="eval-message" class="mt-6 hidden">
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
+                        <div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500 text-lg"></i><span class="font-bold text-green-700">자기 평가 완료!</span></div>
+                        <p class="text-sm text-gray-600 mt-2" id="eval-feedback"></p>
+                    </div>
                 </div>
             </div>
         </section>
-
-        <!-- ============================================ -->
-        <!-- Submit Section -->
-        <!-- ============================================ -->
-        <div class="flex flex-wrap justify-center gap-3 no-print">
-            <button id="submitBtn" onclick="submitData()" class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-800 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors text-base shadow-lg shadow-slate-300">
-                <i class="fas fa-paper-plane" id="submitIcon"></i>
-                <span id="submitText">답안 제출하기</span>
-            </button>
-        </div>
-
-        <!-- Submit Result Messages -->
-        <div id="submitResult" class="hidden text-center">
-            <div id="submitSuccess" class="hidden inline-flex items-center gap-3 bg-green-50 border-2 border-green-300 text-green-700 rounded-xl px-6 py-4 text-sm font-semibold">
-                <i class="fas fa-circle-check text-xl"></i>
-                <span>답안이 성공적으로 제출되었습니다!</span>
-            </div>
-            <div id="submitError" class="hidden inline-flex items-center gap-3 bg-red-50 border-2 border-red-300 text-red-700 rounded-xl px-6 py-4 text-sm font-semibold">
-                <i class="fas fa-circle-exclamation text-xl"></i>
-                <span id="submitErrorMsg">제출 중 오류가 발생했습니다. 다시 시도해 주세요.</span>
-            </div>
-        </div>
 
         <!-- 학습 완료 메시지 -->
-        <section class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl p-8 text-center">
+        <section class="bg-gradient-to-r from-cyan-600 to-sky-600 text-white rounded-2xl p-8 text-center">
             <div class="text-5xl mb-4">🎉</div>
             <h2 class="text-2xl font-extrabold mb-2">II단원 학습 완료!</h2>
-            <p class="text-emerald-100">디지털 데이터 단원을 모두 마쳤습니다.<br>다음 단원에서도 열심히 학습하세요!</p>
+            <p class="text-cyan-100">디지털 데이터 단원을 모두 마쳤습니다.<br>다음 단원에서도 열심히 학습하세요!</p>
         </section>
     </main>
 
@@ -1002,7 +656,7 @@
                 <div class="flex-1 flex justify-center">
                     <a href="../../index.html"
                        class="inline-flex items-center gap-2 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
-                       style="background: linear-gradient(135deg, #20c997, #12b886);">
+                       style="background: linear-gradient(135deg, #22d3ee, #0891b2);">
                         <i class="fas fa-th-list"></i>
                         전체 단원으로 돌아가기
                     </a>
@@ -1031,377 +685,252 @@
         </div>
     </footer>
 
+    <!-- ===== SCRIPTS ===== -->
     <script>
-        // =============================================
-        // 프록시 Apps Script Web App URL
-        // =============================================
-        const APPS_SCRIPT_URL = '';
+        // ===== Quiz System =====
+        const quizAnswered = {};
+        let correctCount = 0;
+        const totalQuestions = 10;
 
-        // Validate Google Sheet URL format
-        function validateSheetUrl() {
-            var url = document.getElementById('sheetUrl').value.trim();
-            var icon = document.getElementById('sheetUrlIcon');
-            var input = document.getElementById('sheetUrl');
-
-            if (!url) {
-                input.style.borderColor = '#fca5a5';
-                input.style.backgroundColor = '#fef2f2';
-                icon.className = 'fas fa-link-slash text-red-500';
-                return false;
+        const quizExplanations = {
+            quiz1: {
+                correct: '데이터 압축에서 원래의 데이터를 더 작은 크기로 변환하는 과정을 <strong>인코딩(압축)</strong>, 압축된 데이터를 원래의 데이터로 복원하는 과정을 <strong>디코딩(복원)</strong>이라 합니다.',
+                wrong: '정답은 <strong>㉠ 압축(인코딩), ㉡ 복원(디코딩)</strong>입니다. 데이터 압축에서 원래의 데이터를 더 작은 크기로 변환하는 과정을 인코딩, 압축된 데이터를 원래의 데이터로 복원하는 과정을 디코딩이라 합니다.'
+            },
+            quiz2: {
+                correct: 'MP3는 사람이 들을 수 없는 주파수 대역의 소리를 제거하는 <strong>손실 압축</strong> 방식입니다.',
+                wrong: '정답은 <strong>&#9312; MP3는 손실 압축 방식이다</strong>입니다. MP3는 사람이 들을 수 없는 주파수 대역의 소리를 제거하는 손실 압축 방식입니다.'
+            },
+            quiz3: {
+                correct: 'JPEG는 사람의 눈이 인식하지 못하는 범위의 정보를 제거하여 이미지 크기를 줄이는 <strong>손실 압축</strong> 형식입니다.',
+                wrong: '정답은 <strong>&#9316; JPEG</strong>입니다. JPEG는 사람의 눈이 인식하지 못하는 범위의 정보를 제거하여 이미지 크기를 줄이는 손실 압축 형식입니다.'
+            },
+            quiz4: {
+                correct: '권한이 없는 사람이 데이터에 접근하지 못하도록 변환하는 기술은 <strong>데이터 암호화</strong>입니다.',
+                wrong: '정답은 <strong>&#9315; 데이터 암호화</strong>입니다. 권한이 없는 사람이 데이터에 접근하지 못하도록 변환하는 기술은 데이터 암호화입니다.'
+            },
+            quiz5: {
+                correct: '평문을 암호문으로 변경할 때 사용하는 문자열은 <strong>키(Key)</strong>입니다.',
+                wrong: '정답은 <strong>&#9312; 키</strong>입니다. 평문을 암호문으로 변경할 때 사용하는 문자열은 키(Key)입니다.'
+            },
+            quiz6: {
+                correct: '카이사르 암호는 평문의 알파벳을 키만큼 평행 이동하여 <strong>치환</strong>하는 대표적인 고대 암호입니다.',
+                wrong: '정답은 <strong>&#9316; 카이사르 암호</strong>입니다. 카이사르 암호는 평문의 알파벳을 키만큼 평행 이동하여 치환하는 대표적인 고대 암호입니다.'
+            },
+            quiz7: {
+                correct: '(가) <strong>해시함수</strong> - 고정 길이 변환, 복원 불가 (나) <strong>공개키</strong> - 서로 다른 키 (다) <strong>대칭키</strong> - 같은 키 사용',
+                wrong: '정답은 <strong>&#9315; (가) 해시함수 (나) 공개키 (다) 대칭키</strong>입니다. 해시함수는 고정 길이 변환 및 복원 불가, 공개키는 서로 다른 키 사용, 대칭키는 같은 키를 사용합니다.'
+            },
+            quiz8: {
+                correct: 'CSV 파일은 <strong>정형 데이터</strong>이며, 나머지(사진, 영상, PDF, SNS 게시글)는 <strong>비정형 데이터</strong>입니다.',
+                wrong: '정답은 <strong>&#9314; CSV 파일</strong>입니다. CSV 파일은 정형 데이터이며, 나머지(사진, 영상, PDF, SNS 게시글)는 비정형 데이터입니다.'
+            },
+            quiz9: {
+                correct: '<strong>빅데이터</strong>는 대규모 데이터를 저장 &middot; 분석하여 가치를 추출하고 활용하는 개념입니다.',
+                wrong: '정답은 <strong>빅데이터</strong>입니다. 빅데이터는 대규모 데이터를 저장 &middot; 분석하여 가치를 추출하고 다양한 분야에서 활용하는 개념입니다.'
+            },
+            quiz10: {
+                correct: '빅데이터 분석 과정: <strong>ㄷ(문제 정의) &rarr; ㄴ(데이터 수집) &rarr; ㄱ(데이터 분석) &rarr; ㄹ(공유&middot;평가)</strong>',
+                wrong: '정답은 <strong>&#9316; ㄷ &rarr; ㄴ &rarr; ㄱ &rarr; ㄹ</strong>입니다. 빅데이터 분석 과정은 문제 정의 &rarr; 데이터 수집 &rarr; 데이터 분석 &rarr; 공유&middot;평가 순서입니다.'
             }
-
-            var match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-            if (match) {
-                input.style.borderColor = '#86efac';
-                input.style.backgroundColor = '#f0fdf4';
-                icon.className = 'fas fa-circle-check text-green-500';
-                return true;
-            } else {
-                input.style.borderColor = '#fca5a5';
-                input.style.backgroundColor = '#fef2f2';
-                icon.className = 'fas fa-circle-xmark text-red-500';
-                alert('올바른 구글 시트 URL이 아닙니다.\n\n예시: https://docs.google.com/spreadsheets/d/abc123.../edit');
-                return false;
-            }
-        }
-
-        // Submit data to Google Sheets
-        function submitData() {
-            var grade = document.getElementById('grade').value;
-            var classNum = document.getElementById('classNum').value;
-            var number = document.getElementById('number').value;
-            var studentName = document.getElementById('name').value.trim();
-
-            if (!grade || !classNum || !number || !studentName) {
-                alert('학년, 반, 번호, 이름을 모두 입력해주세요.');
-                document.getElementById('grade').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return;
-            }
-
-            // Validate Google Sheet URL
-            var sheetUrl = document.getElementById('sheetUrl').value.trim();
-            if (!sheetUrl) {
-                alert('구글 시트 URL을 입력해 주세요.\n선생님이 공유한 구글 시트 주소를 붙여넣으세요.');
-                document.getElementById('sheetUrl').focus();
-                return;
-            }
-            if (!validateSheetUrl()) return;
-
-            if (!APPS_SCRIPT_URL) {
-                alert('Apps Script URL이 설정되지 않았습니다.');
-                return;
-            }
-
-            var payload = {
-                sheetUrl: sheetUrl,
-                page: '데이터 대단원 마무리',
-                grade: grade,
-                class: classNum,
-                number: number,
-                name: studentName,
-                q1_answer: document.getElementById('q1_answer')?.value || '',
-                q2_answer: document.querySelector('input[name="q2"]:checked')?.value || '',
-                q3_answer: document.querySelector('input[name="q3"]:checked')?.value || '',
-                q4_answer: document.querySelector('input[name="q4"]:checked')?.value || '',
-                q5_answer: document.querySelector('input[name="q5"]:checked')?.value || '',
-                q6_answer: document.querySelector('input[name="q6"]:checked')?.value || '',
-                q7_answer: document.querySelector('input[name="q7"]:checked')?.value || '',
-                q8_answer: document.querySelector('input[name="q8"]:checked')?.value || '',
-                q9_answer: document.getElementById('q9_answer')?.value || '',
-                q10_answer: document.querySelector('input[name="q10"]:checked')?.value || '',
-                eval1: document.querySelector('input[name="eval1"]:checked')?.value || '',
-                eval2: document.querySelector('input[name="eval2"]:checked')?.value || '',
-                eval3: document.querySelector('input[name="eval3"]:checked')?.value || ''
-            };
-
-            // UI: loading state
-            var btn = document.getElementById('submitBtn');
-            var icon = document.getElementById('submitIcon');
-            var text = document.getElementById('submitText');
-            var resultDiv = document.getElementById('submitResult');
-            var successDiv = document.getElementById('submitSuccess');
-            var errorDiv = document.getElementById('submitError');
-            var errorMsg = document.getElementById('submitErrorMsg');
-
-            btn.disabled = true;
-            btn.style.opacity = '0.7';
-            icon.className = 'fas fa-spinner fa-spin';
-            text.textContent = '제출 중...';
-            resultDiv.classList.add('hidden');
-            successDiv.classList.add('hidden');
-            errorDiv.classList.add('hidden');
-
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payload),
-                redirect: 'follow'
-            })
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                if (data.result === 'success') {
-                    icon.className = 'fas fa-circle-check';
-                    text.textContent = '제출 완료!';
-                    btn.style.opacity = '1';
-                    btn.classList.add('bg-green-600');
-                    resultDiv.classList.remove('hidden');
-                    successDiv.classList.remove('hidden');
-
-                    // Show the 정답 확인 area
-                    var checkArea = document.getElementById('checkBtnArea');
-                    checkArea.style.display = '';
-                    checkArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    throw new Error(data.message || '알 수 없는 오류');
-                }
-            })
-            .catch(function(err) {
-                icon.className = 'fas fa-paper-plane';
-                text.textContent = '답안 제출하기';
-                btn.disabled = false;
-                btn.style.opacity = '1';
-                resultDiv.classList.remove('hidden');
-                errorDiv.classList.remove('hidden');
-                errorMsg.textContent = '제출 실패: ' + err.message;
-            });
-        }
-
-        // Answer key
-        const answerKey = {
-            q2: '1', q3: '5', q4: '4', q5: '1',
-            q6: '5', q7: '4', q8: '3', q10: '5'
         };
 
-        const explanations = {
-            q1: '데이터 압축에서 원래의 데이터를 더 작은 크기로 변환하는 과정을 <strong>인코딩</strong>, 압축된 데이터를 원래의 데이터로 복원하는 과정을 <strong>디코딩</strong>이라 합니다.',
-            q2: 'MP3는 사람이 들을 수 없는 주파수 대역의 소리를 제거하는 <strong>손실 압축</strong> 방식입니다.',
-            q3: 'JPEG는 사람의 눈이 인식하지 못하는 범위의 정보를 제거하여 이미지 크기를 줄이는 <strong>손실 압축</strong> 형식입니다.',
-            q4: '권한이 없는 사람이 데이터에 접근하지 못하도록 변환하는 기술은 <strong>데이터 암호화</strong>입니다.',
-            q5: '평문을 암호문으로 변경할 때 사용하는 문자열은 <strong>키(Key)</strong>입니다.',
-            q6: '카이사르 암호는 평문의 알파벳을 키만큼 평행 이동하여 <strong>치환</strong>하는 대표적인 고대 암호입니다.',
-            q7: '(가) <strong>해시함수</strong> - 고정 길이 변환, 복원 불가 (나) <strong>공개키</strong> - 서로 다른 키 (다) <strong>대칭키</strong> - 같은 키 사용',
-            q8: 'CSV 파일은 <strong>정형 데이터</strong>이며, 나머지(사진, 영상, PDF, SNS 게시글)는 <strong>비정형 데이터</strong>입니다.',
-            q9: '<strong>빅데이터</strong>는 대규모 데이터를 저장 &middot; 분석하여 가치를 추출하고 활용하는 개념입니다.',
-            q10: '빅데이터 분석 과정: <strong>ㄷ(문제 정의) &rarr; ㄴ(데이터 수집) &rarr; ㄱ(데이터 분석) &rarr; ㄹ(공유&middot;평가)</strong>'
-        };
+        function checkQuiz(quizId, element, isCorrect) {
+            if (quizAnswered[quizId]) return;
+            quizAnswered[quizId] = true;
 
-        // Quiz option click handling
-        document.querySelectorAll('.quiz-option').forEach(function(option) {
-            option.addEventListener('click', function() {
-                var qNum = this.dataset.question;
-                // Remove selected from siblings
-                document.querySelectorAll('[data-question="' + qNum + '"]').forEach(function(opt) {
-                    opt.classList.remove('selected');
-                });
-                this.classList.add('selected');
-                // Check the radio
-                this.querySelector('input[type="radio"]').checked = true;
+            const container = document.getElementById(quizId + '-container');
+            const resultDiv = document.getElementById(quizId + '-result');
+            const options = container.querySelectorAll('.quiz-option');
+
+            options.forEach(opt => {
+                opt.style.cursor = 'default';
+                opt.style.opacity = '0.7';
             });
-        });
+            element.style.opacity = '1';
 
-        // Star rating for eval
-        document.querySelectorAll('.star-btn').forEach(function(btn) {
-            btn.style.opacity = '0.5';
-            btn.addEventListener('click', function() {
-                var radio = this.querySelector('input[type="radio"]');
-                if (radio) {
-                    var name = radio.name;
-                    // Reset all stars in this group
-                    document.querySelectorAll('input[name="' + name + '"]').forEach(function(r) {
-                        r.closest('.star-btn').classList.remove('active');
-                        r.closest('.star-btn').classList.add('inactive');
-                        r.closest('.star-btn').style.opacity = '0.5';
-                        r.closest('.star-btn').style.transform = 'scale(1)';
-                    });
-                    // Activate selected
-                    this.classList.remove('inactive');
-                    this.classList.add('active');
-                    this.style.opacity = '1';
-                    this.style.transform = 'scale(1.15)';
-                    radio.checked = true;
-                }
-            });
-        });
-
-        function checkAllAnswers() {
-            var correct = 0;
-            var total = 10;
-
-            // Check q1 (text input)
-            var q1Val = document.getElementById('q1_answer').value.trim().replace(/\s+/g, '');
-            var q1Div = document.getElementById('q1_div');
-            var q1Result = document.getElementById('q1-result');
-            q1Result.classList.remove('hidden');
-            // Accept variations
-            if (q1Val === '인코딩,디코딩' || q1Val === '인코딩,디코딩' || q1Val === '인코딩 디코딩' || q1Val.includes('인코딩') && q1Val.includes('디코딩')) {
-                correct++;
-                q1Div.classList.add('border-green-400', 'bg-green-50');
-                q1Result.className = 'mt-4 rounded-xl p-4 text-sm font-medium result-correct';
-                q1Result.innerHTML = '<i class="fas fa-check-circle mr-2 text-green-500"></i><strong>정답입니다!</strong> ' + explanations.q1;
+            if (isCorrect) {
+                correctCount++;
+                element.classList.add('correct');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-green-50 border border-green-200 ml-11';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500 text-lg"></i><span class="font-bold text-green-700">정답입니다!</span></div>';
+                resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">' + quizExplanations[quizId].correct + '</p>';
             } else {
-                q1Div.classList.add('border-red-400', 'bg-red-50');
-                q1Result.className = 'mt-4 rounded-xl p-4 text-sm font-medium result-incorrect';
-                q1Result.innerHTML = '<i class="fas fa-times-circle mr-2 text-red-500"></i><strong>오답입니다.</strong> 정답: <strong>인코딩, 디코딩</strong>. ' + explanations.q1;
-            }
+                element.classList.add('wrong');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-red-50 border border-red-200 ml-11';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-times-circle text-red-500 text-lg"></i><span class="font-bold text-red-700">오답입니다.</span></div>';
+                resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">' + quizExplanations[quizId].wrong + '</p>';
 
-            // Check multiple choice questions (q2-q8, q10)
-            var mcQuestions = ['q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q10'];
-            mcQuestions.forEach(function(qName) {
-                var selected = document.querySelector('input[name="' + qName + '"]:checked');
-                var qDiv = document.getElementById(qName + '_div');
-                var resultEl = document.getElementById(qName.replace('q', 'q') + '-result');
-                var options = document.querySelectorAll('[data-question="' + qName.replace('q', '') + '"]');
-
-                resultEl.classList.remove('hidden');
-
-                if (!selected) {
-                    if (qDiv) qDiv.classList.add('border-red-400', 'bg-red-50');
-                    resultEl.className = 'mt-4 rounded-xl p-4 text-sm font-medium result-incorrect';
-                    resultEl.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i>답을 선택해 주세요.';
-                    return;
-                }
-
-                var correctAnswer = answerKey[qName];
-
-                // Highlight options
-                options.forEach(function(opt) {
-                    opt.classList.remove('correct', 'incorrect', 'correct-answer');
-                    if (opt.dataset.value === correctAnswer) {
-                        opt.classList.add('correct-answer');
-                    }
-                    if (opt.dataset.value === selected.value && selected.value !== correctAnswer) {
-                        opt.classList.add('incorrect');
-                    }
-                    if (opt.dataset.value === selected.value && selected.value === correctAnswer) {
+                // Highlight correct answer
+                options.forEach(opt => {
+                    if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) {
                         opt.classList.add('correct');
+                        opt.style.opacity = '1';
                     }
                 });
-
-                if (selected.value === correctAnswer) {
-                    correct++;
-                    if (qDiv) qDiv.classList.add('border-green-400', 'bg-green-50');
-                    resultEl.className = 'mt-4 rounded-xl p-4 text-sm font-medium result-correct';
-                    resultEl.innerHTML = '<i class="fas fa-check-circle mr-2 text-green-500"></i><strong>정답입니다!</strong> ' + explanations[qName];
-                } else {
-                    if (qDiv) qDiv.classList.add('border-red-400', 'bg-red-50');
-                    resultEl.className = 'mt-4 rounded-xl p-4 text-sm font-medium result-incorrect';
-                    resultEl.innerHTML = '<i class="fas fa-times-circle mr-2 text-red-500"></i><strong>오답입니다.</strong> ' + explanations[qName];
-                }
-            });
-
-            // Check q9 (text input)
-            var q9Val = document.getElementById('q9_answer').value.trim();
-            var q9Div = document.getElementById('q9_div');
-            var q9Result = document.getElementById('q9-result');
-            q9Result.classList.remove('hidden');
-
-            if (q9Val === '빅데이터' || q9Val === '빅 데이터' || q9Val.toLowerCase() === 'big data' || q9Val.toLowerCase() === 'bigdata') {
-                correct++;
-                q9Div.classList.add('border-green-400', 'bg-green-50');
-                q9Result.className = 'mt-4 rounded-xl p-4 text-sm font-medium result-correct';
-                q9Result.innerHTML = '<i class="fas fa-check-circle mr-2 text-green-500"></i><strong>정답입니다!</strong> ' + explanations.q9;
-            } else {
-                q9Div.classList.add('border-red-400', 'bg-red-50');
-                q9Result.className = 'mt-4 rounded-xl p-4 text-sm font-medium result-incorrect';
-                q9Result.innerHTML = '<i class="fas fa-times-circle mr-2 text-red-500"></i><strong>오답입니다.</strong> 정답: <strong>빅데이터</strong>. ' + explanations.q9;
             }
-
-            // Show score
-            var scoreDisplay = document.getElementById('scoreDisplay');
-            var scoreValue = document.getElementById('scoreValue');
-            var scoreText = document.getElementById('scoreText');
-
-            scoreDisplay.classList.remove('hidden');
-            scoreValue.textContent = correct + ' / ' + total;
-
-            if (correct === total) {
-                scoreText.textContent = '모든 문제를 맞혔습니다! 훌륭합니다!';
-                scoreDisplay.className = 'mb-6 bg-green-50 border border-green-200 rounded-2xl p-6 text-center';
-                scoreValue.className = 'text-4xl font-extrabold text-green-700 mb-1';
-            } else if (correct >= 7) {
-                scoreText.textContent = '잘 하고 있습니다! 틀린 문제를 다시 확인해 보세요.';
-                scoreDisplay.className = 'mb-6 bg-blue-50 border border-blue-200 rounded-2xl p-6 text-center';
-                scoreValue.className = 'text-4xl font-extrabold text-blue-700 mb-1';
-            } else {
-                scoreText.textContent = '개념을 다시 복습한 후 도전해 보세요.';
-                scoreDisplay.className = 'mb-6 bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center';
-                scoreValue.className = 'text-4xl font-extrabold text-amber-700 mb-1';
-            }
-
-            // Also show in quizResult div
-            var quizResult = document.getElementById('quizResult');
-            quizResult.innerHTML = '<div class="text-center p-6 bg-white rounded-2xl shadow-lg border-2 border-slate-200">' +
-                '<div class="text-4xl font-bold text-slate-800 mb-2">' + correct + ' / ' + total + '</div>' +
-                '<p class="text-slate-600">문제를 맞혔습니다!</p>' +
-                '<p class="text-sm text-slate-400 mt-2">1번 정답: 인코딩, 디코딩 | 9번 정답: 빅데이터</p>' +
-            '</div>';
-            quizResult.style.display = '';
-
-            // Scroll to score
-            scoreDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            resultDiv.classList.remove('hidden');
+            updateScore();
         }
 
-        function resetQuiz() {
-            // Reset radio buttons
-            document.querySelectorAll('input[type="radio"]').forEach(function(r) { r.checked = false; });
+        // Q1 short answer check
+        function checkShortAnswer() {
+            if (quizAnswered['quiz1']) return;
+            quizAnswered['quiz1'] = true;
+
+            const input = document.getElementById('q1-input');
+            const val = input.value.trim().replace(/\s+/g, '');
+            const resultDiv = document.getElementById('quiz1-result');
+
+            // Accept variations: 압축,복원 / 인코딩,디코딩
+            const isCorrect = (
+                (val.includes('압축') && val.includes('복원')) ||
+                (val.includes('인코딩') && val.includes('디코딩'))
+            );
+
+            if (isCorrect) {
+                correctCount++;
+                input.classList.add('border-green-400', 'bg-green-50');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-green-50 border border-green-200 ml-11';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500 text-lg"></i><span class="font-bold text-green-700">정답입니다!</span></div>';
+                resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">' + quizExplanations.quiz1.correct + '</p>';
+            } else {
+                input.classList.add('border-red-400', 'bg-red-50');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-red-50 border border-red-200 ml-11';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-times-circle text-red-500 text-lg"></i><span class="font-bold text-red-700">오답입니다.</span></div>';
+                resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">' + quizExplanations.quiz1.wrong + '</p>';
+            }
+            resultDiv.classList.remove('hidden');
+            updateScore();
+        }
+
+        // Q9 short answer check
+        function checkShortAnswer9() {
+            if (quizAnswered['quiz9']) return;
+            quizAnswered['quiz9'] = true;
+
+            const input = document.getElementById('q9-input');
+            const val = input.value.trim();
+            const resultDiv = document.getElementById('quiz9-result');
+
+            const isCorrect = (val === '빅데이터' || val === '빅 데이터' || val.toLowerCase() === 'big data' || val.toLowerCase() === 'bigdata');
+
+            if (isCorrect) {
+                correctCount++;
+                input.classList.add('border-green-400', 'bg-green-50');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-green-50 border border-green-200 ml-11';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500 text-lg"></i><span class="font-bold text-green-700">정답입니다!</span></div>';
+                resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">' + quizExplanations.quiz9.correct + '</p>';
+            } else {
+                input.classList.add('border-red-400', 'bg-red-50');
+                resultDiv.className = 'mt-4 p-4 rounded-xl bg-red-50 border border-red-200 ml-11';
+                resultDiv.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-times-circle text-red-500 text-lg"></i><span class="font-bold text-red-700">오답입니다.</span></div>';
+                resultDiv.innerHTML += '<p class="text-sm text-gray-600 mt-2">' + quizExplanations.quiz9.wrong + '</p>';
+            }
+            resultDiv.classList.remove('hidden');
+            updateScore();
+        }
+
+        function updateScore() {
+            document.getElementById('score-count').textContent = correctCount;
+            const percentage = (correctCount / totalQuestions * 100);
+            document.getElementById('score-bar').style.width = percentage + '%';
+
+            // Show score message when all questions are answered
+            const answeredCount = Object.keys(quizAnswered).length;
+            if (answeredCount === totalQuestions) {
+                const msgDiv = document.getElementById('score-message');
+                msgDiv.classList.remove('hidden');
+                if (correctCount === totalQuestions) {
+                    msgDiv.innerHTML = '<div class="flex items-center gap-2 text-green-700 font-bold"><i class="fas fa-trophy text-amber-500"></i> 완벽합니다! 모든 문제를 맞혔습니다!</div>';
+                } else if (correctCount >= 7) {
+                    msgDiv.innerHTML = '<div class="flex items-center gap-2 text-blue-700 font-medium"><i class="fas fa-thumbs-up text-blue-500"></i> 잘 했습니다! 틀린 문제의 해설을 다시 확인해 보세요.</div>';
+                } else if (correctCount >= 4) {
+                    msgDiv.innerHTML = '<div class="flex items-center gap-2 text-amber-700 font-medium"><i class="fas fa-book-reader text-amber-500"></i> 좋은 시도입니다! 개념 정리를 다시 살펴보고 "다시 풀기"를 눌러 보세요.</div>';
+                } else {
+                    msgDiv.innerHTML = '<div class="flex items-center gap-2 text-red-700 font-medium"><i class="fas fa-book-open text-red-500"></i> 교과서 내용을 다시 복습한 후 도전해 봅시다!</div>';
+                }
+            }
+        }
+
+        function resetAllQuiz() {
+            correctCount = 0;
+            for (const key in quizAnswered) delete quizAnswered[key];
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const container = document.getElementById('quiz' + i + '-container');
+                const resultDiv = document.getElementById('quiz' + i + '-result');
+
+                if (container) {
+                    container.querySelectorAll('.quiz-option').forEach(opt => {
+                        opt.style.cursor = 'pointer';
+                        opt.style.opacity = '1';
+                        opt.classList.remove('correct', 'wrong');
+                    });
+                }
+                if (resultDiv) {
+                    resultDiv.classList.add('hidden');
+                    resultDiv.className = 'hidden mt-4 ml-11';
+                    resultDiv.innerHTML = '';
+                }
+            }
 
             // Reset text inputs
-            document.querySelectorAll('input[type="text"], textarea').forEach(function(t) {
-                if (t.id !== 'sheetUrl' && t.id !== 'name') {
-                    t.value = '';
-                }
-            });
-
-            // Reset option styling
-            document.querySelectorAll('.quiz-option').forEach(function(opt) {
-                opt.classList.remove('selected', 'correct', 'incorrect', 'correct-answer');
-            });
-
-            // Reset question div highlights
-            document.querySelectorAll('[id$="_div"]').forEach(function(d) {
-                d.classList.remove('border-green-400', 'bg-green-50', 'border-red-400', 'bg-red-50');
-            });
-
-            // Hide result divs
-            for (var i = 1; i <= 10; i++) {
-                var r = document.getElementById('q' + i + '-result');
-                if (r) {
-                    r.classList.add('hidden');
-                    r.className = 'mt-4 hidden rounded-xl p-4 text-sm font-medium';
-                }
+            const q1Input = document.getElementById('q1-input');
+            if (q1Input) {
+                q1Input.value = '';
+                q1Input.classList.remove('border-green-400', 'bg-green-50', 'border-red-400', 'bg-red-50');
+            }
+            const q9Input = document.getElementById('q9-input');
+            if (q9Input) {
+                q9Input.value = '';
+                q9Input.classList.remove('border-green-400', 'bg-green-50', 'border-red-400', 'bg-red-50');
             }
 
-            // Hide score
-            document.getElementById('scoreDisplay').classList.add('hidden');
+            document.getElementById('score-message').classList.add('hidden');
+            updateScore();
 
-            // Hide checkBtnArea
-            document.getElementById('checkBtnArea').style.display = 'none';
+            // Scroll to quiz section
+            document.getElementById('section-quiz').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
 
-            // Hide quizResult
-            var quizResult = document.getElementById('quizResult');
-            if (quizResult) quizResult.style.display = 'none';
+        // ===== Star Rating System =====
+        const ratings = {};
 
-            // Reset star ratings
-            document.querySelectorAll('.star-btn').forEach(function(btn) {
-                btn.classList.remove('active');
-                btn.classList.add('inactive');
-                btn.style.opacity = '0.5';
-                btn.style.transform = 'scale(1)';
+        function setRating(evalId, value) {
+            ratings[evalId] = value;
+            const container = document.querySelector('[data-rating="' + evalId + '"]');
+            container.querySelectorAll('.star').forEach((star, i) => {
+                star.classList.toggle('active', i < value);
             });
 
-            // Reset submit button
-            var btn = document.getElementById('submitBtn');
-            btn.disabled = false;
-            btn.style.opacity = '1';
-            btn.classList.remove('bg-green-600');
-            document.getElementById('submitIcon').className = 'fas fa-paper-plane';
-            document.getElementById('submitText').textContent = '답안 제출하기';
-            document.getElementById('submitResult').classList.add('hidden');
+            // Check if all ratings are set
+            if (ratings.eval1 && ratings.eval2 && ratings.eval3) {
+                const avg = (ratings.eval1 + ratings.eval2 + ratings.eval3) / 3;
+                const msgDiv = document.getElementById('eval-message');
+                const feedbackP = document.getElementById('eval-feedback');
+                msgDiv.classList.remove('hidden');
 
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (avg >= 4) {
+                    feedbackP.textContent = '훌륭합니다! 데이터 단원의 핵심 내용을 잘 이해하고 있습니다. 다음 단원에서도 이 자신감을 유지하세요!';
+                } else if (avg >= 3) {
+                    feedbackP.textContent = '잘하고 있습니다! 부족한 부분은 교과서를 다시 읽어보며 보충하면 좋겠습니다.';
+                } else {
+                    feedbackP.textContent = '아직 부족한 부분이 있는 것 같습니다. 개념 정리를 다시 살펴보고, 모르는 부분은 선생님에게 질문해 봅시다!';
+                }
+            }
         }
-    </script>
 
+        // ===== Fade-in animation on scroll =====
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.fade-in').forEach(el => fadeInObserver.observe(el));
+    </script>
 </body>
 </html>
