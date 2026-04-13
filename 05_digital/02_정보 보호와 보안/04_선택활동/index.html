@@ -114,47 +114,152 @@
             color: rgba(255,255,255,0.6);
         }
 
-        .step-connector {
-            position: relative;
+        /* CCL Matcher styles */
+        .ccl-drop-zone {
+            min-height: 48px;
+            border: 2px dashed #a5d8ff;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
         }
-        .step-connector::after {
-            content: '';
-            position: absolute;
-            left: 1.25rem;
-            top: 3.5rem;
-            bottom: -0.5rem;
-            width: 2px;
-            background: linear-gradient(to bottom, #a5d8ff, #d0ebff);
+        .ccl-drop-zone.drag-over {
+            border-color: #228be6;
+            background-color: #e7f5ff;
+            transform: scale(1.02);
         }
-        .step-connector:last-child::after {
-            display: none;
+        .ccl-drop-zone.matched {
+            border-color: #40c057;
+            background-color: #ebfbee;
+            border-style: solid;
         }
-
-        .checklist-item {
+        .ccl-draggable {
+            cursor: grab;
+            user-select: none;
             transition: all 0.2s ease;
         }
-        .checklist-item:hover {
+        .ccl-draggable:active { cursor: grabbing; }
+        .ccl-draggable:hover { transform: scale(1.05); }
+        .ccl-draggable.placed { opacity: 0.4; pointer-events: none; }
+
+        /* Password meter */
+        .pw-meter-bar {
+            height: 8px;
+            border-radius: 4px;
+            transition: width 0.4s ease, background-color 0.4s ease;
+        }
+        .pw-criteria-item { transition: color 0.2s ease; }
+        .pw-criteria-met { color: #40c057; }
+        .pw-criteria-unmet { color: #adb5bd; }
+
+        /* Phishing quiz */
+        .phishing-indicator {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 2px 6px;
+        }
+        .phishing-indicator:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+        .phishing-indicator.found {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.15);
+        }
+
+        /* Scenario game */
+        .scenario-option {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e9ecef;
+        }
+        .scenario-option:hover:not(.disabled) {
+            border-color: #339af0;
+            transform: translateX(4px);
+        }
+        .scenario-option.correct {
+            border-color: #40c057;
+            background: linear-gradient(135deg, #ebfbee, #d3f9d8);
+        }
+        .scenario-option.incorrect {
+            border-color: #ff6b6b;
+            background: linear-gradient(135deg, #fff5f5, #ffe3e3);
+        }
+        .scenario-option.disabled { pointer-events: none; opacity: 0.7; }
+
+        /* Threat matching */
+        .threat-card {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid #dee2e6;
+        }
+        .threat-card:hover:not(.selected):not(.matched) {
+            border-color: #339af0;
+            transform: translateY(-2px);
+        }
+        .threat-card.selected {
+            border-color: #339af0;
+            background-color: #e7f5ff;
+            box-shadow: 0 0 0 3px rgba(51, 154, 240, 0.2);
+        }
+        .threat-card.matched {
+            border-color: #40c057;
+            background: linear-gradient(135deg, #ebfbee, #d3f9d8);
+            pointer-events: none;
+        }
+
+        /* Security checklist */
+        .security-check-item {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .security-check-item:hover {
             background-color: #e7f5ff;
         }
-
-        .discussion-card {
+        .security-check-item.checked {
+            background-color: #ebfbee;
+            border-color: #40c057;
+        }
+        .check-icon {
             transition: all 0.3s ease;
-            border-left: 4px solid #339af0;
         }
-        .discussion-card:hover {
-            transform: translateX(4px);
-            border-left-color: #1c7ed6;
+        .security-check-item.checked .check-icon {
+            color: #40c057;
+            transform: scale(1.2);
         }
+
+        /* Progress ring */
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s ease;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+        }
+        .confetti-particle {
+            animation: confetti 1s ease-out forwards;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .shake { animation: shake 0.3s ease-in-out; }
 
         @media print {
-            
             .fade-in { opacity: 1 !important; transform: none !important; }
             .card-hover:hover { transform: none; box-shadow: none; }
             footer { display: none; }
             .no-print { display: none !important; }
             body { font-size: 12pt; }
             .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
-        
             .hero-gradient { background: #2563eb !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
@@ -240,210 +345,632 @@
             </div>
         </div>
     </section>
+
 <!-- ===== MAIN CONTENT ===== -->
     <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
 
-        <!-- ===== ACTIVITY 1: 정보 보호 실천하기 ===== -->
-        <section class="fade-in" id="activity-1">
+        <!-- ===== ACTIVITY 1: CCL 라이선스 매칭 게임 ===== -->
+        <section class="fade-in" id="activity-ccl">
             <div class="flex items-center gap-3 mb-8">
                 <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl shadow-lg">
-                    <i class="fas fa-shield-halved"></i>
+                    <i class="fab fa-creative-commons"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동 1. 정보 보호 실천하기</h2>
-                    <p class="text-gray-500 text-sm mt-0.5">조사 / 실습</p>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동 1. CCL 라이선스 매칭 게임</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">드래그 앤 드롭으로 라이선스 조건을 올바른 설명에 매칭하세요</p>
                 </div>
             </div>
 
-            <!-- Activity Type Badge -->
             <div class="flex flex-wrap gap-2 mb-6">
                 <span class="inline-flex items-center gap-1.5 bg-blue-100 text-blue-700 rounded-full px-3 py-1 text-sm font-medium">
-                    <i class="fas fa-search"></i> 조사
+                    <i class="fas fa-puzzle-piece"></i> 매칭 게임
                 </span>
                 <span class="inline-flex items-center gap-1.5 bg-teal-100 text-teal-700 rounded-full px-3 py-1 text-sm font-medium">
-                    <i class="fas fa-laptop-code"></i> 실습
+                    <i class="fas fa-hand-pointer"></i> 인터랙티브
                 </span>
             </div>
 
-            <!-- CCL Explanation Card -->
-            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6">
-                <div class="flex items-center gap-3 mb-5">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow">
-                        <i class="fab fa-creative-commons text-white text-lg"></i>
-                    </div>
-                    <h3 class="font-bold text-lg text-gray-900">CCL(Creative Commons License)이란?</h3>
-                </div>
-
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <!-- Info box -->
                 <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-100 mb-6">
                     <div class="flex items-start gap-3">
                         <div class="w-10 h-10 rounded-full bg-blue-400 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <i class="fas fa-info-circle text-white"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-blue-800 mb-2">CCL의 정의</h4>
+                            <h4 class="font-bold text-blue-800 mb-2">CCL(Creative Commons License)이란?</h4>
                             <p class="text-gray-700 text-sm leading-relaxed">
                                 <strong class="text-blue-700">저작자가 일정한 조건에서 자신의 저작물을 다른 사람들이 자유롭게 이용하도록 허락하는 것</strong>입니다.
-                                크리에이티브 커먼즈(Creative Commons) 라이선스를 통해 저작자는 자신의 저작물에 대한 이용 조건을 명확하게 표시하고,
-                                이용자는 해당 조건을 지키면서 저작물을 합법적으로 활용할 수 있습니다.
+                                아래의 4가지 조건 아이콘을 올바른 설명에 드래그하여 매칭해 보세요!
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- CCL Types Grid -->
-                <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <i class="fas fa-layer-group text-primary-500"></i> CCL 라이선스의 주요 조건
+                <!-- Draggable icons -->
+                <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                    <i class="fas fa-hand-pointer text-primary-500"></i> 아이콘을 아래 설명에 드래그하세요
                 </h4>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <div class="card-hover bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200 text-center">
-                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-500 flex items-center justify-center shadow">
+                <div id="ccl-source" class="flex flex-wrap gap-3 mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200 min-h-[72px] justify-center">
+                    <div class="ccl-draggable bg-white rounded-xl px-5 py-3 border-2 border-blue-200 shadow-sm flex items-center gap-3 hover:shadow-md" draggable="true" data-ccl="by">
+                        <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center shadow">
                             <i class="fas fa-user text-white"></i>
                         </div>
-                        <h5 class="font-bold text-blue-800 text-sm mb-1">저작자 표시</h5>
-                        <p class="text-gray-600 text-xs leading-relaxed">BY - 원저작자의 이름을 반드시 표시</p>
+                        <span class="font-bold text-blue-800 text-sm">BY (저작자 표시)</span>
                     </div>
-                    <div class="card-hover bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200 text-center">
-                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-green-500 flex items-center justify-center shadow">
+                    <div class="ccl-draggable bg-white rounded-xl px-5 py-3 border-2 border-green-200 shadow-sm flex items-center gap-3 hover:shadow-md" draggable="true" data-ccl="nc">
+                        <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center shadow">
                             <i class="fas fa-ban text-white"></i>
                         </div>
-                        <h5 class="font-bold text-green-800 text-sm mb-1">비영리</h5>
-                        <p class="text-gray-600 text-xs leading-relaxed">NC - 상업적 이용 불가</p>
+                        <span class="font-bold text-green-800 text-sm">NC (비영리)</span>
                     </div>
-                    <div class="card-hover bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 border border-amber-200 text-center">
-                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-amber-500 flex items-center justify-center shadow">
+                    <div class="ccl-draggable bg-white rounded-xl px-5 py-3 border-2 border-amber-200 shadow-sm flex items-center gap-3 hover:shadow-md" draggable="true" data-ccl="sa">
+                        <div class="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center shadow">
                             <i class="fas fa-equals text-white"></i>
                         </div>
-                        <h5 class="font-bold text-amber-800 text-sm mb-1">동일 조건 변경 허락</h5>
-                        <p class="text-gray-600 text-xs leading-relaxed">SA - 동일한 라이선스로 배포</p>
+                        <span class="font-bold text-amber-800 text-sm">SA (동일조건 변경허락)</span>
                     </div>
-                    <div class="card-hover bg-gradient-to-br from-rose-50 to-rose-100 rounded-xl p-4 border border-rose-200 text-center">
-                        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-rose-500 flex items-center justify-center shadow">
+                    <div class="ccl-draggable bg-white rounded-xl px-5 py-3 border-2 border-rose-200 shadow-sm flex items-center gap-3 hover:shadow-md" draggable="true" data-ccl="nd">
+                        <div class="w-10 h-10 rounded-full bg-rose-500 flex items-center justify-center shadow">
                             <i class="fas fa-lock text-white"></i>
                         </div>
-                        <h5 class="font-bold text-rose-800 text-sm mb-1">변경 금지</h5>
-                        <p class="text-gray-600 text-xs leading-relaxed">ND - 원본 그대로만 이용 가능</p>
+                        <span class="font-bold text-rose-800 text-sm">ND (변경 금지)</span>
                     </div>
                 </div>
 
-                <!-- Search Steps -->
-                <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <i class="fas fa-search text-primary-500"></i> 저작권 프리 이미지 검색 방법
-                </h4>
-                <div class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-5 border border-gray-200">
-                    <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4">
-                        <div class="bg-white rounded-lg px-4 py-3 border border-blue-200 shadow-sm text-center min-w-[120px]">
-                            <div class="text-primary-600 text-xs font-bold mb-1">STEP 1</div>
-                            <div class="text-sm font-medium text-gray-800 flex items-center gap-1.5">
-                                <i class="fab fa-google text-blue-500"></i> Google 검색
-                            </div>
+                <!-- Drop zones -->
+                <div class="grid sm:grid-cols-2 gap-4" id="ccl-targets">
+                    <div class="rounded-xl p-4 bg-gray-50 border border-gray-200">
+                        <p class="text-sm text-gray-700 mb-3 font-medium">"원저작자의 이름을 반드시 표시해야 합니다."</p>
+                        <div class="ccl-drop-zone" data-answer="by">
+                            <span class="text-gray-400 text-sm"><i class="fas fa-arrow-down mr-1"></i>여기에 드롭하세요</span>
                         </div>
-                        <i class="fas fa-arrow-right text-gray-300"></i>
-                        <div class="bg-white rounded-lg px-4 py-3 border border-blue-200 shadow-sm text-center min-w-[120px]">
-                            <div class="text-primary-600 text-xs font-bold mb-1">STEP 2</div>
-                            <div class="text-sm font-medium text-gray-800 flex items-center gap-1.5">
-                                <i class="fas fa-image text-green-500"></i> 이미지 탭
-                            </div>
+                    </div>
+                    <div class="rounded-xl p-4 bg-gray-50 border border-gray-200">
+                        <p class="text-sm text-gray-700 mb-3 font-medium">"상업적인 목적으로 이용할 수 없습니다."</p>
+                        <div class="ccl-drop-zone" data-answer="nc">
+                            <span class="text-gray-400 text-sm"><i class="fas fa-arrow-down mr-1"></i>여기에 드롭하세요</span>
                         </div>
-                        <i class="fas fa-arrow-right text-gray-300"></i>
-                        <div class="bg-white rounded-lg px-4 py-3 border border-blue-200 shadow-sm text-center min-w-[120px]">
-                            <div class="text-primary-600 text-xs font-bold mb-1">STEP 3</div>
-                            <div class="text-sm font-medium text-gray-800 flex items-center gap-1.5">
-                                <i class="fas fa-sliders-h text-amber-500"></i> 도구 클릭
-                            </div>
+                    </div>
+                    <div class="rounded-xl p-4 bg-gray-50 border border-gray-200">
+                        <p class="text-sm text-gray-700 mb-3 font-medium">"변경 시 동일한 라이선스로 배포해야 합니다."</p>
+                        <div class="ccl-drop-zone" data-answer="sa">
+                            <span class="text-gray-400 text-sm"><i class="fas fa-arrow-down mr-1"></i>여기에 드롭하세요</span>
                         </div>
-                        <i class="fas fa-arrow-right text-gray-300"></i>
-                        <div class="bg-white rounded-lg px-4 py-3 border border-blue-200 shadow-sm text-center min-w-[120px]">
-                            <div class="text-primary-600 text-xs font-bold mb-1">STEP 4</div>
-                            <div class="text-sm font-medium text-gray-800 flex items-center gap-1.5">
-                                <i class="fas fa-key text-purple-500"></i> 사용권
-                            </div>
-                        </div>
-                        <i class="fas fa-arrow-right text-gray-300"></i>
-                        <div class="bg-white rounded-lg px-4 py-3 border border-primary-300 shadow-sm text-center min-w-[120px] bg-primary-50">
-                            <div class="text-primary-700 text-xs font-bold mb-1">STEP 5</div>
-                            <div class="text-sm font-bold text-primary-800 flex items-center gap-1.5">
-                                <i class="fab fa-creative-commons text-primary-600"></i> 크리에이티브 커먼즈 라이선스
-                            </div>
+                    </div>
+                    <div class="rounded-xl p-4 bg-gray-50 border border-gray-200">
+                        <p class="text-sm text-gray-700 mb-3 font-medium">"원본을 그대로만 이용할 수 있으며 수정이 불가합니다."</p>
+                        <div class="ccl-drop-zone" data-answer="nd">
+                            <span class="text-gray-400 text-sm"><i class="fas fa-arrow-down mr-1"></i>여기에 드롭하세요</span>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Privacy Breach Case Card -->
-            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6">
-                <div class="flex items-center gap-3 mb-5">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow">
-                        <i class="fas fa-exclamation-triangle text-white text-sm"></i>
-                    </div>
-                    <h3 class="font-bold text-lg text-gray-900">개인 정보 침해 사례</h3>
-                </div>
-
-                <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-5 border border-red-100">
-                    <div class="flex items-start gap-4">
-                        <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-lg">
-                            <i class="fas fa-user-shield text-white text-2xl"></i>
+                <!-- Result -->
+                <div id="ccl-result" class="mt-4 hidden">
+                    <div class="bg-green-50 rounded-xl p-4 border border-green-200 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-check text-white text-lg"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-red-800 mb-2 text-base">SNS 플랫폼의 개인 정보 유출 사건</h4>
-                            <div class="space-y-3 text-sm text-gray-700 leading-relaxed">
-                                <p>
-                                    <strong class="text-red-700">F사</strong>가 2016년 미국 대선 당시 회원 <strong class="text-red-700">5,000만 명</strong>의 개인 정보 유출을 방조한 의혹이 제기되었습니다.
-                                </p>
-                                <p>
-                                    데이터 분석 기업 <strong class="text-red-700">C사</strong>가 성격 검사 앱을 배포하여
-                                    <strong class="text-red-700">27만 명</strong>의 친구 목록, 위치 정보 등을 수집하고
-                                    이를 <strong class="text-red-700">유권자 성향 분석</strong>에 활용하였습니다.
-                                </p>
-                            </div>
-                            <div class="mt-3 flex flex-wrap gap-2">
-                                <span class="text-xs bg-red-100 text-red-700 rounded-full px-2.5 py-0.5 font-medium">개인 정보 유출</span>
-                                <span class="text-xs bg-orange-100 text-orange-700 rounded-full px-2.5 py-0.5 font-medium">데이터 무단 수집</span>
-                                <span class="text-xs bg-amber-100 text-amber-700 rounded-full px-2.5 py-0.5 font-medium">프라이버시 침해</span>
-                            </div>
+                            <h4 class="font-bold text-green-800">모두 정답!</h4>
+                            <p class="text-sm text-green-700">CCL 라이선스 4가지 조건을 모두 올바르게 매칭했습니다.</p>
                         </div>
                     </div>
+                </div>
+
+                <div class="mt-4 flex justify-end">
+                    <button onclick="resetCCL()" class="text-sm text-primary-600 hover:text-primary-800 font-medium flex items-center gap-1.5 transition-colors">
+                        <i class="fas fa-redo"></i> 다시 하기
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== ACTIVITY 2: 비밀번호 강도 체크 게임 ===== -->
+        <section class="fade-in" id="activity-password">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동 2. 비밀번호 강도 체크 게임</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">강력한 비밀번호를 만들어 보세요!</p>
                 </div>
             </div>
 
-            <!-- Discussion Questions -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <span class="inline-flex items-center gap-1.5 bg-amber-100 text-amber-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-keyboard"></i> 실습
+                </span>
+                <span class="inline-flex items-center gap-1.5 bg-orange-100 text-orange-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-shield-halved"></i> 보안
+                </span>
+            </div>
+
             <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
-                <div class="flex items-center gap-3 mb-5">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow">
-                        <i class="fas fa-comments text-white text-sm"></i>
+                <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-100 mb-6">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-amber-400 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-lightbulb text-white"></i>
+                        </div>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            강력한 비밀번호는 개인 정보를 보호하는 첫 번째 방어선입니다. 아래에 비밀번호를 입력하고 실시간으로 강도를 확인해 보세요.
+                            <strong class="text-amber-800">실제 사용하는 비밀번호를 입력하지 마세요!</strong>
+                        </p>
                     </div>
-                    <h3 class="font-bold text-lg text-gray-900">토론 질문</h3>
                 </div>
-                <div class="space-y-4">
-                    <div class="discussion-card bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-5">
-                        <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <span class="text-white text-sm font-bold">1</span>
+
+                <div class="max-w-lg mx-auto">
+                    <!-- Password input -->
+                    <div class="relative mb-4">
+                        <input type="text" id="pw-input" placeholder="비밀번호를 입력하세요..." autocomplete="off"
+                            class="w-full text-lg px-5 py-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-400 transition-colors font-mono tracking-wider"
+                            oninput="checkPassword(this.value)">
+                        <div id="pw-strength-label" class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400">
+                        </div>
+                    </div>
+
+                    <!-- Strength meter -->
+                    <div class="bg-gray-100 rounded-full h-3 mb-4 overflow-hidden">
+                        <div id="pw-meter" class="pw-meter-bar bg-gray-300" style="width: 0%"></div>
+                    </div>
+
+                    <!-- Score display -->
+                    <div id="pw-score-display" class="text-center mb-6">
+                        <span class="text-4xl font-black text-gray-300">0</span>
+                        <span class="text-gray-400 text-sm font-medium"> / 100점</span>
+                    </div>
+
+                    <!-- Criteria checklist -->
+                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                        <h4 class="font-bold text-gray-700 mb-3 text-sm">비밀번호 조건 확인</h4>
+                        <div class="grid sm:grid-cols-2 gap-2">
+                            <div class="pw-criteria-item pw-criteria-unmet flex items-center gap-2 text-sm" data-criteria="length">
+                                <i class="fas fa-circle-check"></i> 8자 이상
                             </div>
-                            <div>
-                                <p class="font-medium text-gray-800 text-sm leading-relaxed">
-                                    개인 정보 침해 사례에서 가장 큰 문제점은 무엇이라고 생각하나요? 이러한 사건이 발생하지 않도록 하려면 개인과 기업이 각각 어떤 노력을 해야 할까요?
+                            <div class="pw-criteria-item pw-criteria-unmet flex items-center gap-2 text-sm" data-criteria="upper">
+                                <i class="fas fa-circle-check"></i> 대문자 포함
+                            </div>
+                            <div class="pw-criteria-item pw-criteria-unmet flex items-center gap-2 text-sm" data-criteria="lower">
+                                <i class="fas fa-circle-check"></i> 소문자 포함
+                            </div>
+                            <div class="pw-criteria-item pw-criteria-unmet flex items-center gap-2 text-sm" data-criteria="number">
+                                <i class="fas fa-circle-check"></i> 숫자 포함
+                            </div>
+                            <div class="pw-criteria-item pw-criteria-unmet flex items-center gap-2 text-sm" data-criteria="special">
+                                <i class="fas fa-circle-check"></i> 특수문자 포함
+                            </div>
+                            <div class="pw-criteria-item pw-criteria-unmet flex items-center gap-2 text-sm" data-criteria="long">
+                                <i class="fas fa-circle-check"></i> 12자 이상 (보너스)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tip area -->
+                    <div id="pw-tip" class="mt-4 hidden">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== ACTIVITY 3: 피싱 탐지 퀴즈 ===== -->
+        <section class="fade-in" id="activity-phishing">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-fish"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동 3. 피싱 탐지 퀴즈</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">이메일과 웹사이트에서 피싱 단서를 찾아보세요</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-6">
+                <span class="inline-flex items-center gap-1.5 bg-red-100 text-red-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-magnifying-glass"></i> 탐지
+                </span>
+                <span class="inline-flex items-center gap-1.5 bg-purple-100 text-purple-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-brain"></i> 분석력
+                </span>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-5 border border-red-100 mb-6">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-red-400 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-white"></i>
+                        </div>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            아래의 이메일/웹사이트를 살펴보고 <strong class="text-red-700">피싱의 단서가 되는 부분</strong>을 클릭하세요.
+                            각 문제에서 의심스러운 부분을 모두 찾아야 합니다!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Phishing scenario tracker -->
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fas fa-envelope-open-text text-red-500"></i>
+                        <span id="phishing-title">문제 1: 의심스러운 이메일</span>
+                    </h4>
+                    <span id="phishing-progress" class="text-sm text-gray-500 font-medium">1 / 3</span>
+                </div>
+
+                <!-- Phishing scenarios container -->
+                <div id="phishing-scenarios">
+                    <!-- Scenario 1: Phishing email -->
+                    <div class="phishing-scenario active" data-scenario="1">
+                        <div class="bg-white border-2 border-gray-200 rounded-xl overflow-hidden">
+                            <!-- Email header -->
+                            <div class="bg-gray-50 px-5 py-3 border-b border-gray-200">
+                                <div class="text-xs text-gray-500 space-y-1">
+                                    <div class="flex gap-2">
+                                        <span class="font-semibold w-12">보낸이:</span>
+                                        <span class="phishing-indicator" data-clue="sender" title="클릭해서 확인">security-alert@naverr-support.com <i class="fas fa-mouse-pointer text-[10px] text-gray-400 ml-1"></i></span>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <span class="font-semibold w-12">받는이:</span>
+                                        <span>사용자@email.com</span>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <span class="font-semibold w-12">제목:</span>
+                                        <span class="phishing-indicator" data-clue="subject" title="클릭해서 확인">[긴급] 계정이 해킹되었습니다! 즉시 비밀번호를 변경하세요 <i class="fas fa-mouse-pointer text-[10px] text-gray-400 ml-1"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Email body -->
+                            <div class="px-5 py-4 text-sm text-gray-700 space-y-3">
+                                <p>안녕하세요, 고객님.</p>
+                                <p>귀하의 계정에서 <span class="phishing-indicator" data-clue="urgency" title="클릭해서 확인">비정상적인 로그인이 감지되었습니다. 24시간 이내에 조치하지 않으면 계정이 영구 정지됩니다. <i class="fas fa-mouse-pointer text-[10px] text-gray-400 ml-1"></i></span></p>
+                                <p>아래 링크를 클릭하여 즉시 비밀번호를 변경해 주세요:</p>
+                                <p class="phishing-indicator inline-block" data-clue="link" title="클릭해서 확인">
+                                    <span class="text-blue-600 underline">https://naverr-security-check.com/verify</span>
+                                    <i class="fas fa-mouse-pointer text-[10px] text-gray-400 ml-1"></i>
                                 </p>
-                                <div class="mt-3 bg-white/60 rounded-lg p-3 border border-blue-100">
-                                    <p class="text-xs text-gray-500"><i class="fas fa-pencil-alt mr-1"></i> 나의 생각을 정리해 봅시다</p>
-                                    <textarea class="w-full mt-2 p-2 border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white" rows="3" placeholder="여기에 의견을 작성하세요..."></textarea>
+                                <p class="text-gray-500">네이버 보안팀 드림</p>
+                            </div>
+                        </div>
+
+                        <!-- Found indicators -->
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-600">발견한 단서: <span class="phishing-found-count font-bold text-red-600">0</span> / 4</span>
+                            </div>
+                            <div class="grid sm:grid-cols-2 gap-2" id="phishing-clues-1">
+                                <div class="phishing-clue-indicator text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200" data-for="sender">
+                                    <i class="fas fa-circle text-[8px] mr-1"></i> 의심스러운 발신자 주소
+                                </div>
+                                <div class="phishing-clue-indicator text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200" data-for="subject">
+                                    <i class="fas fa-circle text-[8px] mr-1"></i> 공포 유발 제목
+                                </div>
+                                <div class="phishing-clue-indicator text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200" data-for="urgency">
+                                    <i class="fas fa-circle text-[8px] mr-1"></i> 긴급성을 강조하는 문구
+                                </div>
+                                <div class="phishing-clue-indicator text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200" data-for="link">
+                                    <i class="fas fa-circle text-[8px] mr-1"></i> 가짜 URL 링크
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="discussion-card bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl p-5">
-                        <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-full bg-accent-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <span class="text-white text-sm font-bold">2</span>
+
+                    <!-- Scenario 2: Fake banking site -->
+                    <div class="phishing-scenario hidden" data-scenario="2">
+                        <div class="bg-white border-2 border-gray-200 rounded-xl overflow-hidden">
+                            <div class="bg-gradient-to-r from-green-600 to-green-700 px-5 py-3 flex items-center gap-3">
+                                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                                    <i class="fas fa-university text-green-600 text-sm"></i>
+                                </div>
+                                <span class="text-white font-bold text-sm">KB 국민은행</span>
                             </div>
-                            <div>
-                                <p class="font-medium text-gray-800 text-sm leading-relaxed">
-                                    CCL 라이선스가 없었다면 디지털 콘텐츠의 공유와 활용은 어떤 모습이었을까요? CCL이 우리 사회에 미치는 긍정적인 영향에 대해 토론해 봅시다.
+                            <div class="bg-gray-50 px-5 py-2 border-b border-gray-200 text-xs text-gray-500">
+                                <span class="phishing-indicator" data-clue="url2" title="클릭해서 확인">
+                                    <i class="fas fa-lock text-gray-400 mr-1"></i>https://kb-kookmin-banking.net/login
+                                    <i class="fas fa-mouse-pointer text-[10px] text-gray-400 ml-1"></i>
+                                </span>
+                            </div>
+                            <div class="px-5 py-6 text-center space-y-4">
+                                <h3 class="font-bold text-lg text-gray-800">보안 인증 필요</h3>
+                                <p class="text-sm text-gray-600">
+                                    <span class="phishing-indicator" data-clue="personal2" title="클릭해서 확인">고객님의 주민등록번호와 계좌 비밀번호를 입력해 주세요. <i class="fas fa-mouse-pointer text-[10px] text-gray-400 ml-1"></i></span>
                                 </p>
-                                <div class="mt-3 bg-white/60 rounded-lg p-3 border border-teal-100">
-                                    <p class="text-xs text-gray-500"><i class="fas fa-pencil-alt mr-1"></i> 나의 생각을 정리해 봅시다</p>
-                                    <textarea class="w-full mt-2 p-2 border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-accent-300 bg-white" rows="3" placeholder="여기에 의견을 작성하세요..."></textarea>
+                                <div class="max-w-xs mx-auto space-y-2">
+                                    <div class="bg-gray-100 rounded-lg px-3 py-2 text-left text-sm text-gray-400 border border-gray-200">주민등록번호</div>
+                                    <div class="bg-gray-100 rounded-lg px-3 py-2 text-left text-sm text-gray-400 border border-gray-200">계좌 비밀번호</div>
+                                    <div class="phishing-indicator" data-clue="cert2" title="클릭해서 확인">
+                                        <div class="bg-gray-100 rounded-lg px-3 py-2 text-left text-sm text-gray-400 border border-gray-200">보안카드 전체 번호 <i class="fas fa-mouse-pointer text-[10px] text-gray-400 ml-1"></i></div>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-400">
+                                    <span class="phishing-indicator" data-clue="grammar2" title="클릭해서 확인">인증을 완료하시면 정상적인 서비스 이용이 가능합니다. 빠른시일내 인증 부탁드립니다. <i class="fas fa-mouse-pointer text-[10px] text-gray-400 ml-1"></i></span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-600">발견한 단서: <span class="phishing-found-count font-bold text-red-600">0</span> / 4</span>
+                            </div>
+                            <div class="grid sm:grid-cols-2 gap-2" id="phishing-clues-2">
+                                <div class="phishing-clue-indicator text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200" data-for="url2">
+                                    <i class="fas fa-circle text-[8px] mr-1"></i> 가짜 은행 URL
+                                </div>
+                                <div class="phishing-clue-indicator text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200" data-for="personal2">
+                                    <i class="fas fa-circle text-[8px] mr-1"></i> 과도한 개인정보 요구
+                                </div>
+                                <div class="phishing-clue-indicator text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200" data-for="cert2">
+                                    <i class="fas fa-circle text-[8px] mr-1"></i> 보안카드 전체 번호 요구
+                                </div>
+                                <div class="phishing-clue-indicator text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200" data-for="grammar2">
+                                    <i class="fas fa-circle text-[8px] mr-1"></i> 어색한 띄어쓰기/문법
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Scenario 3: SMS phishing -->
+                    <div class="phishing-scenario hidden" data-scenario="3">
+                        <div class="bg-white border-2 border-gray-200 rounded-xl overflow-hidden">
+                            <div class="bg-gray-800 px-5 py-3 flex items-center gap-3">
+                                <i class="fas fa-comment-sms text-green-400"></i>
+                                <span class="text-white font-bold text-sm">문자 메시지</span>
+                            </div>
+                            <div class="px-5 py-6 space-y-4">
+                                <div class="flex gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-building text-gray-500"></i>
+                                    </div>
+                                    <div class="bg-gray-100 rounded-2xl rounded-tl-md px-4 py-3 max-w-sm">
+                                        <p class="text-xs text-gray-500 mb-1">
+                                            <span class="phishing-indicator" data-clue="sender3" title="클릭해서 확인">발신: 010-8472-XXXX <i class="fas fa-mouse-pointer text-[10px] text-gray-400 ml-1"></i></span>
+                                        </p>
+                                        <p class="text-sm text-gray-800">
+                                            <span class="phishing-indicator" data-clue="content3" title="클릭해서 확인">[CJ대한통운] 고객님 택배 배송 불가. 주소 확인 요망. <i class="fas fa-mouse-pointer text-[10px] text-gray-400 ml-1"></i></span>
+                                        </p>
+                                        <p class="mt-1">
+                                            <span class="phishing-indicator text-blue-600 underline text-sm" data-clue="link3" title="클릭해서 확인">https://bit.ly/3xK9mW2 <i class="fas fa-mouse-pointer text-[10px] text-gray-400 ml-1"></i></span>
+                                        </p>
+                                        <p class="text-xs text-gray-500 mt-2">
+                                            <span class="phishing-indicator" data-clue="action3" title="클릭해서 확인">앱 설치 후 주소를 수정해 주세요. <i class="fas fa-mouse-pointer text-[10px] text-gray-400 ml-1"></i></span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-600">발견한 단서: <span class="phishing-found-count font-bold text-red-600">0</span> / 4</span>
+                            </div>
+                            <div class="grid sm:grid-cols-2 gap-2" id="phishing-clues-3">
+                                <div class="phishing-clue-indicator text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200" data-for="sender3">
+                                    <i class="fas fa-circle text-[8px] mr-1"></i> 개인 번호로 발송
+                                </div>
+                                <div class="phishing-clue-indicator text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200" data-for="content3">
+                                    <i class="fas fa-circle text-[8px] mr-1"></i> 택배 사칭 문구
+                                </div>
+                                <div class="phishing-clue-indicator text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200" data-for="link3">
+                                    <i class="fas fa-circle text-[8px] mr-1"></i> 단축 URL 사용
+                                </div>
+                                <div class="phishing-clue-indicator text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200" data-for="action3">
+                                    <i class="fas fa-circle text-[8px] mr-1"></i> 앱 설치 유도
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation buttons -->
+                <div class="mt-6 flex items-center justify-between">
+                    <button id="phishing-prev" onclick="changePhishingScenario(-1)" disabled
+                        class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed transition-all">
+                        <i class="fas fa-arrow-left mr-1"></i> 이전
+                    </button>
+                    <div id="phishing-total-result" class="hidden text-center">
+                        <div class="bg-green-50 rounded-lg px-4 py-2 border border-green-200">
+                            <span class="text-green-700 font-bold text-sm"><i class="fas fa-trophy mr-1"></i> 모든 피싱 단서를 찾았습니다!</span>
+                        </div>
+                    </div>
+                    <button id="phishing-next" onclick="changePhishingScenario(1)"
+                        class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 transition-all">
+                        다음 <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== ACTIVITY 4: 디지털 윤리 시나리오 게임 ===== -->
+        <section class="fade-in" id="activity-ethics">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-scale-balanced"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동 4. 디지털 윤리 시나리오 게임</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">상황별로 올바른 행동을 선택하세요</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-6">
+                <span class="inline-flex items-center gap-1.5 bg-violet-100 text-violet-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-comments"></i> 판단력
+                </span>
+                <span class="inline-flex items-center gap-1.5 bg-purple-100 text-purple-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-heart"></i> 윤리
+                </span>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <!-- Score -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500">진행도:</span>
+                        <span id="ethics-progress" class="font-bold text-primary-600">1 / 5</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500">점수:</span>
+                        <span id="ethics-score" class="font-bold text-green-600">0</span>
+                    </div>
+                </div>
+
+                <!-- Scenario container -->
+                <div id="ethics-container">
+                    <!-- Filled by JS -->
+                </div>
+
+                <!-- Final result -->
+                <div id="ethics-final" class="hidden text-center py-8">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-star text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">게임 완료!</h3>
+                    <p class="text-gray-600 mb-4">최종 점수: <span id="ethics-final-score" class="font-bold text-primary-600 text-xl"></span> / 5</p>
+                    <button onclick="resetEthics()" class="px-6 py-2.5 bg-primary-500 text-white rounded-xl font-medium hover:bg-primary-600 transition-colors">
+                        <i class="fas fa-redo mr-1"></i> 다시 도전하기
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===== ACTIVITY 5: 보안 위협 매칭 ===== -->
+        <section class="fade-in" id="activity-threats">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-400 to-pink-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-bug"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동 5. 보안 위협 매칭 게임</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">보안 위협의 유형과 설명, 예방법을 연결하세요</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-6">
+                <span class="inline-flex items-center gap-1.5 bg-rose-100 text-rose-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-link"></i> 매칭
+                </span>
+                <span class="inline-flex items-center gap-1.5 bg-pink-100 text-pink-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-virus"></i> 보안 위협
+                </span>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div class="bg-gradient-to-r from-rose-50 to-pink-50 rounded-xl p-5 border border-rose-100 mb-6">
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        왼쪽의 <strong class="text-rose-700">보안 위협 유형</strong>을 클릭한 후, 오른쪽의 <strong class="text-rose-700">올바른 설명</strong>을 클릭하여 매칭하세요.
+                        올바르게 연결되면 초록색으로 표시됩니다.
+                    </p>
+                </div>
+
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm text-gray-500">매칭 완료: <span id="threat-match-count" class="font-bold text-rose-600">0</span> / 5</span>
+                    <button onclick="resetThreats()" class="text-sm text-rose-600 hover:text-rose-800 font-medium flex items-center gap-1.5 transition-colors">
+                        <i class="fas fa-redo"></i> 다시 하기
+                    </button>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <!-- Threat types (left) -->
+                    <div class="space-y-3" id="threat-types">
+                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">보안 위협 유형</h4>
+                        <div class="threat-card rounded-xl p-4 bg-white" data-threat="malware">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center">
+                                    <i class="fas fa-virus text-red-500"></i>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-gray-800 text-sm">멀웨어</span>
+                                    <p class="text-xs text-gray-500">Malware</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="threat-card rounded-xl p-4 bg-white" data-threat="phishing">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                                    <i class="fas fa-fish text-orange-500"></i>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-gray-800 text-sm">피싱</span>
+                                    <p class="text-xs text-gray-500">Phishing</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="threat-card rounded-xl p-4 bg-white" data-threat="social">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                                    <i class="fas fa-masks-theater text-purple-500"></i>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-gray-800 text-sm">사회공학</span>
+                                    <p class="text-xs text-gray-500">Social Engineering</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="threat-card rounded-xl p-4 bg-white" data-threat="ransomware">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                                    <i class="fas fa-lock text-gray-600"></i>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-gray-800 text-sm">랜섬웨어</span>
+                                    <p class="text-xs text-gray-500">Ransomware</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="threat-card rounded-xl p-4 bg-white" data-threat="ddos">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                                    <i class="fas fa-network-wired text-blue-500"></i>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-gray-800 text-sm">DDoS 공격</span>
+                                    <p class="text-xs text-gray-500">Distributed Denial of Service</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Descriptions (right) -->
+                    <div class="space-y-3" id="threat-descriptions">
+                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">설명 및 예방법</h4>
+                        <div class="threat-card rounded-xl p-4 bg-white" data-desc="ddos">
+                            <p class="text-sm text-gray-700"><strong>다수의 컴퓨터</strong>로 서버에 대량의 트래픽을 보내 서비스를 마비시키는 공격</p>
+                            <p class="text-xs text-gray-500 mt-1"><i class="fas fa-shield-halved mr-1"></i>예방: 방화벽 설정, 트래픽 모니터링</p>
+                        </div>
+                        <div class="threat-card rounded-xl p-4 bg-white" data-desc="malware">
+                            <p class="text-sm text-gray-700"><strong>바이러스, 웜, 트로이 목마</strong> 등 컴퓨터에 피해를 주는 악성 소프트웨어</p>
+                            <p class="text-xs text-gray-500 mt-1"><i class="fas fa-shield-halved mr-1"></i>예방: 백신 설치, 출처 불명 파일 주의</p>
+                        </div>
+                        <div class="threat-card rounded-xl p-4 bg-white" data-desc="ransomware">
+                            <p class="text-sm text-gray-700">파일을 <strong>암호화</strong>하고 복구 대가로 <strong>금전을 요구</strong>하는 악성 프로그램</p>
+                            <p class="text-xs text-gray-500 mt-1"><i class="fas fa-shield-halved mr-1"></i>예방: 정기적 백업, 이메일 첨부파일 주의</p>
+                        </div>
+                        <div class="threat-card rounded-xl p-4 bg-white" data-desc="phishing">
+                            <p class="text-sm text-gray-700">신뢰할 수 있는 기관을 <strong>사칭</strong>하여 개인정보나 금융정보를 <strong>탈취</strong>하는 사기</p>
+                            <p class="text-xs text-gray-500 mt-1"><i class="fas fa-shield-halved mr-1"></i>예방: 발신자 확인, URL 직접 입력</p>
+                        </div>
+                        <div class="threat-card rounded-xl p-4 bg-white" data-desc="social">
+                            <p class="text-sm text-gray-700"><strong>사람의 심리</strong>를 이용하여 비밀 정보를 알아내거나 시스템에 접근하는 기법</p>
+                            <p class="text-xs text-gray-500 mt-1"><i class="fas fa-shield-halved mr-1"></i>예방: 정보 공유 주의, 신원 확인</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="threat-result" class="mt-4 hidden">
+                    <div class="bg-green-50 rounded-xl p-4 border border-green-200 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-check text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-green-800">모두 정답!</h4>
+                            <p class="text-sm text-green-700">5가지 보안 위협을 모두 올바르게 매칭했습니다.</p>
                         </div>
                     </div>
                 </div>
@@ -452,265 +979,170 @@
 
         <div class="section-divider max-w-md mx-auto"></div>
 
-        <!-- ===== ACTIVITY 2: 디지털 윤리 규칙 수립해 보기 ===== -->
-        <section class="fade-in" id="activity-2">
+        <!-- ===== ACTIVITY 6: 내 기기 보안 점검 체크리스트 ===== -->
+        <section class="fade-in" id="activity-checklist">
             <div class="flex items-center gap-3 mb-8">
                 <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center text-white text-xl shadow-lg">
-                    <i class="fas fa-scale-balanced"></i>
+                    <i class="fas fa-clipboard-check"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동 2. 디지털 윤리 규칙 수립해 보기</h2>
-                    <p class="text-gray-500 text-sm mt-0.5">조사 / 협력 / 실습</p>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">활동 6. 내 기기 보안 점검 체크리스트</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">내 디지털 기기의 보안 상태를 점검해 보세요</p>
                 </div>
             </div>
 
-            <!-- Activity Type Badges -->
             <div class="flex flex-wrap gap-2 mb-6">
-                <span class="inline-flex items-center gap-1.5 bg-blue-100 text-blue-700 rounded-full px-3 py-1 text-sm font-medium">
-                    <i class="fas fa-search"></i> 조사
-                </span>
-                <span class="inline-flex items-center gap-1.5 bg-purple-100 text-purple-700 rounded-full px-3 py-1 text-sm font-medium">
-                    <i class="fas fa-users"></i> 협력
-                </span>
                 <span class="inline-flex items-center gap-1.5 bg-teal-100 text-teal-700 rounded-full px-3 py-1 text-sm font-medium">
-                    <i class="fas fa-laptop-code"></i> 실습
+                    <i class="fas fa-check-double"></i> 점검
+                </span>
+                <span class="inline-flex items-center gap-1.5 bg-cyan-100 text-cyan-700 rounded-full px-3 py-1 text-sm font-medium">
+                    <i class="fas fa-mobile-screen-button"></i> 실천
                 </span>
             </div>
 
-            <!-- Digital Ethics Checklist -->
-            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6">
-                <div class="flex items-center gap-3 mb-5">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center shadow">
-                        <i class="fas fa-clipboard-check text-white text-sm"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-lg text-gray-900">크리에이터 디지털 윤리 체크리스트</h3>
-                        <p class="text-sm text-gray-500 mt-0.5">디지털 콘텐츠를 만들기 전에 반드시 확인해 봅시다</p>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm border-collapse">
-                        <thead>
-                            <tr class="bg-gradient-to-r from-primary-50 to-accent-50">
-                                <th class="border border-blue-200 px-3 py-3 text-primary-800 text-center w-12">번호</th>
-                                <th class="border border-blue-200 px-4 py-3 text-primary-800 text-left">점검 항목</th>
-                                <th class="border border-blue-200 px-3 py-3 text-primary-800 text-center w-20">예</th>
-                                <th class="border border-blue-200 px-3 py-3 text-primary-800 text-center w-20">아니요</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
-                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">1</td>
-                                <td class="border border-gray-200 px-4 py-3 text-gray-700">이미지, 글꼴, 음원 등 원저작자의 동의를 구했으며 출처를 표시하였는가?</td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check1" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
-                                    </label>
-                                </td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check1" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
-                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">2</td>
-                                <td class="border border-gray-200 px-4 py-3 text-gray-700">특정인을 비방하거나 명예를 훼손하는 내용을 포함하고 있지 않은가?</td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check2" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
-                                    </label>
-                                </td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check2" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
-                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">3</td>
-                                <td class="border border-gray-200 px-4 py-3 text-gray-700">주민등록번호, 전화번호 등 프라이버시를 침해하는 내용을 포함하고 있지 않은가?</td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check3" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
-                                    </label>
-                                </td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check3" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
-                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">4</td>
-                                <td class="border border-gray-200 px-4 py-3 text-gray-700">특정인의 얼굴이 담긴 사진이나 영상을 포함하고 있지 않은가?</td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check4" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
-                                    </label>
-                                </td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check4" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
-                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">5</td>
-                                <td class="border border-gray-200 px-4 py-3 text-gray-700">가짜 뉴스를 발표하거나 인용하고 있지 않은가?</td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check5" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
-                                    </label>
-                                </td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check5" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
-                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">6</td>
-                                <td class="border border-gray-200 px-4 py-3 text-gray-700">위험하거나 폭력적이거나 선정적인 내용을 포함하고 있지 않은가?</td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check6" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
-                                    </label>
-                                </td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check6" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr class="checklist-item hover:bg-blue-50/50 transition-colors">
-                                <td class="border border-gray-200 px-3 py-3 text-center font-bold text-primary-600">7</td>
-                                <td class="border border-gray-200 px-4 py-3 text-gray-700">콘텐츠를 조작하거나 허위로 가공하고 있지 않은가?</td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check7" value="yes" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
-                                    </label>
-                                </td>
-                                <td class="border border-gray-200 px-3 py-3 text-center">
-                                    <label class="cursor-pointer flex items-center justify-center">
-                                        <input type="radio" name="check7" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
-                                    </label>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mt-4 bg-amber-50 rounded-xl p-4 border border-amber-200">
-                    <div class="flex items-start gap-2">
-                        <i class="fas fa-lightbulb text-amber-500 mt-0.5"></i>
-                        <p class="text-sm text-amber-800">
-                            <strong>TIP:</strong> 모든 항목에 '예'로 답할 수 있어야 윤리적인 디지털 콘텐츠를 만들 수 있습니다. '아니요'인 항목이 있다면 해당 내용을 수정한 후 다시 점검해 봅시다.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Digital Environment Rules -->
             <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
-                <div class="flex items-center gap-3 mb-5">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow">
-                        <i class="fas fa-scroll text-white text-sm"></i>
+                <div class="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl p-5 border border-teal-100 mb-6">
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        각 항목을 클릭하여 현재 내 기기의 보안 상태를 점검해 보세요. 체크하지 못한 항목은 오늘 바로 실천해 봅시다!
+                    </p>
+                </div>
+
+                <!-- Progress ring -->
+                <div class="flex items-center justify-center gap-6 mb-8">
+                    <div class="relative">
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="42" fill="none" stroke="#e9ecef" stroke-width="8"/>
+                            <circle id="security-ring" class="progress-ring-circle" cx="50" cy="50" r="42" fill="none"
+                                stroke="#22b8cf" stroke-width="8" stroke-linecap="round"
+                                stroke-dasharray="264" stroke-dashoffset="264"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span id="security-percent" class="text-2xl font-black text-accent-600">0%</span>
+                        </div>
                     </div>
                     <div>
-                        <h3 class="font-bold text-lg text-gray-900">디지털 환경 규칙 만들기</h3>
-                        <p class="text-sm text-gray-500 mt-0.5">우리 모둠만의 디지털 윤리 규칙을 수립해 봅시다</p>
+                        <h4 class="font-bold text-gray-800">보안 점수</h4>
+                        <p id="security-grade" class="text-sm text-gray-500">체크리스트를 시작하세요</p>
                     </div>
                 </div>
 
-                <div class="space-y-0">
-                    <!-- Step 1 -->
-                    <div class="step-connector relative pl-14 pb-8">
-                        <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg z-10">
-                            <span class="text-white font-bold text-sm">1</span>
-                        </div>
-                        <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-5 border border-blue-100">
-                            <h4 class="font-bold text-primary-800 mb-2">디지털 환경 문제 조사하기</h4>
-                            <p class="text-sm text-gray-700 leading-relaxed">인터넷, SNS, 온라인 게임 등 디지털 환경에서 발생하는 윤리적 문제를 모둠별로 조사합니다.</p>
-                        </div>
-                    </div>
-
-                    <!-- Step 2 -->
-                    <div class="step-connector relative pl-14 pb-8">
-                        <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg z-10">
-                            <span class="text-white font-bold text-sm">2</span>
-                        </div>
-                        <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl p-5 border border-teal-100">
-                            <h4 class="font-bold text-teal-800 mb-2">문제 사례 공유 및 분류하기</h4>
-                            <p class="text-sm text-gray-700 leading-relaxed">조사한 문제 사례를 모둠원끼리 공유하고, 유형별(저작권, 프라이버시, 사이버 폭력 등)로 분류합니다.</p>
-                        </div>
-                    </div>
-
-                    <!-- Step 3 -->
-                    <div class="step-connector relative pl-14 pb-8">
-                        <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow-lg z-10">
-                            <span class="text-white font-bold text-sm">3</span>
-                        </div>
-                        <div class="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl p-5 border border-cyan-100">
-                            <h4 class="font-bold text-accent-800 mb-2">규칙 초안 작성하기</h4>
-                            <p class="text-sm text-gray-700 leading-relaxed">분류된 문제 유형별로 지켜야 할 규칙을 작성합니다. 구체적이고 실천 가능한 규칙을 만들어 봅시다.</p>
-                        </div>
-                    </div>
-
-                    <!-- Step 4 -->
-                    <div class="step-connector relative pl-14 pb-8">
-                        <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center shadow-lg z-10">
-                            <span class="text-white font-bold text-sm">4</span>
-                        </div>
-                        <div class="bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl p-5 border border-violet-100">
-                            <h4 class="font-bold text-violet-800 mb-2">모둠 토론 및 규칙 확정하기</h4>
-                            <p class="text-sm text-gray-700 leading-relaxed">작성한 규칙 초안을 모둠원과 토론하여 최종 규칙을 확정합니다. 모든 모둠원이 동의하는 내용으로 정리합니다.</p>
+                <!-- Checklist categories -->
+                <div class="space-y-6" id="security-checklist">
+                    <!-- Category: 계정 보안 -->
+                    <div>
+                        <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
+                            <i class="fas fa-user-lock text-primary-500"></i> 계정 보안
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="security-check-item rounded-xl p-4 border-2 border-gray-100 flex items-center gap-4" onclick="toggleSecurityCheck(this)">
+                                <div class="check-icon w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-gray-300">
+                                    <i class="fas fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800 text-sm">비밀번호를 8자리 이상으로 설정했다</p>
+                                    <p class="text-xs text-gray-500 mt-0.5">영문, 숫자, 특수문자를 조합한 비밀번호</p>
+                                </div>
+                            </div>
+                            <div class="security-check-item rounded-xl p-4 border-2 border-gray-100 flex items-center gap-4" onclick="toggleSecurityCheck(this)">
+                                <div class="check-icon w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-gray-300">
+                                    <i class="fas fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800 text-sm">서비스마다 다른 비밀번호를 사용한다</p>
+                                    <p class="text-xs text-gray-500 mt-0.5">같은 비밀번호를 여러 곳에 재사용하지 않기</p>
+                                </div>
+                            </div>
+                            <div class="security-check-item rounded-xl p-4 border-2 border-gray-100 flex items-center gap-4" onclick="toggleSecurityCheck(this)">
+                                <div class="check-icon w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-gray-300">
+                                    <i class="fas fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800 text-sm">2단계 인증(2FA)을 설정했다</p>
+                                    <p class="text-xs text-gray-500 mt-0.5">문자 인증, OTP 앱 등을 활용</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Step 5 -->
-                    <div class="relative pl-14 pb-2">
-                        <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-lg z-10">
-                            <span class="text-white font-bold text-sm">5</span>
-                        </div>
-                        <div class="bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl p-5 border border-primary-200">
-                            <h4 class="font-bold text-primary-800 mb-2">규칙 발표 및 실천 서약하기</h4>
-                            <p class="text-sm text-gray-700 leading-relaxed">확정된 규칙을 학급 전체에 발표하고, 모둠원 전체가 디지털 윤리 규칙을 실천할 것을 서약합니다.</p>
+                    <!-- Category: 기기 보안 -->
+                    <div>
+                        <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
+                            <i class="fas fa-laptop text-amber-500"></i> 기기 보안
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="security-check-item rounded-xl p-4 border-2 border-gray-100 flex items-center gap-4" onclick="toggleSecurityCheck(this)">
+                                <div class="check-icon w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-gray-300">
+                                    <i class="fas fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800 text-sm">운영체제(OS)를 최신 버전으로 업데이트했다</p>
+                                    <p class="text-xs text-gray-500 mt-0.5">보안 패치가 포함된 최신 업데이트 적용</p>
+                                </div>
+                            </div>
+                            <div class="security-check-item rounded-xl p-4 border-2 border-gray-100 flex items-center gap-4" onclick="toggleSecurityCheck(this)">
+                                <div class="check-icon w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-gray-300">
+                                    <i class="fas fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800 text-sm">백신 프로그램을 설치하고 실시간 검사를 켜놓았다</p>
+                                    <p class="text-xs text-gray-500 mt-0.5">Windows Defender 또는 별도 백신 활용</p>
+                                </div>
+                            </div>
+                            <div class="security-check-item rounded-xl p-4 border-2 border-gray-100 flex items-center gap-4" onclick="toggleSecurityCheck(this)">
+                                <div class="check-icon w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-gray-300">
+                                    <i class="fas fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800 text-sm">화면 잠금(비밀번호/지문/패턴)을 설정했다</p>
+                                    <p class="text-xs text-gray-500 mt-0.5">기기를 사용하지 않을 때 자동으로 잠기게 설정</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Rule Writing Area -->
-                <div class="mt-6 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-5 border border-gray-200">
-                    <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <i class="fas fa-edit text-primary-500"></i> 우리 모둠의 디지털 윤리 규칙
-                    </h4>
-                    <div class="space-y-3">
-                        <div class="flex items-start gap-3">
-                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary-500 text-white text-xs font-bold flex-shrink-0 mt-0.5">1</span>
-                            <input type="text" class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white" placeholder="규칙 1을 작성하세요...">
+                    <!-- Category: 온라인 습관 -->
+                    <div>
+                        <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
+                            <i class="fas fa-globe text-green-500"></i> 온라인 습관
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="security-check-item rounded-xl p-4 border-2 border-gray-100 flex items-center gap-4" onclick="toggleSecurityCheck(this)">
+                                <div class="check-icon w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-gray-300">
+                                    <i class="fas fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800 text-sm">의심스러운 링크나 첨부파일을 클릭하지 않는다</p>
+                                    <p class="text-xs text-gray-500 mt-0.5">출처가 불분명한 메일, 문자의 링크 주의</p>
+                                </div>
+                            </div>
+                            <div class="security-check-item rounded-xl p-4 border-2 border-gray-100 flex items-center gap-4" onclick="toggleSecurityCheck(this)">
+                                <div class="check-icon w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-gray-300">
+                                    <i class="fas fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800 text-sm">공용 Wi-Fi에서 민감한 정보를 입력하지 않는다</p>
+                                    <p class="text-xs text-gray-500 mt-0.5">카페, 공공장소 Wi-Fi에서 로그인/결제 자제</p>
+                                </div>
+                            </div>
+                            <div class="security-check-item rounded-xl p-4 border-2 border-gray-100 flex items-center gap-4" onclick="toggleSecurityCheck(this)">
+                                <div class="check-icon w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-gray-300">
+                                    <i class="fas fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800 text-sm">SNS에 과도한 개인정보를 공개하지 않는다</p>
+                                    <p class="text-xs text-gray-500 mt-0.5">위치, 일정, 개인 연락처 등의 노출 최소화</p>
+                                </div>
+                            </div>
+                            <div class="security-check-item rounded-xl p-4 border-2 border-gray-100 flex items-center gap-4" onclick="toggleSecurityCheck(this)">
+                                <div class="check-icon w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 text-gray-300">
+                                    <i class="fas fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800 text-sm">앱 설치 시 접근 권한을 꼼꼼히 확인한다</p>
+                                    <p class="text-xs text-gray-500 mt-0.5">불필요한 권한(카메라, 연락처 등)은 거부</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex items-start gap-3">
-                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary-500 text-white text-xs font-bold flex-shrink-0 mt-0.5">2</span>
-                            <input type="text" class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white" placeholder="규칙 2를 작성하세요...">
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary-500 text-white text-xs font-bold flex-shrink-0 mt-0.5">3</span>
-                            <input type="text" class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white" placeholder="규칙 3을 작성하세요...">
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-accent-500 text-white text-xs font-bold flex-shrink-0 mt-0.5">4</span>
-                            <input type="text" class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-300 bg-white" placeholder="규칙 4를 작성하세요...">
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-accent-500 text-white text-xs font-bold flex-shrink-0 mt-0.5">5</span>
-                            <input type="text" class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-300 bg-white" placeholder="규칙 5를 작성하세요...">
-                        </div>
-                    </div>
-                    <div class="mt-4 flex items-center gap-2 text-xs text-gray-500">
-                        <i class="fas fa-info-circle"></i>
-                        <span>모둠원과 충분히 토론한 후 규칙을 작성합니다.</span>
                     </div>
                 </div>
             </div>
@@ -770,7 +1202,9 @@
 
     <!-- ===== SCRIPTS ===== -->
     <script>
+        // ==========================================
         // Fade-in animation on scroll
+        // ==========================================
         const fadeInObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -778,23 +1212,528 @@
                 }
             });
         }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
         document.querySelectorAll('.fade-in').forEach(el => fadeInObserver.observe(el));
 
-        // Checklist radio visual feedback
-        document.querySelectorAll('input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                const row = this.closest('tr');
-                if (row) {
-                    row.style.transition = 'background-color 0.3s ease';
-                    if (this.value === 'yes') {
-                        row.style.backgroundColor = '#f0fdf4';
-                    } else {
-                        row.style.backgroundColor = '#fef2f2';
-                    }
+        // ==========================================
+        // ACTIVITY 1: CCL License Matcher
+        // ==========================================
+        let draggedCCL = null;
+        let cclMatches = 0;
+
+        document.querySelectorAll('.ccl-draggable').forEach(el => {
+            el.addEventListener('dragstart', (e) => {
+                draggedCCL = el;
+                e.dataTransfer.effectAllowed = 'move';
+                el.style.opacity = '0.5';
+            });
+            el.addEventListener('dragend', () => {
+                el.style.opacity = draggedCCL && el.classList.contains('placed') ? '0.4' : '1';
+                draggedCCL = null;
+            });
+            // Click-based matching for mobile
+            el.addEventListener('click', () => {
+                if (el.classList.contains('placed')) return;
+                document.querySelectorAll('.ccl-draggable').forEach(d => d.classList.remove('ring-2', 'ring-primary-400'));
+                el.classList.add('ring-2', 'ring-primary-400');
+                draggedCCL = el;
+            });
+        });
+
+        document.querySelectorAll('.ccl-drop-zone').forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            });
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                handleCCLDrop(zone);
+            });
+            // Click-based matching for mobile
+            zone.addEventListener('click', () => {
+                if (draggedCCL && !zone.classList.contains('matched')) {
+                    handleCCLDrop(zone);
                 }
             });
         });
+
+        function handleCCLDrop(zone) {
+            if (!draggedCCL || zone.classList.contains('matched')) return;
+            const answer = zone.dataset.answer;
+            const dragged = draggedCCL.dataset.ccl;
+
+            if (answer === dragged) {
+                zone.innerHTML = draggedCCL.innerHTML;
+                zone.classList.add('matched');
+                draggedCCL.classList.add('placed');
+                draggedCCL.classList.remove('ring-2', 'ring-primary-400');
+                cclMatches++;
+                if (cclMatches === 4) {
+                    document.getElementById('ccl-result').classList.remove('hidden');
+                }
+            } else {
+                zone.classList.add('shake');
+                setTimeout(() => zone.classList.remove('shake'), 300);
+            }
+            draggedCCL = null;
+        }
+
+        function resetCCL() {
+            cclMatches = 0;
+            document.getElementById('ccl-result').classList.add('hidden');
+            document.querySelectorAll('.ccl-draggable').forEach(el => {
+                el.classList.remove('placed', 'ring-2', 'ring-primary-400');
+                el.style.opacity = '1';
+            });
+            document.querySelectorAll('.ccl-drop-zone').forEach(zone => {
+                zone.classList.remove('matched');
+                zone.innerHTML = '<span class="text-gray-400 text-sm"><i class="fas fa-arrow-down mr-1"></i>여기에 드롭하세요</span>';
+            });
+            draggedCCL = null;
+        }
+
+        // ==========================================
+        // ACTIVITY 2: Password Strength Checker
+        // ==========================================
+        function checkPassword(pw) {
+            const criteria = {
+                length: pw.length >= 8,
+                upper: /[A-Z]/.test(pw),
+                lower: /[a-z]/.test(pw),
+                number: /[0-9]/.test(pw),
+                special: /[^A-Za-z0-9]/.test(pw),
+                long: pw.length >= 12
+            };
+
+            let score = 0;
+            if (criteria.length) score += 20;
+            if (criteria.upper) score += 15;
+            if (criteria.lower) score += 15;
+            if (criteria.number) score += 15;
+            if (criteria.special) score += 20;
+            if (criteria.long) score += 15;
+
+            // Penalty for common patterns
+            if (/^[0-9]+$/.test(pw)) score = Math.min(score, 10);
+            if (/^[a-z]+$/i.test(pw)) score = Math.min(score, 15);
+            if (/1234|password|qwerty|abcd/i.test(pw)) score = Math.max(0, score - 30);
+
+            if (pw.length === 0) score = 0;
+
+            // Update meter
+            const meter = document.getElementById('pw-meter');
+            const label = document.getElementById('pw-strength-label');
+            const scoreDisplay = document.getElementById('pw-score-display');
+            const tip = document.getElementById('pw-tip');
+
+            meter.style.width = score + '%';
+
+            let color, text, tipText;
+            if (score === 0) {
+                color = '#adb5bd'; text = ''; tipText = '';
+            } else if (score <= 25) {
+                color = '#ff6b6b'; text = '매우 약함';
+                tipText = '비밀번호가 너무 약합니다. 영문 대/소문자, 숫자, 특수문자를 조합하세요.';
+            } else if (score <= 50) {
+                color = '#ffa94d'; text = '약함';
+                tipText = '좀 더 길고 다양한 문자를 포함해 보세요.';
+            } else if (score <= 75) {
+                color = '#ffd43b'; text = '보통';
+                tipText = '괜찮지만 특수문자나 길이를 늘리면 더 안전합니다.';
+            } else {
+                color = '#51cf66'; text = '강함';
+                tipText = '훌륭한 비밀번호입니다! 이 정도면 안전합니다.';
+            }
+
+            meter.style.backgroundColor = color;
+            label.textContent = text;
+            label.style.color = color;
+            scoreDisplay.innerHTML = `<span class="text-4xl font-black" style="color:${color}">${score}</span><span class="text-gray-400 text-sm font-medium"> / 100점</span>`;
+
+            if (tipText) {
+                tip.classList.remove('hidden');
+                tip.innerHTML = `<div class="bg-gray-50 rounded-xl p-4 border border-gray-200"><p class="text-sm text-gray-700"><i class="fas fa-lightbulb text-amber-400 mr-2"></i>${tipText}</p></div>`;
+            } else {
+                tip.classList.add('hidden');
+            }
+
+            // Update criteria
+            Object.entries(criteria).forEach(([key, met]) => {
+                const el = document.querySelector(`[data-criteria="${key}"]`);
+                if (el) {
+                    el.classList.toggle('pw-criteria-met', met);
+                    el.classList.toggle('pw-criteria-unmet', !met);
+                }
+            });
+        }
+
+        // ==========================================
+        // ACTIVITY 3: Phishing Detection Quiz
+        // ==========================================
+        let currentPhishingScenario = 1;
+        const totalPhishingScenarios = 3;
+        const phishingFound = { 1: new Set(), 2: new Set(), 3: new Set() };
+        const phishingTotals = { 1: 4, 2: 4, 3: 4 };
+
+        const phishingExplanations = {
+            sender: '발신 주소가 "naverr-support.com"으로 공식 도메인(naver.com)과 다릅니다.',
+            subject: '긴급, 해킹 등의 공포를 유발하는 제목으로 사용자를 당황하게 합니다.',
+            urgency: '"24시간 이내", "영구 정지" 등으로 급하게 행동하도록 유도합니다.',
+            link: '공식 URL이 아닌 "naverr-security-check.com"이라는 가짜 사이트로 유도합니다.',
+            url2: '실제 KB국민은행 주소(kbstar.com)가 아닌 가짜 도메인입니다.',
+            personal2: '은행은 웹사이트에서 주민등록번호와 계좌 비밀번호를 동시에 요구하지 않습니다.',
+            cert2: '보안카드의 전체 번호를 한 번에 요구하는 것은 피싱의 대표적 특징입니다.',
+            grammar2: '"빠른시일내" 등 어색한 띄어쓰기가 보이며, 전문 기관의 공식 문서 수준이 아닙니다.',
+            sender3: '택배 회사는 대표번호(1588-XXXX)로 발송하지, 010 개인번호로 보내지 않습니다.',
+            content3: '택배 배송 불가 사칭은 가장 흔한 스미싱(SMS 피싱) 유형입니다.',
+            link3: '단축 URL(bit.ly)로 실제 주소를 숨기고 있어 악성 사이트일 수 있습니다.',
+            action3: '링크 클릭 후 앱 설치를 유도하는 것은 악성 앱 설치를 위한 전형적 수법입니다.'
+        };
+
+        document.querySelectorAll('.phishing-indicator').forEach(el => {
+            el.addEventListener('click', function() {
+                const clue = this.dataset.clue;
+                if (!clue) return;
+
+                const scenarioNum = this.closest('.phishing-scenario').dataset.scenario;
+                if (phishingFound[scenarioNum].has(clue)) return;
+
+                phishingFound[scenarioNum].add(clue);
+                this.classList.add('found');
+
+                // Show explanation tooltip
+                const explanation = phishingExplanations[clue];
+                if (explanation) {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'bg-red-50 border border-red-200 rounded-lg p-2 mt-1 text-xs text-red-700';
+                    tooltip.innerHTML = '<i class="fas fa-check-circle mr-1"></i>' + explanation;
+                    this.parentNode.insertBefore(tooltip, this.nextSibling);
+                }
+
+                // Update clue indicator
+                const clueIndicator = document.querySelector(`#phishing-clues-${scenarioNum} [data-for="${clue}"]`);
+                if (clueIndicator) {
+                    clueIndicator.classList.remove('text-gray-400', 'bg-gray-50', 'border-gray-200');
+                    clueIndicator.classList.add('text-red-700', 'bg-red-50', 'border-red-200', 'font-medium');
+                    clueIndicator.querySelector('i').classList.remove('fa-circle');
+                    clueIndicator.querySelector('i').classList.add('fa-check-circle');
+                }
+
+                // Update count
+                const countEl = this.closest('.phishing-scenario').querySelector('.phishing-found-count');
+                countEl.textContent = phishingFound[scenarioNum].size;
+
+                // Check if all found
+                if (phishingFound[scenarioNum].size === phishingTotals[scenarioNum]) {
+                    checkAllPhishingComplete();
+                }
+            });
+        });
+
+        function checkAllPhishingComplete() {
+            let allComplete = true;
+            for (let i = 1; i <= totalPhishingScenarios; i++) {
+                if (phishingFound[i].size < phishingTotals[i]) {
+                    allComplete = false;
+                    break;
+                }
+            }
+            if (allComplete) {
+                document.getElementById('phishing-total-result').classList.remove('hidden');
+            }
+        }
+
+        function changePhishingScenario(direction) {
+            const newScenario = currentPhishingScenario + direction;
+            if (newScenario < 1 || newScenario > totalPhishingScenarios) return;
+
+            document.querySelectorAll('.phishing-scenario').forEach(el => el.classList.add('hidden'));
+            document.querySelector(`[data-scenario="${newScenario}"]`).classList.remove('hidden');
+            currentPhishingScenario = newScenario;
+
+            const titles = { 1: '문제 1: 의심스러운 이메일', 2: '문제 2: 가짜 은행 사이트', 3: '문제 3: 스미싱 문자' };
+            document.getElementById('phishing-title').textContent = titles[newScenario];
+            document.getElementById('phishing-progress').textContent = `${newScenario} / ${totalPhishingScenarios}`;
+
+            // Button states
+            const prevBtn = document.getElementById('phishing-prev');
+            const nextBtn = document.getElementById('phishing-next');
+            prevBtn.disabled = newScenario === 1;
+            prevBtn.className = newScenario === 1
+                ? 'px-4 py-2 rounded-lg text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed transition-all'
+                : 'px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 transition-all';
+            nextBtn.disabled = newScenario === totalPhishingScenarios;
+            nextBtn.className = newScenario === totalPhishingScenarios
+                ? 'px-4 py-2 rounded-lg text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed transition-all'
+                : 'px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 transition-all';
+        }
+
+        // ==========================================
+        // ACTIVITY 4: Digital Ethics Scenario Game
+        // ==========================================
+        const ethicsScenarios = [
+            {
+                icon: 'fa-copy',
+                color: 'blue',
+                situation: '친구가 유료 소프트웨어를 불법 복제해서 USB에 담아 줄 테니 같이 쓰자고 합니다.',
+                options: [
+                    { text: '고마워! 비싼 프로그램인데 잘됐다.', correct: false, feedback: '불법 복제 소프트웨어 사용은 저작권법 위반이며, 악성코드 감염 위험도 있습니다.' },
+                    { text: '괜찮아, 나는 무료 대안 프로그램을 찾아볼게.', correct: true, feedback: '정답! 무료 오픈소스 대안을 활용하거나 정품을 구매하는 것이 올바른 선택입니다.' },
+                    { text: '선생님한테 말하면 친구가 혼나니까 그냥 넘어가자.', correct: false, feedback: '불법 복제를 묵인하는 것도 문제입니다. 친구에게 바르게 알려주는 것이 진정한 우정입니다.' }
+                ]
+            },
+            {
+                icon: 'fa-user-secret',
+                color: 'red',
+                situation: '반 단체 채팅방에서 한 친구의 사진을 몰래 찍어 올리며 외모를 놀리는 학생이 있습니다.',
+                options: [
+                    { text: '재미있으니까 같이 웃고 넘어간다.', correct: false, feedback: '동조하는 행위도 사이버 폭력의 가해자가 될 수 있습니다.' },
+                    { text: '사진 삭제를 요청하고, 피해 친구에게 지지를 표현한다.', correct: true, feedback: '정답! 초상권 침해이자 사이버 폭력입니다. 적극적으로 대응하는 것이 중요합니다.' },
+                    { text: '나만 안 하면 되니까 채팅방을 나간다.', correct: false, feedback: '방관도 문제를 해결하지 못합니다. 피해자를 돕는 적극적 행동이 필요합니다.' }
+                ]
+            },
+            {
+                icon: 'fa-id-card',
+                color: 'purple',
+                situation: '온라인 이벤트에 응모하려면 주민등록번호와 집 주소를 입력해야 합니다. 상품이 매우 좋습니다.',
+                options: [
+                    { text: '상품이 좋으니까 바로 입력한다.', correct: false, feedback: '과도한 개인정보를 요구하는 이벤트는 개인정보 수집이 목적일 수 있습니다.' },
+                    { text: '개인정보 수집 동의서와 이용 목적을 꼼꼼히 확인한 후 판단한다.', correct: true, feedback: '정답! 개인정보 제공 전에 반드시 수집 목적, 이용 기간, 제3자 제공 여부를 확인해야 합니다.' },
+                    { text: '가짜 정보를 입력해서 응모한다.', correct: false, feedback: '허위 정보 입력은 약관 위반이며, 다른 윤리적 문제를 야기합니다.' }
+                ]
+            },
+            {
+                icon: 'fa-newspaper',
+                color: 'amber',
+                situation: 'SNS에서 "유명 연예인 사망" 이라는 자극적인 제목의 기사를 봤습니다. 출처가 불분명합니다.',
+                options: [
+                    { text: '빨리 친구들에게 공유해서 알려준다.', correct: false, feedback: '출처가 불분명한 정보를 퍼뜨리면 가짜 뉴스 확산에 기여하게 됩니다.' },
+                    { text: '공식 뉴스 매체에서 사실 여부를 확인한 후 판단한다.', correct: true, feedback: '정답! 팩트체크는 디지털 시민으로서 기본적인 의무입니다. 공신력 있는 출처를 확인하세요.' },
+                    { text: '재미있으니 댓글을 달고 관전한다.', correct: false, feedback: '가짜 뉴스에 반응하면 알고리즘에 의해 더 많은 사람에게 노출됩니다.' }
+                ]
+            },
+            {
+                icon: 'fa-wifi',
+                color: 'teal',
+                situation: '카페에서 무료 Wi-Fi에 접속했는데, 은행 앱에 로그인하려고 합니다.',
+                options: [
+                    { text: '무료 Wi-Fi라 좋다! 바로 로그인한다.', correct: false, feedback: '공용 Wi-Fi는 해커가 데이터를 가로챌 수 있어 매우 위험합니다.' },
+                    { text: '모바일 데이터(LTE/5G)로 전환한 후 접속한다.', correct: true, feedback: '정답! 금융 거래는 반드시 안전한 네트워크(모바일 데이터, VPN)에서 해야 합니다.' },
+                    { text: '시크릿 모드를 켜면 안전하니까 괜찮다.', correct: false, feedback: '시크릿 모드는 브라우저 기록만 삭제할 뿐, 네트워크 보안과는 관계없습니다.' }
+                ]
+            }
+        ];
+
+        let currentEthicsQ = 0;
+        let ethicsScore = 0;
+
+        function renderEthicsQuestion() {
+            const container = document.getElementById('ethics-container');
+            const q = ethicsScenarios[currentEthicsQ];
+            const colorMap = { blue: 'from-blue-400 to-blue-600', red: 'from-red-400 to-red-600', purple: 'from-purple-400 to-purple-600', amber: 'from-amber-400 to-amber-600', teal: 'from-teal-400 to-teal-600' };
+
+            container.innerHTML = `
+                <div class="mb-6">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br ${colorMap[q.color]} flex items-center justify-center flex-shrink-0 shadow-lg">
+                            <i class="fas ${q.icon} text-white text-lg"></i>
+                        </div>
+                        <div class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-5 border border-gray-200 flex-1">
+                            <h4 class="font-bold text-gray-800 mb-1 text-sm">상황 ${currentEthicsQ + 1}</h4>
+                            <p class="text-gray-700 leading-relaxed">${q.situation}</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3" id="ethics-options">
+                        ${q.options.map((opt, i) => `
+                            <div class="scenario-option rounded-xl p-4 bg-white" onclick="selectEthicsOption(${i})" data-index="${i}">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <span class="text-gray-600 font-bold text-sm">${String.fromCharCode(65 + i)}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-700">${opt.text}</p>
+                                </div>
+                                <div class="feedback hidden mt-3 pl-11 text-sm"></div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectEthicsOption(index) {
+            const q = ethicsScenarios[currentEthicsQ];
+            const options = document.querySelectorAll('.scenario-option');
+
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                const feedback = opt.querySelector('.feedback');
+                const isCorrect = q.options[i].correct;
+
+                if (i === index) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                    feedback.classList.remove('hidden');
+                    feedback.innerHTML = `<p class="${isCorrect ? 'text-green-700' : 'text-red-700'}"><i class="fas ${isCorrect ? 'fa-check-circle' : 'fa-times-circle'} mr-1"></i>${q.options[i].feedback}</p>`;
+                    if (isCorrect) ethicsScore++;
+                }
+                if (q.options[i].correct && i !== index) {
+                    opt.classList.add('correct');
+                    opt.style.opacity = '1';
+                    feedback.classList.remove('hidden');
+                    feedback.innerHTML = `<p class="text-green-700"><i class="fas fa-check-circle mr-1"></i>${q.options[i].feedback}</p>`;
+                }
+            });
+
+            document.getElementById('ethics-score').textContent = ethicsScore;
+
+            // Next question button
+            setTimeout(() => {
+                const container = document.getElementById('ethics-container');
+                if (currentEthicsQ < ethicsScenarios.length - 1) {
+                    const nextBtn = document.createElement('div');
+                    nextBtn.className = 'text-center mt-6';
+                    nextBtn.innerHTML = `<button onclick="nextEthicsQuestion()" class="px-6 py-2.5 bg-primary-500 text-white rounded-xl font-medium hover:bg-primary-600 transition-colors"><i class="fas fa-arrow-right mr-1"></i> 다음 문제</button>`;
+                    container.appendChild(nextBtn);
+                } else {
+                    showEthicsFinal();
+                }
+            }, 500);
+        }
+
+        function nextEthicsQuestion() {
+            currentEthicsQ++;
+            document.getElementById('ethics-progress').textContent = `${currentEthicsQ + 1} / ${ethicsScenarios.length}`;
+            renderEthicsQuestion();
+        }
+
+        function showEthicsFinal() {
+            document.getElementById('ethics-container').classList.add('hidden');
+            document.getElementById('ethics-final').classList.remove('hidden');
+            document.getElementById('ethics-final-score').textContent = ethicsScore;
+        }
+
+        function resetEthics() {
+            currentEthicsQ = 0;
+            ethicsScore = 0;
+            document.getElementById('ethics-score').textContent = '0';
+            document.getElementById('ethics-progress').textContent = '1 / 5';
+            document.getElementById('ethics-container').classList.remove('hidden');
+            document.getElementById('ethics-final').classList.add('hidden');
+            renderEthicsQuestion();
+        }
+
+        renderEthicsQuestion();
+
+        // ==========================================
+        // ACTIVITY 5: Security Threat Matching
+        // ==========================================
+        let selectedThreat = null;
+        let selectedDesc = null;
+        let threatMatchCount = 0;
+
+        document.querySelectorAll('#threat-types .threat-card').forEach(card => {
+            card.addEventListener('click', function() {
+                if (this.classList.contains('matched')) return;
+                document.querySelectorAll('#threat-types .threat-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedThreat = this.dataset.threat;
+                checkThreatMatch();
+            });
+        });
+
+        document.querySelectorAll('#threat-descriptions .threat-card').forEach(card => {
+            card.addEventListener('click', function() {
+                if (this.classList.contains('matched')) return;
+                document.querySelectorAll('#threat-descriptions .threat-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedDesc = this.dataset.desc;
+                checkThreatMatch();
+            });
+        });
+
+        function checkThreatMatch() {
+            if (!selectedThreat || !selectedDesc) return;
+
+            const threatCard = document.querySelector(`#threat-types [data-threat="${selectedThreat}"]`);
+            const descCard = document.querySelector(`#threat-descriptions [data-desc="${selectedDesc}"]`);
+
+            if (selectedThreat === selectedDesc) {
+                threatCard.classList.remove('selected');
+                threatCard.classList.add('matched');
+                descCard.classList.remove('selected');
+                descCard.classList.add('matched');
+                threatMatchCount++;
+                document.getElementById('threat-match-count').textContent = threatMatchCount;
+
+                if (threatMatchCount === 5) {
+                    document.getElementById('threat-result').classList.remove('hidden');
+                }
+            } else {
+                threatCard.classList.add('shake');
+                descCard.classList.add('shake');
+                setTimeout(() => {
+                    threatCard.classList.remove('shake', 'selected');
+                    descCard.classList.remove('shake', 'selected');
+                }, 400);
+            }
+
+            selectedThreat = null;
+            selectedDesc = null;
+        }
+
+        function resetThreats() {
+            threatMatchCount = 0;
+            selectedThreat = null;
+            selectedDesc = null;
+            document.getElementById('threat-match-count').textContent = '0';
+            document.getElementById('threat-result').classList.add('hidden');
+            document.querySelectorAll('.threat-card').forEach(card => {
+                card.classList.remove('matched', 'selected', 'shake');
+            });
+        }
+
+        // ==========================================
+        // ACTIVITY 6: Security Checklist
+        // ==========================================
+        const totalCheckItems = document.querySelectorAll('.security-check-item').length;
+
+        function toggleSecurityCheck(el) {
+            el.classList.toggle('checked');
+            updateSecurityProgress();
+        }
+
+        function updateSecurityProgress() {
+            const checked = document.querySelectorAll('.security-check-item.checked').length;
+            const percent = Math.round((checked / totalCheckItems) * 100);
+
+            // Update ring
+            const ring = document.getElementById('security-ring');
+            const circumference = 264;
+            const offset = circumference - (percent / 100) * circumference;
+            ring.style.strokeDashoffset = offset;
+
+            // Update color based on progress
+            let color;
+            if (percent < 40) color = '#ff6b6b';
+            else if (percent < 70) color = '#ffa94d';
+            else color = '#22b8cf';
+            ring.style.stroke = color;
+
+            document.getElementById('security-percent').textContent = percent + '%';
+            document.getElementById('security-percent').style.color = color;
+
+            // Update grade
+            const gradeEl = document.getElementById('security-grade');
+            if (percent === 0) gradeEl.textContent = '체크리스트를 시작하세요';
+            else if (percent < 40) gradeEl.textContent = '보안 상태: 위험! 개선이 필요합니다';
+            else if (percent < 70) gradeEl.textContent = '보안 상태: 보통. 몇 가지 더 개선해 보세요';
+            else if (percent < 100) gradeEl.textContent = '보안 상태: 양호! 거의 다 됐어요';
+            else gradeEl.textContent = '보안 상태: 완벽! 훌륭합니다';
+
+            gradeEl.style.color = color;
+        }
     </script>
 </body>
 </html>

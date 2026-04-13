@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -60,44 +61,12 @@
             animation: heroFloat 6s ease-in-out infinite;
         }
 
-
-        /* Fillable input/textarea styling */
-        .activity-input {
-            width: 100%;
-            min-height: 2.5rem;
-            padding: 0.5rem 0.75rem;
-            border: 2px solid #a7f3d0;
-            border-radius: 0.5rem;
-            background-color: #ecfdf5;
-            font-size: 0.875rem;
-            font-family: 'Noto Sans KR', sans-serif;
-            transition: all 0.2s ease;
-            resize: vertical;
+        /* Activity card animation */
+        .activity-card {
+            transition: transform 0.2s ease;
         }
-        .activity-input:focus {
-            outline: none;
-            border-color: #059669;
-            background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
-        }
-        .activity-input::placeholder {
-            color: #6ee7b7;
-            font-style: italic;
-        }
-        .activity-input:not(:placeholder-shown) {
-            background-color: #fff;
-            border-color: #34d399;
-        }
-
-        /* Pre-filled example cells */
-        .example-cell {
-            background-color: #ecfdf5;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.85rem;
-            color: #064e3b;
-            line-height: 1.6;
-            border-left: 3px solid #059669;
+        .activity-card:hover {
+            transform: translateY(-2px);
         }
 
         /* Eval buttons */
@@ -127,12 +96,273 @@
             margin-bottom: 0.5rem;
         }
 
-        /* Activity card animation */
-        .activity-card {
-            transition: transform 0.2s ease;
+        /* Fillable input/textarea styling */
+        .activity-input {
+            width: 100%;
+            min-height: 2.5rem;
+            padding: 0.5rem 0.75rem;
+            border: 2px solid #a7f3d0;
+            border-radius: 0.5rem;
+            background-color: #ecfdf5;
+            font-size: 0.875rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            transition: all 0.2s ease;
+            resize: vertical;
         }
-        .activity-card:hover {
-            transform: translateY(-2px);
+        .activity-input:focus {
+            outline: none;
+            border-color: #059669;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+        }
+        .activity-input::placeholder {
+            color: #6ee7b7;
+            font-style: italic;
+        }
+
+        /* Word Cloud */
+        .word-cloud-area {
+            min-height: 260px;
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f0f9ff 100%);
+            border: 2px dashed #a7f3d0;
+            border-radius: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .word-cloud-area.active {
+            border-color: #059669;
+            border-style: solid;
+        }
+        .word-cloud-item {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+            cursor: default;
+            animation: wordPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            opacity: 0;
+            transform: scale(0);
+            white-space: nowrap;
+        }
+        @keyframes wordPop {
+            to { opacity: 1; transform: scale(1); }
+        }
+        .keyword-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #d1d5db;
+            border-radius: 999px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .keyword-btn:hover {
+            border-color: #059669;
+            background: #ecfdf5;
+            transform: translateY(-1px);
+        }
+        .keyword-btn.active {
+            border-color: #059669;
+            background: #059669;
+            color: white;
+            transform: scale(0.95);
+        }
+
+        /* Drag and Drop */
+        .drag-item {
+            padding: 1rem 1.5rem;
+            background: white;
+            border: 2px solid #d1d5db;
+            border-radius: 0.75rem;
+            cursor: grab;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .drag-item:active {
+            cursor: grabbing;
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+        .drag-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+        .drop-zone {
+            min-height: 60px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+        }
+        .drop-zone.drag-over {
+            border-color: #059669;
+            background: #ecfdf5;
+            transform: scale(1.02);
+        }
+        .drop-zone.filled {
+            border-style: solid;
+            border-color: #34d399;
+            background: white;
+        }
+        .drop-zone.correct {
+            border-color: #059669;
+            background: #ecfdf5;
+        }
+        .drop-zone.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+            animation: shake 0.4s ease;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* Quiz */
+        .quiz-option {
+            padding: 1rem 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            width: 100%;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.9rem;
+        }
+        .quiz-option:hover {
+            border-color: #0891b2;
+            background: #ecfeff;
+            transform: translateX(4px);
+        }
+        .quiz-option.correct {
+            border-color: #059669;
+            background: #ecfdf5;
+            color: #064e3b;
+        }
+        .quiz-option.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+        .quiz-option:disabled {
+            cursor: default;
+            opacity: 0.7;
+        }
+        .quiz-option:disabled:hover {
+            transform: none;
+        }
+
+        /* Interactive Table */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.85rem;
+        }
+        .data-table th {
+            background: #0e7490;
+            color: white;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .data-table th:hover {
+            background: #0891b2;
+        }
+        .data-table th:first-child { border-radius: 0.5rem 0 0 0; }
+        .data-table th:last-child { border-radius: 0 0.5rem 0 0; }
+        .data-table td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.15s;
+        }
+        .data-table tr:hover td {
+            background: #ecfdf5;
+        }
+        .data-table tr.hidden-row {
+            display: none;
+        }
+        .data-table tr:last-child td:first-child { border-radius: 0 0 0 0.5rem; }
+        .data-table tr:last-child td:last-child { border-radius: 0 0 0.5rem 0; }
+        .sort-icon::after {
+            content: ' \2195';
+            opacity: 0.5;
+        }
+        .sort-asc::after {
+            content: ' \2191';
+            opacity: 1;
+        }
+        .sort-desc::after {
+            content: ' \2193';
+            opacity: 1;
+        }
+
+        .filter-chip {
+            padding: 0.4rem 0.9rem;
+            border: 2px solid #d1d5db;
+            border-radius: 999px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .filter-chip:hover {
+            border-color: #0891b2;
+        }
+        .filter-chip.active {
+            border-color: #0891b2;
+            background: #0891b2;
+            color: white;
+        }
+
+        /* Chart container */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-height: 400px;
+        }
+
+        /* Progress indicator */
+        .progress-ring {
+            width: 60px;
+            height: 60px;
+        }
+
+        /* Feedback animations */
+        @keyframes celebratePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .celebrate {
+            animation: celebratePulse 0.5s ease;
         }
 
         /* Table responsive wrapper */
@@ -141,63 +371,21 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Case study card */
-        .case-card {
-            border-radius: 0.75rem;
-            overflow: hidden;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .case-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-        }
-
         /* Print styles */
         @media print {
-            body {
-                background: white !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .activity-input {
-                border: 1px solid #999 !important;
-                background: white !important;
-                min-height: 3rem !important;
-            }
-            .eval-btn.selected {
-                border: 3px solid #059669 !important;
-                background: #ecfdf5 !important;
-            }
-        .hero-section {
-                background: #059669 !important;
-                color: white !important;
-            }
-            nav, .action-buttons {
-                display: none !important;
-            }
-            .activity-card {
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-        
+            body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            .eval-btn.selected { border: 3px solid #059669 !important; background: #ecfdf5 !important; }
+            .hero-section { background: #059669 !important; color: white !important; }
+            nav, .action-buttons { display: none !important; }
+            .activity-card { break-inside: avoid; page-break-inside: avoid; }
             .hero-gradient { background: #0e7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
 
         /* Scrollbar styling */
-        .table-wrapper::-webkit-scrollbar {
-            height: 6px;
-        }
-        .table-wrapper::-webkit-scrollbar-track {
-            background: #ecfdf5;
-            border-radius: 3px;
-        }
-        .table-wrapper::-webkit-scrollbar-thumb {
-            background: #34d399;
-            border-radius: 3px;
-        }
+        .table-wrapper::-webkit-scrollbar { height: 6px; }
+        .table-wrapper::-webkit-scrollbar-track { background: #ecfdf5; border-radius: 3px; }
+        .table-wrapper::-webkit-scrollbar-thumb { background: #34d399; border-radius: 3px; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -252,15 +440,15 @@
                 </p>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-chart-line text-emerald-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
+                        <i class="fas fa-chart-line text-cyan-300"></i>
                         <span>데이터 분석</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-magnifying-glass-chart text-emerald-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
+                        <i class="fas fa-magnifying-glass-chart text-cyan-300"></i>
                         <span>트렌드 탐구</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-triangle-exclamation text-emerald-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
+                        <i class="fas fa-triangle-exclamation text-cyan-300"></i>
                         <span>문제점 분석</span>
                     </div>
                 </div>
@@ -284,72 +472,12 @@
             </div>
         </div>
     </section>
-<!-- Main Content -->
+
+    <!-- Main Content -->
     <main class="max-w-5xl mx-auto px-4 py-10 space-y-10">
 
         <!-- ============================================ -->
-        <!-- Student Info Section -->
-        <!-- ============================================ -->
-        <section class="bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
-            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4 flex items-center gap-3">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
-                    <i class="fas fa-user-pen"></i>
-                </div>
-                <div>
-                    <h2 class="text-lg font-bold text-white">학생 정보</h2>
-                    <p class="text-emerald-100 text-xs">활동 제출을 위해 정보를 입력하세요</p>
-                </div>
-            </div>
-            <div class="p-6 space-y-5">
-                <!-- Google Sheet URL -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                        <i class="fas fa-table text-green-500 mr-1"></i>구글 시트 URL <span class="text-red-400">*</span>
-                    </label>
-                    <div class="flex gap-2">
-                        <input type="url" id="sheetUrl" class="activity-input w-full"
-                               placeholder="선생님이 공유한 구글 시트 주소를 붙여넣으세요"
-                               style="border-color: #86efac; background-color: #f0fdf4;">
-                        <button type="button" onclick="validateSheetUrl()"
-                                class="flex-shrink-0 px-4 py-2 bg-green-100 border-2 border-green-300 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-all"
-                                title="URL 확인">
-                            <i class="fas fa-link-slash" id="sheetUrlIcon"></i>
-                        </button>
-                    </div>
-                    <p class="text-xs text-gray-400 mt-1.5">
-                        <i class="fas fa-circle-info mr-1"></i>
-                        예: https://docs.google.com/spreadsheets/d/abc123.../edit
-                    </p>
-                </div>
-                <!-- Student Info Fields -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">학년 <span class="text-red-400">*</span></label>
-                        <select id="grade" class="activity-input w-full" style="padding: 10px 12px;">
-                            <option value="">선택</option>
-                            <option value="1">1학년</option>
-                            <option value="2">2학년</option>
-                            <option value="3">3학년</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">반 <span class="text-red-400">*</span></label>
-                        <input type="number" id="classNum" class="activity-input w-full" placeholder="예: 3" min="1" max="20">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">번호 <span class="text-red-400">*</span></label>
-                        <input type="number" id="number" class="activity-input w-full" placeholder="예: 15" min="1" max="50">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">이름 <span class="text-red-400">*</span></label>
-                        <input type="text" id="name" class="activity-input w-full" placeholder="이름 입력">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============================================ -->
-        <!-- 활동 1: 검색어 트렌드 분석 -->
+        <!-- 활동 1: 빅데이터 워드클라우드 생성기 -->
         <!-- ============================================ -->
         <section class="activity-card bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
             <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-5 flex items-center gap-4">
@@ -357,85 +485,54 @@
                     1
                 </div>
                 <div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white">검색어 트렌드 분석</h2>
-                    <p class="text-emerald-100 text-sm mt-0.5"><i class="fas fa-chart-line mr-1"></i> 검색어 트렌드 도구를 활용하여 데이터를 분석합니다</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">빅데이터 키워드 워드클라우드</h2>
+                    <p class="text-emerald-100 text-sm mt-0.5"><i class="fas fa-cloud mr-1"></i> 빅데이터 관련 핵심 키워드를 선택하여 워드클라우드를 만들어 봅시다</p>
                 </div>
             </div>
 
-            <div class="p-6 md:p-8 space-y-8">
+            <div class="p-6 md:p-8 space-y-6">
                 <!-- 안내 -->
                 <div class="bg-teal-50 border-l-4 border-teal-400 rounded-r-lg p-4 md:p-5">
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base">
-                        <i class="fas fa-globe text-teal-500 mr-1"></i>
-                        <strong>검색어 트렌드</strong> 서비스(구글 트렌드, 네이버 데이터랩 등)를 이용하여 다양한 검색어의 추이를 분석해 봅시다.
+                        <i class="fas fa-hand-pointer text-teal-500 mr-1"></i>
+                        아래 키워드를 클릭하면 워드클라우드에 추가됩니다. 빅데이터와 가장 관련 깊은 키워드를 골라보세요. 같은 키워드를 여러 번 클릭하면 크기가 커집니다.
                     </p>
                 </div>
 
-                <!-- (1) AI와 ChatGPT 검색 추이 비교 -->
-                <div class="bg-emerald-50 rounded-xl p-5 md:p-6 border border-emerald-200">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2 mb-4">
-                        <span class="inline-flex items-center justify-center w-7 h-7 bg-emerald-500 text-white rounded-full text-xs font-bold">(1)</span>
-                        AI와 ChatGPT 검색 추이 비교
-                    </h3>
-                    <div class="space-y-4">
-                        <div class="bg-white rounded-lg p-4 border border-emerald-100">
-                            <p class="text-gray-700 text-sm md:text-base leading-relaxed mb-3">
-                                <i class="fas fa-search text-emerald-500 mr-1"></i>
-                                <strong>AI</strong>와 <strong>ChatGPT</strong> 검색 추이를 비교해 봅시다. (기간: 2022.4.25 ~ 2024.4.25)
-                            </p>
-                            <p class="text-gray-600 text-sm leading-relaxed">
-                                <i class="fas fa-plus-circle text-teal-400 mr-1"></i>
-                                추가로 <strong>Gemini</strong>, <strong>robot</strong> 등 다른 검색어와도 비교해 보고, 발견한 내용을 정리해 봅시다.
-                            </p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                <i class="fas fa-pencil text-emerald-500 mr-1"></i>분석 결과 및 발견한 점
-                            </label>
-                            <textarea id="act1_trend" class="activity-input" rows="5"
-                                      placeholder="AI와 ChatGPT 검색 추이 비교 결과, Gemini/robot 등과의 비교에서 발견한 점을 작성하세요..."></textarea>
-                        </div>
+                <!-- 주제 선택 -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-3"><i class="fas fa-tag text-emerald-500 mr-1"></i>주제 선택</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button onclick="loadWordCloudTopic('bigdata')" class="filter-chip active" id="topicBigdata">빅데이터 개념</button>
+                        <button onclick="loadWordCloudTopic('analysis')" class="filter-chip" id="topicAnalysis">데이터 분석</button>
+                        <button onclick="loadWordCloudTopic('application')" class="filter-chip" id="topicApplication">활용 분야</button>
                     </div>
                 </div>
 
-                <!-- (2) 다양한 검색어 추이 확인 -->
-                <div class="bg-teal-50 rounded-xl p-5 md:p-6 border border-teal-200">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2 mb-4">
-                        <span class="inline-flex items-center justify-center w-7 h-7 bg-teal-500 text-white rounded-full text-xs font-bold">(2)</span>
-                        다양한 검색어 추이 확인
-                    </h3>
-                    <div class="space-y-4">
-                        <div class="bg-white rounded-lg p-4 border border-teal-100">
-                            <p class="text-gray-700 text-sm md:text-base leading-relaxed mb-3">
-                                <i class="fas fa-magnifying-glass text-teal-500 mr-1"></i>
-                                다양한 검색어의 추이를 확인해 봅시다. 아래 예시를 참고하여 자유롭게 분석해 보세요.
-                            </p>
-                            <div class="flex flex-wrap gap-2 mt-2">
-                                <span class="inline-flex items-center gap-1 bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-xs font-medium">
-                                    <i class="fas fa-thermometer-half"></i> 독감과 감기
-                                </span>
-                                <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium">
-                                    <i class="fas fa-mask-face"></i> 마스크와 미세 먼지
-                                </span>
-                                <span class="inline-flex items-center gap-1 bg-cyan-100 text-cyan-700 px-3 py-1 rounded-full text-xs font-medium">
-                                    <i class="fas fa-fan"></i> 선풍기와 에어컨
-                                </span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                <i class="fas fa-pencil text-teal-500 mr-1"></i>분석 결과 및 발견한 점
-                            </label>
-                            <textarea id="act1_various" class="activity-input" rows="5"
-                                      placeholder="선택한 검색어와 비교 결과, 발견한 특이한 점이나 패턴을 작성하세요..."></textarea>
-                        </div>
+                <!-- 키워드 버튼 -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-3"><i class="fas fa-tags text-teal-500 mr-1"></i>키워드를 클릭하세요</p>
+                    <div id="keywordButtons" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <!-- 워드클라우드 영역 -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-sm font-semibold text-gray-700"><i class="fas fa-cloud text-cyan-500 mr-1"></i>나의 워드클라우드</p>
+                        <button onclick="clearWordCloud()" class="text-xs text-gray-400 hover:text-red-500 transition-colors">
+                            <i class="fas fa-trash-can mr-1"></i>초기화
+                        </button>
                     </div>
+                    <div id="wordCloudArea" class="word-cloud-area">
+                        <p class="text-gray-400 text-sm" id="wordCloudPlaceholder">키워드를 클릭하면 여기에 워드클라우드가 생성됩니다</p>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2 text-center" id="wordCloudCount">선택한 키워드: 0개</p>
                 </div>
             </div>
         </section>
 
         <!-- ============================================ -->
-        <!-- 활동 2: 어획량 변화 그래프 해석 -->
+        <!-- 활동 2: 어획량 데이터 시각화 도구 -->
         <!-- ============================================ -->
         <section class="activity-card bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
             <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-5 flex items-center gap-4">
@@ -443,190 +540,250 @@
                     2
                 </div>
                 <div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white">어획량 변화 그래프 해석</h2>
-                    <p class="text-teal-100 text-sm mt-0.5"><i class="fas fa-fish mr-1"></i> 어획량 데이터를 수집하고 그래프를 해석합니다</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">어획량 데이터 시각화</h2>
+                    <p class="text-teal-100 text-sm mt-0.5"><i class="fas fa-chart-area mr-1"></i> 어획량 데이터를 필터링하고 차트로 시각화해 봅시다</p>
                 </div>
             </div>
 
-            <div class="p-6 md:p-8 space-y-8">
+            <div class="p-6 md:p-8 space-y-6">
                 <!-- 안내 -->
                 <div class="bg-cyan-50 border-l-4 border-cyan-400 rounded-r-lg p-4 md:p-5">
-                    <div class="space-y-3 text-gray-700 leading-relaxed text-sm md:text-base">
+                    <div class="space-y-2 text-gray-700 leading-relaxed text-sm md:text-base">
                         <p>
                             <i class="fas fa-chart-area text-cyan-500 mr-1"></i>
-                            <strong>1970~2022년</strong> 동안 <strong>명태, 도루묵, 꽁치, 멸치, 고등어</strong>의 어획량 변화를 분석해 봅시다.
+                            <strong>1970~2022년</strong> 어획량 데이터를 직접 필터링하고 차트로 시각화해 보세요.
                         </p>
                         <p>
                             <i class="fas fa-circle-question text-cyan-500 mr-1"></i>
-                            특히 <strong>2016년</strong>과 <strong>2020년</strong>에 멸치와 고등어 어획량이 줄어든 이유를 찾아봅시다.
+                            어종별 필터와 기간 슬라이더를 조작하며 데이터의 패턴을 발견해 봅시다.
                         </p>
                     </div>
                 </div>
 
-                <!-- 어종 태그 -->
-                <div class="flex flex-wrap gap-2">
-                    <span class="inline-flex items-center gap-1.5 bg-blue-100 text-blue-700 px-3 py-1.5 rounded-full text-sm font-medium">
-                        <i class="fas fa-fish"></i> 명태
-                    </span>
-                    <span class="inline-flex items-center gap-1.5 bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-full text-sm font-medium">
-                        <i class="fas fa-fish"></i> 도루묵
-                    </span>
-                    <span class="inline-flex items-center gap-1.5 bg-purple-100 text-purple-700 px-3 py-1.5 rounded-full text-sm font-medium">
-                        <i class="fas fa-fish"></i> 꽁치
-                    </span>
-                    <span class="inline-flex items-center gap-1.5 bg-teal-100 text-teal-700 px-3 py-1.5 rounded-full text-sm font-medium">
-                        <i class="fas fa-fish"></i> 멸치
-                    </span>
-                    <span class="inline-flex items-center gap-1.5 bg-cyan-100 text-cyan-700 px-3 py-1.5 rounded-full text-sm font-medium">
-                        <i class="fas fa-fish"></i> 고등어
-                    </span>
+                <!-- 필터 컨트롤 -->
+                <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 space-y-4">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-700 mb-3"><i class="fas fa-fish text-teal-500 mr-1"></i>어종 선택 (클릭하여 표시/숨김)</p>
+                        <div class="flex flex-wrap gap-2" id="fishFilterBtns">
+                            <button onclick="toggleFish('명태')" class="filter-chip active" id="fish_명태" style="border-color:#3b82f6;background:#3b82f6;color:white">
+                                <i class="fas fa-fish mr-1"></i>명태
+                            </button>
+                            <button onclick="toggleFish('도루묵')" class="filter-chip active" id="fish_도루묵" style="border-color:#6366f1;background:#6366f1;color:white">
+                                <i class="fas fa-fish mr-1"></i>도루묵
+                            </button>
+                            <button onclick="toggleFish('꽁치')" class="filter-chip active" id="fish_꽁치" style="border-color:#a855f7;background:#a855f7;color:white">
+                                <i class="fas fa-fish mr-1"></i>꽁치
+                            </button>
+                            <button onclick="toggleFish('멸치')" class="filter-chip active" id="fish_멸치" style="border-color:#14b8a6;background:#14b8a6;color:white">
+                                <i class="fas fa-fish mr-1"></i>멸치
+                            </button>
+                            <button onclick="toggleFish('고등어')" class="filter-chip active" id="fish_고등어" style="border-color:#06b6d4;background:#06b6d4;color:white">
+                                <i class="fas fa-fish mr-1"></i>고등어
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-700 mb-2"><i class="fas fa-calendar-days text-cyan-500 mr-1"></i>기간 설정</p>
+                        <div class="flex items-center gap-4">
+                            <span class="text-sm text-gray-500 font-mono" id="yearStart">1970</span>
+                            <input type="range" id="yearRangeStart" min="1970" max="2022" value="1970" class="flex-1 accent-teal-500" oninput="updateChart()">
+                            <span class="text-gray-400">~</span>
+                            <input type="range" id="yearRangeEnd" min="1970" max="2022" value="2022" class="flex-1 accent-teal-500" oninput="updateChart()">
+                            <span class="text-sm text-gray-500 font-mono" id="yearEnd">2022</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-700 mb-2"><i class="fas fa-chart-simple text-teal-500 mr-1"></i>차트 유형</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="setChartType('line')" class="filter-chip active" id="chartTypeLine">선형 차트</button>
+                            <button onclick="setChartType('bar')" class="filter-chip" id="chartTypeBar">막대 차트</button>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- 데이터 수집 -->
-                <div class="bg-teal-50 rounded-xl p-5 md:p-6 border border-teal-200">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2 mb-4">
-                        <i class="fas fa-database text-teal-500"></i>
-                        데이터 수집
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-3">
-                        어획량 데이터를 어디에서 수집했는지 출처를 기록하세요.
-                    </p>
-                    <textarea id="act2_datasource" class="activity-input" rows="3"
-                              placeholder="예: 국가통계포털(KOSIS), 해양수산부 어업생산통계, 통계청 등 데이터 수집 출처를 작성하세요..."></textarea>
+                <!-- 차트 영역 -->
+                <div class="chart-container bg-white rounded-xl border border-gray-200 p-4">
+                    <canvas id="fishChart"></canvas>
                 </div>
 
-                <!-- 그래프 해석 -->
-                <div class="bg-cyan-50 rounded-xl p-5 md:p-6 border border-cyan-200">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2 mb-4">
-                        <i class="fas fa-chart-bar text-cyan-500"></i>
-                        그래프 해석
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-3">
-                        어획량 변화 그래프를 보고 해석한 내용을 작성하세요. 2016년과 2020년 멸치 및 고등어 어획량 감소 이유도 포함해 주세요.
-                    </p>
-                    <textarea id="act2_interpret" class="activity-input" rows="6"
-                              placeholder="어획량 변화의 전반적인 추이, 2016년과 2020년 멸치/고등어 어획량 감소 원인, 기후 변화와의 관계 등을 분석하여 작성하세요..."></textarea>
+                <!-- 발견 내용 표시 -->
+                <div id="fishInsight" class="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4 hidden">
+                    <p class="text-amber-800 text-sm font-semibold mb-1"><i class="fas fa-lightbulb text-amber-500 mr-1"></i>데이터 인사이트</p>
+                    <p class="text-amber-700 text-sm" id="fishInsightText"></p>
                 </div>
             </div>
         </section>
 
         <!-- ============================================ -->
-        <!-- 활동 3: 빅데이터 분석과 활용 문제점 -->
+        <!-- 활동 3: 인터랙티브 데이터 탐색 테이블 -->
         <!-- ============================================ -->
         <section class="activity-card bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
-            <div class="bg-gradient-to-r from-emerald-700 to-teal-700 px-6 py-5 flex items-center gap-4">
+            <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                     3
                 </div>
                 <div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white">빅데이터 분석과 활용 문제점</h2>
-                    <p class="text-emerald-100 text-sm mt-0.5"><i class="fas fa-triangle-exclamation mr-1"></i> 빅데이터 활용 시 발생할 수 있는 문제점을 탐구합니다</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">데이터 탐색 테이블</h2>
+                    <p class="text-cyan-100 text-sm mt-0.5"><i class="fas fa-table mr-1"></i> 검색어 트렌드 데이터를 정렬하고 필터링하며 패턴을 발견해 봅시다</p>
                 </div>
             </div>
 
-            <div class="p-6 md:p-8 space-y-8">
-                <!-- 안내 -->
-                <div class="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4 md:p-5">
+            <div class="p-6 md:p-8 space-y-6">
+                <div class="bg-blue-50 border-l-4 border-blue-400 rounded-r-lg p-4 md:p-5">
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base">
-                        <i class="fas fa-lightbulb text-amber-500 mr-1"></i>
-                        아래 사례를 읽고, 각 사례에서 발생하는 <strong>문제점</strong>을 파악한 뒤 <strong>해결 방안</strong>을 작성해 봅시다.
+                        <i class="fas fa-magnifying-glass-chart text-blue-500 mr-1"></i>
+                        <strong>검색어 트렌드 데이터</strong>를 클릭하여 정렬하고, 필터를 사용하여 패턴을 발견해 보세요. 열 제목을 클릭하면 정렬됩니다.
                     </p>
                 </div>
 
-                <!-- 사례 1: 맞춤형 광고 -->
-                <div class="case-card border border-red-200 bg-white">
-                    <div class="bg-red-50 px-5 py-4 border-b border-red-200">
-                        <h3 class="text-lg font-bold text-red-800 flex items-center gap-2">
-                            <span class="inline-flex items-center justify-center w-8 h-8 bg-red-500 text-white rounded-lg text-sm font-bold">1</span>
-                            <i class="fas fa-ad text-red-400"></i>
-                            맞춤형 광고와 프라이버시 침해
-                        </h3>
+                <!-- 필터 -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterTable('all')" class="filter-chip active" id="tableFilterAll">전체</button>
+                    <button onclick="filterTable('AI')" class="filter-chip" id="tableFilterAI">AI 관련</button>
+                    <button onclick="filterTable('건강')" class="filter-chip" id="tableFilter건강">건강</button>
+                    <button onclick="filterTable('계절')" class="filter-chip" id="tableFilter계절">계절</button>
+                </div>
+
+                <!-- 테이블 -->
+                <div class="table-wrapper rounded-xl border border-gray-200 overflow-hidden">
+                    <table class="data-table" id="trendTable">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable(0)" class="sort-icon">검색어</th>
+                                <th onclick="sortTable(1)" class="sort-icon">분류</th>
+                                <th onclick="sortTable(2)" class="sort-icon">2023 상반기</th>
+                                <th onclick="sortTable(3)" class="sort-icon">2023 하반기</th>
+                                <th onclick="sortTable(4)" class="sort-icon">2024 상반기</th>
+                                <th onclick="sortTable(5)" class="sort-icon">변화율</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trendTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="tableInsight" class="bg-emerald-50 border-l-4 border-emerald-400 rounded-r-lg p-4">
+                    <p class="text-emerald-800 text-sm font-semibold mb-1"><i class="fas fa-chart-line text-emerald-500 mr-1"></i>패턴 발견 도우미</p>
+                    <p class="text-emerald-700 text-sm">열 제목을 클릭해서 정렬하고, 분류 필터를 눌러서 특정 유형의 검색어만 확인해 보세요. 어떤 패턴이 보이나요?</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 활동 4: 빅데이터 분석 단계 드래그 앤 드롭 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                    4
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">빅데이터 분석 단계 정렬하기</h2>
+                    <p class="text-indigo-100 text-sm mt-0.5"><i class="fas fa-arrows-up-down mr-1"></i> 빅데이터 분석의 4단계를 올바른 순서로 배열해 봅시다</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-6">
+                <div class="bg-indigo-50 border-l-4 border-indigo-400 rounded-r-lg p-4 md:p-5">
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">
+                        <i class="fas fa-hand-pointer text-indigo-500 mr-1"></i>
+                        아래의 카드를 <strong>드래그하여</strong> 올바른 순서 칸에 놓아보세요. 빅데이터 분석은 4단계로 이루어집니다.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- 드래그 소스 -->
+                    <div>
+                        <p class="text-sm font-semibold text-gray-700 mb-3"><i class="fas fa-puzzle-piece text-indigo-500 mr-1"></i>분석 단계 카드</p>
+                        <div id="dragSource" class="space-y-3">
+                        </div>
                     </div>
-                    <div class="p-5 space-y-4">
-                        <div class="bg-red-50 rounded-lg p-4 text-sm text-gray-700 leading-relaxed border-l-3 border-red-300">
-                            <i class="fas fa-scroll text-red-400 mr-1"></i>
-                            인터넷 검색 기록, 구매 이력, 위치 정보 등을 분석하여 개인 맞춤형 광고를 제공하지만, 이 과정에서 개인의 프라이버시가 침해될 수 있습니다.
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                <i class="fas fa-exclamation-circle text-red-400 mr-1"></i>문제점
-                            </label>
-                            <div class="example-cell" style="border-left-color: #ef4444; background-color: #fef2f2; color: #991b1b;">
-                                프라이버시 침해 - 개인의 검색 기록, 구매 이력, 위치 정보 등 사적 데이터가 동의 없이 수집/활용되어 사생활이 침해됨
+
+                    <!-- 드롭 대상 -->
+                    <div>
+                        <p class="text-sm font-semibold text-gray-700 mb-3"><i class="fas fa-list-ol text-purple-500 mr-1"></i>올바른 순서</p>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
+                                <div class="drop-zone flex-1" id="dropZone1" ondrop="dropItem(event, 1)" ondragover="dragOver(event)" ondragleave="dragLeave(event)">
+                                    <span class="text-gray-400 text-sm">첫 번째 단계</span>
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                <i class="fas fa-wand-magic-sparkles text-emerald-500 mr-1"></i>해결 방안
-                            </label>
-                            <textarea id="act3_solution1" class="activity-input" rows="4"
-                                      placeholder="맞춤형 광고로 인한 프라이버시 침해 문제를 해결하기 위한 방안을 작성하세요..."></textarea>
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
+                                <div class="drop-zone flex-1" id="dropZone2" ondrop="dropItem(event, 2)" ondragover="dragOver(event)" ondragleave="dragLeave(event)">
+                                    <span class="text-gray-400 text-sm">두 번째 단계</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</span>
+                                <div class="drop-zone flex-1" id="dropZone3" ondrop="dropItem(event, 3)" ondragover="dragOver(event)" ondragleave="dragLeave(event)">
+                                    <span class="text-gray-400 text-sm">세 번째 단계</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">4</span>
+                                <div class="drop-zone flex-1" id="dropZone4" ondrop="dropItem(event, 4)" ondragover="dragOver(event)" ondragleave="dragLeave(event)">
+                                    <span class="text-gray-400 text-sm">네 번째 단계</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 사례 2: 아이스크림-익사 상관관계 -->
-                <div class="case-card border border-amber-200 bg-white">
-                    <div class="bg-amber-50 px-5 py-4 border-b border-amber-200">
-                        <h3 class="text-lg font-bold text-amber-800 flex items-center gap-2">
-                            <span class="inline-flex items-center justify-center w-8 h-8 bg-amber-500 text-white rounded-lg text-sm font-bold">2</span>
-                            <i class="fas fa-ice-cream text-amber-400"></i>
-                            아이스크림 판매량과 익사 사고 - 인과관계 확대 해석
-                        </h3>
-                    </div>
-                    <div class="p-5 space-y-4">
-                        <div class="bg-amber-50 rounded-lg p-4 text-sm text-gray-700 leading-relaxed border-l-3 border-amber-300">
-                            <i class="fas fa-scroll text-amber-400 mr-1"></i>
-                            아이스크림 판매량이 늘어나면 익사 사고도 늘어나는 상관관계가 있지만, 이것을 "아이스크림이 익사를 유발한다"라고 해석하는 것은 인과관계를 확대 해석한 것입니다. 실제 원인은 '기온 상승'이라는 제3의 변수입니다.
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                <i class="fas fa-exclamation-circle text-amber-400 mr-1"></i>문제점
-                            </label>
-                            <div class="example-cell" style="border-left-color: #f59e0b; background-color: #fffbeb; color: #78350f;">
-                                인과관계 확대 해석 - 상관관계가 있는 데이터를 인과관계로 잘못 해석하여 잘못된 결론을 도출할 수 있음
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                <i class="fas fa-wand-magic-sparkles text-emerald-500 mr-1"></i>해결 방안
-                            </label>
-                            <textarea id="act3_solution2" class="activity-input" rows="4"
-                                      placeholder="상관관계를 인과관계로 확대 해석하는 문제를 방지하기 위한 방안을 작성하세요..."></textarea>
-                        </div>
-                    </div>
+                <!-- 결과 -->
+                <div class="flex flex-wrap gap-3 items-center">
+                    <button onclick="checkDragOrder()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-semibold text-sm hover:bg-indigo-700 transition-all">
+                        <i class="fas fa-check-circle mr-1"></i>정답 확인
+                    </button>
+                    <button onclick="resetDrag()" class="px-5 py-2.5 bg-gray-100 border-2 border-gray-300 text-gray-600 rounded-xl font-semibold text-sm hover:bg-gray-200 transition-all">
+                        <i class="fas fa-rotate-left mr-1"></i>다시하기
+                    </button>
+                    <span id="dragResult" class="text-sm font-semibold"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 활동 5: 시나리오 기반 퀴즈 -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-700 to-teal-700 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                    5
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">빅데이터 활용 시나리오 퀴즈</h2>
+                    <p class="text-emerald-100 text-sm mt-0.5"><i class="fas fa-brain mr-1"></i> 실생활 문제에 적합한 빅데이터 기법을 선택해 봅시다</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-6">
+                <div class="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4 md:p-5">
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">
+                        <i class="fas fa-lightbulb text-amber-500 mr-1"></i>
+                        각 시나리오를 읽고, 가장 적합한 빅데이터 분석 기법이나 해결 방법을 선택하세요. 빅데이터 활용의 장점과 문제점을 함께 생각해 봅시다.
+                    </p>
                 </div>
 
-                <!-- 사례 3: 신용카드 분석 -->
-                <div class="case-card border border-purple-200 bg-white">
-                    <div class="bg-purple-50 px-5 py-4 border-b border-purple-200">
-                        <h3 class="text-lg font-bold text-purple-800 flex items-center gap-2">
-                            <span class="inline-flex items-center justify-center w-8 h-8 bg-purple-500 text-white rounded-lg text-sm font-bold">3</span>
-                            <i class="fas fa-credit-card text-purple-400"></i>
-                            신용카드 분석과 데이터 속성의 다중 의미
-                        </h3>
+                <!-- 퀴즈 진행 상태 -->
+                <div class="flex items-center gap-3">
+                    <div class="flex-1 bg-gray-200 rounded-full h-2.5">
+                        <div id="quizProgressBar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
-                    <div class="p-5 space-y-4">
-                        <div class="bg-purple-50 rounded-lg p-4 text-sm text-gray-700 leading-relaxed border-l-3 border-purple-300">
-                            <i class="fas fa-scroll text-purple-400 mr-1"></i>
-                            신용카드 사용 내역을 분석하면 소비 패턴을 파악할 수 있지만, 동일한 데이터도 맥락에 따라 다양하게 해석될 수 있습니다. 예를 들어, 특정 시간대의 편의점 결제가 야근인지 야식 습관인지 구분하기 어렵습니다.
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                <i class="fas fa-exclamation-circle text-purple-400 mr-1"></i>문제점
-                            </label>
-                            <div class="example-cell" style="border-left-color: #a855f7; background-color: #faf5ff; color: #581c87;">
-                                데이터 속성의 다중 의미 - 하나의 데이터가 여러 의미로 해석될 수 있어 분석 결과가 왜곡될 수 있음
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                <i class="fas fa-wand-magic-sparkles text-emerald-500 mr-1"></i>해결 방안
-                            </label>
-                            <textarea id="act3_solution3" class="activity-input" rows="4"
-                                      placeholder="데이터의 다중 의미 해석 문제를 해결하기 위한 방안을 작성하세요..."></textarea>
-                        </div>
+                    <span class="text-sm text-gray-500 font-semibold" id="quizScore">0 / 4</span>
+                </div>
+
+                <!-- 퀴즈 컨테이너 -->
+                <div id="quizContainer" class="space-y-6"></div>
+
+                <!-- 최종 결과 -->
+                <div id="quizFinalResult" class="hidden text-center py-6">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-100 mb-4">
+                        <i class="fas fa-trophy text-emerald-600 text-3xl"></i>
                     </div>
+                    <p class="text-xl font-bold text-gray-800 mb-2" id="quizFinalText"></p>
+                    <p class="text-gray-500 text-sm" id="quizFinalDetail"></p>
                 </div>
             </div>
         </section>
@@ -732,43 +889,6 @@
             </div>
         </section>
 
-        <!-- ============================================ -->
-        <!-- Submit / Action Buttons -->
-        <!-- ============================================ -->
-        <section class="bg-white rounded-2xl shadow-md border border-emerald-100 overflow-hidden">
-            <div class="p-6 md:p-8">
-                <div class="flex flex-col sm:flex-row gap-3 justify-center action-buttons">
-                    <button id="submitBtn" onclick="submitData()"
-                            class="px-8 py-3 bg-emerald-600 text-white rounded-xl font-bold text-base hover:bg-emerald-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
-                        <i class="fas fa-paper-plane" id="submitIcon"></i>
-                        <span id="submitText">제출하기</span>
-                    </button>
-                    <button onclick="resetAll()"
-                            class="px-8 py-3 bg-gray-100 border-2 border-gray-300 text-gray-600 rounded-xl font-bold text-base hover:bg-gray-200 transition-all flex items-center justify-center gap-2">
-                        <i class="fas fa-rotate-left"></i>
-                        <span>초기화</span>
-                    </button>
-                    <button onclick="printPage()"
-                            class="px-8 py-3 bg-gray-100 border-2 border-gray-300 text-gray-600 rounded-xl font-bold text-base hover:bg-gray-200 transition-all flex items-center justify-center gap-2 no-print">
-                        <i class="fas fa-print"></i>
-                        <span>인쇄</span>
-                    </button>
-                </div>
-
-                <!-- Submit result messages -->
-                <div id="submitResult" class="hidden mt-4">
-                    <div id="submitSuccess" class="hidden text-center p-4 bg-green-50 border border-green-200 rounded-xl">
-                        <i class="fas fa-circle-check text-green-500 text-2xl mb-2"></i>
-                        <p class="text-green-700 font-semibold">제출이 완료되었습니다!</p>
-                    </div>
-                    <div id="submitError" class="hidden text-center p-4 bg-red-50 border border-red-200 rounded-xl">
-                        <i class="fas fa-circle-exclamation text-red-500 text-2xl mb-2"></i>
-                        <p class="text-red-700 font-semibold" id="submitErrorMsg"></p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
     </main>
 
     <!-- ===== FOOTER / NAVIGATION ===== -->
@@ -823,229 +943,650 @@
 
     <!-- JavaScript -->
     <script>
-        // =============================================
-        // 프록시 Apps Script Web App URL
-        // =============================================
-        const APPS_SCRIPT_URL = '';
-        const PROXY_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwxqTEl_oN-oMdsDz_63jBMpjSNmCoRdSqRNYLrXVdOGmE3J2XURWd5OVu3h_k4TkEgPA/exec';
+    // =============================================
+    // 1. 워드클라우드 생성기
+    // =============================================
+    var wordCloudData = {};
+    var wordCloudTopics = {
+        bigdata: ['빅데이터', '대용량', '비정형', '실시간', '다양성', '속도', '크기', '가치', '정형 데이터', '반정형', 'SNS', '센서', '로그', 'IoT', '클라우드', '데이터 마이닝', '머신러닝', '패턴'],
+        analysis: ['수집', '저장', '처리', '분석', '시각화', '통계', '예측', '분류', '군집', '상관관계', '인과관계', '회귀분석', '트렌드', '이상탐지', '자연어처리', '감성분석', '텍스트마이닝', '딥러닝'],
+        application: ['의료', '교통', '마케팅', '금융', '교육', '농업', '스포츠', '날씨예보', '범죄예방', '추천시스템', '스마트시티', '자율주행', '맞춤광고', '검색엔진', '소셜분석', '환경모니터링', '재난예측', '질병예측']
+    };
+    var currentTopic = 'bigdata';
+    var wordColors = ['#059669','#0891b2','#7c3aed','#db2777','#ea580c','#2563eb','#0d9488','#4f46e5','#c026d3','#b91c1c','#15803d','#0369a1'];
 
-        // Validate Google Sheet URL format
-        function validateSheetUrl() {
-            var url = document.getElementById('sheetUrl').value.trim();
-            var icon = document.getElementById('sheetUrlIcon');
-            var input = document.getElementById('sheetUrl');
+    function loadWordCloudTopic(topic) {
+        currentTopic = topic;
+        document.querySelectorAll('#topicBigdata, #topicAnalysis, #topicApplication').forEach(function(b) {
+            b.classList.remove('active');
+        });
+        document.getElementById('topic' + topic.charAt(0).toUpperCase() + topic.slice(1)).classList.add('active');
+        renderKeywordButtons();
+    }
 
-            if (!url) {
-                input.style.borderColor = '#fca5a5';
-                input.style.backgroundColor = '#fef2f2';
-                icon.className = 'fas fa-link-slash text-red-500';
-                return false;
-            }
+    function renderKeywordButtons() {
+        var container = document.getElementById('keywordButtons');
+        var keywords = wordCloudTopics[currentTopic];
+        container.innerHTML = '';
+        keywords.forEach(function(kw) {
+            var btn = document.createElement('button');
+            btn.className = 'keyword-btn' + (wordCloudData[kw] ? ' active' : '');
+            btn.textContent = kw;
+            btn.onclick = function() { addToWordCloud(kw); };
+            container.appendChild(btn);
+        });
+    }
 
-            var match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-            if (match) {
-                input.style.borderColor = '#86efac';
-                input.style.backgroundColor = '#f0fdf4';
-                icon.className = 'fas fa-circle-check text-green-500';
-                return true;
-            } else {
-                input.style.borderColor = '#fca5a5';
-                input.style.backgroundColor = '#fef2f2';
-                icon.className = 'fas fa-circle-xmark text-red-500';
-                alert('올바른 구글 시트 URL이 아닙니다.\n\n예시: https://docs.google.com/spreadsheets/d/abc123.../edit');
-                return false;
-            }
+    function addToWordCloud(keyword) {
+        wordCloudData[keyword] = (wordCloudData[keyword] || 0) + 1;
+        renderWordCloud();
+        renderKeywordButtons();
+    }
+
+    function renderWordCloud() {
+        var area = document.getElementById('wordCloudArea');
+        var placeholder = document.getElementById('wordCloudPlaceholder');
+        var countEl = document.getElementById('wordCloudCount');
+        var keys = Object.keys(wordCloudData);
+
+        if (keys.length === 0) {
+            area.innerHTML = '<p class="text-gray-400 text-sm" id="wordCloudPlaceholder">키워드를 클릭하면 여기에 워드클라우드가 생성됩니다</p>';
+            countEl.textContent = '선택한 키워드: 0개';
+            area.classList.remove('active');
+            return;
         }
 
-        // Submit data to Google Sheets
-        function submitData() {
-            var grade = document.getElementById('grade').value;
-            var classNum = document.getElementById('classNum').value;
-            var number = document.getElementById('number').value;
-            var name = document.getElementById('name').value;
+        area.classList.add('active');
+        area.innerHTML = '';
+        var maxCount = Math.max.apply(null, keys.map(function(k) { return wordCloudData[k]; }));
+        var totalClicks = keys.reduce(function(s, k) { return s + wordCloudData[k]; }, 0);
 
-            if (!grade || !classNum || !number || !name) {
-                alert('학년, 반, 번호, 이름을 모두 입력해주세요.');
-                return;
-            }
+        keys.sort(function() { return Math.random() - 0.5; });
 
-            var sheetUrl = document.getElementById('sheetUrl').value.trim();
-            if (!sheetUrl) {
-                alert('구글 시트 URL을 입력해 주세요.\n선생님이 공유한 구글 시트 주소를 붙여넣으세요.');
-                document.getElementById('sheetUrl').focus();
-                return;
-            }
-            if (!validateSheetUrl()) return;
+        keys.forEach(function(kw, i) {
+            var count = wordCloudData[kw];
+            var ratio = count / maxCount;
+            var size = 0.75 + ratio * 1.8;
+            var color = wordColors[i % wordColors.length];
+            var span = document.createElement('span');
+            span.className = 'word-cloud-item';
+            span.textContent = kw;
+            span.style.fontSize = size + 'rem';
+            span.style.color = color;
+            span.style.animationDelay = (i * 0.05) + 's';
+            span.style.opacity = 0.6 + ratio * 0.4;
+            span.title = kw + ' (' + count + '회)';
+            if (ratio > 0.7) span.style.fontWeight = '800';
+            area.appendChild(span);
+        });
 
-            // Determine which URL to use
-            var targetUrl = APPS_SCRIPT_URL || PROXY_SCRIPT_URL;
-            if (!targetUrl) {
-                alert('Apps Script URL이 설정되지 않았습니다.');
-                return;
-            }
+        countEl.textContent = '선택한 키워드: ' + keys.length + '개 (총 ' + totalClicks + '회 클릭)';
+    }
 
-            // Gather self-eval values
-            var evalValues = [];
-            for (var i = 1; i <= 3; i++) {
-                var selectedBtn = document.querySelector('#evalGroup' + i + ' .eval-btn.selected');
-                evalValues.push(selectedBtn ? selectedBtn.getAttribute('data-value') : '');
-            }
-            var selfEvalStr = evalValues.join(', ');
+    function clearWordCloud() {
+        wordCloudData = {};
+        renderWordCloud();
+        renderKeywordButtons();
+    }
 
-            var payload = {
-                sheetUrl: sheetUrl,
-                page: '빅데이터 선택활동',
-                grade: grade,
-                class: classNum,
-                number: number,
-                name: name,
-                act1_trend: document.getElementById('act1_trend') ? document.getElementById('act1_trend').value : '',
-                act1_various: document.getElementById('act1_various') ? document.getElementById('act1_various').value : '',
-                act2_datasource: document.getElementById('act2_datasource') ? document.getElementById('act2_datasource').value : '',
-                act2_interpret: document.getElementById('act2_interpret') ? document.getElementById('act2_interpret').value : '',
-                act3_solution1: document.getElementById('act3_solution1') ? document.getElementById('act3_solution1').value : '',
-                act3_solution2: document.getElementById('act3_solution2') ? document.getElementById('act3_solution2').value : '',
-                act3_solution3: document.getElementById('act3_solution3') ? document.getElementById('act3_solution3').value : '',
-                selfEval: selfEvalStr
-            };
-
-            var btn = document.getElementById('submitBtn');
-            var icon = document.getElementById('submitIcon');
-            var text = document.getElementById('submitText');
-            var resultDiv = document.getElementById('submitResult');
-            var successDiv = document.getElementById('submitSuccess');
-            var errorDiv = document.getElementById('submitError');
-            var errorMsg = document.getElementById('submitErrorMsg');
-
-            btn.disabled = true;
-            btn.style.opacity = '0.7';
-            icon.className = 'fas fa-spinner fa-spin';
-            text.textContent = '제출 중...';
-            resultDiv.classList.add('hidden');
-            successDiv.classList.add('hidden');
-            errorDiv.classList.add('hidden');
-
-            fetch(targetUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payload),
-                redirect: 'follow'
-            })
-            .then(function(response) {
-                return response.json();
-            })
-            .then(function(result) {
-                if (result.result === 'success') {
-                    icon.className = 'fas fa-circle-check';
-                    text.textContent = '제출 완료!';
-                    btn.style.opacity = '1';
-                    btn.classList.remove('bg-emerald-600');
-                    btn.classList.add('bg-green-600');
-                    resultDiv.classList.remove('hidden');
-                    successDiv.classList.remove('hidden');
-                    alert('제출 완료!');
-                } else {
-                    throw new Error(result.message || '알 수 없는 오류');
-                }
-            })
-            .catch(function(err) {
-                icon.className = 'fas fa-paper-plane';
-                text.textContent = '제출하기';
-                btn.disabled = false;
-                btn.style.opacity = '1';
-                resultDiv.classList.remove('hidden');
-                errorDiv.classList.remove('hidden');
-                errorMsg.textContent = '제출 실패: ' + err.message;
-                alert('오류 발생');
-                console.error('Submit error:', err);
-            });
+    // =============================================
+    // 2. 어획량 데이터 시각화
+    // =============================================
+    var fishData = {
+        years: [1970,1975,1980,1985,1990,1995,2000,2005,2010,2015,2016,2017,2018,2019,2020,2021,2022],
+        species: {
+            '명태': [120000,95000,72000,55000,30000,12000,5000,2000,800,200,150,100,80,50,30,20,15],
+            '도루묵': [3000,2500,2000,1500,800,400,600,1200,2500,3500,3800,4200,4800,5200,5000,5500,5800],
+            '꽁치': [45000,42000,38000,35000,28000,22000,18000,15000,12000,8000,7500,6800,5500,4200,3500,3000,2500],
+            '멸치': [85000,92000,110000,130000,155000,170000,185000,200000,220000,235000,180000,225000,240000,250000,190000,230000,245000],
+            '고등어': [60000,65000,75000,85000,95000,110000,125000,135000,150000,160000,120000,155000,165000,170000,130000,158000,168000]
         }
+    };
+    var fishColors = {
+        '명태': '#3b82f6',
+        '도루묵': '#6366f1',
+        '꽁치': '#a855f7',
+        '멸치': '#14b8a6',
+        '고등어': '#06b6d4'
+    };
+    var activeFish = { '명태': true, '도루묵': true, '꽁치': true, '멸치': true, '고등어': true };
+    var currentChartType = 'line';
+    var fishChart = null;
 
-        // Self evaluation button selection
-        function selectEval(btn, groupId) {
-            var group = document.getElementById(groupId);
-            group.querySelectorAll('.eval-btn').forEach(function(b) {
-                b.classList.remove('selected');
-            });
-            btn.classList.add('selected');
-
-            var groupNum = groupId.replace('evalGroup', '');
-            var resultDiv = document.getElementById('evalResult' + groupNum);
-            var resultText = document.getElementById('evalResultText' + groupNum);
-            resultDiv.classList.remove('hidden');
-            resultText.textContent = '"' + btn.getAttribute('data-value') + '"을(를) 선택했습니다.';
+    function toggleFish(name) {
+        activeFish[name] = !activeFish[name];
+        var btn = document.getElementById('fish_' + name);
+        if (activeFish[name]) {
+            btn.style.borderColor = fishColors[name];
+            btn.style.background = fishColors[name];
+            btn.style.color = 'white';
+            btn.classList.add('active');
+        } else {
+            btn.style.borderColor = '#d1d5db';
+            btn.style.background = 'white';
+            btn.style.color = '#374151';
+            btn.classList.remove('active');
         }
+        updateChart();
+    }
 
-        // Reset all form inputs and evaluation
-        function resetAll() {
-            if (!confirm('모든 입력 내용을 초기화하시겠습니까?\n작성한 내용이 모두 지워집니다.')) {
-                return;
-            }
+    function setChartType(type) {
+        currentChartType = type;
+        document.getElementById('chartTypeLine').classList.toggle('active', type === 'line');
+        document.getElementById('chartTypeBar').classList.toggle('active', type === 'bar');
+        document.getElementById('chartTypeLine').style.borderColor = type === 'line' ? '#0891b2' : '#d1d5db';
+        document.getElementById('chartTypeLine').style.background = type === 'line' ? '#0891b2' : 'white';
+        document.getElementById('chartTypeLine').style.color = type === 'line' ? 'white' : '#374151';
+        document.getElementById('chartTypeBar').style.borderColor = type === 'bar' ? '#0891b2' : '#d1d5db';
+        document.getElementById('chartTypeBar').style.background = type === 'bar' ? '#0891b2' : 'white';
+        document.getElementById('chartTypeBar').style.color = type === 'bar' ? 'white' : '#374151';
+        updateChart();
+    }
 
-            document.querySelectorAll('.activity-input').forEach(function(input) {
-                if (input.tagName === 'SELECT') {
-                    input.selectedIndex = 0;
-                } else {
-                    input.value = '';
+    function updateChart() {
+        var startYear = parseInt(document.getElementById('yearRangeStart').value);
+        var endYear = parseInt(document.getElementById('yearRangeEnd').value);
+        if (startYear > endYear) {
+            var tmp = startYear; startYear = endYear; endYear = tmp;
+        }
+        document.getElementById('yearStart').textContent = startYear;
+        document.getElementById('yearEnd').textContent = endYear;
+
+        var filteredYears = fishData.years.filter(function(y) { return y >= startYear && y <= endYear; });
+        var datasets = [];
+
+        Object.keys(fishData.species).forEach(function(name) {
+            if (!activeFish[name]) return;
+            var data = [];
+            fishData.years.forEach(function(y, i) {
+                if (y >= startYear && y <= endYear) {
+                    data.push(fishData.species[name][i]);
                 }
             });
-
-            var sheetInput = document.getElementById('sheetUrl');
-            if (sheetInput) {
-                sheetInput.value = '';
-                sheetInput.style.borderColor = '#86efac';
-                sheetInput.style.backgroundColor = '#f0fdf4';
-                document.getElementById('sheetUrlIcon').className = 'fas fa-link-slash';
-            }
-
-            var submitBtn = document.getElementById('submitBtn');
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.classList.remove('bg-green-600');
-                submitBtn.classList.add('bg-emerald-600');
-                document.getElementById('submitIcon').className = 'fas fa-paper-plane';
-                document.getElementById('submitText').textContent = '제출하기';
-                document.getElementById('submitResult').classList.add('hidden');
-            }
-
-            document.querySelectorAll('.eval-btn').forEach(function(btn) {
-                btn.classList.remove('selected');
+            datasets.push({
+                label: name,
+                data: data,
+                borderColor: fishColors[name],
+                backgroundColor: currentChartType === 'bar' ? fishColors[name] + '99' : fishColors[name] + '20',
+                borderWidth: 2,
+                tension: 0.3,
+                fill: currentChartType === 'line',
+                pointRadius: currentChartType === 'line' ? 3 : 0,
+                pointHoverRadius: 6
             });
+        });
 
-            ['evalResult1', 'evalResult2', 'evalResult3'].forEach(function(id) {
-                var el = document.getElementById(id);
-                if (el) el.classList.add('hidden');
-            });
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Print page
-        function printPage() {
-            window.print();
-        }
-
-        // Add subtle animation on scroll
-        (function() {
-            var observer = new IntersectionObserver(function(entries) {
-                entries.forEach(function(entry) {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
+        if (fishChart) fishChart.destroy();
+        var ctx = document.getElementById('fishChart').getContext('2d');
+        fishChart = new Chart(ctx, {
+            type: currentChartType,
+            data: {
+                labels: filteredYears.map(String),
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 2,
+                interaction: { intersect: false, mode: 'index' },
+                plugins: {
+                    legend: { position: 'top', labels: { usePointStyle: true, padding: 15 } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString() + ' 톤';
+                            }
+                        }
                     }
-                });
-            }, { threshold: 0.1 });
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: '어획량 (톤)' },
+                        ticks: { callback: function(v) { return v.toLocaleString(); } }
+                    },
+                    x: { title: { display: true, text: '연도' } }
+                }
+            }
+        });
 
-            document.addEventListener('DOMContentLoaded', function() {
-                document.querySelectorAll('.activity-card').forEach(function(card) {
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(20px)';
-                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                    observer.observe(card);
-                });
+        showFishInsight(startYear, endYear);
+    }
+
+    function showFishInsight(start, end) {
+        var insightEl = document.getElementById('fishInsight');
+        var textEl = document.getElementById('fishInsightText');
+        var insights = [];
+
+        if (activeFish['명태'] && start <= 1975 && end >= 2020) {
+            insights.push('명태: 1970년대 12만 톤에서 현재 거의 잡히지 않을 정도로 급감했습니다. 남획과 수온 변화가 주요 원인입니다.');
+        }
+        if (activeFish['멸치'] && start <= 2016 && end >= 2016) {
+            insights.push('멸치: 2016년과 2020년에 어획량이 크게 감소했는데, 이는 엘니뇨/라니냐 현상과 해수면 온도 상승의 영향으로 분석됩니다.');
+        }
+        if (activeFish['고등어'] && start <= 2016 && end >= 2016) {
+            insights.push('고등어: 2016년과 2020년의 감소는 멸치와 유사한 해양 환경 변화에 기인합니다.');
+        }
+        if (activeFish['도루묵'] && start <= 2000 && end >= 2020) {
+            insights.push('도루묵: 1990년대 급감 후 2000년대부터 서서히 회복되고 있는 드문 사례입니다.');
+        }
+
+        if (insights.length > 0) {
+            insightEl.classList.remove('hidden');
+            textEl.innerHTML = insights.join('<br><br>');
+        } else {
+            insightEl.classList.add('hidden');
+        }
+    }
+
+    // =============================================
+    // 3. 인터랙티브 데이터 탐색 테이블
+    // =============================================
+    var trendData = [
+        { keyword: 'ChatGPT', category: 'AI', h1_2023: 92, h2_2023: 85, h1_2024: 78, change: -15.2 },
+        { keyword: 'AI', category: 'AI', h1_2023: 65, h2_2023: 78, h1_2024: 95, change: 46.2 },
+        { keyword: 'Gemini', category: 'AI', h1_2023: 10, h2_2023: 35, h1_2024: 72, change: 620.0 },
+        { keyword: '코딩', category: 'AI', h1_2023: 55, h2_2023: 60, h1_2024: 70, change: 27.3 },
+        { keyword: '독감', category: '건강', h1_2023: 30, h2_2023: 85, h1_2024: 35, change: 16.7 },
+        { keyword: '감기', category: '건강', h1_2023: 28, h2_2023: 72, h1_2024: 30, change: 7.1 },
+        { keyword: '미세먼지', category: '건강', h1_2023: 75, h2_2023: 25, h1_2024: 80, change: 6.7 },
+        { keyword: '마스크', category: '건강', h1_2023: 45, h2_2023: 22, h1_2024: 40, change: -11.1 },
+        { keyword: '에어컨', category: '계절', h1_2023: 85, h2_2023: 15, h1_2024: 90, change: 5.9 },
+        { keyword: '선풍기', category: '계절', h1_2023: 70, h2_2023: 10, h1_2024: 68, change: -2.9 },
+        { keyword: '히터', category: '계절', h1_2023: 12, h2_2023: 78, h1_2024: 15, change: 25.0 },
+        { keyword: '크리스마스', category: '계절', h1_2023: 8, h2_2023: 95, h1_2024: 10, change: 25.0 }
+    ];
+    var currentFilter = 'all';
+    var sortCol = -1;
+    var sortDir = 'asc';
+
+    function renderTable() {
+        var tbody = document.getElementById('trendTableBody');
+        var filtered = currentFilter === 'all' ? trendData : trendData.filter(function(r) { return r.category === currentFilter; });
+
+        if (sortCol >= 0) {
+            var keys = ['keyword', 'category', 'h1_2023', 'h2_2023', 'h1_2024', 'change'];
+            var key = keys[sortCol];
+            filtered.sort(function(a, b) {
+                var va = a[key], vb = b[key];
+                if (typeof va === 'string') {
+                    return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+                }
+                return sortDir === 'asc' ? va - vb : vb - va;
             });
-        })();
+        }
+
+        tbody.innerHTML = '';
+        filtered.forEach(function(row) {
+            var changeColor = row.change > 0 ? 'text-emerald-600' : row.change < 0 ? 'text-red-600' : 'text-gray-500';
+            var changeIcon = row.change > 0 ? 'fa-arrow-up' : row.change < 0 ? 'fa-arrow-down' : 'fa-minus';
+            var catColor = { 'AI': 'bg-violet-100 text-violet-700', '건강': 'bg-rose-100 text-rose-700', '계절': 'bg-sky-100 text-sky-700' };
+            var tr = document.createElement('tr');
+            tr.innerHTML =
+                '<td class="font-semibold text-gray-800">' + row.keyword + '</td>' +
+                '<td><span class="inline-block px-2 py-0.5 rounded-full text-xs font-medium ' + (catColor[row.category] || '') + '">' + row.category + '</span></td>' +
+                '<td class="text-center">' + row.h1_2023 + '</td>' +
+                '<td class="text-center">' + row.h2_2023 + '</td>' +
+                '<td class="text-center font-semibold">' + row.h1_2024 + '</td>' +
+                '<td class="text-center font-semibold ' + changeColor + '"><i class="fas ' + changeIcon + ' mr-1 text-xs"></i>' + (row.change > 0 ? '+' : '') + row.change + '%</td>';
+            tbody.appendChild(tr);
+        });
+    }
+
+    function filterTable(category) {
+        currentFilter = category;
+        document.querySelectorAll('[id^="tableFilter"]').forEach(function(b) {
+            b.classList.remove('active');
+            b.style.borderColor = '#d1d5db';
+            b.style.background = 'white';
+            b.style.color = '#374151';
+        });
+        var activeBtn = document.getElementById('tableFilter' + category);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+            activeBtn.style.borderColor = '#0891b2';
+            activeBtn.style.background = '#0891b2';
+            activeBtn.style.color = 'white';
+        }
+        renderTable();
+
+        var insightEl = document.getElementById('tableInsight');
+        var msgs = {
+            'all': '열 제목을 클릭해서 정렬하고, 분류 필터를 눌러서 특정 유형의 검색어만 확인해 보세요. 어떤 패턴이 보이나요?',
+            'AI': 'AI 관련 검색어를 보면, ChatGPT는 초기 관심이 줄어드는 반면 AI와 Gemini는 급증하고 있습니다. 기술 트렌드의 변화가 보이시나요?',
+            '건강': '건강 관련 검색어는 계절에 따라 크게 변합니다. 독감/감기는 하반기에, 미세먼지는 상반기에 높아지는 패턴이 있습니다.',
+            '계절': '계절 관련 검색어는 매우 뚜렷한 주기성을 보입니다. 에어컨/선풍기는 여름에, 히터/크리스마스는 겨울에 집중됩니다.'
+        };
+        insightEl.querySelector('p:last-child').textContent = msgs[category] || msgs['all'];
+    }
+
+    function sortTable(colIndex) {
+        var ths = document.querySelectorAll('.data-table th');
+        ths.forEach(function(th, i) {
+            th.className = 'sort-icon';
+        });
+        if (sortCol === colIndex) {
+            sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortCol = colIndex;
+            sortDir = 'asc';
+        }
+        ths[colIndex].className = sortDir === 'asc' ? 'sort-asc' : 'sort-desc';
+        renderTable();
+    }
+
+    // =============================================
+    // 4. 드래그 앤 드롭 - 빅데이터 분석 단계
+    // =============================================
+    var dragSteps = [
+        { id: 'step_share', label: '공유 및 평가', icon: 'fa-share-nodes', color: '#7c3aed', correctOrder: 4, desc: '분석 결과를 공유하고 피드백을 받아 개선합니다' },
+        { id: 'step_collect', label: '데이터 수집', icon: 'fa-database', color: '#0891b2', correctOrder: 2, desc: '다양한 출처에서 필요한 데이터를 모읍니다' },
+        { id: 'step_define', label: '문제 정의', icon: 'fa-bullseye', color: '#059669', correctOrder: 1, desc: '해결하고자 하는 문제를 명확하게 정의합니다' },
+        { id: 'step_analyze', label: '데이터 분석', icon: 'fa-magnifying-glass-chart', color: '#ea580c', correctOrder: 3, desc: '수집한 데이터를 가공하고 분석합니다' }
+    ];
+    var dropState = { 1: null, 2: null, 3: null, 4: null };
+
+    function initDrag() {
+        var source = document.getElementById('dragSource');
+        source.innerHTML = '';
+        dragSteps.forEach(function(step) {
+            var div = document.createElement('div');
+            div.className = 'drag-item';
+            div.id = step.id;
+            div.draggable = true;
+            div.style.borderColor = step.color + '66';
+            div.innerHTML = '<i class="fas ' + step.icon + '" style="color:' + step.color + ';font-size:1.2rem"></i>' +
+                '<div><div style="color:' + step.color + '">' + step.label + '</div>' +
+                '<div class="text-xs text-gray-400 font-normal mt-0.5">' + step.desc + '</div></div>';
+            div.ondragstart = function(e) {
+                e.dataTransfer.setData('text/plain', step.id);
+                setTimeout(function() { div.classList.add('dragging'); }, 0);
+            };
+            div.ondragend = function() { div.classList.remove('dragging'); };
+            source.appendChild(div);
+        });
+    }
+
+    function dragOver(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add('drag-over');
+    }
+
+    function dragLeave(e) {
+        e.currentTarget.classList.remove('drag-over');
+    }
+
+    function dropItem(e, zoneNum) {
+        e.preventDefault();
+        var zone = e.currentTarget;
+        zone.classList.remove('drag-over');
+        var stepId = e.dataTransfer.getData('text/plain');
+        var step = dragSteps.find(function(s) { return s.id === stepId; });
+        if (!step) return;
+
+        // Remove from previous zone if any
+        Object.keys(dropState).forEach(function(k) {
+            if (dropState[k] === stepId) {
+                dropState[k] = null;
+                var prevZone = document.getElementById('dropZone' + k);
+                prevZone.innerHTML = '<span class="text-gray-400 text-sm">' + ['첫','두','세','네'][k-1] + ' 번째 단계</span>';
+                prevZone.classList.remove('filled', 'correct', 'incorrect');
+            }
+        });
+
+        // If zone already has item, return it to source
+        if (dropState[zoneNum]) {
+            var oldStepId = dropState[zoneNum];
+            var oldStep = dragSteps.find(function(s) { return s.id === oldStepId; });
+            returnToSource(oldStep);
+        }
+
+        dropState[zoneNum] = stepId;
+
+        // Remove from source
+        var sourceItem = document.getElementById(stepId);
+        if (sourceItem) sourceItem.style.display = 'none';
+
+        // Render in drop zone
+        zone.innerHTML = '<div class="flex items-center gap-2"><i class="fas ' + step.icon + '" style="color:' + step.color + '"></i><span class="font-semibold" style="color:' + step.color + '">' + step.label + '</span></div>';
+        zone.classList.add('filled');
+        zone.classList.remove('correct', 'incorrect');
+
+        // Clear result
+        document.getElementById('dragResult').textContent = '';
+    }
+
+    function returnToSource(step) {
+        var el = document.getElementById(step.id);
+        if (el) el.style.display = 'flex';
+    }
+
+    function checkDragOrder() {
+        var allFilled = Object.values(dropState).every(function(v) { return v !== null; });
+        if (!allFilled) {
+            document.getElementById('dragResult').innerHTML = '<span class="text-amber-600"><i class="fas fa-exclamation-triangle mr-1"></i>모든 단계를 배치해 주세요.</span>';
+            return;
+        }
+
+        var correct = 0;
+        Object.keys(dropState).forEach(function(zoneNum) {
+            var stepId = dropState[zoneNum];
+            var step = dragSteps.find(function(s) { return s.id === stepId; });
+            var zone = document.getElementById('dropZone' + zoneNum);
+            if (step.correctOrder === parseInt(zoneNum)) {
+                zone.classList.add('correct');
+                zone.classList.remove('incorrect');
+                correct++;
+            } else {
+                zone.classList.add('incorrect');
+                zone.classList.remove('correct');
+            }
+        });
+
+        var resultEl = document.getElementById('dragResult');
+        if (correct === 4) {
+            resultEl.innerHTML = '<span class="text-emerald-600"><i class="fas fa-circle-check mr-1"></i>정답입니다! 문제 정의 -> 데이터 수집 -> 데이터 분석 -> 공유 및 평가 순서가 맞습니다.</span>';
+        } else {
+            resultEl.innerHTML = '<span class="text-red-600"><i class="fas fa-circle-xmark mr-1"></i>' + correct + '/4 맞았습니다. 다시 시도해 보세요!</span>';
+        }
+    }
+
+    function resetDrag() {
+        dropState = { 1: null, 2: null, 3: null, 4: null };
+        for (var i = 1; i <= 4; i++) {
+            var zone = document.getElementById('dropZone' + i);
+            zone.innerHTML = '<span class="text-gray-400 text-sm">' + ['첫','두','세','네'][i-1] + ' 번째 단계</span>';
+            zone.classList.remove('filled', 'correct', 'incorrect');
+        }
+        document.getElementById('dragResult').textContent = '';
+        initDrag();
+    }
+
+    // =============================================
+    // 5. 시나리오 기반 퀴즈
+    // =============================================
+    var quizQuestions = [
+        {
+            scenario: '한 편의점 체인이 전국 매장의 판매 데이터를 분석하여 지역별, 시간대별로 어떤 상품을 더 많이 진열할지 결정하려고 합니다.',
+            question: '이 경우 가장 적합한 빅데이터 분석 방법은?',
+            options: [
+                '텍스트 마이닝으로 고객 리뷰 분석',
+                '판매 패턴 분석 및 군집 분석을 통한 매장별 수요 예측',
+                '소셜 미디어 감성 분석',
+                'GPS 데이터로 고객 이동 경로 분석'
+            ],
+            correct: 1,
+            explanation: '판매 데이터의 패턴 분석과 군집 분석은 지역/시간대별 수요를 예측하는 데 가장 효과적입니다. 실제로 많은 편의점 체인이 이 방법을 활용합니다.'
+        },
+        {
+            scenario: '아이스크림 판매량이 증가할 때 익사 사고도 증가한다는 데이터를 발견했습니다. 한 기자가 "아이스크림이 익사를 유발한다"는 기사를 작성하려 합니다.',
+            question: '이 상황에서 발생하는 빅데이터 분석의 문제점은?',
+            options: [
+                '데이터 수집이 부족한 문제',
+                '개인정보 보호 위반',
+                '상관관계를 인과관계로 잘못 해석하는 문제',
+                '데이터 시각화 방법의 문제'
+            ],
+            correct: 2,
+            explanation: '이것은 대표적인 "상관관계와 인과관계의 혼동" 사례입니다. 실제 원인은 기온 상승이라는 제3의 변수(교란 변수)입니다.'
+        },
+        {
+            scenario: '한 보험회사가 고객의 SNS 게시글, 검색 기록, 건강 앱 데이터를 수집하여 보험료를 차등 책정하려고 합니다.',
+            question: '이 사례에서 가장 심각한 문제점은?',
+            options: [
+                '데이터 분석 기술의 부족',
+                '개인 프라이버시 침해 및 데이터 동의 없는 활용',
+                '분석 결과의 시각화 문제',
+                '데이터 저장 공간 부족'
+            ],
+            correct: 1,
+            explanation: '개인의 민감한 데이터를 동의 없이 수집하고 불이익에 활용하는 것은 심각한 프라이버시 침해입니다. GDPR 등 개인정보보호법이 이를 규제합니다.'
+        },
+        {
+            scenario: '한 도시에서 교통 데이터, 날씨 데이터, 이벤트 일정 데이터를 결합하여 실시간 교통 흐름을 예측하고 신호등을 자동 제어하려 합니다.',
+            question: '이 프로젝트에서 빅데이터 분석의 어떤 특성이 가장 중요한가요?',
+            options: [
+                '데이터의 크기(Volume)만 중요',
+                '데이터의 다양성(Variety)과 속도(Velocity)',
+                '데이터의 저장 방식',
+                '데이터의 색상과 시각화 방법'
+            ],
+            correct: 1,
+            explanation: '교통, 날씨, 이벤트 등 다양한 형태의 데이터(Variety)를 실시간으로 처리(Velocity)해야 하므로 빅데이터의 3V 중 다양성과 속도가 핵심입니다.'
+        }
+    ];
+    var quizAnswered = 0;
+    var quizCorrect = 0;
+
+    function renderQuiz() {
+        var container = document.getElementById('quizContainer');
+        container.innerHTML = '';
+        quizQuestions.forEach(function(q, qi) {
+            var div = document.createElement('div');
+            div.className = 'bg-gray-50 rounded-xl p-5 md:p-6 border border-gray-200';
+            div.id = 'quiz_' + qi;
+
+            var scenarioHtml = '<div class="bg-white rounded-lg p-4 border border-gray-100 mb-4">' +
+                '<p class="text-sm text-gray-500 font-semibold mb-2"><i class="fas fa-book-open text-teal-500 mr-1"></i>시나리오 ' + (qi + 1) + '</p>' +
+                '<p class="text-gray-700 text-sm md:text-base leading-relaxed">' + q.scenario + '</p></div>';
+
+            var questionHtml = '<p class="text-gray-800 font-semibold text-sm md:text-base mb-3"><i class="fas fa-circle-question text-indigo-500 mr-1"></i>' + q.question + '</p>';
+
+            var optionsHtml = '<div class="space-y-2">';
+            q.options.forEach(function(opt, oi) {
+                optionsHtml += '<button class="quiz-option" id="quiz_' + qi + '_opt_' + oi + '" onclick="answerQuiz(' + qi + ',' + oi + ')">' +
+                    '<span class="inline-flex items-center justify-center w-6 h-6 bg-gray-200 text-gray-600 rounded-full text-xs font-bold mr-2">' + String.fromCharCode(65 + oi) + '</span>' +
+                    opt + '</button>';
+            });
+            optionsHtml += '</div>';
+
+            var feedbackHtml = '<div id="quiz_' + qi + '_feedback" class="hidden mt-4 rounded-lg p-4 text-sm"></div>';
+
+            div.innerHTML = scenarioHtml + questionHtml + optionsHtml + feedbackHtml;
+            container.appendChild(div);
+        });
+    }
+
+    function answerQuiz(qi, oi) {
+        var q = quizQuestions[qi];
+        // Disable all options for this question
+        q.options.forEach(function(_, i) {
+            var btn = document.getElementById('quiz_' + qi + '_opt_' + i);
+            btn.disabled = true;
+        });
+
+        var selectedBtn = document.getElementById('quiz_' + qi + '_opt_' + oi);
+        var correctBtn = document.getElementById('quiz_' + qi + '_opt_' + q.correct);
+        var feedback = document.getElementById('quiz_' + qi + '_feedback');
+
+        if (oi === q.correct) {
+            selectedBtn.classList.add('correct');
+            feedback.className = 'mt-4 rounded-lg p-4 text-sm bg-emerald-50 border border-emerald-200';
+            feedback.innerHTML = '<p class="font-semibold text-emerald-700 mb-1"><i class="fas fa-circle-check mr-1"></i>정답입니다!</p><p class="text-emerald-600">' + q.explanation + '</p>';
+            quizCorrect++;
+        } else {
+            selectedBtn.classList.add('incorrect');
+            correctBtn.classList.add('correct');
+            feedback.className = 'mt-4 rounded-lg p-4 text-sm bg-red-50 border border-red-200';
+            feedback.innerHTML = '<p class="font-semibold text-red-700 mb-1"><i class="fas fa-circle-xmark mr-1"></i>아쉽습니다!</p><p class="text-red-600 mb-1">정답은 <strong>' + String.fromCharCode(65 + q.correct) + '</strong>입니다.</p><p class="text-gray-600">' + q.explanation + '</p>';
+        }
+        feedback.classList.remove('hidden');
+
+        quizAnswered++;
+        document.getElementById('quizScore').textContent = quizCorrect + ' / ' + quizQuestions.length;
+        document.getElementById('quizProgressBar').style.width = (quizAnswered / quizQuestions.length * 100) + '%';
+
+        if (quizAnswered === quizQuestions.length) {
+            var finalDiv = document.getElementById('quizFinalResult');
+            var finalText = document.getElementById('quizFinalText');
+            var finalDetail = document.getElementById('quizFinalDetail');
+            finalDiv.classList.remove('hidden');
+            if (quizCorrect === quizQuestions.length) {
+                finalText.textContent = '완벽합니다! 모두 맞혔어요!';
+                finalDetail.textContent = '빅데이터 분석과 활용 문제점에 대해 잘 이해하고 있습니다.';
+            } else if (quizCorrect >= quizQuestions.length / 2) {
+                finalText.textContent = quizCorrect + '/' + quizQuestions.length + ' 정답! 잘 하고 있어요!';
+                finalDetail.textContent = '틀린 문제의 설명을 다시 읽어보며 개념을 정리해 보세요.';
+            } else {
+                finalText.textContent = quizCorrect + '/' + quizQuestions.length + ' 정답. 조금 더 공부해 볼까요?';
+                finalDetail.textContent = '빅데이터 분석 단원을 다시 복습하고 도전해 보세요!';
+            }
+        }
+    }
+
+    // =============================================
+    // 평가하기
+    // =============================================
+    function selectEval(btn, groupId) {
+        var group = document.getElementById(groupId);
+        group.querySelectorAll('.eval-btn').forEach(function(b) {
+            b.classList.remove('selected');
+        });
+        btn.classList.add('selected');
+
+        var groupNum = groupId.replace('evalGroup', '');
+        var resultDiv = document.getElementById('evalResult' + groupNum);
+        var resultText = document.getElementById('evalResultText' + groupNum);
+        resultDiv.classList.remove('hidden');
+        resultText.textContent = '"' + btn.getAttribute('data-value') + '"을(를) 선택했습니다.';
+    }
+
+    // =============================================
+    // 초기화
+    // =============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // 워드클라우드 초기화
+        renderKeywordButtons();
+
+        // 차트 초기화
+        updateChart();
+
+        // 테이블 초기화
+        renderTable();
+
+        // 드래그 앤 드롭 초기화
+        initDrag();
+
+        // 퀴즈 초기화
+        renderQuiz();
+
+        // Scroll animation
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.activity-card').forEach(function(card) {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    });
     </script>
 </body>
 </html>

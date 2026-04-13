@@ -75,7 +75,6 @@
             animation: heroFloat 6s ease-in-out infinite;
         }
 
-
         /* Fillable input/textarea styling */
         .activity-input {
             width: 100%;
@@ -181,6 +180,187 @@
         .code-block .op { color: #fbbf24; }
         .code-block .num { color: #fb923c; }
 
+        /* ===== RLE Grid ===== */
+        .rle-grid {
+            display: grid;
+            gap: 2px;
+            user-select: none;
+        }
+        .rle-cell {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .rle-cell:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .rle-cell.active {
+            border-color: #0891b2;
+        }
+        .rle-color-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .rle-color-btn:hover {
+            transform: scale(1.15);
+        }
+        .rle-color-btn.selected {
+            border-color: #0f172a;
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0891b2;
+        }
+        .rle-encoding-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* ===== Drag & Drop ===== */
+        .drag-item {
+            padding: 0.6rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: grab;
+            transition: all 0.2s ease;
+            user-select: none;
+            border: 2px solid transparent;
+        }
+        .drag-item:active { cursor: grabbing; }
+        .drag-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        .drag-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+        .drop-zone {
+            min-height: 60px;
+            border: 2.5px dashed #a5f3fc;
+            border-radius: 1rem;
+            padding: 0.75rem;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .drop-zone.drag-over {
+            border-color: #0891b2;
+            background-color: #ecfeff;
+            box-shadow: inset 0 0 0 2px rgba(8,145,178,0.1);
+        }
+        .drop-zone .placeholder-text {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-style: italic;
+            width: 100%;
+            text-align: center;
+        }
+        .drop-zone .drag-item {
+            cursor: pointer;
+        }
+
+        /* ===== Compression Bar Chart ===== */
+        .bar-chart-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            height: 220px;
+            padding: 0 8px 0 8px;
+        }
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: flex-end;
+        }
+        .bar-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            flex: 1;
+            gap: 4px;
+        }
+        .bar {
+            width: 36px;
+            border-radius: 6px 6px 0 0;
+            transition: height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            min-height: 4px;
+        }
+        .bar .bar-label {
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .bar-group-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #475569;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* ===== Quiz ===== */
+        .quiz-option {
+            padding: 0.75rem 1.25rem;
+            border: 2.5px solid #e2e8f0;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .quiz-option:hover {
+            border-color: #a5f3fc;
+            background-color: #f0fdfa;
+            transform: translateX(4px);
+        }
+        .quiz-option.correct {
+            border-color: #22c55e;
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            color: #166534;
+        }
+        .quiz-option.wrong {
+            border-color: #ef4444;
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            color: #991b1b;
+        }
+        .quiz-option.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 0.75rem;
+            display: none;
+        }
+        .quiz-feedback.show { display: block; }
+
         /* Print styles */
         @media print {
             body {
@@ -211,7 +391,7 @@
                 break-inside: avoid;
                 page-break-inside: avoid;
             }
-        
+
             .hero-gradient { background: #0e7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
 
@@ -226,6 +406,12 @@
         .table-wrapper::-webkit-scrollbar-thumb {
             background: #22d3ee;
             border-radius: 3px;
+        }
+
+        /* Confetti burst on correct answer */
+        @keyframes confettiBurst {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
         }
     </style>
 </head>
@@ -281,16 +467,16 @@
                 </p>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-layer-group text-cyan-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
-                        <span>활동 3개</span>
+                        <i class="fas fa-layer-group text-cyan-300"></i>
+                        <span>활동 4개</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-clock text-cyan-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
+                        <i class="fas fa-clock text-cyan-300"></i>
                         <span>소요 시간: 약 40분</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-pen-to-square text-cyan-300 text-cyan-300 text-cyan-300 text-cyan-300"></i>
-                        <span>직접 작성 활동</span>
+                        <i class="fas fa-hand-pointer text-cyan-300"></i>
+                        <span>인터랙티브 활동</span>
                     </div>
                 </div>
                 </div>
@@ -313,7 +499,8 @@
             </div>
         </div>
     </section>
-<!-- Main Content -->
+
+    <!-- Main Content -->
     <main class="max-w-5xl mx-auto px-4 py-10 space-y-10">
 
         <!-- ============================================ -->
@@ -330,7 +517,6 @@
                 </div>
             </div>
             <div class="p-6 space-y-5">
-                <!-- Student Info Fields -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">학년 <span class="text-red-400">*</span></label>
@@ -358,17 +544,16 @@
         </section>
 
         <!-- ============================================ -->
-        <!-- Activity 1: 런-렝스 인코딩으로 문자열 압축 -->
+        <!-- Activity 1: Interactive RLE Simulator -->
         <!-- ============================================ -->
         <section class="activity-card bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
-            <!-- Activity Header -->
             <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                     1
                 </div>
                 <div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white">런-렝스 인코딩으로 문자열 압축</h2>
-                    <p class="text-cyan-100 text-sm mt-0.5"><i class="fas fa-keyboard mr-1"></i> 문자열 압축 실습</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">런-렝스 인코딩(RLE) 시뮬레이터</h2>
+                    <p class="text-cyan-100 text-sm mt-0.5"><i class="fas fa-th mr-1"></i> 셀을 클릭하여 그림을 그리고 압축 결과를 확인하세요</p>
                 </div>
             </div>
 
@@ -377,57 +562,72 @@
                 <div class="bg-cyan-50 border-l-4 border-cyan-400 rounded-r-lg p-4 md:p-5">
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base">
                         <i class="fas fa-info-circle text-cyan-500 mr-1"></i>
-                        입력 문자열을 런-렝스 인코딩을 이용하여 압축해 보자.
+                        아래 격자판에서 색을 선택하고 셀을 클릭하여 그림을 그려 보세요.
+                        오른쪽에 RLE(런-렝스 인코딩) 결과가 실시간으로 생성됩니다.
+                        같은 색이 연속될수록 압축 효율이 높아집니다.
                     </p>
                 </div>
 
-                <!-- Input Table -->
-                <div class="table-wrapper">
-                    <table class="w-full border-collapse min-w-[480px]">
-                        <thead>
-                            <tr>
-                                <th class="bg-cyan-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tl-lg w-[35%]">
-                                    <i class="fas fa-tag mr-2"></i>항목
-                                </th>
-                                <th class="bg-cyan-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tr-lg w-[65%]">
-                                    <i class="fas fa-pen mr-2"></i>내용
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- 입력 문자열 (pre-filled) -->
-                            <tr class="border-b border-cyan-100">
-                                <td class="px-4 py-3 bg-cyan-50 font-semibold text-cyan-900 text-sm">입력 문자열</td>
-                                <td class="px-4 py-3">
-                                    <div class="example-cell font-mono">
-                                        oopsssss didn't see you
-                                    </div>
-                                    <input type="hidden" id="act1_input" value="oopsssss didn't see you">
-                                </td>
-                            </tr>
-                            <!-- 입력 문자열 길이 -->
-                            <tr class="border-b border-cyan-100">
-                                <td class="px-4 py-3 bg-cyan-50 font-semibold text-cyan-900 text-sm">입력 문자열 길이</td>
-                                <td class="px-4 py-3">
-                                    <input type="text" id="act1_inputLen" class="activity-input" placeholder="문자열의 길이를 세어 입력하세요" data-activity="1">
-                                </td>
-                            </tr>
-                            <!-- 압축 후 문자열 -->
-                            <tr class="border-b border-cyan-100">
-                                <td class="px-4 py-3 bg-cyan-50 font-semibold text-cyan-900 text-sm">압축 후 문자열</td>
-                                <td class="px-4 py-3">
-                                    <input type="text" id="act1_result" class="activity-input font-mono" placeholder="런-렝스 인코딩 결과를 입력하세요" data-activity="1">
-                                </td>
-                            </tr>
-                            <!-- 압축 후 문자열 길이 -->
-                            <tr>
-                                <td class="px-4 py-3 bg-cyan-50 font-semibold text-cyan-900 text-sm">압축 후 문자열 길이</td>
-                                <td class="px-4 py-3">
-                                    <input type="text" id="act1_resultLen" class="activity-input" placeholder="압축 후 문자열의 길이를 입력하세요" data-activity="1">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- Color palette + grid + encoding -->
+                <div class="space-y-4">
+                    <!-- Color Palette -->
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <span class="text-sm font-semibold text-gray-700"><i class="fas fa-palette mr-1"></i> 색상 선택:</span>
+                        <div class="flex gap-2" id="rleColorPalette">
+                            <button class="rle-color-btn selected" data-color="#ffffff" style="background:#ffffff; border-color:#e2e8f0;" title="흰색"></button>
+                            <button class="rle-color-btn" data-color="#0891b2" style="background:#0891b2;" title="청록"></button>
+                            <button class="rle-color-btn" data-color="#f59e0b" style="background:#f59e0b;" title="주황"></button>
+                            <button class="rle-color-btn" data-color="#ef4444" style="background:#ef4444;" title="빨강"></button>
+                            <button class="rle-color-btn" data-color="#8b5cf6" style="background:#8b5cf6;" title="보라"></button>
+                            <button class="rle-color-btn" data-color="#10b981" style="background:#10b981;" title="초록"></button>
+                            <button class="rle-color-btn" data-color="#1e293b" style="background:#1e293b;" title="검정"></button>
+                        </div>
+                        <button onclick="rlePresetPattern()" class="ml-auto text-xs bg-cyan-100 hover:bg-cyan-200 text-cyan-700 font-semibold px-3 py-1.5 rounded-lg transition-colors">
+                            <i class="fas fa-magic mr-1"></i> 예시 패턴
+                        </button>
+                        <button onclick="rleClearGrid()" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold px-3 py-1.5 rounded-lg transition-colors">
+                            <i class="fas fa-eraser mr-1"></i> 초기화
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Grid -->
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 mb-2">격자판 (10 x 10)</p>
+                            <div id="rleGrid" class="rle-grid bg-gray-100 p-2 rounded-xl border border-gray-200" style="grid-template-columns: repeat(10, 1fr);"></div>
+                            <div class="mt-3 flex items-center justify-between text-xs text-gray-500">
+                                <span><i class="fas fa-mouse-pointer mr-1"></i> 클릭: 색칠 / 드래그: 연속 색칠</span>
+                                <span id="rleCellCount">칠한 셀: 0 / 100</span>
+                            </div>
+                        </div>
+
+                        <!-- Encoding Output -->
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 mb-2">RLE 인코딩 결과 (행 단위)</p>
+                            <div id="rleOutput" class="bg-gray-50 border border-gray-200 rounded-xl p-4 min-h-[200px] space-y-1.5 text-sm font-mono">
+                                <p class="text-gray-400 italic text-xs">격자판에 그림을 그리면 여기에 인코딩 결과가 표시됩니다.</p>
+                            </div>
+
+                            <!-- Compression Stats -->
+                            <div class="mt-3 grid grid-cols-3 gap-2">
+                                <div class="bg-cyan-50 rounded-lg p-3 text-center border border-cyan-100">
+                                    <p class="text-[10px] text-cyan-600 font-semibold mb-1">원본 크기</p>
+                                    <p class="text-lg font-bold text-cyan-900" id="rleOrigSize">100</p>
+                                    <p class="text-[10px] text-gray-400">셀</p>
+                                </div>
+                                <div class="bg-emerald-50 rounded-lg p-3 text-center border border-emerald-100">
+                                    <p class="text-[10px] text-emerald-600 font-semibold mb-1">압축 크기</p>
+                                    <p class="text-lg font-bold text-emerald-900" id="rleCompSize">0</p>
+                                    <p class="text-[10px] text-gray-400">토큰</p>
+                                </div>
+                                <div class="bg-amber-50 rounded-lg p-3 text-center border border-amber-100">
+                                    <p class="text-[10px] text-amber-600 font-semibold mb-1">압축률</p>
+                                    <p class="text-lg font-bold text-amber-900" id="rleRatio">0%</p>
+                                    <p class="text-[10px] text-gray-400">절감</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Python Code Reference -->
@@ -465,261 +665,349 @@
         </section>
 
         <!-- ============================================ -->
-        <!-- Activity 2: 이미지 변환 (BMP → JPG) -->
+        <!-- Activity 2: Drag & Drop Compression Matching -->
         <!-- ============================================ -->
         <section class="activity-card bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
-            <!-- Activity Header -->
             <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                     2
                 </div>
                 <div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white">이미지 변환 (BMP &rarr; JPG)</h2>
-                    <p class="text-cyan-100 text-sm mt-0.5"><i class="fas fa-image mr-1"></i> 이미지 압축 실습</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">압축 방식 분류하기</h2>
+                    <p class="text-cyan-100 text-sm mt-0.5"><i class="fas fa-hand-pointer mr-1"></i> 파일 형식을 올바른 압축 유형으로 드래그하세요</p>
                 </div>
             </div>
 
             <div class="p-6 md:p-8 space-y-6">
-                <!-- Description -->
                 <div class="bg-cyan-50 border-l-4 border-cyan-400 rounded-r-lg p-4 md:p-5">
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base">
                         <i class="fas fa-info-circle text-cyan-500 mr-1"></i>
-                        온라인 이미지 변환 사이트에 접속하여 BMP 파일을 JPG 파일로 변환해 보자.
-                        이때 이미지 품질(quality)을 조정해 변환된 이미지와 용량 변화를 확인해 보자.
+                        아래 파일 형식들을 <strong>손실 압축</strong> 또는 <strong>비손실 압축</strong> 영역으로 드래그하세요.
+                        손실 압축은 데이터 일부를 버려 크기를 줄이고, 비손실 압축은 원본을 완벽하게 복원할 수 있습니다.
                     </p>
                 </div>
 
-                <!-- Site Link -->
-                <div class="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl p-4 no-print">
-                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 flex-shrink-0">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs font-semibold text-blue-800 mb-0.5">이미지 변환 사이트 주소</p>
-                        <a href="https://convert.io/ko/image-converter" target="_blank" rel="noopener noreferrer"
-                           class="text-sm text-blue-600 hover:text-blue-800 underline break-all">
-                            https://convert.io/ko/image-converter
-                            <i class="fas fa-external-link-alt text-xs ml-1"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Steps Guide -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                        <p class="text-sm font-bold text-gray-700 mb-2"><i class="fas fa-list-ol text-cyan-500 mr-1"></i> 변환 순서</p>
-                        <ol class="text-sm text-gray-600 space-y-1.5 list-decimal list-inside">
-                            <li>BMP 파일 선택</li>
-                            <li>JPG 형식으로 변환 클릭</li>
-                            <li>품질(Quality)을 80%, 50%로 각각 조정</li>
-                            <li>변환 후 파일 크기 비교</li>
-                        </ol>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                        <p class="text-sm font-bold text-gray-700 mb-2"><i class="fas fa-lightbulb text-yellow-500 mr-1"></i> 확인 포인트</p>
-                        <ul class="text-sm text-gray-600 space-y-1.5 list-disc list-inside">
-                            <li>BMP 원본과 JPG 변환 후 화질 차이</li>
-                            <li>품질에 따른 파일 크기 변화</li>
-                            <li>손실 압축의 특성 이해</li>
-                        </ul>
+                <!-- Draggable Items -->
+                <div class="text-center">
+                    <p class="text-xs font-semibold text-gray-500 mb-3"><i class="fas fa-grip-dots mr-1"></i> 파일 형식 (드래그하세요)</p>
+                    <div id="dragSource" class="flex flex-wrap justify-center gap-3 min-h-[48px] p-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <div class="drag-item bg-blue-100 text-blue-800" draggable="true" data-format="JPG" data-answer="lossy">
+                            <i class="fas fa-file-image mr-1"></i> JPG
+                        </div>
+                        <div class="drag-item bg-emerald-100 text-emerald-800" draggable="true" data-format="PNG" data-answer="lossless">
+                            <i class="fas fa-file-image mr-1"></i> PNG
+                        </div>
+                        <div class="drag-item bg-orange-100 text-orange-800" draggable="true" data-format="MP3" data-answer="lossy">
+                            <i class="fas fa-file-audio mr-1"></i> MP3
+                        </div>
+                        <div class="drag-item bg-purple-100 text-purple-800" draggable="true" data-format="WAV" data-answer="lossless">
+                            <i class="fas fa-file-audio mr-1"></i> WAV
+                        </div>
+                        <div class="drag-item bg-rose-100 text-rose-800" draggable="true" data-format="BMP" data-answer="lossless">
+                            <i class="fas fa-file-image mr-1"></i> BMP
+                        </div>
+                        <div class="drag-item bg-amber-100 text-amber-800" draggable="true" data-format="FLAC" data-answer="lossless">
+                            <i class="fas fa-file-audio mr-1"></i> FLAC
+                        </div>
                     </div>
                 </div>
 
-                <!-- Comparison Table -->
-                <div class="table-wrapper">
-                    <table class="w-full border-collapse min-w-[560px]">
-                        <thead>
-                            <tr>
-                                <th class="bg-cyan-700 text-white px-4 py-3 text-center text-sm font-semibold rounded-tl-lg w-[25%]">
-                                    구분
-                                </th>
-                                <th class="bg-cyan-700 text-white px-4 py-3 text-center text-sm font-semibold w-[25%]">
-                                    <i class="fas fa-file-image mr-1"></i> BMP 이미지
-                                </th>
-                                <th class="bg-cyan-700 text-white px-4 py-3 text-center text-sm font-semibold w-[25%]">
-                                    <i class="fas fa-file-image mr-1"></i> JPG 품질 80%
-                                </th>
-                                <th class="bg-cyan-700 text-white px-4 py-3 text-center text-sm font-semibold rounded-tr-lg w-[25%]">
-                                    <i class="fas fa-file-image mr-1"></i> JPG 품질 50%
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-b border-cyan-100">
-                                <td class="px-4 py-3 bg-cyan-50 font-semibold text-cyan-900 text-sm text-center">파일 크기</td>
-                                <td class="px-4 py-3 text-center">
-                                    <div class="example-cell text-center font-semibold" style="border-left: none;">
-                                        <i class="fas fa-file text-cyan-500 mr-1"></i> 236KB
-                                    </div>
-                                    <input type="hidden" id="act2_bmpSize" value="236KB">
-                                </td>
-                                <td class="px-4 py-3 text-center">
-                                    <div class="example-cell text-center font-semibold" style="border-left: none;">
-                                        <i class="fas fa-file text-blue-500 mr-1"></i> 21KB
-                                    </div>
-                                    <input type="hidden" id="act2_jpg80" value="21KB">
-                                </td>
-                                <td class="px-4 py-3 text-center">
-                                    <div class="example-cell text-center font-semibold" style="border-left: none;">
-                                        <i class="fas fa-file text-blue-500 mr-1"></i> 13KB
-                                    </div>
-                                    <input type="hidden" id="act2_jpg50" value="13KB">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3 bg-cyan-50 font-semibold text-cyan-900 text-sm text-center">압축률</td>
-                                <td class="px-4 py-3 text-center">
-                                    <span class="text-sm text-gray-500">원본</span>
-                                </td>
-                                <td class="px-4 py-3 text-center">
-                                    <span class="inline-flex items-center gap-1 bg-green-100 text-green-700 text-sm font-bold px-3 py-1 rounded-full">
-                                        <i class="fas fa-arrow-down text-xs"></i> 약 91% 감소
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-center">
-                                    <span class="inline-flex items-center gap-1 bg-green-100 text-green-700 text-sm font-bold px-3 py-1 rounded-full">
-                                        <i class="fas fa-arrow-down text-xs"></i> 약 94% 감소
-                                    </span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- Drop Zones -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Lossy -->
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-3 h-3 rounded-full bg-red-400"></span>
+                            <p class="text-sm font-bold text-gray-700">손실 압축</p>
+                            <span class="text-xs text-gray-400">(Lossy)</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-2">데이터 일부를 제거하여 압축. 원본 복원 불가.</p>
+                        <div class="drop-zone" id="dropLossy" data-type="lossy">
+                            <span class="placeholder-text"><i class="fas fa-arrow-down mr-1"></i> 여기에 놓으세요</span>
+                        </div>
+                    </div>
+                    <!-- Lossless -->
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-3 h-3 rounded-full bg-green-400"></span>
+                            <p class="text-sm font-bold text-gray-700">비손실 압축</p>
+                            <span class="text-xs text-gray-400">(Lossless)</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-2">데이터 손실 없이 압축. 원본 완벽 복원 가능.</p>
+                        <div class="drop-zone" id="dropLossless" data-type="lossless">
+                            <span class="placeholder-text"><i class="fas fa-arrow-down mr-1"></i> 여기에 놓으세요</span>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Observation note -->
-                <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-                    <p class="text-sm font-semibold text-yellow-800 mb-1"><i class="fas fa-pencil text-yellow-600 mr-1"></i> 관찰 기록</p>
-                    <p class="text-xs text-yellow-700 mb-2">품질을 낮출수록 파일 크기와 이미지 화질은 어떻게 변하는지 적어 보자.</p>
-                    <textarea class="activity-input" rows="2" placeholder="예: 품질을 낮추면 파일 크기는 줄어들지만, 이미지가 흐릿해지고..." data-activity="2" style="border-color: #fde68a; background-color: #fefce8;"></textarea>
+                <!-- Check / Reset buttons -->
+                <div class="flex items-center gap-3 justify-center">
+                    <button onclick="checkDragDrop()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-xl font-semibold text-sm hover:from-cyan-700 hover:to-blue-700 transition-all shadow-md">
+                        <i class="fas fa-check"></i> 정답 확인
+                    </button>
+                    <button onclick="resetDragDrop()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-semibold text-sm hover:bg-gray-200 transition-all">
+                        <i class="fas fa-rotate-left"></i> 다시 하기
+                    </button>
+                </div>
+
+                <!-- Result -->
+                <div id="dragResult" class="hidden text-center">
+                    <div id="dragResultInner" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold"></div>
                 </div>
             </div>
         </section>
 
         <!-- ============================================ -->
-        <!-- Activity 3: WAV → MP3 변환 -->
+        <!-- Activity 3: Interactive Compression Comparison -->
         <!-- ============================================ -->
         <section class="activity-card bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
-            <!-- Activity Header -->
             <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                     3
                 </div>
                 <div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white">WAV &rarr; MP3 변환</h2>
-                    <p class="text-cyan-100 text-sm mt-0.5"><i class="fas fa-music mr-1"></i> 오디오 압축 실습</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">압축 효율 비교 차트</h2>
+                    <p class="text-cyan-100 text-sm mt-0.5"><i class="fas fa-chart-bar mr-1"></i> 슬라이더로 품질을 조절하고 파일 크기 변화를 확인하세요</p>
                 </div>
             </div>
 
             <div class="p-6 md:p-8 space-y-6">
-                <!-- Description -->
                 <div class="bg-cyan-50 border-l-4 border-cyan-400 rounded-r-lg p-4 md:p-5">
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base">
                         <i class="fas fa-info-circle text-cyan-500 mr-1"></i>
-                        온라인 오디오 변환 사이트를 이용하여 WAV 파일을 MP3 파일로 변환해 보자.
-                        이때 변환한 파일의 속성 정보에서 파일 용량과 비트 전송률을 확인해 보자.
+                        이미지와 오디오 파일의 압축 품질을 조절하면 파일 크기가 어떻게 변하는지 시각적으로 확인해 보세요.
+                        품질이 낮을수록 파일 크기는 줄어들지만, 손실 압축에서는 품질이 떨어집니다.
                     </p>
                 </div>
 
-                <!-- Site Link -->
-                <div class="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl p-4 no-print">
-                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 flex-shrink-0">
-                        <i class="fas fa-globe"></i>
+                <!-- Controls -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Image Quality Slider -->
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-image text-blue-500"></i>
+                            <span class="text-sm font-bold text-gray-700">이미지 JPG 품질</span>
+                        </div>
+                        <input type="range" id="imgQualitySlider" min="10" max="100" value="80" class="w-full accent-blue-500 cursor-pointer" oninput="updateChart()">
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>10%</span>
+                            <span class="font-bold text-blue-600" id="imgQualityLabel">80%</span>
+                            <span>100%</span>
+                        </div>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs font-semibold text-blue-800 mb-0.5">온라인 오디오 변환 사이트 주소</p>
-                        <a href="https://online-audio-converter.com/ko/" target="_blank" rel="noopener noreferrer"
-                           class="text-sm text-blue-600 hover:text-blue-800 underline break-all">
-                            https://online-audio-converter.com/ko/
-                            <i class="fas fa-external-link-alt text-xs ml-1"></i>
-                        </a>
+                    <!-- Audio Bitrate Slider -->
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-music text-purple-500"></i>
+                            <span class="text-sm font-bold text-gray-700">오디오 MP3 비트레이트</span>
+                        </div>
+                        <input type="range" id="audioBitrateSlider" min="64" max="320" value="192" step="32" class="w-full accent-purple-500 cursor-pointer" oninput="updateChart()">
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>64kbps</span>
+                            <span class="font-bold text-purple-600" id="audioBitrateLabel">192kbps</span>
+                            <span>320kbps</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Tip -->
-                <div class="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
-                    <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600 flex-shrink-0 mt-0.5">
-                        <i class="fas fa-lightbulb"></i>
+                <!-- Bar Chart -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5">
+                    <div class="flex items-center gap-4 mb-4 text-xs flex-wrap">
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded bg-slate-300"></span> 원본 크기
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded bg-blue-500"></span> 압축 후 크기
+                        </span>
                     </div>
-                    <div>
-                        <p class="text-sm font-semibold text-amber-800 mb-1">참고</p>
-                        <p class="text-sm text-amber-700 leading-relaxed">
-                            [파일 탐색기]에서 소리 파일의 마우스 오른쪽 버튼을 클릭하여 [속성] - [자세히]를 선택하면
-                            파일의 용량과 비트 전송률을 확인할 수 있다.
-                        </p>
+                    <div class="bar-chart-container" id="barChart">
+                        <!-- BMP -> JPG -->
+                        <div class="bar-group">
+                            <div class="bar-wrapper">
+                                <div class="bar bg-slate-300" id="barBmpOrig" style="height: 100%;">
+                                    <span class="bar-label text-slate-600" id="lblBmpOrig">236KB</span>
+                                </div>
+                                <div class="bar bg-blue-500" id="barBmpComp" style="height: 9%;">
+                                    <span class="bar-label text-blue-700" id="lblBmpComp">21KB</span>
+                                </div>
+                            </div>
+                            <p class="bar-group-label"><i class="fas fa-image text-blue-400 mr-1"></i>BMP&rarr;JPG</p>
+                        </div>
+                        <!-- PNG (lossless) -->
+                        <div class="bar-group">
+                            <div class="bar-wrapper">
+                                <div class="bar bg-slate-300" id="barPngOrig" style="height: 100%;">
+                                    <span class="bar-label text-slate-600">236KB</span>
+                                </div>
+                                <div class="bar bg-emerald-500" id="barPngComp" style="height: 38%;">
+                                    <span class="bar-label text-emerald-700">90KB</span>
+                                </div>
+                            </div>
+                            <p class="bar-group-label"><i class="fas fa-image text-emerald-400 mr-1"></i>BMP&rarr;PNG</p>
+                        </div>
+                        <!-- WAV -> MP3 -->
+                        <div class="bar-group">
+                            <div class="bar-wrapper">
+                                <div class="bar bg-slate-300" id="barWavOrig" style="height: 100%;">
+                                    <span class="bar-label text-slate-600" id="lblWavOrig">7.76MB</span>
+                                </div>
+                                <div class="bar bg-purple-500" id="barWavComp" style="height: 12%;">
+                                    <span class="bar-label text-purple-700" id="lblWavComp">0.9MB</span>
+                                </div>
+                            </div>
+                            <p class="bar-group-label"><i class="fas fa-music text-purple-400 mr-1"></i>WAV&rarr;MP3</p>
+                        </div>
+                        <!-- WAV -> FLAC -->
+                        <div class="bar-group">
+                            <div class="bar-wrapper">
+                                <div class="bar bg-slate-300" style="height: 100%;">
+                                    <span class="bar-label text-slate-600">7.76MB</span>
+                                </div>
+                                <div class="bar bg-amber-500" style="height: 55%;">
+                                    <span class="bar-label text-amber-700">4.3MB</span>
+                                </div>
+                            </div>
+                            <p class="bar-group-label"><i class="fas fa-music text-amber-400 mr-1"></i>WAV&rarr;FLAC</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Comparison Table -->
-                <div class="table-wrapper">
-                    <table class="w-full border-collapse min-w-[480px]">
-                        <thead>
-                            <tr>
-                                <th class="bg-cyan-700 text-white px-4 py-3 text-center text-sm font-semibold rounded-tl-lg w-[25%]">
-                                    구분
-                                </th>
-                                <th class="bg-cyan-700 text-white px-4 py-3 text-center text-sm font-semibold w-[37.5%]">
-                                    <i class="fas fa-file-audio mr-1"></i> WAV 파일
-                                </th>
-                                <th class="bg-cyan-700 text-white px-4 py-3 text-center text-sm font-semibold rounded-tr-lg w-[37.5%]">
-                                    <i class="fas fa-file-audio mr-1"></i> MP3 파일
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- 용량 -->
-                            <tr class="border-b border-cyan-100">
-                                <td class="px-4 py-3 bg-cyan-50 font-semibold text-cyan-900 text-sm text-center">용량</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-xs text-gray-400 flex-shrink-0">예</span>
-                                        <div class="example-cell flex-1 text-center font-semibold" style="border-left: none;">
-                                            7.76MB
-                                        </div>
-                                    </div>
-                                    <input type="hidden" id="act3_wavSize" value="7.76MB">
-                                </td>
-                                <td class="px-4 py-3">
-                                    <input type="text" id="act3_mp3Size" class="activity-input text-center" placeholder="MP3 파일 용량을 입력하세요" data-activity="3">
-                                </td>
-                            </tr>
-                            <!-- 비트 전송률 -->
-                            <tr>
-                                <td class="px-4 py-3 bg-cyan-50 font-semibold text-cyan-900 text-sm text-center">비트 전송률</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-xs text-gray-400 flex-shrink-0">예</span>
-                                        <div class="example-cell flex-1 text-center font-semibold" style="border-left: none;">
-                                            2,822kbps
-                                        </div>
-                                    </div>
-                                    <input type="hidden" id="act3_wavBitrate" value="2,822kbps">
-                                </td>
-                                <td class="px-4 py-3">
-                                    <input type="text" id="act3_mp3Bitrate" class="activity-input text-center" placeholder="MP3 비트 전송률을 입력하세요" data-activity="3">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Seeing Music bonus -->
+                <!-- Insight Box -->
                 <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-5">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="inline-flex items-center gap-1.5 bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">
-                            <i class="fas fa-star"></i> 하나 더 알기
+                            <i class="fas fa-lightbulb"></i> 핵심 정리
                         </span>
-                        <span class="text-sm font-semibold text-indigo-800">WAV 파일과 MP3 파일의 차이 알아보기</span>
                     </div>
-                    <p class="text-sm text-indigo-700 leading-relaxed mb-3">
-                        구글 씨잉 뮤직은 소리 정보를 시각화해서 보여 준다. 위에서 활용한 WAV 파일과 MP3 파일을
-                        시각화하여 눈으로 차이를 확인해 보자.
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                        <div class="flex items-start gap-2">
+                            <span class="w-2 h-2 rounded-full bg-red-400 mt-1.5 flex-shrink-0"></span>
+                            <p class="text-sm text-indigo-700"><strong>손실 압축</strong>(JPG, MP3): 품질을 낮추면 파일이 더 작아지지만 원본 복원 불가</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-2 h-2 rounded-full bg-green-400 mt-1.5 flex-shrink-0"></span>
+                            <p class="text-sm text-indigo-700"><strong>비손실 압축</strong>(PNG, FLAC): 파일 크기가 줄어들어도 원본 완벽 복원 가능</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- Activity 4: Click-based Quiz -->
+        <!-- ============================================ -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                    4
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">상황별 압축 형식 퀴즈</h2>
+                    <p class="text-cyan-100 text-sm mt-0.5"><i class="fas fa-question-circle mr-1"></i> 각 상황에 가장 적합한 압축 형식을 선택하세요</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-6">
+                <div class="bg-cyan-50 border-l-4 border-cyan-400 rounded-r-lg p-4 md:p-5">
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">
+                        <i class="fas fa-info-circle text-cyan-500 mr-1"></i>
+                        다양한 상황에서 어떤 압축 형식이 가장 적합한지 선택해 보세요. 각 문제를 클릭하면 정답 여부와 해설을 바로 확인할 수 있습니다.
                     </p>
-                    <a href="https://creatability.withgoogle.com/seeing-music/" target="_blank" rel="noopener noreferrer"
-                       class="inline-flex items-center gap-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors no-print">
-                        <i class="fas fa-music"></i>
-                        씨잉 뮤직 사이트 바로가기
-                        <i class="fas fa-external-link-alt text-xs"></i>
-                    </a>
+                </div>
+
+                <!-- Quiz Score -->
+                <div class="flex items-center justify-center gap-3">
+                    <div class="bg-cyan-50 border border-cyan-200 rounded-full px-5 py-2 flex items-center gap-2">
+                        <i class="fas fa-trophy text-amber-500"></i>
+                        <span class="text-sm font-bold text-cyan-800">점수: <span id="quizScore">0</span> / <span id="quizTotal">5</span></span>
+                    </div>
+                </div>
+
+                <!-- Q1 -->
+                <div class="quiz-item bg-gray-50 rounded-xl p-5 border border-gray-200" data-quiz="q1">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="flex-shrink-0 w-7 h-7 bg-cyan-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">1</span>
+                        <p class="text-sm font-semibold text-gray-800">의료 영상(X-ray, MRI)을 저장해야 합니다. 어떤 형식이 가장 적합할까요?</p>
+                    </div>
+                    <div class="space-y-2 ml-10">
+                        <div class="quiz-option" data-correct="false" onclick="handleQuiz(this, 'q1')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>JPG - 용량이 작아 저장에 유리하다</div>
+                        <div class="quiz-option" data-correct="true" onclick="handleQuiz(this, 'q1')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>PNG - 비손실 압축으로 원본을 보존한다</div>
+                        <div class="quiz-option" data-correct="false" onclick="handleQuiz(this, 'q1')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>MP3 - 빠르게 전송할 수 있다</div>
+                    </div>
+                    <div class="quiz-feedback ml-10 bg-green-50 border border-green-200 text-green-700" data-quiz-fb="q1">
+                        <i class="fas fa-check-circle mr-1"></i> 의료 영상은 진단 정확도를 위해 원본 품질을 유지해야 하므로 비손실 압축(PNG) 형식이 적합합니다.
+                    </div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="quiz-item bg-gray-50 rounded-xl p-5 border border-gray-200" data-quiz="q2">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="flex-shrink-0 w-7 h-7 bg-cyan-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">2</span>
+                        <p class="text-sm font-semibold text-gray-800">SNS에 여행 사진을 올리려고 합니다. 어떤 형식이 가장 적합할까요?</p>
+                    </div>
+                    <div class="space-y-2 ml-10">
+                        <div class="quiz-option" data-correct="true" onclick="handleQuiz(this, 'q2')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>JPG - 적절한 품질로 용량을 줄여준다</div>
+                        <div class="quiz-option" data-correct="false" onclick="handleQuiz(this, 'q2')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>BMP - 가장 고화질을 보장한다</div>
+                        <div class="quiz-option" data-correct="false" onclick="handleQuiz(this, 'q2')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>WAV - 모든 데이터를 보존한다</div>
+                    </div>
+                    <div class="quiz-feedback ml-10 bg-green-50 border border-green-200 text-green-700" data-quiz-fb="q2">
+                        <i class="fas fa-check-circle mr-1"></i> SNS 사진은 빠른 업로드와 적절한 화질이 중요하므로 손실 압축(JPG)이 가장 적합합니다. BMP는 비압축 형식이라 용량이 매우 큽니다.
+                    </div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="quiz-item bg-gray-50 rounded-xl p-5 border border-gray-200" data-quiz="q3">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="flex-shrink-0 w-7 h-7 bg-cyan-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">3</span>
+                        <p class="text-sm font-semibold text-gray-800">스마트폰에서 음악을 스트리밍으로 듣고 싶습니다. 어떤 형식이 가장 적합할까요?</p>
+                    </div>
+                    <div class="space-y-2 ml-10">
+                        <div class="quiz-option" data-correct="false" onclick="handleQuiz(this, 'q3')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>WAV - 원본 음질 그대로 들을 수 있다</div>
+                        <div class="quiz-option" data-correct="true" onclick="handleQuiz(this, 'q3')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>MP3 - 적은 데이터로 음악을 들을 수 있다</div>
+                        <div class="quiz-option" data-correct="false" onclick="handleQuiz(this, 'q3')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>PNG - 파일 크기가 작다</div>
+                    </div>
+                    <div class="quiz-feedback ml-10 bg-green-50 border border-green-200 text-green-700" data-quiz-fb="q3">
+                        <i class="fas fa-check-circle mr-1"></i> 스트리밍은 데이터 사용량이 중요하므로 손실 압축인 MP3가 적합합니다. 사람이 잘 듣지 못하는 소리를 제거하여 용량을 크게 줄입니다.
+                    </div>
+                </div>
+
+                <!-- Q4 -->
+                <div class="quiz-item bg-gray-50 rounded-xl p-5 border border-gray-200" data-quiz="q4">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="flex-shrink-0 w-7 h-7 bg-cyan-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">4</span>
+                        <p class="text-sm font-semibold text-gray-800">음악 녹음실에서 마스터링 작업용 음원을 저장하려 합니다. 어떤 형식이 적합할까요?</p>
+                    </div>
+                    <div class="space-y-2 ml-10">
+                        <div class="quiz-option" data-correct="false" onclick="handleQuiz(this, 'q4')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>MP3 - 널리 사용되는 표준 형식이다</div>
+                        <div class="quiz-option" data-correct="false" onclick="handleQuiz(this, 'q4')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>JPG - 압축률이 매우 높다</div>
+                        <div class="quiz-option" data-correct="true" onclick="handleQuiz(this, 'q4')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>FLAC - 비손실 압축으로 원본 음질을 보존한다</div>
+                    </div>
+                    <div class="quiz-feedback ml-10 bg-green-50 border border-green-200 text-green-700" data-quiz-fb="q4">
+                        <i class="fas fa-check-circle mr-1"></i> 마스터링 작업은 원본 음질이 매우 중요하므로 비손실 오디오 압축인 FLAC이 적합합니다. WAV도 가능하지만 FLAC은 비손실이면서 용량도 줄여줍니다.
+                    </div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="quiz-item bg-gray-50 rounded-xl p-5 border border-gray-200" data-quiz="q5">
+                    <div class="flex items-start gap-3 mb-4">
+                        <span class="flex-shrink-0 w-7 h-7 bg-cyan-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">5</span>
+                        <p class="text-sm font-semibold text-gray-800">런-렝스 인코딩(RLE)이 가장 효과적인 데이터는 무엇일까요?</p>
+                    </div>
+                    <div class="space-y-2 ml-10">
+                        <div class="quiz-option" data-correct="false" onclick="handleQuiz(this, 'q5')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>다양한 색이 섞인 사진</div>
+                        <div class="quiz-option" data-correct="false" onclick="handleQuiz(this, 'q5')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>무작위 문자로 된 텍스트</div>
+                        <div class="quiz-option" data-correct="true" onclick="handleQuiz(this, 'q5')"><i class="fas fa-circle text-[8px] mr-2 text-gray-300"></i>같은 값이 연속으로 반복되는 데이터</div>
+                    </div>
+                    <div class="quiz-feedback ml-10 bg-green-50 border border-green-200 text-green-700" data-quiz-fb="q5">
+                        <i class="fas fa-check-circle mr-1"></i> RLE는 같은 값이 연속 반복될 때 가장 효과적입니다. 예를 들어 "AAAAABBB"를 "5A3B"로 압축합니다. 단순한 아이콘이나 로고 이미지에 효과적입니다.
+                    </div>
+                </div>
+
+                <!-- Quiz Reset -->
+                <div class="text-center">
+                    <button onclick="resetQuiz()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-semibold text-sm hover:bg-gray-200 transition-all">
+                        <i class="fas fa-rotate-left"></i> 퀴즈 다시 풀기
+                    </button>
                 </div>
             </div>
         </section>
@@ -739,7 +1027,6 @@
             </div>
 
             <div class="p-6 md:p-8">
-                <!-- Evaluation Question -->
                 <div class="bg-cyan-50 rounded-xl p-5 md:p-6 mb-8 text-center">
                     <p class="text-lg md:text-xl font-semibold text-cyan-900 leading-relaxed">
                         <i class="fas fa-question-circle text-cyan-500 mr-2"></i>
@@ -748,7 +1035,6 @@
                     </p>
                 </div>
 
-                <!-- Evaluation Buttons -->
                 <div class="flex flex-wrap justify-center gap-4 md:gap-6" id="evalGroup">
                     <button type="button" class="eval-btn" data-value="잘함" onclick="selectEval(this)">
                         <input type="radio" name="selfEval" value="잘함" class="hidden">
@@ -767,7 +1053,6 @@
                     </button>
                 </div>
 
-                <!-- Selected indicator -->
                 <div id="evalResult" class="mt-6 text-center text-sm text-cyan-500 hidden">
                     <i class="fas fa-check-circle mr-1"></i>
                     <span id="evalResultText"></span>
@@ -805,14 +1090,12 @@
             </div>
         </div>
 
-</main>
+    </main>
 
     <!-- ===== FOOTER / NAVIGATION ===== -->
     <footer class="bg-gray-900 text-white mt-16">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <!-- Page navigation -->
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
-                <!-- 이전 페이지 -->
                 <div class="flex-1 flex flex-col items-start gap-1">
                     <a href="../04_소리 압축/index.html"
                        class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
@@ -821,8 +1104,6 @@
                     </a>
                     <span class="text-gray-400 text-xs pl-1">소리 압축</span>
                 </div>
-
-                <!-- 전체 단원으로 돌아가기 -->
                 <div class="flex-1 flex justify-center">
                     <a href="../../../index.html"
                        class="inline-flex items-center gap-2 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
@@ -831,8 +1112,6 @@
                         전체 단원으로 돌아가기
                     </a>
                 </div>
-
-                <!-- 다음 페이지 -->
                 <div class="flex-1 flex flex-col items-end gap-1">
                     <a href="../../02_디지털 데이터 암호화/01_디지털 데이터 암호화의 이해/index.html"
                        class="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5">
@@ -842,9 +1121,7 @@
                     <span class="text-gray-400 text-xs pr-1">디지털 데이터 암호화의 이해</span>
                 </div>
             </div>
-
             <div class="section-divider max-w-xs mx-auto mb-8 opacity-30"></div>
-
             <div class="text-center">
                 <p class="text-gray-400 text-sm">
                     <i class="fas fa-school mr-1"></i>
@@ -861,13 +1138,413 @@
     <script>
         // =============================================
         // Apps Script Web App URL
-        // Teacher fills this in after deploying the script
         // =============================================
-        const APPS_SCRIPT_URL = '';  // Teacher fills this in
+        const APPS_SCRIPT_URL = '';
 
-        // Submit data to Google Sheets
+        // =============================================
+        // 1. RLE SIMULATOR
+        // =============================================
+        const RLE_ROWS = 10;
+        const RLE_COLS = 10;
+        var rleCurrentColor = '#ffffff';
+        var rleGrid = [];  // 2D array of colors
+        var rleMouseDown = false;
+
+        var COLOR_LABELS = {
+            '#ffffff': 'W',
+            '#0891b2': 'C',
+            '#f59e0b': 'O',
+            '#ef4444': 'R',
+            '#8b5cf6': 'P',
+            '#10b981': 'G',
+            '#1e293b': 'B'
+        };
+        var COLOR_BG_CLASS = {
+            '#ffffff': 'background:#f8fafc; color:#475569;',
+            '#0891b2': 'background:#ecfeff; color:#0e7490;',
+            '#f59e0b': 'background:#fffbeb; color:#92400e;',
+            '#ef4444': 'background:#fef2f2; color:#991b1b;',
+            '#8b5cf6': 'background:#f5f3ff; color:#5b21b6;',
+            '#10b981': 'background:#ecfdf5; color:#065f46;',
+            '#1e293b': 'background:#f1f5f9; color:#1e293b;'
+        };
+
+        function initRleGrid() {
+            var gridEl = document.getElementById('rleGrid');
+            gridEl.innerHTML = '';
+            rleGrid = [];
+            for (var r = 0; r < RLE_ROWS; r++) {
+                rleGrid[r] = [];
+                for (var c = 0; c < RLE_COLS; c++) {
+                    rleGrid[r][c] = '#ffffff';
+                    var cell = document.createElement('div');
+                    cell.className = 'rle-cell';
+                    cell.dataset.r = r;
+                    cell.dataset.c = c;
+                    cell.style.backgroundColor = '#ffffff';
+                    cell.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        rleMouseDown = true;
+                        rlePaintCell(this);
+                    });
+                    cell.addEventListener('mouseenter', function() {
+                        if (rleMouseDown) rlePaintCell(this);
+                    });
+                    cell.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        rlePaintCell(this);
+                    }, {passive: false});
+                    cell.addEventListener('touchmove', function(e) {
+                        e.preventDefault();
+                        var touch = e.touches[0];
+                        var el = document.elementFromPoint(touch.clientX, touch.clientY);
+                        if (el && el.classList.contains('rle-cell')) rlePaintCell(el);
+                    }, {passive: false});
+                    gridEl.appendChild(cell);
+                }
+            }
+            document.addEventListener('mouseup', function() { rleMouseDown = false; });
+            updateRleEncoding();
+        }
+
+        function rlePaintCell(cell) {
+            var r = parseInt(cell.dataset.r);
+            var c = parseInt(cell.dataset.c);
+            rleGrid[r][c] = rleCurrentColor;
+            cell.style.backgroundColor = rleCurrentColor;
+            updateRleEncoding();
+        }
+
+        function rleClearGrid() {
+            for (var r = 0; r < RLE_ROWS; r++) {
+                for (var c = 0; c < RLE_COLS; c++) {
+                    rleGrid[r][c] = '#ffffff';
+                }
+            }
+            var cells = document.querySelectorAll('.rle-cell');
+            cells.forEach(function(cell) { cell.style.backgroundColor = '#ffffff'; });
+            updateRleEncoding();
+        }
+
+        function rlePresetPattern() {
+            // Draw a simple pattern: cross shape in cyan
+            rleClearGrid();
+            var pattern = [
+                ['#ffffff','#ffffff','#ffffff','#0891b2','#0891b2','#0891b2','#0891b2','#ffffff','#ffffff','#ffffff'],
+                ['#ffffff','#ffffff','#ffffff','#0891b2','#0891b2','#0891b2','#0891b2','#ffffff','#ffffff','#ffffff'],
+                ['#ffffff','#ffffff','#ffffff','#0891b2','#0891b2','#0891b2','#0891b2','#ffffff','#ffffff','#ffffff'],
+                ['#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2'],
+                ['#0891b2','#0891b2','#0891b2','#0891b2','#f59e0b','#f59e0b','#0891b2','#0891b2','#0891b2','#0891b2'],
+                ['#0891b2','#0891b2','#0891b2','#0891b2','#f59e0b','#f59e0b','#0891b2','#0891b2','#0891b2','#0891b2'],
+                ['#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2'],
+                ['#ffffff','#ffffff','#ffffff','#0891b2','#0891b2','#0891b2','#0891b2','#ffffff','#ffffff','#ffffff'],
+                ['#ffffff','#ffffff','#ffffff','#0891b2','#0891b2','#0891b2','#0891b2','#ffffff','#ffffff','#ffffff'],
+                ['#ffffff','#ffffff','#ffffff','#0891b2','#0891b2','#0891b2','#0891b2','#ffffff','#ffffff','#ffffff'],
+            ];
+            var cells = document.querySelectorAll('.rle-cell');
+            for (var r = 0; r < RLE_ROWS; r++) {
+                for (var c = 0; c < RLE_COLS; c++) {
+                    rleGrid[r][c] = pattern[r][c];
+                    cells[r * RLE_COLS + c].style.backgroundColor = pattern[r][c];
+                }
+            }
+            updateRleEncoding();
+        }
+
+        function updateRleEncoding() {
+            var output = document.getElementById('rleOutput');
+            var totalTokens = 0;
+            var filledCells = 0;
+            var html = '';
+
+            for (var r = 0; r < RLE_ROWS; r++) {
+                var rowTokens = [];
+                var count = 1;
+                for (var c = 1; c < RLE_COLS; c++) {
+                    if (rleGrid[r][c] === rleGrid[r][c-1]) {
+                        count++;
+                    } else {
+                        rowTokens.push({ count: count, color: rleGrid[r][c-1] });
+                        count = 1;
+                    }
+                }
+                rowTokens.push({ count: count, color: rleGrid[r][RLE_COLS-1] });
+
+                var rowHtml = '<div class="flex items-center gap-1 flex-wrap"><span class="text-[10px] text-gray-400 w-8 flex-shrink-0">행' + (r+1) + '</span>';
+                for (var t = 0; t < rowTokens.length; t++) {
+                    var tk = rowTokens[t];
+                    var style = COLOR_BG_CLASS[tk.color] || 'background:#f1f5f9; color:#475569;';
+                    var label = COLOR_LABELS[tk.color] || '?';
+                    rowHtml += '<span class="rle-encoding-tag" style="' + style + '">' + tk.count + label + '</span>';
+                    totalTokens++;
+                }
+                rowHtml += '</div>';
+                html += rowHtml;
+            }
+
+            // Count filled cells
+            for (var r2 = 0; r2 < RLE_ROWS; r2++) {
+                for (var c2 = 0; c2 < RLE_COLS; c2++) {
+                    if (rleGrid[r2][c2] !== '#ffffff') filledCells++;
+                }
+            }
+
+            output.innerHTML = html;
+            document.getElementById('rleCellCount').textContent = '칠한 셀: ' + filledCells + ' / ' + (RLE_ROWS * RLE_COLS);
+            document.getElementById('rleOrigSize').textContent = RLE_ROWS * RLE_COLS;
+            document.getElementById('rleCompSize').textContent = totalTokens;
+            var ratio = Math.round((1 - totalTokens / (RLE_ROWS * RLE_COLS)) * 100);
+            document.getElementById('rleRatio').textContent = (ratio > 0 ? ratio : 0) + '%';
+        }
+
+        // Color palette selection
+        document.getElementById('rleColorPalette').addEventListener('click', function(e) {
+            var btn = e.target.closest('.rle-color-btn');
+            if (!btn) return;
+            document.querySelectorAll('.rle-color-btn').forEach(function(b) { b.classList.remove('selected'); });
+            btn.classList.add('selected');
+            rleCurrentColor = btn.dataset.color;
+        });
+
+        // =============================================
+        // 2. DRAG & DROP
+        // =============================================
+        var draggedItem = null;
+
+        function initDragDrop() {
+            var items = document.querySelectorAll('.drag-item[draggable]');
+            items.forEach(function(item) {
+                item.addEventListener('dragstart', function(e) {
+                    draggedItem = this;
+                    this.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', this.dataset.format);
+                });
+                item.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                    draggedItem = null;
+                    document.querySelectorAll('.drop-zone').forEach(function(z) { z.classList.remove('drag-over'); });
+                });
+            });
+
+            var zones = document.querySelectorAll('.drop-zone');
+            zones.forEach(function(zone) {
+                zone.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    this.classList.add('drag-over');
+                });
+                zone.addEventListener('dragleave', function() {
+                    this.classList.remove('drag-over');
+                });
+                zone.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    if (draggedItem) {
+                        // Remove placeholder text
+                        var ph = this.querySelector('.placeholder-text');
+                        if (ph) ph.remove();
+                        // Move item into zone
+                        draggedItem.setAttribute('draggable', 'false');
+                        draggedItem.style.cursor = 'pointer';
+                        draggedItem.onclick = function() { returnDragItem(this); };
+                        this.appendChild(draggedItem);
+                    }
+                });
+            });
+        }
+
+        function returnDragItem(item) {
+            // Return item to source
+            item.setAttribute('draggable', 'true');
+            item.style.cursor = 'grab';
+            item.onclick = null;
+            item.style.borderColor = 'transparent';
+            item.classList.remove('correct', 'wrong');
+            var src = document.getElementById('dragSource');
+            src.appendChild(item);
+            // Reset result
+            document.getElementById('dragResult').classList.add('hidden');
+            // Re-init drag events
+            item.addEventListener('dragstart', function(e) {
+                draggedItem = this;
+                this.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', this.dataset.format);
+            });
+            item.addEventListener('dragend', function() {
+                this.classList.remove('dragging');
+                draggedItem = null;
+                document.querySelectorAll('.drop-zone').forEach(function(z) { z.classList.remove('drag-over'); });
+            });
+            // Restore placeholder if zone empty
+            document.querySelectorAll('.drop-zone').forEach(function(zone) {
+                if (zone.querySelectorAll('.drag-item').length === 0 && !zone.querySelector('.placeholder-text')) {
+                    var ph = document.createElement('span');
+                    ph.className = 'placeholder-text';
+                    ph.innerHTML = '<i class="fas fa-arrow-down mr-1"></i> 여기에 놓으세요';
+                    zone.appendChild(ph);
+                }
+            });
+        }
+
+        function checkDragDrop() {
+            var allItems = document.querySelectorAll('.drop-zone .drag-item');
+            if (allItems.length === 0) {
+                alert('파일 형식을 드래그하여 분류해 주세요!');
+                return;
+            }
+            var correct = 0;
+            var total = allItems.length;
+            allItems.forEach(function(item) {
+                var zone = item.closest('.drop-zone');
+                var zoneType = zone.dataset.type;
+                var answer = item.dataset.answer;
+                if (zoneType === answer) {
+                    item.style.borderColor = '#22c55e';
+                    item.classList.add('correct');
+                    correct++;
+                } else {
+                    item.style.borderColor = '#ef4444';
+                    item.classList.add('wrong');
+                }
+            });
+
+            var resultDiv = document.getElementById('dragResult');
+            var inner = document.getElementById('dragResultInner');
+            resultDiv.classList.remove('hidden');
+            if (correct === total && total === 6) {
+                inner.className = 'inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold bg-green-50 border-2 border-green-300 text-green-700';
+                inner.innerHTML = '<i class="fas fa-circle-check text-xl"></i> 모두 정답입니다! 6/6';
+            } else {
+                inner.className = 'inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold bg-amber-50 border-2 border-amber-300 text-amber-700';
+                inner.innerHTML = '<i class="fas fa-circle-exclamation text-xl"></i> ' + correct + '/' + total + ' 정답 - 빨간 테두리 항목을 클릭하여 다시 분류해 보세요';
+            }
+        }
+
+        function resetDragDrop() {
+            var allItems = document.querySelectorAll('.drop-zone .drag-item, #dragSource .drag-item');
+            var src = document.getElementById('dragSource');
+            allItems.forEach(function(item) {
+                item.setAttribute('draggable', 'true');
+                item.style.cursor = 'grab';
+                item.style.borderColor = 'transparent';
+                item.classList.remove('correct', 'wrong');
+                item.onclick = null;
+                src.appendChild(item);
+            });
+            document.getElementById('dragResult').classList.add('hidden');
+            // Restore placeholders
+            document.querySelectorAll('.drop-zone').forEach(function(zone) {
+                var existing = zone.querySelector('.placeholder-text');
+                if (!existing) {
+                    var ph = document.createElement('span');
+                    ph.className = 'placeholder-text';
+                    ph.innerHTML = '<i class="fas fa-arrow-down mr-1"></i> 여기에 놓으세요';
+                    zone.appendChild(ph);
+                }
+            });
+            initDragDrop();
+        }
+
+        // =============================================
+        // 3. COMPRESSION BAR CHART
+        // =============================================
+        function updateChart() {
+            var imgQ = parseInt(document.getElementById('imgQualitySlider').value);
+            var audioB = parseInt(document.getElementById('audioBitrateSlider').value);
+
+            document.getElementById('imgQualityLabel').textContent = imgQ + '%';
+            document.getElementById('audioBitrateLabel').textContent = audioB + 'kbps';
+
+            // BMP original = 236KB
+            // JPG size roughly: at 100% ~ 45KB, at 10% ~ 8KB (exponential-ish)
+            var jpgSize = Math.round(8 + (45 - 8) * Math.pow(imgQ / 100, 0.7));
+            var jpgPct = Math.max(3, Math.round(jpgSize / 236 * 100));
+            document.getElementById('barBmpComp').style.height = jpgPct + '%';
+            document.getElementById('lblBmpComp').textContent = jpgSize + 'KB';
+
+            // WAV original = 7.76MB = 7946KB
+            // MP3: at 320kbps ~ 1.5MB, at 64kbps ~ 0.3MB
+            var mp3Size = (0.3 + (1.5 - 0.3) * ((audioB - 64) / (320 - 64))).toFixed(1);
+            var mp3Pct = Math.max(3, Math.round(mp3Size / 7.76 * 100));
+            document.getElementById('barWavComp').style.height = mp3Pct + '%';
+            document.getElementById('lblWavComp').textContent = mp3Size + 'MB';
+        }
+
+        // =============================================
+        // 4. QUIZ
+        // =============================================
+        var quizAnswered = {};
+        var quizScoreVal = 0;
+
+        function handleQuiz(option, qId) {
+            if (quizAnswered[qId]) return;
+            quizAnswered[qId] = true;
+
+            var isCorrect = option.dataset.correct === 'true';
+            var parent = option.closest('.quiz-item');
+            var allOptions = parent.querySelectorAll('.quiz-option');
+
+            allOptions.forEach(function(opt) {
+                opt.classList.add('disabled');
+                if (opt.dataset.correct === 'true') {
+                    opt.classList.add('correct');
+                    opt.querySelector('.fa-circle').className = 'fas fa-check-circle text-[10px] mr-2 text-green-500';
+                }
+            });
+
+            if (!isCorrect) {
+                option.classList.add('wrong');
+                option.querySelector('.fa-circle').className = 'fas fa-times-circle text-[10px] mr-2 text-red-500';
+            }
+
+            if (isCorrect) {
+                quizScoreVal++;
+                document.getElementById('quizScore').textContent = quizScoreVal;
+            }
+
+            // Show feedback
+            var fb = document.querySelector('[data-quiz-fb="' + qId + '"]');
+            if (fb) fb.classList.add('show');
+        }
+
+        function resetQuiz() {
+            quizAnswered = {};
+            quizScoreVal = 0;
+            document.getElementById('quizScore').textContent = '0';
+
+            document.querySelectorAll('.quiz-option').forEach(function(opt) {
+                opt.classList.remove('correct', 'wrong', 'disabled');
+                opt.querySelector('i').className = 'fas fa-circle text-[8px] mr-2 text-gray-300';
+            });
+            document.querySelectorAll('.quiz-feedback').forEach(function(fb) {
+                fb.classList.remove('show');
+            });
+        }
+
+        // =============================================
+        // SELF-EVALUATION
+        // =============================================
+        function selectEval(btn) {
+            document.querySelectorAll('.eval-btn').forEach(function(b) {
+                b.classList.remove('selected');
+                var radio = b.querySelector('input[type="radio"]');
+                if (radio) radio.checked = false;
+            });
+            btn.classList.add('selected');
+            var radio = btn.querySelector('input[type="radio"]');
+            if (radio) radio.checked = true;
+            var resultDiv = document.getElementById('evalResult');
+            var resultText = document.getElementById('evalResultText');
+            resultDiv.classList.remove('hidden');
+            resultText.textContent = '"' + btn.getAttribute('data-value') + '"을(를) 선택했습니다.';
+        }
+
+        // =============================================
+        // SUBMIT
+        // =============================================
         function submitData() {
-            // Collect student info
             var grade = document.getElementById('grade').value;
             var classNum = document.getElementById('classNum').value;
             var number = document.getElementById('number').value;
@@ -883,24 +1560,33 @@
                 return;
             }
 
-            // Collect activity data from textareas/inputs
+            // Collect RLE data
+            var rleCompSize = document.getElementById('rleCompSize').textContent;
+            var rleRatio = document.getElementById('rleRatio').textContent;
+
+            // Collect drag-drop results
+            var lossyItems = [];
+            document.querySelectorAll('#dropLossy .drag-item').forEach(function(item) {
+                lossyItems.push(item.dataset.format);
+            });
+            var losslessItems = [];
+            document.querySelectorAll('#dropLossless .drag-item').forEach(function(item) {
+                losslessItems.push(item.dataset.format);
+            });
+
             var payload = {
                 page: '압축 선택활동',
                 grade: grade,
                 class: classNum,
                 number: number,
                 name: name,
-                act1_input: document.getElementById('act1_input')?.value || '',
-                act1_inputLen: document.getElementById('act1_inputLen')?.value || '',
-                act1_result: document.getElementById('act1_result')?.value || '',
-                act1_resultLen: document.getElementById('act1_resultLen')?.value || '',
-                act2_bmpSize: document.getElementById('act2_bmpSize')?.value || '',
-                act2_jpg80: document.getElementById('act2_jpg80')?.value || '',
-                act2_jpg50: document.getElementById('act2_jpg50')?.value || '',
-                act3_wavSize: document.getElementById('act3_wavSize')?.value || '',
-                act3_wavBitrate: document.getElementById('act3_wavBitrate')?.value || '',
-                act3_mp3Size: document.getElementById('act3_mp3Size')?.value || '',
-                act3_mp3Bitrate: document.getElementById('act3_mp3Bitrate')?.value || '',
+                rle_compSize: rleCompSize,
+                rle_ratio: rleRatio,
+                dragdrop_lossy: lossyItems.join(', '),
+                dragdrop_lossless: losslessItems.join(', '),
+                chart_imgQuality: document.getElementById('imgQualitySlider').value + '%',
+                chart_audioBitrate: document.getElementById('audioBitrateSlider').value + 'kbps',
+                quizScore: quizScoreVal + '/5',
                 selfEval: document.querySelector('input[name="selfEval"]:checked')?.value || ''
             };
 
@@ -952,44 +1638,37 @@
             });
         }
 
-        // Self-evaluation button selection
-        function selectEval(btn) {
-            // Remove selected state from all buttons
-            document.querySelectorAll('.eval-btn').forEach(function(b) {
-                b.classList.remove('selected');
-                var radio = b.querySelector('input[type="radio"]');
-                if (radio) radio.checked = false;
-            });
-            // Add selected state to clicked button
-            btn.classList.add('selected');
-            var radio = btn.querySelector('input[type="radio"]');
-            if (radio) radio.checked = true;
-
-            // Show result
-            var resultDiv = document.getElementById('evalResult');
-            var resultText = document.getElementById('evalResultText');
-            resultDiv.classList.remove('hidden');
-            resultText.textContent = '"' + btn.getAttribute('data-value') + '"을(를) 선택했습니다.';
-        }
-
-        // Reset all form inputs and evaluation
+        // =============================================
+        // RESET ALL
+        // =============================================
         function resetAll() {
             if (!confirm('모든 입력 내용을 초기화하시겠습니까?\n작성한 내용이 모두 지워집니다.')) {
                 return;
             }
 
-            // Clear all inputs and textareas (including student info)
+            // Clear student info
             document.querySelectorAll('.activity-input').forEach(function(input) {
                 if (input.tagName === 'SELECT') {
                     input.selectedIndex = 0;
                 } else if (input.tagName === 'TEXTAREA') {
                     input.value = '';
-                } else if (input.type !== 'hidden') {
+                } else if (input.type !== 'hidden' && input.type !== 'range') {
                     input.value = '';
                 }
             });
 
-            // Reset submit button state
+            // Reset RLE
+            rleClearGrid();
+            // Reset Drag & Drop
+            resetDragDrop();
+            // Reset Chart
+            document.getElementById('imgQualitySlider').value = 80;
+            document.getElementById('audioBitrateSlider').value = 192;
+            updateChart();
+            // Reset Quiz
+            resetQuiz();
+
+            // Reset submit button
             var submitBtn = document.getElementById('submitBtn');
             if (submitBtn) {
                 submitBtn.disabled = false;
@@ -1001,28 +1680,29 @@
                 document.getElementById('submitResult').classList.add('hidden');
             }
 
-            // Reset evaluation buttons
+            // Reset evaluation
             document.querySelectorAll('.eval-btn').forEach(function(btn) {
                 btn.classList.remove('selected');
                 var radio = btn.querySelector('input[type="radio"]');
                 if (radio) radio.checked = false;
             });
+            document.getElementById('evalResult').classList.add('hidden');
 
-            // Hide evaluation result
-            var resultDiv = document.getElementById('evalResult');
-            resultDiv.classList.add('hidden');
-
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Print page
-        function printPage() {
-            window.print();
-        }
+        // Print
+        function printPage() { window.print(); }
 
-        // Add subtle animation on scroll
-        (function() {
+        // =============================================
+        // INIT
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            initRleGrid();
+            initDragDrop();
+            updateChart();
+
+            // Scroll animation
             var observer = new IntersectionObserver(function(entries) {
                 entries.forEach(function(entry) {
                     if (entry.isIntersecting) {
@@ -1032,15 +1712,13 @@
                 });
             }, { threshold: 0.1 });
 
-            document.addEventListener('DOMContentLoaded', function() {
-                document.querySelectorAll('.activity-card').forEach(function(card) {
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(20px)';
-                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                    observer.observe(card);
-                });
+            document.querySelectorAll('.activity-card').forEach(function(card) {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                observer.observe(card);
             });
-        })();
+        });
     </script>
 </body>
 </html>

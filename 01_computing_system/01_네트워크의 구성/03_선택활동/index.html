@@ -75,46 +75,6 @@
             animation: heroFloat 6s ease-in-out infinite;
         }
 
-
-        /* Fillable input/textarea styling */
-        .activity-input {
-            width: 100%;
-            min-height: 2.5rem;
-            padding: 0.5rem 0.75rem;
-            border: 2px solid #e9d5ff;
-            border-radius: 0.5rem;
-            background-color: #faf5ff;
-            font-size: 0.875rem;
-            font-family: 'Noto Sans KR', sans-serif;
-            transition: all 0.2s ease;
-            resize: vertical;
-        }
-        .activity-input:focus {
-            outline: none;
-            border-color: #a855f7;
-            background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
-        }
-        .activity-input::placeholder {
-            color: #c4b5fd;
-            font-style: italic;
-        }
-        .activity-input:not(:placeholder-shown) {
-            background-color: #fff;
-            border-color: #c084fc;
-        }
-
-        /* Pre-filled example cells */
-        .example-cell {
-            background-color: #f3e8ff;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.85rem;
-            color: #581c87;
-            line-height: 1.6;
-            border-left: 3px solid #a855f7;
-        }
-
         /* Self-evaluation buttons */
         .eval-btn {
             padding: 1rem 1.5rem;
@@ -150,10 +110,193 @@
             transform: translateY(-2px);
         }
 
-        /* Table responsive wrapper */
-        .table-wrapper {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+        /* ====== Interactive Activity Styles ====== */
+
+        /* Drag and drop zone */
+        .drop-zone {
+            min-height: 80px;
+            border: 2.5px dashed #d8b4fe;
+            border-radius: 1rem;
+            padding: 0.75rem;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-content: flex-start;
+        }
+        .drop-zone.drag-over {
+            border-color: #a855f7;
+            background: #f3e8ff;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.12);
+        }
+        .drop-zone .placeholder-text {
+            color: #c4b5fd;
+            font-size: 0.8rem;
+            font-style: italic;
+            width: 100%;
+            text-align: center;
+            padding: 0.5rem 0;
+            pointer-events: none;
+        }
+
+        .drag-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.45rem 0.85rem;
+            border-radius: 0.6rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        .drag-item:active { cursor: grabbing; }
+        .drag-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .drag-item.dragging {
+            opacity: 0.4;
+            transform: scale(0.95);
+        }
+
+        .drag-item.purple-chip { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
+        .drag-item.blue-chip { background: #eff6ff; color: #1e40af; border-color: #dbeafe; }
+        .drag-item.teal-chip { background: #f0fdfa; color: #0f766e; border-color: #ccfbf1; }
+        .drag-item.pink-chip { background: #fdf2f8; color: #9d174d; border-color: #fce7f3; }
+
+        /* Matching exercise */
+        .match-item {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 2.5px solid #e9d5ff;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        .match-item:hover {
+            border-color: #c084fc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.15);
+        }
+        .match-item.selected {
+            border-color: #a855f7;
+            background: #f3e8ff;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+        }
+        .match-item.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+        }
+        .match-item.wrong {
+            border-color: #ef4444;
+            background: #fef2f2;
+            animation: headShake 0.5s ease;
+        }
+
+        @keyframes headShake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(5px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(3px); }
+        }
+
+        /* Scenario quiz */
+        .scenario-card {
+            border: 2.5px solid #e9d5ff;
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .scenario-option {
+            padding: 0.85rem 1.1rem;
+            border: 2.5px solid #e5e7eb;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .scenario-option:hover {
+            border-color: #c084fc;
+            background: #faf5ff;
+        }
+        .scenario-option .option-letter {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: #f3e8ff;
+            color: #7e22ce;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        .scenario-option.correct-choice {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+        .scenario-option.correct-choice .option-letter {
+            background: #22c55e;
+            color: white;
+        }
+        .scenario-option.wrong-choice {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+        .scenario-option.wrong-choice .option-letter {
+            background: #ef4444;
+            color: white;
+        }
+        .scenario-option.disabled-choice {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .feedback-box {
+            padding: 0.85rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            display: none;
+        }
+        .feedback-box.show { display: block; }
+        .feedback-box.correct-feedback { background: #f0fdf4; border: 1.5px solid #86efac; color: #166534; }
+        .feedback-box.wrong-feedback { background: #fef2f2; border: 1.5px solid #fca5a5; color: #991b1b; }
+
+        /* Score display */
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* Progress bar */
+        .progress-track {
+            height: 8px;
+            background: #f3e8ff;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #a855f7, #7c3aed);
+            transition: width 0.5s ease;
         }
 
         /* Print styles */
@@ -166,16 +309,11 @@
             .no-print {
                 display: none !important;
             }
-            .activity-input {
-                border: 1px solid #999 !important;
-                background: white !important;
-                min-height: 3rem !important;
-            }
             .eval-btn.selected {
                 border: 3px solid #7e22ce !important;
                 background: #f3e8ff !important;
             }
-        .hero-section {
+            .hero-section {
                 background: #7e22ce !important;
                 color: white !important;
             }
@@ -186,21 +324,7 @@
                 break-inside: avoid;
                 page-break-inside: avoid;
             }
-        
             .hero-gradient { background: #0f766e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        }
-
-        /* Scrollbar styling */
-        .table-wrapper::-webkit-scrollbar {
-            height: 6px;
-        }
-        .table-wrapper::-webkit-scrollbar-track {
-            background: #f3e8ff;
-            border-radius: 3px;
-        }
-        .table-wrapper::-webkit-scrollbar-thumb {
-            background: #c084fc;
-            border-radius: 3px;
         }
     </style>
 </head>
@@ -256,16 +380,16 @@
                 </p>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-layer-group text-purple-300 text-teal-300 text-teal-300 text-teal-300"></i>
+                        <i class="fas fa-layer-group text-teal-300"></i>
                         <span>활동 3개</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-clock text-purple-300 text-teal-300 text-teal-300 text-teal-300"></i>
+                        <i class="fas fa-clock text-teal-300"></i>
                         <span>소요 시간: 약 40분</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-pen-to-square text-purple-300 text-teal-300 text-teal-300 text-teal-300"></i>
-                        <span>직접 작성 활동</span>
+                        <i class="fas fa-gamepad text-teal-300"></i>
+                        <span>인터랙티브 활동</span>
                     </div>
                 </div>
                 </div>
@@ -292,358 +416,377 @@
             </div>
         </div>
     </section>
-<!-- Main Content -->
+
+    <!-- Main Content -->
     <main class="max-w-5xl mx-auto px-4 py-10 space-y-10">
 
         <!-- ============================================ -->
-        <!-- Student Info Section -->
+        <!-- Overall Progress -->
         <!-- ============================================ -->
-        <section class="bg-white rounded-2xl shadow-md border border-purple-100 overflow-hidden">
-            <div class="bg-gradient-to-r from-purple-500 to-violet-500 px-6 py-4 flex items-center gap-3">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
-                    <i class="fas fa-user-pen"></i>
+        <div class="bg-white rounded-2xl shadow-md border border-purple-100 p-5">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-chart-line text-purple-500"></i>
+                    <span class="text-sm font-bold text-gray-700">전체 진행률</span>
                 </div>
-                <div>
-                    <h2 class="text-lg font-bold text-white">학생 정보</h2>
-                    <p class="text-purple-100 text-xs">활동 제출을 위해 정보를 입력하세요</p>
-                </div>
+                <span id="overallScoreText" class="text-sm font-bold text-purple-600">0 / 3 활동 완료</span>
             </div>
-            <div class="p-6 space-y-5">
-                <!-- Google Sheet URL -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                        <i class="fas fa-table text-green-500 mr-1"></i>구글 시트 URL <span class="text-red-400">*</span>
-                    </label>
-                    <div class="flex gap-2">
-                        <input type="url" id="sheetUrl" class="activity-input w-full"
-                               placeholder="선생님이 공유한 구글 시트 주소를 붙여넣으세요"
-                               style="border-color: #86efac; background-color: #f0fdf4;">
-                        <button type="button" onclick="validateSheetUrl()"
-                                class="flex-shrink-0 px-4 py-2 bg-green-100 border-2 border-green-300 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-all"
-                                title="URL 확인">
-                            <i class="fas fa-link-slash" id="sheetUrlIcon"></i>
-                        </button>
-                    </div>
-                    <p class="text-xs text-gray-400 mt-1.5">
-                        <i class="fas fa-circle-info mr-1"></i>
-                        예: https://docs.google.com/spreadsheets/d/abc123.../edit
-                    </p>
-                </div>
-                <!-- Student Info Fields -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">학년 <span class="text-red-400">*</span></label>
-                        <select id="studentGrade" class="activity-input w-full" style="padding: 10px 12px;">
-                            <option value="">선택</option>
-                            <option value="1">1학년</option>
-                            <option value="2">2학년</option>
-                            <option value="3">3학년</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">반 <span class="text-red-400">*</span></label>
-                        <input type="number" id="studentClass" class="activity-input w-full" placeholder="예: 3" min="1" max="20">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">번호 <span class="text-red-400">*</span></label>
-                        <input type="number" id="studentNumber" class="activity-input w-full" placeholder="예: 15" min="1" max="50">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">이름 <span class="text-red-400">*</span></label>
-                        <input type="text" id="studentName" class="activity-input w-full" placeholder="이름 입력">
-                    </div>
-                </div>
+            <div class="progress-track">
+                <div id="overallProgress" class="progress-fill" style="width: 0%"></div>
             </div>
-        </section>
+        </div>
 
         <!-- ============================================ -->
-        <!-- Activity 1: 미러링 실습 -->
+        <!-- Activity 1: 네트워크 기술 분류하기 (Drag & Drop) -->
         <!-- ============================================ -->
-        <section class="activity-card bg-white rounded-2xl shadow-md border border-purple-100 overflow-hidden">
-            <!-- Activity Header -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-purple-100 overflow-hidden" id="activity1Section">
             <div class="bg-gradient-to-r from-purple-600 to-violet-600 px-6 py-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                     1
                 </div>
                 <div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white">미러링 실습</h2>
-                    <p class="text-purple-100 text-sm mt-0.5"><i class="fas fa-desktop mr-1"></i> 화면 미러링 체험</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">네트워크 기술 분류하기</h2>
+                    <p class="text-purple-100 text-sm mt-0.5"><i class="fas fa-arrows-turn-to-dots mr-1"></i> 드래그 앤 드롭으로 분류해 보세요</p>
                 </div>
             </div>
 
             <div class="p-6 md:p-8 space-y-6">
-                <!-- Description -->
                 <div class="bg-purple-50 border-l-4 border-purple-400 rounded-r-lg p-4 md:p-5">
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base">
                         <i class="fas fa-info-circle text-purple-500 mr-1"></i>
-                        태블릿, 노트북, 스마트폰의 화면을 교실의 TV에 미러링해 보고 기기별로 미러링하는 방법을 적어 보자.
-                        또한 확장, 복제 등 미러링 모드가 있는 경우 각각의 모드가 어떻게 다른지 경험한 후 기록해 보자.
+                        아래의 네트워크 기술 카드를 <strong class="text-purple-700">유선 네트워크</strong>와 <strong class="text-purple-700">무선 네트워크</strong>로 분류해 보세요. 카드를 드래그하여 올바른 영역에 놓으면 됩니다.
                     </p>
                 </div>
 
-                <!-- Interactive Table -->
-                <div class="table-wrapper">
-                    <table class="w-full border-collapse min-w-[640px]">
-                        <thead>
-                            <tr>
-                                <th class="bg-purple-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tl-lg w-[20%]">
-                                    <i class="fas fa-mobile-screen mr-2"></i>미러링한 기기
-                                </th>
-                                <th class="bg-purple-700 text-white px-4 py-3 text-left text-sm font-semibold w-[40%]">
-                                    <i class="fas fa-link mr-2"></i>미러링 방법
-                                </th>
-                                <th class="bg-purple-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tr-lg w-[40%]">
-                                    <i class="fas fa-arrows-left-right mr-2"></i>모드별 차이점 (확장, 복제 등)
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Example Row -->
-                            <tr class="border-b border-purple-100">
-                                <td class="px-4 py-3 align-top">
-                                    <div class="example-cell">
-                                        <i class="fas fa-mobile-alt text-purple-400 mr-1"></i> 스마트폰
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <div class="example-cell">
-                                        에어플레이: 미러링 아이콘을 클릭하고 TV를 선택하여 연결
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <div class="example-cell">
-                                        스마트폰을 가로로 들었을 때와 세로로 들었을 때 TV에 미러링되는 화면의 크기가 다르게 표시됨. 가로 모드에서는 전체 화면 표시 가능
-                                    </div>
-                                </td>
-                            </tr>
-                            <!-- Row Indicator -->
-                            <tr>
-                                <td colspan="3" class="px-4 pt-2 pb-0">
-                                    <span class="inline-flex items-center text-xs text-purple-400 font-medium">
-                                        <i class="fas fa-star text-purple-300 mr-1"></i> 위는 예시입니다. 아래 칸에 직접 작성해 보세요.
-                                    </span>
-                                </td>
-                            </tr>
-                            <!-- Empty Row 1 -->
-                            <tr class="border-b border-purple-100">
-                                <td class="px-4 py-3 align-top">
-                                    <input type="text" class="activity-input" data-activity="1" placeholder="예: 태블릿, 노트북 등">
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <textarea class="activity-input" data-activity="1" rows="3" placeholder="미러링 연결 방법을 구체적으로 적어 보세요"></textarea>
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <textarea class="activity-input" data-activity="1" rows="3" placeholder="확장, 복제 등 모드별로 어떤 차이가 있었나요?"></textarea>
-                                </td>
-                            </tr>
-                            <!-- Empty Row 2 -->
-                            <tr>
-                                <td class="px-4 py-3 align-top">
-                                    <input type="text" class="activity-input" data-activity="1" placeholder="예: 태블릿, 노트북 등">
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <textarea class="activity-input" data-activity="1" rows="3" placeholder="미러링 연결 방법을 구체적으로 적어 보세요"></textarea>
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <textarea class="activity-input" data-activity="1" rows="3" placeholder="확장, 복제 등 모드별로 어떤 차이가 있었나요?"></textarea>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- Source chips -->
+                <div id="dragSource1" class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                    <p class="text-xs font-semibold text-gray-500 mb-3"><i class="fas fa-hand-pointer mr-1"></i> 아래 카드를 드래그하세요</p>
+                    <div class="flex flex-wrap gap-2" id="chipPool1">
+                        <div class="drag-item purple-chip" draggable="true" data-answer="wired" data-id="c1">
+                            <i class="fas fa-ethernet"></i> 이더넷 케이블
+                        </div>
+                        <div class="drag-item blue-chip" draggable="true" data-answer="wireless" data-id="c2">
+                            <i class="fas fa-wifi"></i> 와이파이 (Wi-Fi)
+                        </div>
+                        <div class="drag-item teal-chip" draggable="true" data-answer="wireless" data-id="c3">
+                            <i class="fas fa-bluetooth-b"></i> 블루투스
+                        </div>
+                        <div class="drag-item pink-chip" draggable="true" data-answer="wired" data-id="c4">
+                            <i class="fas fa-plug"></i> USB 테더링
+                        </div>
+                        <div class="drag-item blue-chip" draggable="true" data-answer="wireless" data-id="c5">
+                            <i class="fas fa-tower-cell"></i> 5G / LTE
+                        </div>
+                        <div class="drag-item purple-chip" draggable="true" data-answer="wired" data-id="c6">
+                            <i class="fas fa-network-wired"></i> 광케이블 (광섬유)
+                        </div>
+                        <div class="drag-item teal-chip" draggable="true" data-answer="wireless" data-id="c7">
+                            <i class="fas fa-satellite-dish"></i> NFC
+                        </div>
+                        <div class="drag-item pink-chip" draggable="true" data-answer="wired" data-id="c8">
+                            <i class="fas fa-display"></i> HDMI 케이블
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Drop zones -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-plug text-blue-600 text-sm"></i>
+                            </span>
+                            <span class="font-bold text-blue-800 text-sm">유선 네트워크</span>
+                            <span id="wiredCount" class="text-xs text-blue-400 font-medium ml-auto">0 / 4</span>
+                        </div>
+                        <div class="drop-zone" id="wiredZone" data-category="wired">
+                            <span class="placeholder-text">유선 기술을 여기에 놓으세요</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-wifi text-teal-600 text-sm"></i>
+                            </span>
+                            <span class="font-bold text-teal-800 text-sm">무선 네트워크</span>
+                            <span id="wirelessCount" class="text-xs text-teal-400 font-medium ml-auto">0 / 4</span>
+                        </div>
+                        <div class="drop-zone" id="wirelessZone" data-category="wireless">
+                            <span class="placeholder-text">무선 기술을 여기에 놓으세요</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback -->
+                <div id="activity1Feedback" class="feedback-box"></div>
+
+                <!-- Check & Reset -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="checkActivity1()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-600 text-white rounded-xl font-semibold text-sm hover:bg-purple-700 transition-all shadow-md">
+                        <i class="fas fa-check"></i> 정답 확인
+                    </button>
+                    <button onclick="resetActivity1()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-purple-300 text-purple-700 rounded-xl font-semibold text-sm hover:bg-purple-50 transition-all">
+                        <i class="fas fa-rotate-left"></i> 다시 하기
+                    </button>
+                    <span id="activity1Score" class="ml-auto"></span>
                 </div>
             </div>
         </section>
 
         <!-- ============================================ -->
-        <!-- Activity 2: 무선 파일 전송 실습 -->
+        <!-- Activity 2: 기술-특징 매칭 (Matching Exercise) -->
         <!-- ============================================ -->
-        <section class="activity-card bg-white rounded-2xl shadow-md border border-purple-100 overflow-hidden">
-            <!-- Activity Header -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-purple-100 overflow-hidden" id="activity2Section">
             <div class="bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                     2
                 </div>
                 <div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white">무선 파일 전송 실습</h2>
-                    <p class="text-purple-100 text-sm mt-0.5"><i class="fas fa-wifi mr-1"></i> 무선 네트워크 파일 전송 체험</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">전송 기술 매칭하기</h2>
+                    <p class="text-purple-100 text-sm mt-0.5"><i class="fas fa-link mr-1"></i> 기술과 특징을 짝지어 보세요</p>
                 </div>
             </div>
 
             <div class="p-6 md:p-8 space-y-6">
-                <!-- Description -->
                 <div class="bg-violet-50 border-l-4 border-violet-400 rounded-r-lg p-4 md:p-5">
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base">
                         <i class="fas fa-info-circle text-violet-500 mr-1"></i>
-                        무선 네트워크 기술의 다양한 방법을 이용하여 친구에게 파일을 전송해 보고 각 방법의 특징을 적어 보자.
-                        단, <strong class="text-purple-700">두 가지 이상의 방법</strong>을 적용한다.
+                        왼쪽의 <strong class="text-violet-700">네트워크 기술</strong>을 클릭한 후, 오른쪽에서 해당 기술의 <strong class="text-violet-700">특징</strong>을 클릭하여 연결하세요. 올바른 쌍을 모두 찾아보세요!
                     </p>
                 </div>
 
-                <!-- Hint box -->
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
                     <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                         <i class="fas fa-lightbulb text-amber-500"></i>
                     </div>
                     <div>
-                        <p class="text-sm font-semibold text-amber-800 mb-1">힌트</p>
+                        <p class="text-sm font-semibold text-amber-800 mb-1">진행 방법</p>
                         <p class="text-sm text-amber-700">
-                            와이파이 사용, 블루투스 사용, 모바일 기기의 공유 기능 사용(에어드롭, 퀵셰어) 등 다양한 방법을 시도해 보세요.
+                            왼쪽 항목을 먼저 클릭(선택)하고, 이어서 오른쪽 항목을 클릭하면 매칭됩니다. 총 5쌍을 모두 연결하세요.
                         </p>
                     </div>
                 </div>
 
-                <!-- Interactive Table -->
-                <div class="table-wrapper">
-                    <table class="w-full border-collapse min-w-[640px]">
-                        <thead>
-                            <tr>
-                                <th class="bg-violet-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tl-lg w-[25%]">
-                                    <i class="fas fa-share-nodes mr-2"></i>전송 방법
-                                </th>
-                                <th class="bg-violet-700 text-white px-4 py-3 text-left text-sm font-semibold w-[37.5%]">
-                                    <i class="fas fa-thumbs-up mr-2"></i>장점 및 편리한 점
-                                </th>
-                                <th class="bg-violet-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tr-lg w-[37.5%]">
-                                    <i class="fas fa-thumbs-down mr-2"></i>단점 및 불편한 점
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Empty Row 1 -->
-                            <tr class="border-b border-purple-100">
-                                <td class="px-4 py-3 align-top">
-                                    <input type="text" class="activity-input" data-activity="2" placeholder="예: 블루투스">
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <textarea class="activity-input" data-activity="2" rows="3" placeholder="이 방법의 장점이나 편리한 점을 적어 보세요"></textarea>
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <textarea class="activity-input" data-activity="2" rows="3" placeholder="이 방법의 단점이나 불편한 점을 적어 보세요"></textarea>
-                                </td>
-                            </tr>
-                            <!-- Empty Row 2 -->
-                            <tr class="border-b border-purple-100">
-                                <td class="px-4 py-3 align-top">
-                                    <input type="text" class="activity-input" data-activity="2" placeholder="예: 에어드롭">
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <textarea class="activity-input" data-activity="2" rows="3" placeholder="이 방법의 장점이나 편리한 점을 적어 보세요"></textarea>
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <textarea class="activity-input" data-activity="2" rows="3" placeholder="이 방법의 단점이나 불편한 점을 적어 보세요"></textarea>
-                                </td>
-                            </tr>
-                            <!-- Empty Row 3 -->
-                            <tr>
-                                <td class="px-4 py-3 align-top">
-                                    <input type="text" class="activity-input" data-activity="2" placeholder="예: 와이파이 다이렉트">
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <textarea class="activity-input" data-activity="2" rows="3" placeholder="이 방법의 장점이나 편리한 점을 적어 보세요"></textarea>
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <textarea class="activity-input" data-activity="2" rows="3" placeholder="이 방법의 단점이나 불편한 점을 적어 보세요"></textarea>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- Matching pairs grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Left: Technologies -->
+                    <div>
+                        <p class="text-xs font-bold text-purple-500 uppercase tracking-wider mb-3"><i class="fas fa-microchip mr-1"></i> 네트워크 기술</p>
+                        <div class="space-y-2.5" id="matchLeft">
+                            <div class="match-item" data-match="A" data-side="left" onclick="selectMatch(this, 'left')">
+                                <i class="fas fa-desktop text-purple-400 mr-2"></i>미러링 (에어플레이 / 캐스트)
+                            </div>
+                            <div class="match-item" data-match="B" data-side="left" onclick="selectMatch(this, 'left')">
+                                <i class="fas fa-bluetooth-b text-blue-400 mr-2"></i>블루투스 파일 전송
+                            </div>
+                            <div class="match-item" data-match="C" data-side="left" onclick="selectMatch(this, 'left')">
+                                <i class="fas fa-cloud text-teal-400 mr-2"></i>클라우드 공유 (구글 드라이브)
+                            </div>
+                            <div class="match-item" data-match="D" data-side="left" onclick="selectMatch(this, 'left')">
+                                <i class="fas fa-share-nodes text-pink-400 mr-2"></i>에어드롭 / 퀵셰어
+                            </div>
+                            <div class="match-item" data-match="E" data-side="left" onclick="selectMatch(this, 'left')">
+                                <i class="fas fa-ethernet text-amber-400 mr-2"></i>이더넷 유선 연결
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Right: Characteristics -->
+                    <div>
+                        <p class="text-xs font-bold text-violet-500 uppercase tracking-wider mb-3"><i class="fas fa-star mr-1"></i> 특징 설명</p>
+                        <div class="space-y-2.5" id="matchRight">
+                            <div class="match-item" data-match="C" data-side="right" onclick="selectMatch(this, 'right')">
+                                인터넷만 있으면 어디서든 파일에 접근 가능하고 링크로 여러 사람과 동시에 공유할 수 있다
+                            </div>
+                            <div class="match-item" data-match="E" data-side="right" onclick="selectMatch(this, 'right')">
+                                물리적 케이블 연결로 안정적이며 빠른 속도를 제공하지만 이동이 불편하다
+                            </div>
+                            <div class="match-item" data-match="A" data-side="right" onclick="selectMatch(this, 'right')">
+                                스마트폰이나 노트북의 화면을 TV에 실시간으로 동일하게 출력할 수 있다
+                            </div>
+                            <div class="match-item" data-match="D" data-side="right" onclick="selectMatch(this, 'right')">
+                                근거리에서 인터넷 없이 기기 간 직접 파일을 빠르게 전송할 수 있다
+                            </div>
+                            <div class="match-item" data-match="B" data-side="right" onclick="selectMatch(this, 'right')">
+                                별도 앱 없이 기기 간 무선으로 파일을 보낼 수 있지만 전송 속도가 느리다
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Matched pairs display -->
+                <div id="matchedPairsDisplay" class="space-y-2 hidden">
+                    <p class="text-xs font-bold text-green-600 mb-2"><i class="fas fa-link mr-1"></i> 매칭된 쌍</p>
+                </div>
+
+                <!-- Feedback -->
+                <div id="activity2Feedback" class="feedback-box"></div>
+
+                <!-- Score -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="resetActivity2()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-violet-300 text-violet-700 rounded-xl font-semibold text-sm hover:bg-violet-50 transition-all">
+                        <i class="fas fa-rotate-left"></i> 다시 하기
+                    </button>
+                    <span id="activity2Score" class="ml-auto"></span>
                 </div>
             </div>
         </section>
 
         <!-- ============================================ -->
-        <!-- Activity 3: 클라우드 공유 실습 -->
+        <!-- Activity 3: 상황별 네트워크 솔루션 퀴즈 -->
         <!-- ============================================ -->
-        <section class="activity-card bg-white rounded-2xl shadow-md border border-purple-100 overflow-hidden">
-            <!-- Activity Header -->
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-purple-100 overflow-hidden" id="activity3Section">
             <div class="bg-gradient-to-r from-purple-600 to-fuchsia-600 px-6 py-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                     3
                 </div>
                 <div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white">클라우드 공유 실습</h2>
-                    <p class="text-purple-100 text-sm mt-0.5"><i class="fas fa-cloud mr-1"></i> 클라우드 파일 공유 체험</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-white">상황별 네트워크 솔루션</h2>
+                    <p class="text-purple-100 text-sm mt-0.5"><i class="fas fa-question-circle mr-1"></i> 최적의 네트워크 기술을 골라보세요</p>
                 </div>
             </div>
 
             <div class="p-6 md:p-8 space-y-6">
-                <!-- Description -->
                 <div class="bg-fuchsia-50 border-l-4 border-fuchsia-400 rounded-r-lg p-4 md:p-5">
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base">
                         <i class="fas fa-info-circle text-fuchsia-500 mr-1"></i>
-                        클라우드 컴퓨팅에 가입한 후 사진이나 문서를 친구들과 공유해 보자.
+                        다양한 상황이 주어집니다. 각 상황에서 <strong class="text-fuchsia-700">가장 적합한 네트워크 기술</strong>을 선택하세요. 정답을 고르면 바로 피드백을 받을 수 있습니다!
                     </p>
                 </div>
 
-                <!-- Interactive Table -->
-                <div class="table-wrapper">
-                    <table class="w-full border-collapse min-w-[640px]">
-                        <thead>
-                            <tr>
-                                <th class="bg-fuchsia-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tl-lg w-[28%]">
-                                    <i class="fas fa-cloud-arrow-up mr-2"></i>공유 클라우드 컴퓨팅
-                                </th>
-                                <th class="bg-fuchsia-700 text-white px-4 py-3 text-left text-sm font-semibold w-[47%]">
-                                    <i class="fas fa-share mr-2"></i>공유 방법
-                                </th>
-                                <th class="bg-fuchsia-700 text-white px-4 py-3 text-left text-sm font-semibold rounded-tr-lg w-[25%]">
-                                    <i class="fas fa-file mr-2"></i>공유 파일명
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Example Row -->
-                            <tr class="border-b border-purple-100">
-                                <td class="px-4 py-3 align-top">
-                                    <div class="example-cell">
-                                        <i class="fas fa-cloud text-purple-400 mr-1"></i> ○○ 드라이브, N사 MYBOX 등
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <div class="example-cell">
-                                        사진 파일을 선택한 후 [링크 복사]를 클릭하여 친구에게 링크를 보낸다. [액세스 관리]에서 '링크가 있는 모든 사용자'로 권한을 변경한다.
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <div class="example-cell">
-                                        my.jpg
-                                    </div>
-                                </td>
-                            </tr>
-                            <!-- Row Indicator -->
-                            <tr>
-                                <td colspan="3" class="px-4 pt-2 pb-0">
-                                    <span class="inline-flex items-center text-xs text-purple-400 font-medium">
-                                        <i class="fas fa-star text-purple-300 mr-1"></i> 위는 예시입니다. 아래 칸에 직접 작성해 보세요.
-                                    </span>
-                                </td>
-                            </tr>
-                            <!-- Empty Row 1 -->
-                            <tr class="border-b border-purple-100">
-                                <td class="px-4 py-3 align-top">
-                                    <input type="text" class="activity-input" data-activity="3" placeholder="예: 구글 드라이브">
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <textarea class="activity-input" data-activity="3" rows="3" placeholder="파일을 공유한 방법을 구체적으로 적어 보세요"></textarea>
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <input type="text" class="activity-input" data-activity="3" placeholder="예: photo.jpg">
-                                </td>
-                            </tr>
-                            <!-- Empty Row 2 -->
-                            <tr>
-                                <td class="px-4 py-3 align-top">
-                                    <input type="text" class="activity-input" data-activity="3" placeholder="예: 네이버 MYBOX">
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <textarea class="activity-input" data-activity="3" rows="3" placeholder="파일을 공유한 방법을 구체적으로 적어 보세요"></textarea>
-                                </td>
-                                <td class="px-4 py-3 align-top">
-                                    <input type="text" class="activity-input" data-activity="3" placeholder="예: report.docx">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- Scenario 1 -->
+                <div class="scenario-card" id="scenario1">
+                    <div class="bg-gradient-to-r from-purple-50 to-violet-50 px-5 py-4 border-b border-purple-100">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 bg-purple-200 rounded-full flex items-center justify-center text-purple-700 font-bold text-sm flex-shrink-0">1</span>
+                            <p class="text-sm font-semibold text-gray-800">
+                                <i class="fas fa-chalkboard-teacher text-purple-400 mr-1"></i>
+                                발표 수업 시간에 태블릿에 있는 프레젠테이션을 교실 앞 대형 TV에 바로 보여주고 싶다. 어떤 기술이 가장 적합할까?
+                            </p>
+                        </div>
+                    </div>
+                    <div class="p-5 space-y-2.5">
+                        <div class="scenario-option" data-correct="false" onclick="answerScenario('scenario1', this, false, '블루투스는 파일 전송에는 사용되지만, 실시간 화면 공유에는 적합하지 않습니다.')">
+                            <span class="option-letter">A</span>
+                            <span>블루투스로 파일 전송</span>
+                        </div>
+                        <div class="scenario-option" data-correct="true" onclick="answerScenario('scenario1', this, true, '미러링(에어플레이/캐스트)은 실시간 화면 공유에 가장 적합합니다. 케이블 없이 무선으로 TV에 화면을 보낼 수 있어요!')">
+                            <span class="option-letter">B</span>
+                            <span>화면 미러링 (에어플레이/캐스트)</span>
+                        </div>
+                        <div class="scenario-option" data-correct="false" onclick="answerScenario('scenario1', this, false, '클라우드에 업로드 후 TV에서 접속하는 방법도 가능하지만, 실시간 화면 공유에는 미러링이 더 빠르고 편리합니다.')">
+                            <span class="option-letter">C</span>
+                            <span>클라우드에 업로드 후 TV에서 접속</span>
+                        </div>
+                        <div class="scenario-option" data-correct="false" onclick="answerScenario('scenario1', this, false, 'USB는 직접 연결해야 하므로 불편합니다. 또한 TV가 USB에서 프레젠테이션을 직접 열 수 없는 경우가 많습니다.')">
+                            <span class="option-letter">D</span>
+                            <span>USB 메모리에 복사해서 TV에 연결</span>
+                        </div>
+                        <div id="scenario1Feedback" class="feedback-box mt-3"></div>
+                    </div>
+                </div>
+
+                <!-- Scenario 2 -->
+                <div class="scenario-card" id="scenario2">
+                    <div class="bg-gradient-to-r from-violet-50 to-purple-50 px-5 py-4 border-b border-violet-100">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 bg-violet-200 rounded-full flex items-center justify-center text-violet-700 font-bold text-sm flex-shrink-0">2</span>
+                            <p class="text-sm font-semibold text-gray-800">
+                                <i class="fas fa-users text-violet-400 mr-1"></i>
+                                모둠 과제를 하는데, 팀원 4명이 각자 집에서 같은 문서를 동시에 편집해야 한다. 가장 좋은 방법은?
+                            </p>
+                        </div>
+                    </div>
+                    <div class="p-5 space-y-2.5">
+                        <div class="scenario-option" data-correct="false" onclick="answerScenario('scenario2', this, false, '이메일로 보내면 여러 버전이 생겨 혼란이 생기고, 동시 편집이 불가능합니다.')">
+                            <span class="option-letter">A</span>
+                            <span>각자 파일을 만들어 이메일로 보내기</span>
+                        </div>
+                        <div class="scenario-option" data-correct="false" onclick="answerScenario('scenario2', this, false, '에어드롭/퀵셰어는 근거리에서만 작동하므로 각자 집에 있는 상황에서는 사용할 수 없습니다.')">
+                            <span class="option-letter">B</span>
+                            <span>에어드롭/퀵셰어로 파일 주고받기</span>
+                        </div>
+                        <div class="scenario-option" data-correct="true" onclick="answerScenario('scenario2', this, true, '클라우드 문서 공유(구글 독스 등)는 인터넷만 있으면 어디서든 동시 편집이 가능합니다. 실시간으로 변경 사항을 확인할 수 있어 협업에 최적입니다!')">
+                            <span class="option-letter">C</span>
+                            <span>구글 독스 등 클라우드 문서 공유</span>
+                        </div>
+                        <div class="scenario-option" data-correct="false" onclick="answerScenario('scenario2', this, false, 'USB 메모리는 물리적으로 전달해야 하므로 집에서 원격으로 협업하는 데 적합하지 않습니다.')">
+                            <span class="option-letter">D</span>
+                            <span>USB 메모리에 담아서 돌려가며 편집</span>
+                        </div>
+                        <div id="scenario2Feedback" class="feedback-box mt-3"></div>
+                    </div>
+                </div>
+
+                <!-- Scenario 3 -->
+                <div class="scenario-card" id="scenario3">
+                    <div class="bg-gradient-to-r from-fuchsia-50 to-purple-50 px-5 py-4 border-b border-fuchsia-100">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 bg-fuchsia-200 rounded-full flex items-center justify-center text-fuchsia-700 font-bold text-sm flex-shrink-0">3</span>
+                            <p class="text-sm font-semibold text-gray-800">
+                                <i class="fas fa-image text-fuchsia-400 mr-1"></i>
+                                현장학습에서 찍은 사진 5장을 바로 옆에 있는 친구에게 빠르게 보내고 싶다. 인터넷(Wi-Fi/데이터)이 안 되는 상황이다. 어떤 방법이 좋을까?
+                            </p>
+                        </div>
+                    </div>
+                    <div class="p-5 space-y-2.5">
+                        <div class="scenario-option" data-correct="false" onclick="answerScenario('scenario3', this, false, '클라우드 공유는 인터넷 연결이 필요합니다. 현재 인터넷이 안 되는 상황이므로 사용할 수 없습니다.')">
+                            <span class="option-letter">A</span>
+                            <span>클라우드에 업로드 후 링크 공유</span>
+                        </div>
+                        <div class="scenario-option" data-correct="true" onclick="answerScenario('scenario3', this, true, '에어드롭(iOS)이나 퀵셰어(Android)는 Wi-Fi나 모바일 데이터 없이도 기기 간 직접 통신(Wi-Fi Direct / Bluetooth)으로 빠르게 파일을 보낼 수 있습니다!')">
+                            <span class="option-letter">B</span>
+                            <span>에어드롭 / 퀵셰어 (기기 간 직접 전송)</span>
+                        </div>
+                        <div class="scenario-option" data-correct="false" onclick="answerScenario('scenario3', this, false, '이메일도 인터넷 연결이 필요합니다. 현재 상황에서는 사용할 수 없습니다.')">
+                            <span class="option-letter">C</span>
+                            <span>이메일에 첨부하여 전송</span>
+                        </div>
+                        <div class="scenario-option" data-correct="false" onclick="answerScenario('scenario3', this, false, 'HDMI 케이블은 화면 출력용이지 파일 전송에는 사용되지 않습니다.')">
+                            <span class="option-letter">D</span>
+                            <span>HDMI 케이블로 연결</span>
+                        </div>
+                        <div id="scenario3Feedback" class="feedback-box mt-3"></div>
+                    </div>
+                </div>
+
+                <!-- Scenario 4 -->
+                <div class="scenario-card" id="scenario4">
+                    <div class="bg-gradient-to-r from-purple-50 to-fuchsia-50 px-5 py-4 border-b border-purple-100">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 bg-purple-200 rounded-full flex items-center justify-center text-purple-700 font-bold text-sm flex-shrink-0">4</span>
+                            <p class="text-sm font-semibold text-gray-800">
+                                <i class="fas fa-server text-purple-400 mr-1"></i>
+                                학교 컴퓨터실에서 빠르고 안정적인 인터넷이 필요하다. 많은 컴퓨터가 동시에 대용량 파일을 다운로드해야 하는 상황이다. 어떤 연결이 가장 적합할까?
+                            </p>
+                        </div>
+                    </div>
+                    <div class="p-5 space-y-2.5">
+                        <div class="scenario-option" data-correct="false" onclick="answerScenario('scenario4', this, false, 'Wi-Fi는 편리하지만, 많은 기기가 동시에 대용량 파일을 다운로드할 때 속도 저하와 불안정이 생길 수 있습니다.')">
+                            <span class="option-letter">A</span>
+                            <span>Wi-Fi 무선 연결</span>
+                        </div>
+                        <div class="scenario-option" data-correct="false" onclick="answerScenario('scenario4', this, false, '블루투스는 근거리 저속 통신용이므로 인터넷 연결이나 대용량 다운로드에는 부적합합니다.')">
+                            <span class="option-letter">B</span>
+                            <span>블루투스 연결</span>
+                        </div>
+                        <div class="scenario-option" data-correct="false" onclick="answerScenario('scenario4', this, false, '모바일 핫스팟은 데이터 용량 제한이 있고, 여러 컴퓨터를 동시에 연결하면 매우 느려집니다.')">
+                            <span class="option-letter">C</span>
+                            <span>스마트폰 핫스팟 공유</span>
+                        </div>
+                        <div class="scenario-option" data-correct="true" onclick="answerScenario('scenario4', this, true, '이더넷(유선 LAN) 연결은 안정적이고 빠른 속도를 제공합니다. 여러 컴퓨터가 동시에 사용해도 속도 저하가 적어 컴퓨터실에 가장 적합합니다!')">
+                            <span class="option-letter">D</span>
+                            <span>이더넷(유선 LAN) 케이블 연결</span>
+                        </div>
+                        <div id="scenario4Feedback" class="feedback-box mt-3"></div>
+                    </div>
+                </div>
+
+                <!-- Quiz score summary -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="resetActivity3()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-fuchsia-300 text-fuchsia-700 rounded-xl font-semibold text-sm hover:bg-fuchsia-50 transition-all">
+                        <i class="fas fa-rotate-left"></i> 다시 풀기
+                    </button>
+                    <span id="activity3Score" class="ml-auto"></span>
                 </div>
             </div>
         </section>
@@ -702,39 +845,12 @@
         <div class="action-buttons flex flex-wrap justify-center gap-4 no-print">
             <button onclick="resetAll()" class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-purple-300 text-purple-700 rounded-xl font-semibold text-sm hover:bg-purple-50 hover:border-purple-400 transition-all shadow-sm">
                 <i class="fas fa-rotate-left"></i>
-                초기화
+                전체 초기화
             </button>
             <button onclick="printPage()" class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-purple-300 text-purple-700 rounded-xl font-semibold text-sm hover:bg-purple-50 hover:border-purple-400 transition-all shadow-sm">
                 <i class="fas fa-print"></i>
                 인쇄하기
             </button>
-            <button id="submitBtn" onclick="submitData()" class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-purple-700 hover:to-violet-700 transition-all shadow-lg hover:shadow-xl">
-                <i class="fas fa-paper-plane" id="submitIcon"></i>
-                <span id="submitText">제출하기</span>
-            </button>
-        </div>
-
-        <!-- Submit Result Messages -->
-        <div id="submitResult" class="hidden text-center">
-            <div id="submitSuccess" class="hidden inline-flex items-center gap-3 bg-green-50 border-2 border-green-300 text-green-700 rounded-xl px-6 py-4 text-sm font-semibold">
-                <i class="fas fa-circle-check text-xl"></i>
-                <span>제출이 완료되었습니다!</span>
-            </div>
-            <div id="submitError" class="hidden inline-flex items-center gap-3 bg-red-50 border-2 border-red-300 text-red-700 rounded-xl px-6 py-4 text-sm font-semibold">
-                <i class="fas fa-circle-exclamation text-xl"></i>
-                <span id="submitErrorMsg">제출 중 오류가 발생했습니다. 다시 시도해 주세요.</span>
-            </div>
-        </div>
-
-        <!-- ============================================ -->
-        <!-- Teacher Setup Guide Link -->
-        <!-- ============================================ -->
-        <div class="flex justify-center pt-2 no-print">
-            <a href="../../../apps_script_guide/setup_guide.html"
-               class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-50 border-2 border-amber-300 text-amber-700 rounded-xl font-semibold text-sm hover:bg-amber-100 hover:border-amber-400 transition-all shadow-sm">
-                <i class="fas fa-gear"></i>
-                교사용 제출 기능 설정 가이드
-            </a>
         </div>
 
     </main>
@@ -792,225 +908,391 @@
     <!-- JavaScript -->
     <script>
         // =============================================
-        // 프록시 Apps Script Web App URL
-        // 사이트 개발자(관리자)가 1회 배포 후 아래에 입력
-        // 다른 교사들은 이 URL을 수정할 필요 없음
+        // State tracking
         // =============================================
-        const PROXY_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyEejiTLNmgN8OuIV7wu1WaDEuu2RNVZKI41XbG650he3wlTT0x-TxUcUEP7zeFyfqFQA/exec';
+        var activityComplete = { 1: false, 2: false, 3: false };
+        var matchState = { selectedLeft: null, matched: 0, total: 5 };
+        var scenarioState = { answered: 0, correct: 0, total: 4 };
 
-        // Validate Google Sheet URL format
-        function validateSheetUrl() {
-            var url = document.getElementById('sheetUrl').value.trim();
-            var icon = document.getElementById('sheetUrlIcon');
-            var input = document.getElementById('sheetUrl');
+        // =============================================
+        // Activity 1: Drag and Drop Classification
+        // =============================================
+        (function initDragDrop() {
+            document.addEventListener('DOMContentLoaded', function() {
+                var draggables = document.querySelectorAll('.drag-item');
+                var dropZones = document.querySelectorAll('.drop-zone');
+                var chipPool = document.getElementById('chipPool1');
 
-            if (!url) {
-                input.style.borderColor = '#fca5a5';
-                input.style.backgroundColor = '#fef2f2';
-                icon.className = 'fas fa-link-slash text-red-500';
-                return false;
-            }
+                draggables.forEach(function(item) {
+                    item.addEventListener('dragstart', function(e) {
+                        e.dataTransfer.setData('text/plain', item.dataset.id);
+                        item.classList.add('dragging');
+                    });
+                    item.addEventListener('dragend', function() {
+                        item.classList.remove('dragging');
+                    });
+                    // Touch support
+                    item.addEventListener('click', function() {
+                        // If already in a drop zone, move back to pool
+                        if (item.parentElement.classList.contains('drop-zone')) {
+                            chipPool.appendChild(item);
+                            updateDropZonePlaceholders();
+                            updateDragCounts();
+                            return;
+                        }
+                        // Cycle: find first drop zone with space
+                        var zones = document.querySelectorAll('.drop-zone');
+                        for (var i = 0; i < zones.length; i++) {
+                            // Simple toggle: put in wired first, if clicked again in wireless
+                            if (item._lastZone !== zones[i].id) {
+                                zones[i].appendChild(item);
+                                item._lastZone = zones[i].id;
+                                updateDropZonePlaceholders();
+                                updateDragCounts();
+                                return;
+                            }
+                        }
+                        // If was in last zone, go back to pool
+                        chipPool.appendChild(item);
+                        item._lastZone = null;
+                        updateDropZonePlaceholders();
+                        updateDragCounts();
+                    });
+                });
 
-            var match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-            if (match) {
-                input.style.borderColor = '#86efac';
-                input.style.backgroundColor = '#f0fdf4';
-                icon.className = 'fas fa-circle-check text-green-500';
-                return true;
-            } else {
-                input.style.borderColor = '#fca5a5';
-                input.style.backgroundColor = '#fef2f2';
-                icon.className = 'fas fa-circle-xmark text-red-500';
-                alert('올바른 구글 시트 URL이 아닙니다.\n\n예시: https://docs.google.com/spreadsheets/d/abc123.../edit');
-                return false;
-            }
-        }
+                dropZones.forEach(function(zone) {
+                    zone.addEventListener('dragover', function(e) {
+                        e.preventDefault();
+                        zone.classList.add('drag-over');
+                    });
+                    zone.addEventListener('dragleave', function() {
+                        zone.classList.remove('drag-over');
+                    });
+                    zone.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        zone.classList.remove('drag-over');
+                        var id = e.dataTransfer.getData('text/plain');
+                        var item = document.querySelector('[data-id="' + id + '"]');
+                        if (item) {
+                            zone.appendChild(item);
+                            updateDropZonePlaceholders();
+                            updateDragCounts();
+                        }
+                    });
+                });
 
-        // Submit data to Google Sheets via proxy
-        function submitData() {
-            // Check if proxy URL is configured
-            if (!PROXY_SCRIPT_URL) {
-                alert('⚠️ 제출 기능이 아직 설정되지 않았습니다.\n\n사이트 관리자에게 문의하세요.');
-                return;
-            }
-
-            // Validate Google Sheet URL
-            var sheetUrl = document.getElementById('sheetUrl').value.trim();
-            if (!sheetUrl) {
-                alert('구글 시트 URL을 입력해 주세요.\n선생님이 공유한 구글 시트 주소를 붙여넣으세요.');
-                document.getElementById('sheetUrl').focus();
-                return;
-            }
-            if (!validateSheetUrl()) return;
-
-            // Validate student info
-            var grade = document.getElementById('studentGrade').value;
-            var cls = document.getElementById('studentClass').value;
-            var num = document.getElementById('studentNumber').value;
-            var name = document.getElementById('studentName').value.trim();
-
-            if (!grade || !cls || !num || !name) {
-                alert('학년, 반, 번호, 이름을 모두 입력해 주세요.');
-                document.getElementById('studentGrade').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return;
-            }
-
-            // Collect all activity inputs
-            var allInputs = document.querySelectorAll('.activity-input[data-activity]');
-            var act1 = [], act2 = [], act3 = [];
-            allInputs.forEach(function(el) {
-                var val = el.value.trim();
-                var act = el.getAttribute('data-activity');
-                if (act === '1') act1.push(val);
-                else if (act === '2') act2.push(val);
-                else if (act === '3') act3.push(val);
+                // Also allow dragging from drop zones back to pool
+                chipPool.addEventListener('dragover', function(e) { e.preventDefault(); });
+                chipPool.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    var id = e.dataTransfer.getData('text/plain');
+                    var item = document.querySelector('[data-id="' + id + '"]');
+                    if (item) {
+                        chipPool.appendChild(item);
+                        updateDropZonePlaceholders();
+                        updateDragCounts();
+                    }
+                });
             });
+        })();
 
-            // Get self-evaluation
-            var evalBtn = document.querySelector('.eval-btn.selected');
-            var selfEval = evalBtn ? evalBtn.getAttribute('data-value') : '';
-
-            // Build payload (includes sheetUrl for proxy)
-            var payload = {
-                sheetUrl: sheetUrl,
-                grade: grade,
-                class: cls,
-                number: num,
-                name: name,
-                page: '네트워크 선택활동',
-                // 활동1: 미러링 (2행 x 3열)
-                act1_row1_device: act1[0] || '', act1_row1_method: act1[1] || '', act1_row1_mode: act1[2] || '',
-                act1_row2_device: act1[3] || '', act1_row2_method: act1[4] || '', act1_row2_mode: act1[5] || '',
-                // 활동2: 무선 전송 (3행 x 3열)
-                act2_row1_method: act2[0] || '', act2_row1_pros: act2[1] || '', act2_row1_cons: act2[2] || '',
-                act2_row2_method: act2[3] || '', act2_row2_pros: act2[4] || '', act2_row2_cons: act2[5] || '',
-                act2_row3_method: act2[6] || '', act2_row3_pros: act2[7] || '', act2_row3_cons: act2[8] || '',
-                // 활동3: 클라우드 공유 (2행 x 3열)
-                act3_row1_service: act3[0] || '', act3_row1_method: act3[1] || '', act3_row1_file: act3[2] || '',
-                act3_row2_service: act3[3] || '', act3_row2_method: act3[4] || '', act3_row2_file: act3[5] || '',
-                // 자기 평가
-                selfEval: selfEval
-            };
-
-            // UI: loading state
-            var btn = document.getElementById('submitBtn');
-            var icon = document.getElementById('submitIcon');
-            var text = document.getElementById('submitText');
-            var resultDiv = document.getElementById('submitResult');
-            var successDiv = document.getElementById('submitSuccess');
-            var errorDiv = document.getElementById('submitError');
-            var errorMsg = document.getElementById('submitErrorMsg');
-
-            btn.disabled = true;
-            btn.style.opacity = '0.7';
-            icon.className = 'fas fa-spinner fa-spin';
-            text.textContent = '제출 중...';
-            resultDiv.classList.add('hidden');
-            successDiv.classList.add('hidden');
-            errorDiv.classList.add('hidden');
-
-            // Send to proxy Apps Script (text/plain avoids CORS preflight)
-            fetch(PROXY_SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payload),
-                redirect: 'follow'
-            })
-            .then(function(response) {
-                return response.json();
-            })
-            .then(function(result) {
-                if (result.result === 'success') {
-                    icon.className = 'fas fa-circle-check';
-                    text.textContent = '제출 완료!';
-                    btn.style.opacity = '1';
-                    resultDiv.classList.remove('hidden');
-                    successDiv.classList.remove('hidden');
-                } else {
-                    throw new Error(result.message || '알 수 없는 오류');
+        function updateDropZonePlaceholders() {
+            document.querySelectorAll('.drop-zone').forEach(function(zone) {
+                var placeholder = zone.querySelector('.placeholder-text');
+                var hasChips = zone.querySelectorAll('.drag-item').length > 0;
+                if (hasChips && placeholder) {
+                    placeholder.style.display = 'none';
+                } else if (!hasChips && placeholder) {
+                    placeholder.style.display = '';
+                } else if (!hasChips && !placeholder) {
+                    var cat = zone.dataset.category;
+                    var p = document.createElement('span');
+                    p.className = 'placeholder-text';
+                    p.textContent = cat === 'wired' ? '유선 기술을 여기에 놓으세요' : '무선 기술을 여기에 놓으세요';
+                    zone.appendChild(p);
                 }
-            })
-            .catch(function(err) {
-                icon.className = 'fas fa-paper-plane';
-                text.textContent = '제출하기';
-                btn.disabled = false;
-                btn.style.opacity = '1';
-                resultDiv.classList.remove('hidden');
-                errorDiv.classList.remove('hidden');
-                errorMsg.textContent = '제출 실패: ' + err.message;
-                console.error('Submit error:', err);
             });
         }
 
-        // Self-evaluation button selection
+        function updateDragCounts() {
+            var wiredCount = document.getElementById('wiredZone').querySelectorAll('.drag-item').length;
+            var wirelessCount = document.getElementById('wirelessZone').querySelectorAll('.drag-item').length;
+            document.getElementById('wiredCount').textContent = wiredCount + ' / 4';
+            document.getElementById('wirelessCount').textContent = wirelessCount + ' / 4';
+        }
+
+        function checkActivity1() {
+            var wiredZone = document.getElementById('wiredZone');
+            var wirelessZone = document.getElementById('wirelessZone');
+            var allChips = document.querySelectorAll('.drag-item');
+            var correct = 0;
+            var total = allChips.length;
+
+            // Check if all chips are placed
+            var poolChips = document.getElementById('chipPool1').querySelectorAll('.drag-item').length;
+            if (poolChips > 0) {
+                var fb = document.getElementById('activity1Feedback');
+                fb.className = 'feedback-box wrong-feedback show';
+                fb.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i> 모든 카드를 분류 영역에 놓아주세요! 아직 ' + poolChips + '개의 카드가 남아있습니다.';
+                return;
+            }
+
+            allChips.forEach(function(chip) {
+                var answer = chip.dataset.answer;
+                var parent = chip.parentElement;
+                if (parent && parent.dataset.category === answer) {
+                    correct++;
+                    chip.style.border = '2px solid #22c55e';
+                    chip.style.boxShadow = '0 0 0 2px rgba(34,197,94,0.15)';
+                } else {
+                    chip.style.border = '2px solid #ef4444';
+                    chip.style.boxShadow = '0 0 0 2px rgba(239,68,68,0.15)';
+                }
+            });
+
+            var fb = document.getElementById('activity1Feedback');
+            var scoreEl = document.getElementById('activity1Score');
+
+            if (correct === total) {
+                fb.className = 'feedback-box correct-feedback show';
+                fb.innerHTML = '<i class="fas fa-check-circle mr-1"></i> 완벽합니다! 모든 네트워크 기술을 올바르게 분류했습니다.';
+                scoreEl.innerHTML = '<span class="score-badge bg-green-100 text-green-700"><i class="fas fa-trophy mr-1"></i>' + correct + ' / ' + total + ' 정답</span>';
+                activityComplete[1] = true;
+            } else {
+                fb.className = 'feedback-box wrong-feedback show';
+                fb.innerHTML = '<i class="fas fa-times-circle mr-1"></i> ' + correct + '/' + total + '개 정답입니다. 빨간색 테두리의 카드를 올바른 위치로 옮겨보세요!';
+                scoreEl.innerHTML = '<span class="score-badge bg-amber-100 text-amber-700"><i class="fas fa-star-half-stroke mr-1"></i>' + correct + ' / ' + total + ' 정답</span>';
+            }
+            updateOverallProgress();
+        }
+
+        function resetActivity1() {
+            var pool = document.getElementById('chipPool1');
+            document.querySelectorAll('.drag-item').forEach(function(chip) {
+                chip.style.border = '';
+                chip.style.boxShadow = '';
+                chip._lastZone = null;
+                pool.appendChild(chip);
+            });
+            updateDropZonePlaceholders();
+            updateDragCounts();
+            document.getElementById('activity1Feedback').className = 'feedback-box';
+            document.getElementById('activity1Feedback').innerHTML = '';
+            document.getElementById('activity1Score').innerHTML = '';
+            activityComplete[1] = false;
+            updateOverallProgress();
+        }
+
+        // =============================================
+        // Activity 2: Matching Exercise
+        // =============================================
+        function selectMatch(el, side) {
+            if (el.classList.contains('correct')) return; // Already matched
+
+            if (side === 'left') {
+                // Deselect previous left
+                document.querySelectorAll('#matchLeft .match-item').forEach(function(item) {
+                    if (!item.classList.contains('correct')) item.classList.remove('selected');
+                });
+                el.classList.add('selected');
+                matchState.selectedLeft = el;
+            } else if (side === 'right') {
+                if (!matchState.selectedLeft) {
+                    // Prompt to select left first
+                    el.classList.add('wrong');
+                    setTimeout(function() { el.classList.remove('wrong'); }, 500);
+                    return;
+                }
+
+                var leftMatch = matchState.selectedLeft.dataset.match;
+                var rightMatch = el.dataset.match;
+
+                if (leftMatch === rightMatch) {
+                    // Correct match
+                    matchState.selectedLeft.classList.remove('selected');
+                    matchState.selectedLeft.classList.add('correct');
+                    el.classList.add('correct');
+                    matchState.matched++;
+
+                    // Show matched pair
+                    var display = document.getElementById('matchedPairsDisplay');
+                    display.classList.remove('hidden');
+                    var pair = document.createElement('div');
+                    pair.className = 'flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg p-2.5 text-xs';
+                    pair.innerHTML = '<i class="fas fa-check-circle text-green-500"></i><span class="font-semibold text-green-800">' +
+                        matchState.selectedLeft.textContent.trim() + '</span><i class="fas fa-arrow-right text-green-300"></i><span class="text-green-700">' +
+                        el.textContent.trim() + '</span>';
+                    display.appendChild(pair);
+
+                    matchState.selectedLeft = null;
+
+                    // Check if all matched
+                    if (matchState.matched === matchState.total) {
+                        var fb = document.getElementById('activity2Feedback');
+                        fb.className = 'feedback-box correct-feedback show';
+                        fb.innerHTML = '<i class="fas fa-check-circle mr-1"></i> 축하합니다! 모든 기술과 특징을 올바르게 매칭했습니다.';
+                        document.getElementById('activity2Score').innerHTML = '<span class="score-badge bg-green-100 text-green-700"><i class="fas fa-trophy mr-1"></i>' + matchState.matched + ' / ' + matchState.total + ' 완료</span>';
+                        activityComplete[2] = true;
+                        updateOverallProgress();
+                    } else {
+                        document.getElementById('activity2Score').innerHTML = '<span class="score-badge bg-purple-100 text-purple-700"><i class="fas fa-link mr-1"></i>' + matchState.matched + ' / ' + matchState.total + ' 매칭</span>';
+                    }
+                } else {
+                    // Wrong match
+                    el.classList.add('wrong');
+                    matchState.selectedLeft.classList.add('wrong');
+                    var leftEl = matchState.selectedLeft;
+                    setTimeout(function() {
+                        el.classList.remove('wrong');
+                        leftEl.classList.remove('wrong');
+                        leftEl.classList.remove('selected');
+                    }, 600);
+                    matchState.selectedLeft = null;
+                }
+            }
+        }
+
+        function resetActivity2() {
+            matchState = { selectedLeft: null, matched: 0, total: 5 };
+            document.querySelectorAll('#matchLeft .match-item, #matchRight .match-item').forEach(function(item) {
+                item.classList.remove('selected', 'correct', 'wrong');
+            });
+            var display = document.getElementById('matchedPairsDisplay');
+            display.classList.add('hidden');
+            // Remove all pair divs except the title
+            var pairs = display.querySelectorAll('div');
+            pairs.forEach(function(p) { p.remove(); });
+            document.getElementById('activity2Feedback').className = 'feedback-box';
+            document.getElementById('activity2Feedback').innerHTML = '';
+            document.getElementById('activity2Score').innerHTML = '';
+            activityComplete[2] = false;
+            updateOverallProgress();
+        }
+
+        // =============================================
+        // Activity 3: Scenario Quiz
+        // =============================================
+        function answerScenario(scenarioId, optionEl, isCorrect, feedbackText) {
+            var scenario = document.getElementById(scenarioId);
+            var options = scenario.querySelectorAll('.scenario-option');
+
+            // Check if already answered
+            var alreadyAnswered = false;
+            options.forEach(function(opt) {
+                if (opt.classList.contains('correct-choice') || opt.classList.contains('wrong-choice')) {
+                    alreadyAnswered = true;
+                }
+            });
+            if (alreadyAnswered) return;
+
+            scenarioState.answered++;
+
+            // Mark all options as disabled
+            options.forEach(function(opt) {
+                opt.classList.add('disabled-choice');
+                // Highlight the correct one
+                if (opt.getAttribute('data-correct') === 'true') {
+                    opt.classList.add('correct-choice');
+                    opt.classList.remove('disabled-choice');
+                }
+            });
+
+            if (isCorrect) {
+                optionEl.classList.add('correct-choice');
+                optionEl.classList.remove('disabled-choice');
+                scenarioState.correct++;
+            } else {
+                optionEl.classList.add('wrong-choice');
+                optionEl.classList.remove('disabled-choice');
+            }
+
+            // Show feedback
+            var fb = document.getElementById(scenarioId + 'Feedback');
+            fb.className = 'feedback-box show ' + (isCorrect ? 'correct-feedback' : 'wrong-feedback');
+            fb.innerHTML = '<i class="fas fa-' + (isCorrect ? 'check-circle' : 'lightbulb') + ' mr-1"></i> ' + feedbackText;
+
+            // Update score if all scenarios answered
+            if (scenarioState.answered === scenarioState.total) {
+                var scoreEl = document.getElementById('activity3Score');
+                if (scenarioState.correct === scenarioState.total) {
+                    scoreEl.innerHTML = '<span class="score-badge bg-green-100 text-green-700"><i class="fas fa-trophy mr-1"></i>' + scenarioState.correct + ' / ' + scenarioState.total + ' 정답</span>';
+                } else {
+                    scoreEl.innerHTML = '<span class="score-badge bg-amber-100 text-amber-700"><i class="fas fa-star-half-stroke mr-1"></i>' + scenarioState.correct + ' / ' + scenarioState.total + ' 정답</span>';
+                }
+                activityComplete[3] = true;
+                updateOverallProgress();
+            }
+        }
+
+        function resetActivity3() {
+            scenarioState = { answered: 0, correct: 0, total: 4 };
+            for (var i = 1; i <= 4; i++) {
+                var scenario = document.getElementById('scenario' + i);
+                scenario.querySelectorAll('.scenario-option').forEach(function(opt) {
+                    opt.classList.remove('correct-choice', 'wrong-choice', 'disabled-choice');
+                });
+                var fb = document.getElementById('scenario' + i + 'Feedback');
+                fb.className = 'feedback-box';
+                fb.innerHTML = '';
+            }
+            document.getElementById('activity3Score').innerHTML = '';
+            activityComplete[3] = false;
+            updateOverallProgress();
+        }
+
+        // =============================================
+        // Overall Progress
+        // =============================================
+        function updateOverallProgress() {
+            var completed = 0;
+            for (var k in activityComplete) {
+                if (activityComplete[k]) completed++;
+            }
+            var pct = Math.round((completed / 3) * 100);
+            document.getElementById('overallProgress').style.width = pct + '%';
+            document.getElementById('overallScoreText').textContent = completed + ' / 3 활동 완료';
+        }
+
+        // =============================================
+        // Self-Evaluation
+        // =============================================
         function selectEval(btn) {
-            // Remove selected state from all buttons
             document.querySelectorAll('.eval-btn').forEach(function(b) {
                 b.classList.remove('selected');
             });
-            // Add selected state to clicked button
             btn.classList.add('selected');
-
-            // Show result
             var resultDiv = document.getElementById('evalResult');
             var resultText = document.getElementById('evalResultText');
             resultDiv.classList.remove('hidden');
             resultText.textContent = '"' + btn.getAttribute('data-value') + '"을(를) 선택했습니다.';
         }
 
-        // Reset all form inputs and evaluation
+        // =============================================
+        // Reset All
+        // =============================================
         function resetAll() {
-            if (!confirm('모든 입력 내용을 초기화하시겠습니까?\n작성한 내용이 모두 지워집니다.')) {
+            if (!confirm('모든 활동을 초기화하시겠습니까?\n진행 상황이 모두 초기화됩니다.')) {
                 return;
             }
+            resetActivity1();
+            resetActivity2();
+            resetActivity3();
 
-            // Clear all inputs and textareas (including student info)
-            document.querySelectorAll('.activity-input').forEach(function(input) {
-                if (input.tagName === 'SELECT') {
-                    input.selectedIndex = 0;
-                } else {
-                    input.value = '';
-                }
-            });
-
-            // Reset Google Sheet URL field
-            var sheetInput = document.getElementById('sheetUrl');
-            if (sheetInput) {
-                sheetInput.value = '';
-                sheetInput.style.borderColor = '#86efac';
-                sheetInput.style.backgroundColor = '#f0fdf4';
-                document.getElementById('sheetUrlIcon').className = 'fas fa-link-slash';
-            }
-
-            // Reset submit button state
-            var submitBtn = document.getElementById('submitBtn');
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                document.getElementById('submitIcon').className = 'fas fa-paper-plane';
-                document.getElementById('submitText').textContent = '제출하기';
-                document.getElementById('submitResult').classList.add('hidden');
-            }
-
-            // Reset evaluation buttons
+            // Reset evaluation
             document.querySelectorAll('.eval-btn').forEach(function(btn) {
                 btn.classList.remove('selected');
             });
+            document.getElementById('evalResult').classList.add('hidden');
 
-            // Hide evaluation result
-            var resultDiv = document.getElementById('evalResult');
-            resultDiv.classList.add('hidden');
-
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Print page
+        // Print
         function printPage() {
             window.print();
         }
 
-        // Add subtle animation on scroll
+        // Scroll animation
         (function() {
             var observer = new IntersectionObserver(function(entries) {
                 entries.forEach(function(entry) {

@@ -114,66 +114,191 @@
             color: rgba(255,255,255,0.6);
         }
 
-        /* Form input styles */
-        .activity-input {
-            width: 100%;
-            border: 2px solid #e9d5ff;
-            border-radius: 0.75rem;
-            padding: 0.625rem 0.875rem;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-            background: #faf5ff;
-            color: #374151;
-            resize: vertical;
-        }
-        .activity-input:focus {
-            outline: none;
-            border-color: #cc5de8;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(204, 93, 232, 0.15);
-        }
-        .activity-input::placeholder {
-            color: #c4b5fd;
-            font-size: 0.8rem;
-        }
-
-        /* Completed example highlight */
-        .example-value {
-            background: linear-gradient(135deg, #f3e8ff, #eef2ff);
-            border: 1px solid #e9d5ff;
-            border-radius: 0.5rem;
-            padding: 0.5rem 0.75rem;
-            font-size: 0.875rem;
-            color: #4c1d95;
-            font-weight: 500;
-        }
-
-        /* Tab styles */
-        .tab-btn {
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-        }
-        .tab-btn.active {
-            border-bottom-color: #9c36b5;
-            color: #9c36b5;
-            font-weight: 700;
-        }
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        .tab-content.active {
-            display: block;
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* ============================
+           Drag & Drop Styles
+           ============================ */
+        .drag-item {
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease;
+            touch-action: none;
+        }
+        .drag-item:active {
+            cursor: grabbing;
+        }
+        .drag-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+        .drop-zone {
+            border: 2px dashed #d8b4fe;
+            background: #faf5ff;
+            min-height: 60px;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .drop-zone.drag-over {
+            border-color: #9c36b5;
+            background: #f3e8ff;
+            box-shadow: 0 0 0 3px rgba(156, 54, 181, 0.15);
+        }
+        .drop-zone .dropped-item {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .drop-zone .dropped-item:hover {
+            transform: scale(1.05);
+        }
+
+        /* ============================
+           Agent Analysis Cards
+           ============================ */
+        .agent-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .agent-card:hover {
+            border-color: #cc5de8;
+        }
+        .agent-card.active {
+            border-color: #9c36b5;
+            box-shadow: 0 0 0 3px rgba(156, 54, 181, 0.15);
+        }
+        .agent-detail {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .agent-detail.active {
+            display: block;
+        }
+
+        .component-reveal {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .component-reveal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .component-reveal .reveal-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+        }
+        .component-reveal.open .reveal-content {
+            max-height: 200px;
+            padding-top: 12px;
+        }
+        .component-reveal .reveal-arrow {
+            transition: transform 0.3s ease;
+        }
+        .component-reveal.open .reveal-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* ============================
+           Matching Exercise
+           ============================ */
+        .match-item {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        .match-item:hover {
+            border-color: #cc5de8;
+        }
+        .match-item.selected {
+            border-color: #9c36b5;
+            background: #f3e8ff;
+            box-shadow: 0 0 0 3px rgba(156, 54, 181, 0.15);
+        }
+        .match-item.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+        .match-item.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+            animation: shake 0.4s ease;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* ============================
+           Scenario Quiz
+           ============================ */
+        .quiz-option {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid #e9d5ff;
+        }
+        .quiz-option:hover {
+            border-color: #cc5de8;
+            background: #faf5ff;
+        }
+        .quiz-option.selected {
+            border-color: #9c36b5;
+            background: #f3e8ff;
+        }
+        .quiz-option.correct-answer {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+        .quiz-option.wrong-answer {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        /* ============================
+           Agent Cycle
+           ============================ */
+        .cycle-phase {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .cycle-phase:hover {
+            filter: brightness(1.1);
+        }
+        .cycle-phase.active-phase {
+            filter: brightness(1.15);
+            transform: scale(1.08);
+        }
+        .cycle-info-panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .cycle-info-panel.active {
+            display: block;
+        }
+
+        @keyframes cycleRotate {
+            from { stroke-dashoffset: 0; }
+            to { stroke-dashoffset: -20; }
+        }
+
+        /* ============================
+           Progress Tracker
+           ============================ */
+        .progress-dot {
+            transition: all 0.3s ease;
+        }
+        .progress-dot.completed {
+            background: #9c36b5;
+            color: white;
+        }
+
         /* Print styles */
         @media print {
-            
             .fade-in { opacity: 1 !important; transform: none !important; }
             .card-hover:hover { transform: none; box-shadow: none; }
             footer { display: none; }
@@ -181,8 +306,6 @@
             body { font-size: 12pt; }
             .shadow-md, .shadow-lg, .shadow-sm { box-shadow: none !important; }
             a { text-decoration: underline; }
-            .activity-input { border: 1px solid #ccc; background: white; }
-        
             .hero-gradient { background: #7c3aed !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
@@ -236,16 +359,16 @@
                 </p>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-users text-violet-300"></i>
-                        <span>협력 탐구</span>
+                        <i class="fas fa-puzzle-piece text-violet-300"></i>
+                        <span>인터랙티브 활동</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
                         <i class="fas fa-car text-violet-300"></i>
                         <span>지능 에이전트</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-edit text-violet-300"></i>
-                        <span>분석 활동</span>
+                        <i class="fas fa-hand-pointer text-violet-300"></i>
+                        <span>드래그 앤 드롭</span>
                     </div>
                 </div>
                 </div>
@@ -268,7 +391,50 @@
             </div>
         </div>
     </section>
+
 <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- ===================================================================== -->
+        <!-- PROGRESS TRACKER                                                       -->
+        <!-- ===================================================================== -->
+        <div class="fade-in no-print">
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-700 text-sm flex items-center gap-2">
+                        <i class="fas fa-tasks text-primary-500"></i> 활동 진행 상황
+                    </h3>
+                    <span class="text-xs text-gray-400" id="progress-text">0 / 5 완료</span>
+                </div>
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-1 flex-1">
+                        <div class="progress-dot w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs font-bold" id="prog-1" title="에이전트 조립하기">1</div>
+                        <div class="flex-1 h-1 bg-gray-200 rounded" id="prog-bar-1"></div>
+                    </div>
+                    <div class="flex items-center gap-1 flex-1">
+                        <div class="progress-dot w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs font-bold" id="prog-2" title="에이전트 분석하기">2</div>
+                        <div class="flex-1 h-1 bg-gray-200 rounded" id="prog-bar-2"></div>
+                    </div>
+                    <div class="flex items-center gap-1 flex-1">
+                        <div class="progress-dot w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs font-bold" id="prog-3" title="구성 요소 연결하기">3</div>
+                        <div class="flex-1 h-1 bg-gray-200 rounded" id="prog-bar-3"></div>
+                    </div>
+                    <div class="flex items-center gap-1 flex-1">
+                        <div class="progress-dot w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs font-bold" id="prog-4" title="시나리오 퀴즈">4</div>
+                        <div class="flex-1 h-1 bg-gray-200 rounded" id="prog-bar-4"></div>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <div class="progress-dot w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs font-bold" id="prog-5" title="에이전트 사이클">5</div>
+                    </div>
+                </div>
+                <div class="flex justify-between text-[10px] text-gray-400 mt-1 px-1">
+                    <span>조립</span>
+                    <span>분석</span>
+                    <span>연결</span>
+                    <span>퀴즈</span>
+                    <span>사이클</span>
+                </div>
+            </div>
+        </div>
 
         <!-- ===================================================================== -->
         <!-- SECTION 1: 활동 안내                                                    -->
@@ -300,44 +466,56 @@
             </div>
 
             <!-- Activity steps -->
-            <div class="grid sm:grid-cols-3 gap-5">
-                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
-                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg">
-                        <i class="fas fa-search text-white text-xl"></i>
+            <div class="grid sm:grid-cols-5 gap-4">
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-hammer text-white text-lg"></i>
                     </div>
-                    <div class="inline-flex items-center justify-center bg-purple-100 text-purple-700 font-bold text-sm rounded-full px-3 py-1 mb-3">
+                    <div class="inline-flex items-center justify-center bg-purple-100 text-purple-700 font-bold text-xs rounded-full px-2.5 py-0.5 mb-2">
                         STEP 1
                     </div>
-                    <h4 class="font-bold text-gray-900 mb-2">예시 분석하기</h4>
-                    <p class="text-gray-600 text-xs leading-relaxed">
-                        자율주행 자동차의 지능 에이전트 분석 예시를 살펴봅니다
-                    </p>
+                    <h4 class="font-bold text-gray-900 text-sm mb-1">에이전트 조립</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">드래그 앤 드롭으로 에이전트를 조립</p>
                 </div>
-
-                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
-                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-lg">
-                        <i class="fas fa-lightbulb text-white text-xl"></i>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-search text-white text-lg"></i>
                     </div>
-                    <div class="inline-flex items-center justify-center bg-violet-100 text-violet-700 font-bold text-sm rounded-full px-3 py-1 mb-3">
+                    <div class="inline-flex items-center justify-center bg-violet-100 text-violet-700 font-bold text-xs rounded-full px-2.5 py-0.5 mb-2">
                         STEP 2
                     </div>
-                    <h4 class="font-bold text-gray-900 mb-2">에이전트 선택하기</h4>
-                    <p class="text-gray-600 text-xs leading-relaxed">
-                        분석할 지능 에이전트를 직접 선택합니다
-                    </p>
+                    <h4 class="font-bold text-gray-900 text-sm mb-1">에이전트 분석</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">AI 제품의 구성 요소를 탐색</p>
                 </div>
-
-                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-5 text-center">
-                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-lg">
-                        <i class="fas fa-pen-fancy text-white text-xl"></i>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-link text-white text-lg"></i>
                     </div>
-                    <div class="inline-flex items-center justify-center bg-indigo-100 text-indigo-700 font-bold text-sm rounded-full px-3 py-1 mb-3">
+                    <div class="inline-flex items-center justify-center bg-indigo-100 text-indigo-700 font-bold text-xs rounded-full px-2.5 py-0.5 mb-2">
                         STEP 3
                     </div>
-                    <h4 class="font-bold text-gray-900 mb-2">직접 분석하기</h4>
-                    <p class="text-gray-600 text-xs leading-relaxed">
-                        선택한 지능 에이전트의 구성 요소를 직접 분석합니다
-                    </p>
+                    <h4 class="font-bold text-gray-900 text-sm mb-1">구성 요소 연결</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">부품과 기능을 올바르게 연결</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-fuchsia-400 to-fuchsia-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-question-circle text-white text-lg"></i>
+                    </div>
+                    <div class="inline-flex items-center justify-center bg-fuchsia-100 text-fuchsia-700 font-bold text-xs rounded-full px-2.5 py-0.5 mb-2">
+                        STEP 4
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-sm mb-1">시나리오 퀴즈</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">상황에 필요한 구성 요소 선택</p>
+                </div>
+                <div class="card-hover bg-white rounded-2xl shadow-md border border-gray-100 p-4 text-center">
+                    <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-sync-alt text-white text-lg"></i>
+                    </div>
+                    <div class="inline-flex items-center justify-center bg-pink-100 text-pink-700 font-bold text-xs rounded-full px-2.5 py-0.5 mb-2">
+                        STEP 5
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-sm mb-1">에이전트 사이클</h4>
+                    <p class="text-gray-600 text-xs leading-relaxed">인식-학습-추론-행동 사이클 탐색</p>
                 </div>
             </div>
         </section>
@@ -345,204 +523,19 @@
         <div class="section-divider max-w-md mx-auto"></div>
 
         <!-- ===================================================================== -->
-        <!-- SECTION 2: 완성된 예시 - 자율주행 자동차                                   -->
+        <!-- SECTION 2: 드래그 앤 드롭 에이전트 조립                                    -->
         <!-- ===================================================================== -->
-        <section class="fade-in" id="section-example">
+        <section class="fade-in" id="section-build">
             <div class="flex items-center gap-3 mb-8">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg">
-                    <i class="fas fa-car"></i>
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-hammer"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">예시: 자율주행 자동차 분석</h2>
-                    <p class="text-gray-500 text-sm mt-0.5">Example: Self-Driving Car Analysis</p>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">에이전트 조립하기</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Build an Intelligent Agent</p>
                 </div>
             </div>
 
-            <!-- Example callout -->
-            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-400 rounded-r-xl p-5 mb-8 shadow-sm">
-                <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 rounded-full bg-green-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <i class="fas fa-check text-white text-sm"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-green-800 mb-1">완성된 예시</h3>
-                        <p class="text-gray-700 leading-relaxed text-sm">
-                            아래는 <strong>자율주행 자동차</strong>를 지능 에이전트로 분석한 완성된 예시입니다. 각 항목이 어떻게 작성되었는지 참고하세요.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Completed example table -->
-            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                        <i class="fas fa-car-side text-white text-lg"></i>
-                    </div>
-                    <h3 class="font-bold text-gray-900 text-lg">자율주행 자동차</h3>
-                    <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">완성 예시</span>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="bg-gradient-to-r from-purple-50 to-violet-50">
-                                <th class="text-left py-3 px-4 font-bold text-purple-800 rounded-tl-xl w-1/4">분석 항목</th>
-                                <th class="text-left py-3 px-4 font-bold text-purple-800 rounded-tr-xl">내용</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-t border-gray-100">
-                                <td class="py-3 px-4 font-medium text-gray-700">
-                                    <i class="fas fa-tag text-primary-400 mr-2"></i>이름
-                                </td>
-                                <td class="py-3 px-4">
-                                    <div class="example-value">자율주행 자동차</div>
-                                </td>
-                            </tr>
-                            <tr class="border-t border-gray-100 bg-gray-50/50">
-                                <td class="py-3 px-4 font-medium text-gray-700">
-                                    <i class="fas fa-brain text-primary-400 mr-2"></i>지능적 판단
-                                </td>
-                                <td class="py-3 px-4">
-                                    <div class="example-value">경로 탐색, 사고 예측, 앞 차와의 거리 유지</div>
-                                </td>
-                            </tr>
-                            <tr class="border-t border-gray-100">
-                                <td class="py-3 px-4 font-medium text-gray-700">
-                                    <i class="fas fa-bullseye text-primary-400 mr-2"></i>목표
-                                </td>
-                                <td class="py-3 px-4">
-                                    <div class="example-value">안전하고 빠르게 교통 법규를 지키며 목적지까지 운행</div>
-                                </td>
-                            </tr>
-                            <tr class="border-t border-gray-100 bg-gray-50/50">
-                                <td class="py-3 px-4 font-medium text-gray-700">
-                                    <i class="fas fa-globe text-primary-400 mr-2"></i>환경
-                                </td>
-                                <td class="py-3 px-4">
-                                    <div class="example-value">도로, 다른 차량, 승객 등</div>
-                                </td>
-                            </tr>
-                            <tr class="border-t border-gray-100">
-                                <td class="py-3 px-4 font-medium text-gray-700">
-                                    <i class="fas fa-eye text-primary-400 mr-2"></i>인식
-                                </td>
-                                <td class="py-3 px-4">
-                                    <div class="example-value">센서로 앞 차와의 속도와 거리, 보행자, 교통 신호 인식</div>
-                                </td>
-                            </tr>
-                            <tr class="border-t border-gray-100 bg-gray-50/50">
-                                <td class="py-3 px-4 font-medium text-gray-700">
-                                    <i class="fas fa-running text-primary-400 mr-2"></i>행동
-                                </td>
-                                <td class="py-3 px-4">
-                                    <div class="example-value">구동기로 감속, 가속, 멈춤, 방향 변경</div>
-                                </td>
-                            </tr>
-                            <tr class="border-t border-gray-100">
-                                <td class="py-3 px-4 font-medium text-gray-700">
-                                    <i class="fas fa-satellite-dish text-primary-400 mr-2"></i>센서
-                                </td>
-                                <td class="py-3 px-4">
-                                    <div class="example-value">카메라, GPS, 속도계</div>
-                                </td>
-                            </tr>
-                            <tr class="border-t border-gray-100 bg-gray-50/50">
-                                <td class="py-3 px-4 font-medium text-gray-700">
-                                    <i class="fas fa-cogs text-primary-400 mr-2"></i>구동기
-                                </td>
-                                <td class="py-3 px-4">
-                                    <div class="example-value">핸들, 가속 페달, 브레이크, 경적</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Agent structure diagram for the car example -->
-            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
-                <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <i class="fas fa-project-diagram text-primary-500"></i> 자율주행 자동차의 지능 에이전트 구조
-                </h3>
-                <div class="flex justify-center">
-                    <svg viewBox="0 0 620 240" class="w-full max-w-2xl" fill="none">
-                        <!-- Environment background -->
-                        <rect x="10" y="10" width="600" height="220" rx="16" fill="#faf5ff" stroke="#e9d5ff" stroke-width="2"/>
-                        <text x="310" y="36" text-anchor="middle" fill="#9c36b5" font-size="13" font-weight="bold">자율주행 자동차 지능 에이전트</text>
-
-                        <!-- Sensor box -->
-                        <rect x="30" y="70" width="140" height="100" rx="12" fill="#f3e8ff" stroke="#cc5de8" stroke-width="2"/>
-                        <text x="100" y="95" text-anchor="middle" fill="#9c36b5" font-size="14" font-weight="bold">센서</text>
-                        <text x="100" y="115" text-anchor="middle" fill="#7c3aed" font-size="10">카메라</text>
-                        <text x="100" y="132" text-anchor="middle" fill="#7c3aed" font-size="10">GPS</text>
-                        <text x="100" y="149" text-anchor="middle" fill="#7c3aed" font-size="10">속도계</text>
-
-                        <!-- AI brain box -->
-                        <rect x="220" y="65" width="170" height="110" rx="14" fill="url(#brainGrad2)" stroke="#9c36b5" stroke-width="2.5"/>
-                        <text x="305" y="95" text-anchor="middle" fill="white" font-size="14" font-weight="bold">인공지능</text>
-                        <text x="305" y="115" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">경로 탐색</text>
-                        <text x="305" y="132" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">사고 예측</text>
-                        <text x="305" y="149" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">거리 유지 판단</text>
-
-                        <!-- Actuator box -->
-                        <rect x="440" y="70" width="140" height="100" rx="12" fill="#f3e8ff" stroke="#cc5de8" stroke-width="2"/>
-                        <text x="510" y="95" text-anchor="middle" fill="#9c36b5" font-size="14" font-weight="bold">구동기</text>
-                        <text x="510" y="115" text-anchor="middle" fill="#7c3aed" font-size="10">핸들</text>
-                        <text x="510" y="132" text-anchor="middle" fill="#7c3aed" font-size="10">가속 페달 / 브레이크</text>
-                        <text x="510" y="149" text-anchor="middle" fill="#7c3aed" font-size="10">경적</text>
-
-                        <!-- Environment label -->
-                        <rect x="220" y="195" width="170" height="30" rx="8" fill="#e9d5ff" stroke="#cc5de8" stroke-width="1.5"/>
-                        <text x="305" y="215" text-anchor="middle" fill="#7c3aed" font-size="12" font-weight="bold">환경: 도로, 차량, 승객</text>
-
-                        <!-- Arrows -->
-                        <path d="M170 120 L220 120" stroke="#cc5de8" stroke-width="2.5" marker-end="url(#arrowP2)"/>
-                        <path d="M390 120 L440 120" stroke="#cc5de8" stroke-width="2.5" marker-end="url(#arrowP2)"/>
-                        <path d="M510 170 L510 190 L390 205" stroke="#7950f2" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrowI2)"/>
-                        <text x="475" y="188" fill="#7950f2" font-size="9">행동</text>
-                        <path d="M220 210 L100 210 L100 170" stroke="#7950f2" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrowI2)"/>
-                        <text x="135" y="205" fill="#7950f2" font-size="9">감지</text>
-
-                        <defs>
-                            <linearGradient id="brainGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#9c36b5"/>
-                                <stop offset="100%" stop-color="#7950f2"/>
-                            </linearGradient>
-                            <marker id="arrowP2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                                <polygon points="0 0, 10 3.5, 0 7" fill="#cc5de8"/>
-                            </marker>
-                            <marker id="arrowI2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                                <polygon points="0 0, 10 3.5, 0 7" fill="#7950f2"/>
-                            </marker>
-                        </defs>
-                    </svg>
-                </div>
-                <p class="text-center text-sm text-gray-500 mt-3">
-                    <i class="fas fa-sync-alt text-primary-400 mr-1"></i>
-                    센서(카메라, GPS, 속도계)로 환경을 인식 &rarr; 인공지능이 판단 &rarr; 구동기(핸들, 페달 등)로 행동
-                </p>
-            </div>
-        </section>
-
-        <div class="section-divider max-w-md mx-auto"></div>
-
-        <!-- ===================================================================== -->
-        <!-- SECTION 3: 나만의 지능 에이전트 분석 (Interactive Form)                    -->
-        <!-- ===================================================================== -->
-        <section class="fade-in" id="section-activity">
-            <div class="flex items-center gap-3 mb-8">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center text-white text-xl shadow-lg">
-                    <i class="fas fa-pen-fancy"></i>
-                </div>
-                <div>
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">나만의 지능 에이전트 분석</h2>
-                    <p class="text-gray-500 text-sm mt-0.5">Analyze Your Own Intelligent Agent</p>
-                </div>
-            </div>
-
-            <!-- Instruction -->
             <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-400 rounded-r-xl p-5 mb-8 shadow-sm">
                 <div class="flex items-start gap-3">
                     <div class="w-8 h-8 rounded-full bg-amber-400 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -551,265 +544,975 @@
                     <div>
                         <h3 class="font-bold text-amber-800 mb-1">활동 방법</h3>
                         <p class="text-gray-700 leading-relaxed text-sm">
-                            주변에서 찾을 수 있는 지능 에이전트를 하나 선택하고, 위 예시를 참고하여 아래 항목을 직접 작성해 보세요.
-                            <strong class="text-amber-700">AI 스피커, 로봇 청소기, 번역 앱, 추천 시스템</strong> 등 다양한 지능 에이전트가 있습니다.
+                            아래 부품 상자에서 <strong class="text-amber-700">구성 요소를 드래그</strong>하여 에이전트 설계도의 올바른 위치에 놓으세요. 센서, 인공지능(학습/추론), 구동기, 데이터 각 영역에 맞는 부품을 배치하면 됩니다.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- Interactive form -->
-            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-8" id="agent-form">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="font-bold text-gray-900 text-lg flex items-center gap-2">
-                        <i class="fas fa-edit text-primary-500"></i> 지능 에이전트 분석표
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Parts box -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-toolbox text-primary-500"></i> 부품 상자
+                        <span class="text-xs text-gray-400 font-normal ml-auto">드래그하여 설계도에 배치하세요</span>
                     </h3>
-                    <button onclick="resetForm()" class="no-print text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-lg transition-colors duration-200">
-                        <i class="fas fa-redo mr-1"></i> 초기화
-                    </button>
-                </div>
-
-                <div class="space-y-5">
-                    <!-- 이름 -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-start">
-                        <label class="flex items-center gap-2 font-medium text-gray-700 md:pt-2.5">
-                            <span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-tag text-purple-600 text-sm"></i>
-                            </span>
-                            이름
-                        </label>
-                        <div class="md:col-span-3">
-                            <input type="text" class="activity-input" id="input-name" placeholder="예: AI 스피커, 로봇 청소기, 번역 앱 등">
+                    <div class="grid grid-cols-2 gap-3" id="parts-box">
+                        <div class="drag-item bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center gap-2" draggable="true" data-part="camera" data-category="sensor">
+                            <span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-camera text-blue-600 text-sm"></i></span>
+                            <div><p class="font-bold text-sm text-blue-800">카메라</p><p class="text-xs text-blue-500">영상 입력</p></div>
                         </div>
-                    </div>
-
-                    <!-- 지능적 판단 -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-start">
-                        <label class="flex items-center gap-2 font-medium text-gray-700 md:pt-2.5">
-                            <span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-brain text-purple-600 text-sm"></i>
-                            </span>
-                            지능적 판단
-                        </label>
-                        <div class="md:col-span-3">
-                            <textarea class="activity-input" id="input-intelligence" rows="2" placeholder="예: 음성 인식, 문맥 이해, 대화 생성 등 어떤 지능적 판단을 하나요?"></textarea>
+                        <div class="drag-item bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center gap-2" draggable="true" data-part="mic" data-category="sensor">
+                            <span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-microphone text-blue-600 text-sm"></i></span>
+                            <div><p class="font-bold text-sm text-blue-800">마이크</p><p class="text-xs text-blue-500">음성 입력</p></div>
                         </div>
-                    </div>
-
-                    <!-- 목표 -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-start">
-                        <label class="flex items-center gap-2 font-medium text-gray-700 md:pt-2.5">
-                            <span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-bullseye text-purple-600 text-sm"></i>
-                            </span>
-                            목표
-                        </label>
-                        <div class="md:col-span-3">
-                            <textarea class="activity-input" id="input-goal" rows="2" placeholder="이 지능 에이전트의 궁극적인 목표는 무엇인가요?"></textarea>
+                        <div class="drag-item bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center gap-2" draggable="true" data-part="gps" data-category="sensor">
+                            <span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-map-marker-alt text-blue-600 text-sm"></i></span>
+                            <div><p class="font-bold text-sm text-blue-800">GPS</p><p class="text-xs text-blue-500">위치 인식</p></div>
                         </div>
-                    </div>
-
-                    <!-- 환경 -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-start">
-                        <label class="flex items-center gap-2 font-medium text-gray-700 md:pt-2.5">
-                            <span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-globe text-purple-600 text-sm"></i>
-                            </span>
-                            환경
-                        </label>
-                        <div class="md:col-span-3">
-                            <textarea class="activity-input" id="input-environment" rows="2" placeholder="이 에이전트가 상호 작용하는 환경은 무엇인가요?"></textarea>
+                        <div class="drag-item bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center gap-2" draggable="true" data-part="infrared" data-category="sensor">
+                            <span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-broadcast-tower text-blue-600 text-sm"></i></span>
+                            <div><p class="font-bold text-sm text-blue-800">적외선 센서</p><p class="text-xs text-blue-500">거리 측정</p></div>
                         </div>
-                    </div>
-
-                    <!-- 인식 -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-start">
-                        <label class="flex items-center gap-2 font-medium text-gray-700 md:pt-2.5">
-                            <span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-eye text-purple-600 text-sm"></i>
-                            </span>
-                            인식
-                        </label>
-                        <div class="md:col-span-3">
-                            <textarea class="activity-input" id="input-perception" rows="2" placeholder="센서를 통해 무엇을 인식하나요?"></textarea>
+                        <div class="drag-item bg-purple-50 border border-purple-200 rounded-xl p-3 flex items-center gap-2" draggable="true" data-part="neural" data-category="ai">
+                            <span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-brain text-purple-600 text-sm"></i></span>
+                            <div><p class="font-bold text-sm text-purple-800">신경망 학습</p><p class="text-xs text-purple-500">패턴 학습</p></div>
                         </div>
-                    </div>
-
-                    <!-- 행동 -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-start">
-                        <label class="flex items-center gap-2 font-medium text-gray-700 md:pt-2.5">
-                            <span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-running text-purple-600 text-sm"></i>
-                            </span>
-                            행동
-                        </label>
-                        <div class="md:col-span-3">
-                            <textarea class="activity-input" id="input-action" rows="2" placeholder="구동기를 통해 어떤 행동을 하나요?"></textarea>
+                        <div class="drag-item bg-purple-50 border border-purple-200 rounded-xl p-3 flex items-center gap-2" draggable="true" data-part="reasoning" data-category="ai">
+                            <span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-cogs text-purple-600 text-sm"></i></span>
+                            <div><p class="font-bold text-sm text-purple-800">추론 엔진</p><p class="text-xs text-purple-500">판단 수행</p></div>
                         </div>
-                    </div>
-
-                    <!-- 센서 -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-start">
-                        <label class="flex items-center gap-2 font-medium text-gray-700 md:pt-2.5">
-                            <span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-satellite-dish text-purple-600 text-sm"></i>
-                            </span>
-                            센서
-                        </label>
-                        <div class="md:col-span-3">
-                            <input type="text" class="activity-input" id="input-sensor" placeholder="예: 마이크, 카메라, 적외선 센서 등">
+                        <div class="drag-item bg-green-50 border border-green-200 rounded-xl p-3 flex items-center gap-2" draggable="true" data-part="speaker" data-category="actuator">
+                            <span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-volume-up text-green-600 text-sm"></i></span>
+                            <div><p class="font-bold text-sm text-green-800">스피커</p><p class="text-xs text-green-500">음성 출력</p></div>
                         </div>
-                    </div>
-
-                    <!-- 구동기 -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-start">
-                        <label class="flex items-center gap-2 font-medium text-gray-700 md:pt-2.5">
-                            <span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-cogs text-purple-600 text-sm"></i>
-                            </span>
-                            구동기
-                        </label>
-                        <div class="md:col-span-3">
-                            <input type="text" class="activity-input" id="input-actuator" placeholder="예: 스피커, 모터, 화면 디스플레이 등">
+                        <div class="drag-item bg-green-50 border border-green-200 rounded-xl p-3 flex items-center gap-2" draggable="true" data-part="motor" data-category="actuator">
+                            <span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-dharmachakra text-green-600 text-sm"></i></span>
+                            <div><p class="font-bold text-sm text-green-800">모터</p><p class="text-xs text-green-500">물리적 동작</p></div>
+                        </div>
+                        <div class="drag-item bg-green-50 border border-green-200 rounded-xl p-3 flex items-center gap-2" draggable="true" data-part="display" data-category="actuator">
+                            <span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-desktop text-green-600 text-sm"></i></span>
+                            <div><p class="font-bold text-sm text-green-800">디스플레이</p><p class="text-xs text-green-500">시각 출력</p></div>
+                        </div>
+                        <div class="drag-item bg-orange-50 border border-orange-200 rounded-xl p-3 flex items-center gap-2" draggable="true" data-part="training" data-category="data">
+                            <span class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-database text-orange-600 text-sm"></i></span>
+                            <div><p class="font-bold text-sm text-orange-800">학습 데이터</p><p class="text-xs text-orange-500">훈련 자료</p></div>
+                        </div>
+                        <div class="drag-item bg-orange-50 border border-orange-200 rounded-xl p-3 flex items-center gap-2" draggable="true" data-part="feedback" data-category="data">
+                            <span class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-comments text-orange-600 text-sm"></i></span>
+                            <div><p class="font-bold text-sm text-orange-800">피드백 데이터</p><p class="text-xs text-orange-500">사용자 반응</p></div>
+                        </div>
+                        <div class="drag-item bg-orange-50 border border-orange-200 rounded-xl p-3 flex items-center gap-2" draggable="true" data-part="env-data" data-category="data">
+                            <span class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-cloud text-orange-600 text-sm"></i></span>
+                            <div><p class="font-bold text-sm text-orange-800">환경 데이터</p><p class="text-xs text-orange-500">외부 정보</p></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Save / Load indicator -->
-                <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-gray-100">
-                    <p class="text-xs text-gray-400 flex items-center gap-1" id="save-status">
-                        <i class="fas fa-cloud text-gray-300"></i> 작성 내용은 브라우저에 자동 저장됩니다
-                    </p>
-                    <div class="flex gap-2 no-print">
-                        <button onclick="saveForm()" class="text-sm bg-primary-500 hover:bg-primary-600 text-white px-5 py-2.5 rounded-xl transition-colors duration-200 shadow-md hover:shadow-lg">
-                            <i class="fas fa-save mr-1"></i> 저장하기
-                        </button>
-                        <button onclick="printForm()" class="text-sm bg-gray-600 hover:bg-gray-700 text-white px-5 py-2.5 rounded-xl transition-colors duration-200 shadow-md hover:shadow-lg">
-                            <i class="fas fa-print mr-1"></i> 인쇄하기
+                <!-- Agent Blueprint -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-gray-900 flex items-center gap-2">
+                            <i class="fas fa-drafting-compass text-primary-500"></i> 에이전트 설계도
+                        </h3>
+                        <button onclick="resetBlueprint()" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg transition-colors">
+                            <i class="fas fa-redo mr-1"></i> 초기화
                         </button>
                     </div>
+                    <div class="space-y-4">
+                        <!-- Sensor zone -->
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="w-6 h-6 rounded bg-blue-500 flex items-center justify-center"><i class="fas fa-eye text-white text-xs"></i></span>
+                                <span class="font-bold text-sm text-blue-700">센서 (입력)</span>
+                                <span class="text-xs text-gray-400">- 환경을 인식하는 부품</span>
+                            </div>
+                            <div class="drop-zone flex flex-wrap gap-2 items-center" id="drop-sensor" data-category="sensor">
+                                <span class="text-xs text-purple-300 italic drop-placeholder">여기에 센서 부품을 놓으세요</span>
+                            </div>
+                        </div>
+                        <!-- AI zone -->
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="w-6 h-6 rounded bg-purple-500 flex items-center justify-center"><i class="fas fa-brain text-white text-xs"></i></span>
+                                <span class="font-bold text-sm text-purple-700">인공지능 (학습/추론)</span>
+                                <span class="text-xs text-gray-400">- 판단하는 핵심 모듈</span>
+                            </div>
+                            <div class="drop-zone flex flex-wrap gap-2 items-center" id="drop-ai" data-category="ai">
+                                <span class="text-xs text-purple-300 italic drop-placeholder">여기에 AI 모듈을 놓으세요</span>
+                            </div>
+                        </div>
+                        <!-- Actuator zone -->
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="w-6 h-6 rounded bg-green-500 flex items-center justify-center"><i class="fas fa-hand-paper text-white text-xs"></i></span>
+                                <span class="font-bold text-sm text-green-700">구동기 (출력)</span>
+                                <span class="text-xs text-gray-400">- 환경에 행동하는 부품</span>
+                            </div>
+                            <div class="drop-zone flex flex-wrap gap-2 items-center" id="drop-actuator" data-category="actuator">
+                                <span class="text-xs text-purple-300 italic drop-placeholder">여기에 구동기 부품을 놓으세요</span>
+                            </div>
+                        </div>
+                        <!-- Data zone -->
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="w-6 h-6 rounded bg-orange-500 flex items-center justify-center"><i class="fas fa-database text-white text-xs"></i></span>
+                                <span class="font-bold text-sm text-orange-700">데이터</span>
+                                <span class="text-xs text-gray-400">- 학습에 필요한 자료</span>
+                            </div>
+                            <div class="drop-zone flex flex-wrap gap-2 items-center" id="drop-data" data-category="data">
+                                <span class="text-xs text-purple-300 italic drop-placeholder">여기에 데이터를 놓으세요</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Result message -->
+                    <div id="build-result" class="mt-4 hidden">
+                        <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+                            <i class="fas fa-check-circle text-green-500 text-2xl mb-2"></i>
+                            <p class="font-bold text-green-700">잘했습니다!</p>
+                            <p class="text-sm text-green-600">모든 영역에 부품을 배치했습니다. 에이전트 완성!</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Hint / Suggestion cards -->
-            <div class="bg-violet-50 rounded-2xl border border-violet-200 p-6">
-                <h3 class="font-bold text-violet-800 mb-4 flex items-center gap-2">
-                    <i class="fas fa-magic text-violet-500"></i> 분석할 수 있는 지능 에이전트 예시
-                </h3>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white rounded-xl p-4 border border-violet-100 card-hover cursor-pointer" onclick="fillSuggestion('AI 스피커')">
-                        <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mb-2">
-                            <i class="fas fa-volume-up text-blue-600"></i>
-                        </div>
-                        <h4 class="font-bold text-gray-800 text-sm mb-1">AI 스피커</h4>
-                        <p class="text-gray-500 text-xs">음성 인식, 대화 생성, 음악 재생 등</p>
-                    </div>
-                    <div class="bg-white rounded-xl p-4 border border-violet-100 card-hover cursor-pointer" onclick="fillSuggestion('로봇 청소기')">
-                        <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center mb-2">
-                            <i class="fas fa-robot text-green-600"></i>
-                        </div>
-                        <h4 class="font-bold text-gray-800 text-sm mb-1">로봇 청소기</h4>
-                        <p class="text-gray-500 text-xs">공간 매핑, 장애물 회피, 자동 청소 등</p>
-                    </div>
-                    <div class="bg-white rounded-xl p-4 border border-violet-100 card-hover cursor-pointer" onclick="fillSuggestion('번역 앱')">
-                        <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mb-2">
-                            <i class="fas fa-language text-orange-600"></i>
-                        </div>
-                        <h4 class="font-bold text-gray-800 text-sm mb-1">번역 앱</h4>
-                        <p class="text-gray-500 text-xs">텍스트 인식, 문맥 번역, 발음 생성 등</p>
-                    </div>
-                    <div class="bg-white rounded-xl p-4 border border-violet-100 card-hover cursor-pointer" onclick="fillSuggestion('추천 시스템')">
-                        <div class="w-10 h-10 rounded-lg bg-pink-100 flex items-center justify-center mb-2">
-                            <i class="fas fa-thumbs-up text-pink-600"></i>
-                        </div>
-                        <h4 class="font-bold text-gray-800 text-sm mb-1">추천 시스템</h4>
-                        <p class="text-gray-500 text-xs">사용자 분석, 선호도 예측, 콘텐츠 추천 등</p>
-                    </div>
-                </div>
-                <p class="text-xs text-violet-500 mt-3 text-center">
-                    <i class="fas fa-hand-pointer mr-1"></i> 카드를 클릭하면 이름이 자동으로 입력됩니다. 나머지는 직접 작성해 보세요!
-                </p>
             </div>
         </section>
 
         <div class="section-divider max-w-md mx-auto"></div>
 
         <!-- ===================================================================== -->
-        <!-- SECTION 4: 자기 평가                                                    -->
+        <!-- SECTION 3: 인터랙티브 에이전트 분석 카드                                    -->
         <!-- ===================================================================== -->
-        <section class="fade-in" id="section-evaluation">
+        <section class="fade-in" id="section-analysis">
             <div class="flex items-center gap-3 mb-8">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white text-xl shadow-lg">
-                    <i class="fas fa-clipboard-check"></i>
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-700 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-search"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">자기 평가</h2>
-                    <p class="text-gray-500 text-sm mt-0.5">Self-Evaluation</p>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">에이전트 분석하기</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Explore Intelligent Agents</p>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-hand-pointer text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary-800 mb-1">탐색 방법</h3>
+                        <p class="text-gray-700 leading-relaxed text-sm">
+                            아래 AI 제품 카드를 클릭하면 해당 에이전트의 <strong class="text-primary-700">센서, 인공지능, 구동기</strong> 구성 요소가 나타납니다. 각 구성 요소를 클릭하여 상세 정보를 확인하세요.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agent selection cards -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="agent-card bg-white rounded-2xl shadow-md p-5 text-center" onclick="selectAgent('speaker')" id="agent-card-speaker">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-volume-up text-white text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-1">AI 스피커</h4>
+                    <p class="text-gray-500 text-xs">음성 비서 서비스</p>
+                </div>
+                <div class="agent-card bg-white rounded-2xl shadow-md p-5 text-center" onclick="selectAgent('vacuum')" id="agent-card-vacuum">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-robot text-white text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-1">로봇 청소기</h4>
+                    <p class="text-gray-500 text-xs">자율 주행 청소</p>
+                </div>
+                <div class="agent-card bg-white rounded-2xl shadow-md p-5 text-center" onclick="selectAgent('translator')" id="agent-card-translator">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-language text-white text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-1">번역 앱</h4>
+                    <p class="text-gray-500 text-xs">실시간 언어 번역</p>
+                </div>
+                <div class="agent-card bg-white rounded-2xl shadow-md p-5 text-center" onclick="selectAgent('car')" id="agent-card-car">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-car text-white text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-1">자율주행 자동차</h4>
+                    <p class="text-gray-500 text-xs">자율 주행 운행</p>
+                </div>
+            </div>
+
+            <!-- Agent detail panels -->
+            <div id="agent-details-container">
+                <div class="text-center py-8 text-gray-400" id="agent-placeholder">
+                    <i class="fas fa-hand-pointer text-4xl mb-3 text-purple-200"></i>
+                    <p class="text-sm">위에서 AI 제품을 선택하면 분석 결과가 여기에 표시됩니다</p>
+                </div>
+
+                <!-- AI Speaker detail -->
+                <div class="agent-detail" id="detail-speaker">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                                <i class="fas fa-volume-up text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900 text-lg">AI 스피커 분석</h3>
+                                <p class="text-xs text-gray-500">목표: 사용자의 음성 명령을 이해하고 적절한 응답 제공</p>
+                            </div>
+                        </div>
+                        <div class="grid sm:grid-cols-3 gap-4">
+                            <div class="component-reveal bg-blue-50 rounded-xl p-4 border border-blue-100" onclick="this.classList.toggle('open')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center"><i class="fas fa-eye text-white text-sm"></i></span>
+                                        <span class="font-bold text-blue-700 text-sm">센서</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-blue-400 text-xs reveal-arrow"></i>
+                                </div>
+                                <div class="reveal-content">
+                                    <ul class="space-y-2 text-sm text-blue-800">
+                                        <li class="flex items-center gap-2"><i class="fas fa-microphone text-blue-500 text-xs"></i> 마이크 (음성 인식)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-wifi text-blue-500 text-xs"></i> Wi-Fi 모듈 (인터넷 연결)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="component-reveal bg-purple-50 rounded-xl p-4 border border-purple-100" onclick="this.classList.toggle('open')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center"><i class="fas fa-brain text-white text-sm"></i></span>
+                                        <span class="font-bold text-purple-700 text-sm">인공지능</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-purple-400 text-xs reveal-arrow"></i>
+                                </div>
+                                <div class="reveal-content">
+                                    <ul class="space-y-2 text-sm text-purple-800">
+                                        <li class="flex items-center gap-2"><i class="fas fa-comment-dots text-purple-500 text-xs"></i> 자연어 처리 (문맥 이해)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-music text-purple-500 text-xs"></i> 음성 인식 모델</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-lightbulb text-purple-500 text-xs"></i> 대화 생성 AI</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="component-reveal bg-green-50 rounded-xl p-4 border border-green-100" onclick="this.classList.toggle('open')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center"><i class="fas fa-hand-paper text-white text-sm"></i></span>
+                                        <span class="font-bold text-green-700 text-sm">구동기</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-green-400 text-xs reveal-arrow"></i>
+                                </div>
+                                <div class="reveal-content">
+                                    <ul class="space-y-2 text-sm text-green-800">
+                                        <li class="flex items-center gap-2"><i class="fas fa-volume-up text-green-500 text-xs"></i> 스피커 (음성 출력)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-lightbulb text-green-500 text-xs"></i> LED 표시등 (상태 표시)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 bg-gray-50 rounded-xl p-4 text-sm">
+                            <p class="text-gray-600"><strong class="text-gray-700">환경:</strong> 가정, 사용자의 음성, 인터넷 서비스</p>
+                            <p class="text-gray-600 mt-1"><strong class="text-gray-700">행동:</strong> 음악 재생, 날씨 안내, 일정 관리, IoT 기기 제어</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Robot Vacuum detail -->
+                <div class="agent-detail" id="detail-vacuum">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                                <i class="fas fa-robot text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900 text-lg">로봇 청소기 분석</h3>
+                                <p class="text-xs text-gray-500">목표: 실내 공간을 효율적으로 자율 청소</p>
+                            </div>
+                        </div>
+                        <div class="grid sm:grid-cols-3 gap-4">
+                            <div class="component-reveal bg-blue-50 rounded-xl p-4 border border-blue-100" onclick="this.classList.toggle('open')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center"><i class="fas fa-eye text-white text-sm"></i></span>
+                                        <span class="font-bold text-blue-700 text-sm">센서</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-blue-400 text-xs reveal-arrow"></i>
+                                </div>
+                                <div class="reveal-content">
+                                    <ul class="space-y-2 text-sm text-blue-800">
+                                        <li class="flex items-center gap-2"><i class="fas fa-broadcast-tower text-blue-500 text-xs"></i> 적외선 센서 (장애물 감지)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-camera text-blue-500 text-xs"></i> 카메라/LiDAR (공간 매핑)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-tachometer-alt text-blue-500 text-xs"></i> 낙하 방지 센서</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="component-reveal bg-purple-50 rounded-xl p-4 border border-purple-100" onclick="this.classList.toggle('open')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center"><i class="fas fa-brain text-white text-sm"></i></span>
+                                        <span class="font-bold text-purple-700 text-sm">인공지능</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-purple-400 text-xs reveal-arrow"></i>
+                                </div>
+                                <div class="reveal-content">
+                                    <ul class="space-y-2 text-sm text-purple-800">
+                                        <li class="flex items-center gap-2"><i class="fas fa-map text-purple-500 text-xs"></i> SLAM (공간 지도 생성)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-route text-purple-500 text-xs"></i> 경로 최적화 알고리즘</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-exclamation-triangle text-purple-500 text-xs"></i> 장애물 회피 판단</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="component-reveal bg-green-50 rounded-xl p-4 border border-green-100" onclick="this.classList.toggle('open')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center"><i class="fas fa-hand-paper text-white text-sm"></i></span>
+                                        <span class="font-bold text-green-700 text-sm">구동기</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-green-400 text-xs reveal-arrow"></i>
+                                </div>
+                                <div class="reveal-content">
+                                    <ul class="space-y-2 text-sm text-green-800">
+                                        <li class="flex items-center gap-2"><i class="fas fa-dharmachakra text-green-500 text-xs"></i> 바퀴 모터 (이동)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-fan text-green-500 text-xs"></i> 흡입 모터 (청소)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-broom text-green-500 text-xs"></i> 브러시 (먼지 제거)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 bg-gray-50 rounded-xl p-4 text-sm">
+                            <p class="text-gray-600"><strong class="text-gray-700">환경:</strong> 실내 공간, 가구, 벽, 바닥</p>
+                            <p class="text-gray-600 mt-1"><strong class="text-gray-700">행동:</strong> 이동, 방향 전환, 흡입 강도 조절, 충전 스테이션 복귀</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Translator detail -->
+                <div class="agent-detail" id="detail-translator">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                                <i class="fas fa-language text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900 text-lg">번역 앱 분석</h3>
+                                <p class="text-xs text-gray-500">목표: 다국어 텍스트/음성을 정확하게 번역</p>
+                            </div>
+                        </div>
+                        <div class="grid sm:grid-cols-3 gap-4">
+                            <div class="component-reveal bg-blue-50 rounded-xl p-4 border border-blue-100" onclick="this.classList.toggle('open')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center"><i class="fas fa-eye text-white text-sm"></i></span>
+                                        <span class="font-bold text-blue-700 text-sm">센서</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-blue-400 text-xs reveal-arrow"></i>
+                                </div>
+                                <div class="reveal-content">
+                                    <ul class="space-y-2 text-sm text-blue-800">
+                                        <li class="flex items-center gap-2"><i class="fas fa-microphone text-blue-500 text-xs"></i> 마이크 (음성 입력)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-camera text-blue-500 text-xs"></i> 카메라 (텍스트 촬영)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-keyboard text-blue-500 text-xs"></i> 터치스크린 (텍스트 입력)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="component-reveal bg-purple-50 rounded-xl p-4 border border-purple-100" onclick="this.classList.toggle('open')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center"><i class="fas fa-brain text-white text-sm"></i></span>
+                                        <span class="font-bold text-purple-700 text-sm">인공지능</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-purple-400 text-xs reveal-arrow"></i>
+                                </div>
+                                <div class="reveal-content">
+                                    <ul class="space-y-2 text-sm text-purple-800">
+                                        <li class="flex items-center gap-2"><i class="fas fa-language text-purple-500 text-xs"></i> 신경망 기계 번역 (NMT)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-text-height text-purple-500 text-xs"></i> OCR (문자 인식)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-comment-dots text-purple-500 text-xs"></i> 문맥 이해 모델</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="component-reveal bg-green-50 rounded-xl p-4 border border-green-100" onclick="this.classList.toggle('open')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center"><i class="fas fa-hand-paper text-white text-sm"></i></span>
+                                        <span class="font-bold text-green-700 text-sm">구동기</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-green-400 text-xs reveal-arrow"></i>
+                                </div>
+                                <div class="reveal-content">
+                                    <ul class="space-y-2 text-sm text-green-800">
+                                        <li class="flex items-center gap-2"><i class="fas fa-desktop text-green-500 text-xs"></i> 화면 (번역 결과 표시)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-volume-up text-green-500 text-xs"></i> 스피커 (음성 출력)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 bg-gray-50 rounded-xl p-4 text-sm">
+                            <p class="text-gray-600"><strong class="text-gray-700">환경:</strong> 다국어 텍스트, 사용자 음성, 외국어 간판</p>
+                            <p class="text-gray-600 mt-1"><strong class="text-gray-700">행동:</strong> 번역 결과 출력, 발음 재생, 대화 모드 지원</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Autonomous Car detail -->
+                <div class="agent-detail" id="detail-car">
+                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
+                                <i class="fas fa-car text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900 text-lg">자율주행 자동차 분석</h3>
+                                <p class="text-xs text-gray-500">목표: 안전하고 빠르게 교통 법규를 지키며 목적지까지 운행</p>
+                            </div>
+                        </div>
+                        <div class="grid sm:grid-cols-3 gap-4">
+                            <div class="component-reveal bg-blue-50 rounded-xl p-4 border border-blue-100" onclick="this.classList.toggle('open')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center"><i class="fas fa-eye text-white text-sm"></i></span>
+                                        <span class="font-bold text-blue-700 text-sm">센서</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-blue-400 text-xs reveal-arrow"></i>
+                                </div>
+                                <div class="reveal-content">
+                                    <ul class="space-y-2 text-sm text-blue-800">
+                                        <li class="flex items-center gap-2"><i class="fas fa-camera text-blue-500 text-xs"></i> 카메라 (시각 정보)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-map-marker-alt text-blue-500 text-xs"></i> GPS (위치 정보)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-tachometer-alt text-blue-500 text-xs"></i> 속도계 (속도 감지)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-broadcast-tower text-blue-500 text-xs"></i> LiDAR/레이더 (거리 측정)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="component-reveal bg-purple-50 rounded-xl p-4 border border-purple-100" onclick="this.classList.toggle('open')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center"><i class="fas fa-brain text-white text-sm"></i></span>
+                                        <span class="font-bold text-purple-700 text-sm">인공지능</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-purple-400 text-xs reveal-arrow"></i>
+                                </div>
+                                <div class="reveal-content">
+                                    <ul class="space-y-2 text-sm text-purple-800">
+                                        <li class="flex items-center gap-2"><i class="fas fa-route text-purple-500 text-xs"></i> 경로 탐색 알고리즘</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-exclamation-triangle text-purple-500 text-xs"></i> 사고 예측 모델</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-car text-purple-500 text-xs"></i> 거리 유지 판단</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="component-reveal bg-green-50 rounded-xl p-4 border border-green-100" onclick="this.classList.toggle('open')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center"><i class="fas fa-hand-paper text-white text-sm"></i></span>
+                                        <span class="font-bold text-green-700 text-sm">구동기</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-green-400 text-xs reveal-arrow"></i>
+                                </div>
+                                <div class="reveal-content">
+                                    <ul class="space-y-2 text-sm text-green-800">
+                                        <li class="flex items-center gap-2"><i class="fas fa-steering-wheel text-green-500 text-xs"></i> 핸들 (방향 제어)</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-tachometer-alt text-green-500 text-xs"></i> 가속 페달 / 브레이크</li>
+                                        <li class="flex items-center gap-2"><i class="fas fa-bullhorn text-green-500 text-xs"></i> 경적 (경고음)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 bg-gray-50 rounded-xl p-4 text-sm">
+                            <p class="text-gray-600"><strong class="text-gray-700">환경:</strong> 도로, 다른 차량, 보행자, 교통 신호</p>
+                            <p class="text-gray-600 mt-1"><strong class="text-gray-700">행동:</strong> 감속, 가속, 정지, 방향 변경, 차선 변경</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis completion tracker -->
+            <div class="mt-6 bg-violet-50 rounded-xl border border-violet-200 p-4 flex items-center justify-between" id="analysis-tracker">
+                <span class="text-sm text-violet-700"><i class="fas fa-chart-pie text-violet-500 mr-2"></i>분석 완료: <strong id="analysis-count">0</strong> / 4</span>
+                <div class="flex gap-2">
+                    <span class="w-6 h-6 rounded-full bg-gray-200 text-xs flex items-center justify-center" id="an-speaker"><i class="fas fa-volume-up text-gray-400 text-[10px]"></i></span>
+                    <span class="w-6 h-6 rounded-full bg-gray-200 text-xs flex items-center justify-center" id="an-vacuum"><i class="fas fa-robot text-gray-400 text-[10px]"></i></span>
+                    <span class="w-6 h-6 rounded-full bg-gray-200 text-xs flex items-center justify-center" id="an-translator"><i class="fas fa-language text-gray-400 text-[10px]"></i></span>
+                    <span class="w-6 h-6 rounded-full bg-gray-200 text-xs flex items-center justify-center" id="an-car"><i class="fas fa-car text-gray-400 text-[10px]"></i></span>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 4: 매칭 연습                                                    -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-matching">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-link"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">구성 요소 연결하기</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Match Components to Functions</p>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-indigo-50 to-violet-50 border-l-4 border-indigo-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-indigo-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-lightbulb text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-indigo-800 mb-1">활동 방법</h3>
+                        <p class="text-gray-700 leading-relaxed text-sm">
+                            왼쪽의 <strong class="text-indigo-700">에이전트 구성 요소</strong>를 클릭한 다음, 오른쪽에서 해당하는 <strong class="text-indigo-700">기능</strong>을 클릭하여 올바르게 연결하세요.
+                        </p>
+                    </div>
                 </div>
             </div>
 
             <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
-                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-5 mb-6">
-                    <h3 class="font-bold text-green-800 mb-3 flex items-center gap-2">
-                        <i class="fas fa-question-circle text-green-500"></i> 평가 기준
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="font-bold text-gray-900 flex items-center gap-2">
+                        <i class="fas fa-puzzle-piece text-indigo-500"></i> 구성 요소와 기능 연결
                     </h3>
-                    <p class="text-gray-700 text-sm leading-relaxed">
-                        <strong>지능 에이전트의 특성을 이해하고 활용 사례를 설명할 수 있는가?</strong>
-                    </p>
-                </div>
-
-                <div class="space-y-4">
-                    <!-- Evaluation item 1 -->
-                    <div class="flex items-start gap-4 p-4 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors" id="eval-1">
-                        <button onclick="toggleEval(1)" class="w-8 h-8 rounded-lg border-2 border-purple-300 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all duration-200 hover:border-purple-500" id="eval-btn-1">
-                            <i class="fas fa-check text-white text-sm" id="eval-icon-1"></i>
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm text-gray-500" id="match-score">0 / 6 정답</span>
+                        <button onclick="resetMatching()" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg transition-colors">
+                            <i class="fas fa-redo mr-1"></i> 다시하기
                         </button>
-                        <div>
-                            <p class="font-medium text-gray-700">지능 에이전트의 구성 요소(센서, 인공지능, 구동기)를 설명할 수 있다.</p>
-                            <p class="text-xs text-gray-400 mt-1">지능 에이전트가 환경과 상호 작용하는 방식을 이해하고 있나요?</p>
-                        </div>
-                    </div>
-
-                    <!-- Evaluation item 2 -->
-                    <div class="flex items-start gap-4 p-4 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors" id="eval-2">
-                        <button onclick="toggleEval(2)" class="w-8 h-8 rounded-lg border-2 border-purple-300 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all duration-200 hover:border-purple-500" id="eval-btn-2">
-                            <i class="fas fa-check text-white text-sm" id="eval-icon-2"></i>
-                        </button>
-                        <div>
-                            <p class="font-medium text-gray-700">특정 지능 에이전트의 목표, 환경, 인식, 행동을 분석할 수 있다.</p>
-                            <p class="text-xs text-gray-400 mt-1">자율주행 자동차 예시처럼 구체적으로 분석할 수 있나요?</p>
-                        </div>
-                    </div>
-
-                    <!-- Evaluation item 3 -->
-                    <div class="flex items-start gap-4 p-4 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors" id="eval-3">
-                        <button onclick="toggleEval(3)" class="w-8 h-8 rounded-lg border-2 border-purple-300 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all duration-200 hover:border-purple-500" id="eval-btn-3">
-                            <i class="fas fa-check text-white text-sm" id="eval-icon-3"></i>
-                        </button>
-                        <div>
-                            <p class="font-medium text-gray-700">지능 에이전트의 활용 사례를 일상생활에서 찾아 설명할 수 있다.</p>
-                            <p class="text-xs text-gray-400 mt-1">AI 스피커, 로봇 청소기 등 다양한 사례를 들 수 있나요?</p>
-                        </div>
                     </div>
                 </div>
 
-                <!-- Evaluation result -->
-                <div class="mt-6 pt-4 border-t border-gray-100" id="eval-result">
-                    <div class="flex items-center justify-between">
-                        <p class="text-sm text-gray-500">
-                            <i class="fas fa-chart-bar text-primary-400 mr-1"></i>
-                            달성도: <strong id="eval-score" class="text-primary-600">0</strong> / 3
-                        </p>
-                        <div class="w-48 h-3 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-gradient-to-r from-primary-400 to-accent-500 rounded-full transition-all duration-500" id="eval-bar" style="width: 0%"></div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Left: Components -->
+                    <div>
+                        <h4 class="font-bold text-sm text-gray-600 mb-3 flex items-center gap-2"><i class="fas fa-microchip text-gray-400"></i> 구성 요소</h4>
+                        <div class="space-y-3" id="match-left">
+                            <div class="match-item rounded-xl p-3 bg-blue-50 border-blue-200 flex items-center gap-3" data-match="mic" onclick="selectMatchLeft(this)">
+                                <span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-microphone text-blue-600 text-sm"></i></span>
+                                <span class="font-medium text-sm text-blue-800">마이크</span>
+                            </div>
+                            <div class="match-item rounded-xl p-3 bg-green-50 border-green-200 flex items-center gap-3" data-match="speaker" onclick="selectMatchLeft(this)">
+                                <span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-volume-up text-green-600 text-sm"></i></span>
+                                <span class="font-medium text-sm text-green-800">스피커</span>
+                            </div>
+                            <div class="match-item rounded-xl p-3 bg-blue-50 border-blue-200 flex items-center gap-3" data-match="camera" onclick="selectMatchLeft(this)">
+                                <span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-camera text-blue-600 text-sm"></i></span>
+                                <span class="font-medium text-sm text-blue-800">카메라</span>
+                            </div>
+                            <div class="match-item rounded-xl p-3 bg-green-50 border-green-200 flex items-center gap-3" data-match="motor" onclick="selectMatchLeft(this)">
+                                <span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-dharmachakra text-green-600 text-sm"></i></span>
+                                <span class="font-medium text-sm text-green-800">모터</span>
+                            </div>
+                            <div class="match-item rounded-xl p-3 bg-purple-50 border-purple-200 flex items-center gap-3" data-match="nlp" onclick="selectMatchLeft(this)">
+                                <span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-brain text-purple-600 text-sm"></i></span>
+                                <span class="font-medium text-sm text-purple-800">자연어 처리 모델</span>
+                            </div>
+                            <div class="match-item rounded-xl p-3 bg-blue-50 border-blue-200 flex items-center gap-3" data-match="gps" onclick="selectMatchLeft(this)">
+                                <span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-map-marker-alt text-blue-600 text-sm"></i></span>
+                                <span class="font-medium text-sm text-blue-800">GPS</span>
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- Right: Functions -->
+                    <div>
+                        <h4 class="font-bold text-sm text-gray-600 mb-3 flex items-center gap-2"><i class="fas fa-bolt text-gray-400"></i> 기능</h4>
+                        <div class="space-y-3" id="match-right">
+                            <div class="match-item rounded-xl p-3 bg-gray-50 flex items-center gap-3" data-match="camera" onclick="selectMatchRight(this)">
+                                <span class="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0"><i class="fas fa-image text-gray-500 text-sm"></i></span>
+                                <span class="font-medium text-sm text-gray-700">시각 인식 (영상 입력)</span>
+                            </div>
+                            <div class="match-item rounded-xl p-3 bg-gray-50 flex items-center gap-3" data-match="motor" onclick="selectMatchRight(this)">
+                                <span class="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0"><i class="fas fa-arrows-alt text-gray-500 text-sm"></i></span>
+                                <span class="font-medium text-sm text-gray-700">물리적 이동 및 동작</span>
+                            </div>
+                            <div class="match-item rounded-xl p-3 bg-gray-50 flex items-center gap-3" data-match="nlp" onclick="selectMatchRight(this)">
+                                <span class="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0"><i class="fas fa-comment-dots text-gray-500 text-sm"></i></span>
+                                <span class="font-medium text-sm text-gray-700">문맥 이해 및 언어 처리</span>
+                            </div>
+                            <div class="match-item rounded-xl p-3 bg-gray-50 flex items-center gap-3" data-match="mic" onclick="selectMatchRight(this)">
+                                <span class="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0"><i class="fas fa-waveform text-gray-500 text-sm"></i></span>
+                                <span class="font-medium text-sm text-gray-700">음성 인식 (소리 입력)</span>
+                            </div>
+                            <div class="match-item rounded-xl p-3 bg-gray-50 flex items-center gap-3" data-match="gps" onclick="selectMatchRight(this)">
+                                <span class="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0"><i class="fas fa-location-arrow text-gray-500 text-sm"></i></span>
+                                <span class="font-medium text-sm text-gray-700">위치 파악 및 내비게이션</span>
+                            </div>
+                            <div class="match-item rounded-xl p-3 bg-gray-50 flex items-center gap-3" data-match="speaker" onclick="selectMatchRight(this)">
+                                <span class="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0"><i class="fas fa-music text-gray-500 text-sm"></i></span>
+                                <span class="font-medium text-sm text-gray-700">음성 및 소리 출력</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Matching result -->
+                <div id="match-result" class="mt-6 hidden">
+                    <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+                        <i class="fas fa-trophy text-yellow-500 text-2xl mb-2"></i>
+                        <p class="font-bold text-green-700">완벽합니다!</p>
+                        <p class="text-sm text-green-600">모든 구성 요소와 기능을 올바르게 연결했습니다.</p>
                     </div>
                 </div>
             </div>
         </section>
 
+        <div class="section-divider max-w-md mx-auto"></div>
+
         <!-- ===================================================================== -->
-        <!-- SECTION 5: 핵심 정리                                                    -->
+        <!-- SECTION 5: 시나리오 퀴즈                                                 -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-quiz">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-fuchsia-500 to-pink-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">시나리오 퀴즈</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Which Components Are Needed?</p>
+                </div>
+            </div>
+
+            <div class="space-y-6" id="quiz-container">
+                <!-- Quiz 1 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 quiz-card" data-quiz="1">
+                    <div class="flex items-start gap-3 mb-5">
+                        <span class="w-8 h-8 rounded-full bg-fuchsia-500 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">Q1</span>
+                        <div>
+                            <h4 class="font-bold text-gray-900">화재를 감지하고 자동으로 스프링클러를 작동시키는 스마트 화재 감지 시스템</h4>
+                            <p class="text-sm text-gray-500 mt-1">이 에이전트에 필요한 구성 요소를 모두 선택하세요.</p>
+                        </div>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-3 mb-4">
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="true" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-thermometer-half text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">온도 센서</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="true" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-smog text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">연기 감지 센서</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="false" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-microphone text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">마이크</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="true" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-tint text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">스프링클러 (구동기)</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="true" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-bell text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">경보 알람 (구동기)</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="false" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-map-marker-alt text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">GPS</span>
+                        </div>
+                    </div>
+                    <button onclick="checkQuiz(1)" class="bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-medium text-sm px-5 py-2.5 rounded-xl transition-colors shadow-md">
+                        <i class="fas fa-check mr-1"></i> 정답 확인
+                    </button>
+                    <div id="quiz-feedback-1" class="mt-3 hidden"></div>
+                </div>
+
+                <!-- Quiz 2 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 quiz-card" data-quiz="2">
+                    <div class="flex items-start gap-3 mb-5">
+                        <span class="w-8 h-8 rounded-full bg-fuchsia-500 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">Q2</span>
+                        <div>
+                            <h4 class="font-bold text-gray-900">고객 얼굴을 인식하여 맞춤형 인사를 하는 매장 안내 로봇</h4>
+                            <p class="text-sm text-gray-500 mt-1">이 에이전트에 필요한 구성 요소를 모두 선택하세요.</p>
+                        </div>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-3 mb-4">
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="true" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-camera text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">카메라 (센서)</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="true" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-brain text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">얼굴 인식 AI</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="true" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-volume-up text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">스피커 (구동기)</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="false" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-thermometer-half text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">온도 센서</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="true" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-database text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">고객 데이터베이스</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="false" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-fan text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">흡입 모터</span>
+                        </div>
+                    </div>
+                    <button onclick="checkQuiz(2)" class="bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-medium text-sm px-5 py-2.5 rounded-xl transition-colors shadow-md">
+                        <i class="fas fa-check mr-1"></i> 정답 확인
+                    </button>
+                    <div id="quiz-feedback-2" class="mt-3 hidden"></div>
+                </div>
+
+                <!-- Quiz 3 -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 quiz-card" data-quiz="3">
+                    <div class="flex items-start gap-3 mb-5">
+                        <span class="w-8 h-8 rounded-full bg-fuchsia-500 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">Q3</span>
+                        <div>
+                            <h4 class="font-bold text-gray-900">농작물 상태를 확인하고 자동으로 물을 주는 스마트 농업 시스템</h4>
+                            <p class="text-sm text-gray-500 mt-1">이 에이전트에 필요한 구성 요소를 모두 선택하세요.</p>
+                        </div>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-3 mb-4">
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="true" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-tint text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">토양 수분 센서</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="true" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-camera text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">카메라 (작물 촬영)</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="true" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-faucet text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">급수 밸브 (구동기)</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="false" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-microphone text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">마이크</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="true" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-cloud-sun text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">기상 데이터 수집</span>
+                        </div>
+                        <div class="quiz-option rounded-xl p-3 flex items-center gap-3" data-correct="false" onclick="toggleQuizOption(this)">
+                            <span class="w-7 h-7 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-keyboard text-gray-500 text-sm"></i></span>
+                            <span class="text-sm font-medium">키보드</span>
+                        </div>
+                    </div>
+                    <button onclick="checkQuiz(3)" class="bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-medium text-sm px-5 py-2.5 rounded-xl transition-colors shadow-md">
+                        <i class="fas fa-check mr-1"></i> 정답 확인
+                    </button>
+                    <div id="quiz-feedback-3" class="mt-3 hidden"></div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 6: 에이전트 사이클 시각화                                         -->
+        <!-- ===================================================================== -->
+        <section class="fade-in" id="section-cycle">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">에이전트 작동 사이클</h2>
+                    <p class="text-gray-500 text-sm mt-0.5">Agent Operation Cycle</p>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-pink-50 to-rose-50 border-l-4 border-pink-400 rounded-r-xl p-5 mb-8 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-pink-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-hand-pointer text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-pink-800 mb-1">탐색 방법</h3>
+                        <p class="text-gray-700 leading-relaxed text-sm">
+                            지능 에이전트는 <strong class="text-pink-700">인식 - 학습 - 추론 - 행동</strong>의 사이클을 반복합니다. 아래 다이어그램에서 각 단계를 클릭하여 상세 내용을 확인하세요.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <div class="flex flex-col lg:flex-row gap-8 items-start">
+                    <!-- Cycle Diagram -->
+                    <div class="flex-shrink-0 mx-auto">
+                        <svg viewBox="0 0 340 340" width="320" height="320" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Center circle -->
+                            <circle cx="170" cy="170" r="45" fill="url(#centerGrad)" stroke="#9c36b5" stroke-width="2"/>
+                            <text x="170" y="163" text-anchor="middle" fill="white" font-size="12" font-weight="bold">지능</text>
+                            <text x="170" y="180" text-anchor="middle" fill="white" font-size="12" font-weight="bold">에이전트</text>
+
+                            <!-- Rotating arrow ring -->
+                            <circle cx="170" cy="170" r="95" fill="none" stroke="#e9d5ff" stroke-width="2" stroke-dasharray="8 4" style="animation: cycleRotate 8s linear infinite"/>
+
+                            <!-- Phase 1: 인식 (top) -->
+                            <g class="cycle-phase" onclick="selectCyclePhase('perceive')" id="phase-perceive">
+                                <circle cx="170" cy="55" r="38" fill="#3b82f6" stroke="#2563eb" stroke-width="2.5"/>
+                                <text x="170" y="50" text-anchor="middle" fill="white" font-size="13" font-weight="bold">인식</text>
+                                <text x="170" y="66" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9">Perceive</text>
+                            </g>
+
+                            <!-- Phase 2: 학습 (right) -->
+                            <g class="cycle-phase" onclick="selectCyclePhase('learn')" id="phase-learn">
+                                <circle cx="285" cy="170" r="38" fill="#9c36b5" stroke="#7c3aed" stroke-width="2.5"/>
+                                <text x="285" y="165" text-anchor="middle" fill="white" font-size="13" font-weight="bold">학습</text>
+                                <text x="285" y="181" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9">Learn</text>
+                            </g>
+
+                            <!-- Phase 3: 추론 (bottom) -->
+                            <g class="cycle-phase" onclick="selectCyclePhase('reason')" id="phase-reason">
+                                <circle cx="170" cy="285" r="38" fill="#f59e0b" stroke="#d97706" stroke-width="2.5"/>
+                                <text x="170" y="280" text-anchor="middle" fill="white" font-size="13" font-weight="bold">추론</text>
+                                <text x="170" y="296" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9">Reason</text>
+                            </g>
+
+                            <!-- Phase 4: 행동 (left) -->
+                            <g class="cycle-phase" onclick="selectCyclePhase('act')" id="phase-act">
+                                <circle cx="55" cy="170" r="38" fill="#22c55e" stroke="#16a34a" stroke-width="2.5"/>
+                                <text x="55" y="165" text-anchor="middle" fill="white" font-size="13" font-weight="bold">행동</text>
+                                <text x="55" y="181" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9">Act</text>
+                            </g>
+
+                            <!-- Arrows between phases -->
+                            <path d="M200 68 Q240 90 272 140" stroke="#6366f1" stroke-width="2.5" fill="none" marker-end="url(#cycleArrow)"/>
+                            <path d="M272 200 Q240 250 200 272" stroke="#7c3aed" stroke-width="2.5" fill="none" marker-end="url(#cycleArrow)"/>
+                            <path d="M140 272 Q100 250 68 200" stroke="#d97706" stroke-width="2.5" fill="none" marker-end="url(#cycleArrow)"/>
+                            <path d="M68 140 Q100 90 140 68" stroke="#16a34a" stroke-width="2.5" fill="none" marker-end="url(#cycleArrow)"/>
+
+                            <defs>
+                                <linearGradient id="centerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#9c36b5"/>
+                                    <stop offset="100%" stop-color="#7950f2"/>
+                                </linearGradient>
+                                <marker id="cycleArrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                                    <polygon points="0 0, 8 3, 0 6" fill="#7c3aed"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                        <p class="text-center text-xs text-gray-400 mt-2">각 단계를 클릭하여 탐색하세요</p>
+                    </div>
+
+                    <!-- Phase detail panels -->
+                    <div class="flex-1 min-h-[280px]">
+                        <div class="text-center py-12 text-gray-400" id="cycle-placeholder">
+                            <i class="fas fa-hand-pointer text-4xl mb-3 text-purple-200"></i>
+                            <p class="text-sm">왼쪽 다이어그램에서 단계를 클릭하세요</p>
+                        </div>
+
+                        <div class="cycle-info-panel" id="info-perceive">
+                            <div class="bg-blue-50 rounded-2xl p-6 border border-blue-100">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span class="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center"><i class="fas fa-eye text-white"></i></span>
+                                    <h3 class="font-bold text-blue-800 text-lg">인식 (Perceive)</h3>
+                                </div>
+                                <p class="text-blue-700 text-sm leading-relaxed mb-4">
+                                    센서를 통해 <strong>환경의 정보를 수집</strong>하는 단계입니다. 에이전트가 세상을 이해하는 첫 번째 단계입니다.
+                                </p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2 bg-white rounded-lg p-2.5 text-sm">
+                                        <i class="fas fa-camera text-blue-500"></i>
+                                        <span class="text-blue-800">자율주행차: 카메라로 도로 상황 촬영</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 bg-white rounded-lg p-2.5 text-sm">
+                                        <i class="fas fa-microphone text-blue-500"></i>
+                                        <span class="text-blue-800">AI 스피커: 마이크로 사용자 음성 수집</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 bg-white rounded-lg p-2.5 text-sm">
+                                        <i class="fas fa-broadcast-tower text-blue-500"></i>
+                                        <span class="text-blue-800">로봇 청소기: 적외선 센서로 장애물 감지</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cycle-info-panel" id="info-learn">
+                            <div class="bg-purple-50 rounded-2xl p-6 border border-purple-100">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span class="w-10 h-10 rounded-xl bg-purple-500 flex items-center justify-center"><i class="fas fa-graduation-cap text-white"></i></span>
+                                    <h3 class="font-bold text-purple-800 text-lg">학습 (Learn)</h3>
+                                </div>
+                                <p class="text-purple-700 text-sm leading-relaxed mb-4">
+                                    수집된 데이터에서 <strong>패턴을 발견하고 지식을 축적</strong>하는 단계입니다. 경험을 통해 점점 더 나은 판단을 할 수 있게 됩니다.
+                                </p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2 bg-white rounded-lg p-2.5 text-sm">
+                                        <i class="fas fa-chart-line text-purple-500"></i>
+                                        <span class="text-purple-800">수많은 도로 영상에서 신호등 패턴 학습</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 bg-white rounded-lg p-2.5 text-sm">
+                                        <i class="fas fa-comment-dots text-purple-500"></i>
+                                        <span class="text-purple-800">대화 데이터에서 자연어 문맥 이해 학습</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 bg-white rounded-lg p-2.5 text-sm">
+                                        <i class="fas fa-map text-purple-500"></i>
+                                        <span class="text-purple-800">청소 이력으로 최적 경로 패턴 학습</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cycle-info-panel" id="info-reason">
+                            <div class="bg-amber-50 rounded-2xl p-6 border border-amber-100">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center"><i class="fas fa-lightbulb text-white"></i></span>
+                                    <h3 class="font-bold text-amber-800 text-lg">추론 (Reason)</h3>
+                                </div>
+                                <p class="text-amber-700 text-sm leading-relaxed mb-4">
+                                    학습된 지식을 바탕으로 <strong>현재 상황을 분석하고 최선의 행동을 결정</strong>하는 단계입니다.
+                                </p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2 bg-white rounded-lg p-2.5 text-sm">
+                                        <i class="fas fa-route text-amber-500"></i>
+                                        <span class="text-amber-800">앞차가 멈추면 브레이크를 밟아야 한다고 판단</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 bg-white rounded-lg p-2.5 text-sm">
+                                        <i class="fas fa-music text-amber-500"></i>
+                                        <span class="text-amber-800">"노래 틀어줘" 의도를 파악하고 음악 재생 결정</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 bg-white rounded-lg p-2.5 text-sm">
+                                        <i class="fas fa-exclamation-triangle text-amber-500"></i>
+                                        <span class="text-amber-800">장애물 감지 시 우회 경로 계산</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cycle-info-panel" id="info-act">
+                            <div class="bg-green-50 rounded-2xl p-6 border border-green-100">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span class="w-10 h-10 rounded-xl bg-green-500 flex items-center justify-center"><i class="fas fa-play text-white"></i></span>
+                                    <h3 class="font-bold text-green-800 text-lg">행동 (Act)</h3>
+                                </div>
+                                <p class="text-green-700 text-sm leading-relaxed mb-4">
+                                    추론 결과를 바탕으로 <strong>구동기를 통해 환경에 실제 행동</strong>을 수행하는 단계입니다. 행동의 결과는 다시 인식 단계로 이어집니다.
+                                </p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2 bg-white rounded-lg p-2.5 text-sm">
+                                        <i class="fas fa-car text-green-500"></i>
+                                        <span class="text-green-800">브레이크를 밟아 차량 감속</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 bg-white rounded-lg p-2.5 text-sm">
+                                        <i class="fas fa-volume-up text-green-500"></i>
+                                        <span class="text-green-800">스피커를 통해 음악 재생 시작</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 bg-white rounded-lg p-2.5 text-sm">
+                                        <i class="fas fa-dharmachakra text-green-500"></i>
+                                        <span class="text-green-800">모터를 회전시켜 방향 전환</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cycle explored tracker -->
+                <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <span class="text-sm text-gray-500"><i class="fas fa-check-double text-primary-400 mr-1"></i> 탐색 단계: <strong id="cycle-count" class="text-primary-600">0</strong> / 4</span>
+                    <div class="flex gap-2">
+                        <span class="w-6 h-6 rounded-full text-[10px] flex items-center justify-center bg-gray-200 text-gray-400" id="cyc-perceive">인</span>
+                        <span class="w-6 h-6 rounded-full text-[10px] flex items-center justify-center bg-gray-200 text-gray-400" id="cyc-learn">학</span>
+                        <span class="w-6 h-6 rounded-full text-[10px] flex items-center justify-center bg-gray-200 text-gray-400" id="cyc-reason">추</span>
+                        <span class="w-6 h-6 rounded-full text-[10px] flex items-center justify-center bg-gray-200 text-gray-400" id="cyc-act">행</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider max-w-md mx-auto"></div>
+
+        <!-- ===================================================================== -->
+        <!-- SECTION 7: 핵심 정리                                                    -->
         <!-- ===================================================================== -->
         <section class="fade-in" id="section-summary">
             <div class="flex items-center gap-3 mb-8">
@@ -865,6 +1568,21 @@
                                 <span><strong>사회성</strong> - 다른 에이전트와 협력</span>
                             </li>
                         </ul>
+                    </div>
+                </div>
+                <div class="mt-4 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-violet-700 mb-2 flex items-center gap-2">
+                        <i class="fas fa-sync-alt text-sm"></i> 에이전트 작동 사이클
+                    </h4>
+                    <div class="flex items-center justify-center gap-3 flex-wrap text-sm">
+                        <span class="bg-blue-100 text-blue-700 font-bold px-3 py-1.5 rounded-lg">인식</span>
+                        <i class="fas fa-arrow-right text-gray-400 text-xs"></i>
+                        <span class="bg-purple-100 text-purple-700 font-bold px-3 py-1.5 rounded-lg">학습</span>
+                        <i class="fas fa-arrow-right text-gray-400 text-xs"></i>
+                        <span class="bg-amber-100 text-amber-700 font-bold px-3 py-1.5 rounded-lg">추론</span>
+                        <i class="fas fa-arrow-right text-gray-400 text-xs"></i>
+                        <span class="bg-green-100 text-green-700 font-bold px-3 py-1.5 rounded-lg">행동</span>
+                        <i class="fas fa-redo text-gray-400 text-xs"></i>
                     </div>
                 </div>
             </div>
@@ -926,131 +1644,313 @@
     <!-- ===== SCRIPTS ===== -->
     <script>
         // ============================
-        // Form Field IDs
+        // Progress Tracking
         // ============================
-        const fieldIds = [
-            'input-name', 'input-intelligence', 'input-goal',
-            'input-environment', 'input-perception', 'input-action',
-            'input-sensor', 'input-actuator'
-        ];
+        const progressState = { 1: false, 2: false, 3: false, 4: false, 5: false };
 
-        // ============================
-        // Auto-save to localStorage
-        // ============================
-        const STORAGE_KEY = 'agent-analysis-form';
-
-        function saveForm() {
-            const data = {};
-            fieldIds.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) data[id] = el.value;
-            });
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            showSaveStatus('saved');
+        function updateProgress(step) {
+            progressState[step] = true;
+            const dot = document.getElementById('prog-' + step);
+            dot.classList.add('completed');
+            dot.innerHTML = '<i class="fas fa-check text-xs"></i>';
+            if (step > 1) {
+                const bar = document.getElementById('prog-bar-' + (step - 1));
+                if (bar) bar.style.background = '#9c36b5';
+            }
+            const count = Object.values(progressState).filter(v => v).length;
+            document.getElementById('progress-text').textContent = count + ' / 5 완료';
         }
 
-        function loadForm() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    fieldIds.forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el && data[id]) el.value = data[id];
-                    });
-                } catch (e) {
-                    console.log('Failed to load saved data');
+        // ============================
+        // Drag & Drop Agent Builder
+        // ============================
+        let draggedPart = null;
+        const droppedParts = { sensor: [], ai: [], actuator: [], data: [] };
+
+        document.querySelectorAll('.drag-item').forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+                draggedPart = item;
+                item.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', item.dataset.part);
+            });
+            item.addEventListener('dragend', () => {
+                item.classList.remove('dragging');
+                draggedPart = null;
+            });
+
+            // Touch support
+            let touchClone = null;
+            item.addEventListener('touchstart', (e) => {
+                draggedPart = item;
+                item.classList.add('dragging');
+            }, { passive: true });
+
+            item.addEventListener('touchend', (e) => {
+                if (!draggedPart) return;
+                const touch = e.changedTouches[0];
+                const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                const dropZone = target ? target.closest('.drop-zone') : null;
+                if (dropZone) {
+                    handleDrop(dropZone);
                 }
-            }
-        }
-
-        function resetForm() {
-            if (!confirm('작성한 내용을 모두 지우시겠습니까?')) return;
-            fieldIds.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = '';
+                item.classList.remove('dragging');
+                draggedPart = null;
             });
-            localStorage.removeItem(STORAGE_KEY);
-            showSaveStatus('reset');
-        }
-
-        function showSaveStatus(type) {
-            const status = document.getElementById('save-status');
-            if (type === 'saved') {
-                status.innerHTML = '<i class="fas fa-check-circle text-green-500"></i> <span class="text-green-600 font-medium">저장되었습니다!</span>';
-            } else if (type === 'reset') {
-                status.innerHTML = '<i class="fas fa-redo text-gray-400"></i> <span class="text-gray-500">초기화되었습니다</span>';
-            }
-            setTimeout(() => {
-                status.innerHTML = '<i class="fas fa-cloud text-gray-300"></i> 작성 내용은 브라우저에 자동 저장됩니다';
-            }, 2500);
-        }
-
-        // Auto-save on input
-        fieldIds.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.addEventListener('input', () => {
-                    clearTimeout(el._saveTimer);
-                    el._saveTimer = setTimeout(saveForm, 1000);
-                });
-            }
         });
 
-        // Load saved data on page load
-        loadForm();
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                zone.classList.add('drag-over');
+            });
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                handleDrop(zone);
+            });
+        });
 
-        // ============================
-        // Fill suggestion
-        // ============================
-        function fillSuggestion(name) {
-            const nameInput = document.getElementById('input-name');
-            nameInput.value = name;
-            nameInput.focus();
-            nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        function handleDrop(zone) {
+            if (!draggedPart) return;
+            const category = zone.dataset.category;
+            const partCategory = draggedPart.dataset.category;
+            const partId = draggedPart.dataset.part;
 
-            // Brief highlight animation
-            nameInput.style.borderColor = '#cc5de8';
-            nameInput.style.background = '#fff';
-            nameInput.style.boxShadow = '0 0 0 3px rgba(204, 93, 232, 0.2)';
-            setTimeout(() => {
-                nameInput.style.borderColor = '';
-                nameInput.style.background = '';
-                nameInput.style.boxShadow = '';
-            }, 1500);
-        }
+            // Check if already dropped
+            if (droppedParts[category].includes(partId)) return;
 
-        // ============================
-        // Print Form
-        // ============================
-        function printForm() {
-            window.print();
-        }
-
-        // ============================
-        // Self-Evaluation Checkboxes
-        // ============================
-        const evalState = { 1: false, 2: false, 3: false };
-
-        function toggleEval(num) {
-            evalState[num] = !evalState[num];
-            const btn = document.getElementById('eval-btn-' + num);
-            const icon = document.getElementById('eval-icon-' + num);
-
-            if (evalState[num]) {
-                btn.style.backgroundColor = '#9c36b5';
-                btn.style.borderColor = '#9c36b5';
-                icon.style.color = '#ffffff';
-            } else {
-                btn.style.backgroundColor = '';
-                btn.style.borderColor = '';
-                icon.style.color = '#ffffff';
+            // Check category match
+            if (category !== partCategory) {
+                zone.style.borderColor = '#ef4444';
+                zone.style.background = '#fef2f2';
+                setTimeout(() => {
+                    zone.style.borderColor = '';
+                    zone.style.background = '';
+                }, 600);
+                return;
             }
 
-            // Update score
-            const score = Object.values(evalState).filter(v => v).length;
-            document.getElementById('eval-score').textContent = score;
-            document.getElementById('eval-bar').style.width = ((score / 3) * 100) + '%';
+            // Add to zone
+            droppedParts[category].push(partId);
+            const placeholder = zone.querySelector('.drop-placeholder');
+            if (placeholder) placeholder.remove();
+
+            const chip = document.createElement('div');
+            chip.className = 'dropped-item inline-flex items-center gap-1.5 bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm font-medium shadow-sm';
+            chip.dataset.part = partId;
+            chip.innerHTML = draggedPart.querySelector('p.font-bold').textContent;
+            chip.title = '클릭하여 제거';
+            chip.onclick = () => {
+                droppedParts[category] = droppedParts[category].filter(p => p !== partId);
+                chip.remove();
+                draggedPart = null;
+                // Show source again
+                const source = document.querySelector(`.drag-item[data-part="${partId}"]`);
+                if (source) source.style.display = '';
+                if (zone.children.length === 0) {
+                    zone.innerHTML = '<span class="text-xs text-purple-300 italic drop-placeholder">여기에 부품을 놓으세요</span>';
+                }
+                checkBuildComplete();
+            };
+            zone.appendChild(chip);
+
+            // Hide source
+            draggedPart.style.display = 'none';
+            checkBuildComplete();
+        }
+
+        function checkBuildComplete() {
+            const filled = Object.values(droppedParts).every(arr => arr.length > 0);
+            const result = document.getElementById('build-result');
+            if (filled) {
+                result.classList.remove('hidden');
+                updateProgress(1);
+            } else {
+                result.classList.add('hidden');
+            }
+        }
+
+        function resetBlueprint() {
+            Object.keys(droppedParts).forEach(k => droppedParts[k] = []);
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.innerHTML = '<span class="text-xs text-purple-300 italic drop-placeholder">여기에 부품을 놓으세요</span>';
+            });
+            document.querySelectorAll('.drag-item').forEach(item => {
+                item.style.display = '';
+            });
+            document.getElementById('build-result').classList.add('hidden');
+        }
+
+        // ============================
+        // Agent Analysis Cards
+        // ============================
+        const analyzedAgents = new Set();
+
+        function selectAgent(agent) {
+            // Update card states
+            document.querySelectorAll('.agent-card').forEach(c => c.classList.remove('active'));
+            document.getElementById('agent-card-' + agent).classList.add('active');
+
+            // Show detail
+            document.getElementById('agent-placeholder').style.display = 'none';
+            document.querySelectorAll('.agent-detail').forEach(d => d.classList.remove('active'));
+            document.getElementById('detail-' + agent).classList.add('active');
+
+            // Track
+            analyzedAgents.add(agent);
+            document.getElementById('analysis-count').textContent = analyzedAgents.size;
+
+            // Update indicator dots
+            const dot = document.getElementById('an-' + agent);
+            dot.style.background = '#9c36b5';
+            dot.querySelector('i').style.color = 'white';
+
+            if (analyzedAgents.size >= 2) {
+                updateProgress(2);
+            }
+        }
+
+        // ============================
+        // Matching Exercise
+        // ============================
+        let selectedLeft = null;
+        let matchCorrectCount = 0;
+        const matchedPairs = new Set();
+
+        function selectMatchLeft(el) {
+            if (matchedPairs.has(el.dataset.match)) return;
+            document.querySelectorAll('#match-left .match-item').forEach(i => i.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedLeft = el;
+        }
+
+        function selectMatchRight(el) {
+            if (!selectedLeft || matchedPairs.has(el.dataset.match)) return;
+            const leftMatch = selectedLeft.dataset.match;
+            const rightMatch = el.dataset.match;
+
+            if (leftMatch === rightMatch) {
+                // Correct
+                selectedLeft.classList.remove('selected');
+                selectedLeft.classList.add('correct');
+                el.classList.add('correct');
+                matchedPairs.add(leftMatch);
+                matchCorrectCount++;
+                document.getElementById('match-score').textContent = matchCorrectCount + ' / 6 정답';
+
+                if (matchCorrectCount === 6) {
+                    document.getElementById('match-result').classList.remove('hidden');
+                    updateProgress(3);
+                }
+            } else {
+                // Incorrect
+                el.classList.add('incorrect');
+                setTimeout(() => el.classList.remove('incorrect'), 600);
+            }
+
+            selectedLeft.classList.remove('selected');
+            selectedLeft = null;
+        }
+
+        function resetMatching() {
+            selectedLeft = null;
+            matchCorrectCount = 0;
+            matchedPairs.clear();
+            document.getElementById('match-score').textContent = '0 / 6 정답';
+            document.getElementById('match-result').classList.add('hidden');
+            document.querySelectorAll('.match-item').forEach(i => {
+                i.classList.remove('selected', 'correct', 'incorrect');
+            });
+        }
+
+        // ============================
+        // Scenario Quiz
+        // ============================
+        const quizAnswered = new Set();
+
+        function toggleQuizOption(el) {
+            const quizCard = el.closest('.quiz-card');
+            const quizNum = quizCard.dataset.quiz;
+            if (quizAnswered.has(quizNum)) return;
+            el.classList.toggle('selected');
+        }
+
+        function checkQuiz(num) {
+            if (quizAnswered.has(String(num))) return;
+
+            const card = document.querySelector(`.quiz-card[data-quiz="${num}"]`);
+            const options = card.querySelectorAll('.quiz-option');
+            let allCorrect = true;
+
+            options.forEach(opt => {
+                const isCorrect = opt.dataset.correct === 'true';
+                const isSelected = opt.classList.contains('selected');
+
+                if (isCorrect && isSelected) {
+                    opt.classList.remove('selected');
+                    opt.classList.add('correct-answer');
+                } else if (isCorrect && !isSelected) {
+                    opt.classList.add('correct-answer');
+                    allCorrect = false;
+                } else if (!isCorrect && isSelected) {
+                    opt.classList.remove('selected');
+                    opt.classList.add('wrong-answer');
+                    allCorrect = false;
+                }
+            });
+
+            const feedback = document.getElementById('quiz-feedback-' + num);
+            feedback.classList.remove('hidden');
+            if (allCorrect) {
+                feedback.innerHTML = '<div class="bg-green-50 border border-green-200 rounded-xl p-3 text-sm text-green-700 flex items-center gap-2"><i class="fas fa-check-circle"></i> 정답입니다! 모든 구성 요소를 정확히 선택했습니다.</div>';
+            } else {
+                feedback.innerHTML = '<div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-700 flex items-center gap-2"><i class="fas fa-info-circle"></i> 초록색으로 표시된 항목이 정답입니다. 빨간색 항목은 필요하지 않은 구성 요소입니다.</div>';
+            }
+
+            quizAnswered.add(String(num));
+            if (quizAnswered.size >= 2) {
+                updateProgress(4);
+            }
+        }
+
+        // ============================
+        // Agent Cycle Visualization
+        // ============================
+        const exploredPhases = new Set();
+        const phaseColors = {
+            perceive: '#3b82f6',
+            learn: '#9c36b5',
+            reason: '#f59e0b',
+            act: '#22c55e'
+        };
+
+        function selectCyclePhase(phase) {
+            // Update SVG phases
+            document.querySelectorAll('.cycle-phase').forEach(p => p.classList.remove('active-phase'));
+            document.getElementById('phase-' + phase).classList.add('active-phase');
+
+            // Show info panel
+            document.getElementById('cycle-placeholder').style.display = 'none';
+            document.querySelectorAll('.cycle-info-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('info-' + phase).classList.add('active');
+
+            // Track
+            exploredPhases.add(phase);
+            document.getElementById('cycle-count').textContent = exploredPhases.size;
+
+            // Update dots
+            const dotColors = { perceive: 'bg-blue-500', learn: 'bg-purple-500', reason: 'bg-amber-500', act: 'bg-green-500' };
+            const dot = document.getElementById('cyc-' + phase);
+            dot.className = 'w-6 h-6 rounded-full text-[10px] flex items-center justify-center text-white ' + dotColors[phase];
+
+            if (exploredPhases.size === 4) {
+                updateProgress(5);
+            }
         }
 
         // ============================
