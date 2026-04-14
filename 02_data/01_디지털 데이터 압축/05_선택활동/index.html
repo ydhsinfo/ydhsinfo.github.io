@@ -18,16 +18,16 @@
                     },
                     colors: {
                         cyan: {
-                            50: '#ecfeff',
-                            100: '#cffafe',
-                            200: '#a5f3fc',
-                            300: '#67e8f9',
-                            400: '#22d3ee',
-                            500: '#06b6d4',
-                            600: '#0891b2',
-                            700: '#0e7490',
-                            800: '#155e75',
-                            900: '#164e63',
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
                             950: '#083344',
                         }
                     }
@@ -41,7 +41,7 @@
         }
 
         .hero-gradient {
-            background: linear-gradient(135deg, #0e7490 0%, #0891b2 30%, #0284c7 100%);
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 30%, #047857 100%);
         }
         /* Hero SVG animations */
         @keyframes heroFloat {
@@ -80,9 +80,9 @@
             width: 100%;
             min-height: 2.5rem;
             padding: 0.5rem 0.75rem;
-            border: 2px solid #a5f3fc;
+            border: 2px solid #99f6e4;
             border-radius: 0.5rem;
-            background-color: #ecfeff;
+            background-color: #f0fdfa;
             font-size: 0.875rem;
             font-family: 'Noto Sans KR', sans-serif;
             transition: all 0.2s ease;
@@ -90,36 +90,36 @@
         }
         .activity-input:focus {
             outline: none;
-            border-color: #0891b2;
+            border-color: #0d9488;
             background-color: #ffffff;
             box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.15);
         }
         .activity-input::placeholder {
-            color: #67e8f9;
+            color: #5eead4;
             font-style: italic;
         }
         .activity-input:not(:placeholder-shown) {
             background-color: #fff;
-            border-color: #22d3ee;
+            border-color: #2dd4bf;
         }
 
         /* Pre-filled example cells */
         .example-cell {
-            background-color: #ecfeff;
+            background-color: #f0fdfa;
             padding: 0.75rem;
             border-radius: 0.5rem;
             font-size: 0.85rem;
-            color: #164e63;
+            color: #134e4a;
             line-height: 1.6;
-            border-left: 3px solid #0891b2;
+            border-left: 3px solid #0d9488;
         }
 
         /* Self-evaluation buttons */
         .eval-btn {
             padding: 1rem 1.5rem;
-            border: 3px solid #a5f3fc;
+            border: 3px solid #99f6e4;
             border-radius: 1rem;
-            background: #ecfeff;
+            background: #f0fdfa;
             cursor: pointer;
             transition: all 0.25s ease;
             text-align: center;
@@ -130,8 +130,8 @@
             box-shadow: 0 6px 20px rgba(8, 145, 178, 0.2);
         }
         .eval-btn.selected {
-            border-color: #0891b2;
-            background: linear-gradient(135deg, #ecfeff, #cffafe);
+            border-color: #0d9488;
+            background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(8, 145, 178, 0.3);
         }
@@ -176,7 +176,7 @@
         .code-block .keyword { color: #c084fc; }
         .code-block .string { color: #34d399; }
         .code-block .comment { color: #64748b; font-style: italic; }
-        .code-block .func { color: #38bdf8; }
+        .code-block .func { color: #34d399; }
         .code-block .op { color: #fbbf24; }
         .code-block .num { color: #fb923c; }
 
@@ -199,7 +199,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
         .rle-cell.active {
-            border-color: #0891b2;
+            border-color: #0d9488;
         }
         .rle-color-btn {
             width: 32px;
@@ -214,7 +214,7 @@
         }
         .rle-color-btn.selected {
             border-color: #0f172a;
-            box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0891b2;
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0d9488;
         }
         .rle-encoding-tag {
             display: inline-flex;
@@ -249,7 +249,7 @@
         }
         .drop-zone {
             min-height: 60px;
-            border: 2.5px dashed #a5f3fc;
+            border: 2.5px dashed #99f6e4;
             border-radius: 1rem;
             padding: 0.75rem;
             transition: all 0.2s ease;
@@ -259,8 +259,8 @@
             align-items: center;
         }
         .drop-zone.drag-over {
-            border-color: #0891b2;
-            background-color: #ecfeff;
+            border-color: #0d9488;
+            background-color: #f0fdfa;
             box-shadow: inset 0 0 0 2px rgba(8,145,178,0.1);
         }
         .drop-zone .placeholder-text {
@@ -333,7 +333,7 @@
             font-weight: 500;
         }
         .quiz-option:hover {
-            border-color: #a5f3fc;
+            border-color: #99f6e4;
             background-color: #f0fdfa;
             transform: translateX(4px);
         }
@@ -377,11 +377,11 @@
                 min-height: 3rem !important;
             }
             .eval-btn.selected {
-                border: 3px solid #0e7490 !important;
-                background: #ecfeff !important;
+                border: 3px solid #0f766e !important;
+                background: #f0fdfa !important;
             }
         .hero-section {
-                background: #0e7490 !important;
+                background: #0f766e !important;
                 color: white !important;
             }
             nav, .action-buttons {
@@ -392,7 +392,7 @@
                 page-break-inside: avoid;
             }
 
-            .hero-gradient { background: #0e7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .hero-gradient { background: #0f766e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
 
         /* Scrollbar styling */
@@ -400,11 +400,11 @@
             height: 6px;
         }
         .table-wrapper::-webkit-scrollbar-track {
-            background: #ecfeff;
+            background: #f0fdfa;
             border-radius: 3px;
         }
         .table-wrapper::-webkit-scrollbar-thumb {
-            background: #22d3ee;
+            background: #2dd4bf;
             border-radius: 3px;
         }
 
@@ -420,11 +420,11 @@
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-14">
-                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-cyan-700 transition-colors text-sm font-medium">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-teal-700 transition-colors text-sm font-medium">
                     <i class="fas fa-arrow-left"></i>
                     <span>전체 단원</span>
                 </a>
-                <span class="bg-cyan-50 text-cyan-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-cyan-100">
+                <span class="bg-teal-50 text-teal-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-teal-100">
                     II. 데이터
                 </span>
             </div>
@@ -435,7 +435,7 @@
     <div class="bg-white border-b border-gray-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
             <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
-                <a href="../../../index.html" class="hover:text-cyan-600 transition-colors">
+                <a href="../../../index.html" class="hover:text-teal-600 transition-colors">
                     <i class="fas fa-home mr-1"></i>전체
                 </a>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
@@ -443,7 +443,7 @@
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
                 <span class="text-gray-600 font-medium">디지털 데이터 압축</span>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
-                <span class="text-cyan-700 font-semibold">선택활동</span>
+                <span class="text-teal-700 font-semibold">선택활동</span>
             </nav>
         </div>
     </div>
@@ -459,23 +459,23 @@
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
                     선택활동
                 </h1>
-                <p class="text-lg sm:text-xl text-cyan-200 font-medium mb-4">
+                <p class="text-lg sm:text-xl text-teal-200 font-medium mb-4">
                     데이터를 압축하여 효율성 분석하기
                 </p>
-                <p class="text-cyan-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                <p class="text-teal-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
                     런-렝스 인코딩, 이미지 변환, 오디오 변환을 직접 체험하고 압축 효율을 분석해 봅시다
                 </p>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-layer-group text-cyan-300"></i>
+                        <i class="fas fa-layer-group text-teal-300"></i>
                         <span>활동 4개</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-clock text-cyan-300"></i>
+                        <i class="fas fa-clock text-teal-300"></i>
                         <span>소요 시간: 약 40분</span>
                     </div>
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                        <i class="fas fa-hand-pointer text-cyan-300"></i>
+                        <i class="fas fa-hand-pointer text-teal-300"></i>
                         <span>인터랙티브 활동</span>
                     </div>
                 </div>
@@ -506,14 +506,14 @@
         <!-- ============================================ -->
         <!-- Student Info Section -->
         <!-- ============================================ -->
-        <section class="bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
-            <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-4 flex items-center gap-3">
+        <section class="bg-white rounded-2xl shadow-md border border-teal-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-teal-600 to-emerald-600 px-6 py-4 flex items-center gap-3">
                 <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0">
                     <i class="fas fa-user-pen"></i>
                 </div>
                 <div>
                     <h2 class="text-lg font-bold text-white">학생 정보</h2>
-                    <p class="text-cyan-100 text-xs">활동 제출을 위해 정보를 입력하세요</p>
+                    <p class="text-teal-100 text-xs">활동 제출을 위해 정보를 입력하세요</p>
                 </div>
             </div>
             <div class="p-6 space-y-5">
@@ -546,22 +546,22 @@
         <!-- ============================================ -->
         <!-- Activity 1: Interactive RLE Simulator -->
         <!-- ============================================ -->
-        <section class="activity-card bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
-            <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-5 flex items-center gap-4">
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-teal-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-teal-600 to-emerald-600 px-6 py-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                     1
                 </div>
                 <div>
                     <h2 class="text-xl md:text-2xl font-bold text-white">런-렝스 인코딩(RLE) 시뮬레이터</h2>
-                    <p class="text-cyan-100 text-sm mt-0.5"><i class="fas fa-th mr-1"></i> 셀을 클릭하여 그림을 그리고 압축 결과를 확인하세요</p>
+                    <p class="text-teal-100 text-sm mt-0.5"><i class="fas fa-th mr-1"></i> 셀을 클릭하여 그림을 그리고 압축 결과를 확인하세요</p>
                 </div>
             </div>
 
             <div class="p-6 md:p-8 space-y-6">
                 <!-- Description -->
-                <div class="bg-cyan-50 border-l-4 border-cyan-400 rounded-r-lg p-4 md:p-5">
+                <div class="bg-teal-50 border-l-4 border-teal-400 rounded-r-lg p-4 md:p-5">
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base">
-                        <i class="fas fa-info-circle text-cyan-500 mr-1"></i>
+                        <i class="fas fa-info-circle text-teal-500 mr-1"></i>
                         아래 격자판에서 색을 선택하고 셀을 클릭하여 그림을 그려 보세요.
                         오른쪽에 RLE(런-렝스 인코딩) 결과가 실시간으로 생성됩니다.
                         같은 색이 연속될수록 압축 효율이 높아집니다.
@@ -575,14 +575,14 @@
                         <span class="text-sm font-semibold text-gray-700"><i class="fas fa-palette mr-1"></i> 색상 선택:</span>
                         <div class="flex gap-2" id="rleColorPalette">
                             <button class="rle-color-btn selected" data-color="#ffffff" style="background:#ffffff; border-color:#e2e8f0;" title="흰색"></button>
-                            <button class="rle-color-btn" data-color="#0891b2" style="background:#0891b2;" title="청록"></button>
+                            <button class="rle-color-btn" data-color="#0d9488" style="background:#0d9488;" title="청록"></button>
                             <button class="rle-color-btn" data-color="#f59e0b" style="background:#f59e0b;" title="주황"></button>
                             <button class="rle-color-btn" data-color="#ef4444" style="background:#ef4444;" title="빨강"></button>
                             <button class="rle-color-btn" data-color="#8b5cf6" style="background:#8b5cf6;" title="보라"></button>
                             <button class="rle-color-btn" data-color="#10b981" style="background:#10b981;" title="초록"></button>
                             <button class="rle-color-btn" data-color="#1e293b" style="background:#1e293b;" title="검정"></button>
                         </div>
-                        <button onclick="rlePresetPattern()" class="ml-auto text-xs bg-cyan-100 hover:bg-cyan-200 text-cyan-700 font-semibold px-3 py-1.5 rounded-lg transition-colors">
+                        <button onclick="rlePresetPattern()" class="ml-auto text-xs bg-teal-100 hover:bg-teal-200 text-teal-700 font-semibold px-3 py-1.5 rounded-lg transition-colors">
                             <i class="fas fa-magic mr-1"></i> 예시 패턴
                         </button>
                         <button onclick="rleClearGrid()" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold px-3 py-1.5 rounded-lg transition-colors">
@@ -610,9 +610,9 @@
 
                             <!-- Compression Stats -->
                             <div class="mt-3 grid grid-cols-3 gap-2">
-                                <div class="bg-cyan-50 rounded-lg p-3 text-center border border-cyan-100">
-                                    <p class="text-[10px] text-cyan-600 font-semibold mb-1">원본 크기</p>
-                                    <p class="text-lg font-bold text-cyan-900" id="rleOrigSize">100</p>
+                                <div class="bg-teal-50 rounded-lg p-3 text-center border border-teal-100">
+                                    <p class="text-[10px] text-teal-600 font-semibold mb-1">원본 크기</p>
+                                    <p class="text-lg font-bold text-teal-900" id="rleOrigSize">100</p>
                                     <p class="text-[10px] text-gray-400">셀</p>
                                 </div>
                                 <div class="bg-emerald-50 rounded-lg p-3 text-center border border-emerald-100">
@@ -633,7 +633,7 @@
                 <!-- Python Code Reference -->
                 <div class="mt-6">
                     <div class="flex items-center gap-2 mb-3">
-                        <span class="inline-flex items-center gap-1.5 bg-cyan-100 text-cyan-800 text-xs font-bold px-3 py-1 rounded-full">
+                        <span class="inline-flex items-center gap-1.5 bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full">
                             <i class="fas fa-book-open"></i> 참고
                         </span>
                         <span class="text-sm font-semibold text-gray-700">런-렝스 인코딩 알고리즘으로 문자열 압축하기</span>
@@ -667,21 +667,21 @@
         <!-- ============================================ -->
         <!-- Activity 2: Drag & Drop Compression Matching -->
         <!-- ============================================ -->
-        <section class="activity-card bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
-            <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-5 flex items-center gap-4">
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-teal-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-teal-600 to-emerald-600 px-6 py-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                     2
                 </div>
                 <div>
                     <h2 class="text-xl md:text-2xl font-bold text-white">압축 방식 분류하기</h2>
-                    <p class="text-cyan-100 text-sm mt-0.5"><i class="fas fa-hand-pointer mr-1"></i> 파일 형식을 올바른 압축 유형으로 드래그하세요</p>
+                    <p class="text-teal-100 text-sm mt-0.5"><i class="fas fa-hand-pointer mr-1"></i> 파일 형식을 올바른 압축 유형으로 드래그하세요</p>
                 </div>
             </div>
 
             <div class="p-6 md:p-8 space-y-6">
-                <div class="bg-cyan-50 border-l-4 border-cyan-400 rounded-r-lg p-4 md:p-5">
+                <div class="bg-teal-50 border-l-4 border-teal-400 rounded-r-lg p-4 md:p-5">
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base">
-                        <i class="fas fa-info-circle text-cyan-500 mr-1"></i>
+                        <i class="fas fa-info-circle text-teal-500 mr-1"></i>
                         아래 파일 형식들을 <strong>손실 압축</strong> 또는 <strong>비손실 압축</strong> 영역으로 드래그하세요.
                         손실 압축은 데이터 일부를 버려 크기를 줄이고, 비손실 압축은 원본을 완벽하게 복원할 수 있습니다.
                     </p>
@@ -691,7 +691,7 @@
                 <div class="text-center">
                     <p class="text-xs font-semibold text-gray-500 mb-3"><i class="fas fa-grip-dots mr-1"></i> 파일 형식 (드래그하세요)</p>
                     <div id="dragSource" class="flex flex-wrap justify-center gap-3 min-h-[48px] p-3 bg-gray-50 rounded-xl border border-gray-200">
-                        <div class="drag-item bg-blue-100 text-blue-800" draggable="true" data-format="JPG" data-answer="lossy">
+                        <div class="drag-item bg-emerald-100 text-emerald-800" draggable="true" data-format="JPG" data-answer="lossy">
                             <i class="fas fa-file-image mr-1"></i> JPG
                         </div>
                         <div class="drag-item bg-emerald-100 text-emerald-800" draggable="true" data-format="PNG" data-answer="lossless">
@@ -742,7 +742,7 @@
 
                 <!-- Check / Reset buttons -->
                 <div class="flex items-center gap-3 justify-center">
-                    <button onclick="checkDragDrop()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-xl font-semibold text-sm hover:from-cyan-700 hover:to-blue-700 transition-all shadow-md">
+                    <button onclick="checkDragDrop()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-emerald-700 transition-all shadow-md">
                         <i class="fas fa-check"></i> 정답 확인
                     </button>
                     <button onclick="resetDragDrop()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-semibold text-sm hover:bg-gray-200 transition-all">
@@ -760,21 +760,21 @@
         <!-- ============================================ -->
         <!-- Activity 3: Interactive Compression Comparison -->
         <!-- ============================================ -->
-        <section class="activity-card bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
-            <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-5 flex items-center gap-4">
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-teal-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-teal-600 to-emerald-600 px-6 py-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                     3
                 </div>
                 <div>
                     <h2 class="text-xl md:text-2xl font-bold text-white">압축 효율 비교 차트</h2>
-                    <p class="text-cyan-100 text-sm mt-0.5"><i class="fas fa-chart-bar mr-1"></i> 슬라이더로 품질을 조절하고 파일 크기 변화를 확인하세요</p>
+                    <p class="text-teal-100 text-sm mt-0.5"><i class="fas fa-chart-bar mr-1"></i> 슬라이더로 품질을 조절하고 파일 크기 변화를 확인하세요</p>
                 </div>
             </div>
 
             <div class="p-6 md:p-8 space-y-6">
-                <div class="bg-cyan-50 border-l-4 border-cyan-400 rounded-r-lg p-4 md:p-5">
+                <div class="bg-teal-50 border-l-4 border-teal-400 rounded-r-lg p-4 md:p-5">
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base">
-                        <i class="fas fa-info-circle text-cyan-500 mr-1"></i>
+                        <i class="fas fa-info-circle text-teal-500 mr-1"></i>
                         이미지와 오디오 파일의 압축 품질을 조절하면 파일 크기가 어떻게 변하는지 시각적으로 확인해 보세요.
                         품질이 낮을수록 파일 크기는 줄어들지만, 손실 압축에서는 품질이 떨어집니다.
                     </p>
@@ -785,13 +785,13 @@
                     <!-- Image Quality Slider -->
                     <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
                         <div class="flex items-center gap-2 mb-3">
-                            <i class="fas fa-image text-blue-500"></i>
+                            <i class="fas fa-image text-emerald-500"></i>
                             <span class="text-sm font-bold text-gray-700">이미지 JPG 품질</span>
                         </div>
                         <input type="range" id="imgQualitySlider" min="10" max="100" value="80" class="w-full accent-blue-500 cursor-pointer" oninput="updateChart()">
                         <div class="flex justify-between text-xs text-gray-500 mt-1">
                             <span>10%</span>
-                            <span class="font-bold text-blue-600" id="imgQualityLabel">80%</span>
+                            <span class="font-bold text-emerald-600" id="imgQualityLabel">80%</span>
                             <span>100%</span>
                         </div>
                     </div>
@@ -817,7 +817,7 @@
                             <span class="w-3 h-3 rounded bg-slate-300"></span> 원본 크기
                         </span>
                         <span class="flex items-center gap-1.5">
-                            <span class="w-3 h-3 rounded bg-blue-500"></span> 압축 후 크기
+                            <span class="w-3 h-3 rounded bg-emerald-500"></span> 압축 후 크기
                         </span>
                     </div>
                     <div class="bar-chart-container" id="barChart">
@@ -827,11 +827,11 @@
                                 <div class="bar bg-slate-300" id="barBmpOrig" style="height: 100%;">
                                     <span class="bar-label text-slate-600" id="lblBmpOrig">236KB</span>
                                 </div>
-                                <div class="bar bg-blue-500" id="barBmpComp" style="height: 9%;">
-                                    <span class="bar-label text-blue-700" id="lblBmpComp">21KB</span>
+                                <div class="bar bg-emerald-500" id="barBmpComp" style="height: 9%;">
+                                    <span class="bar-label text-emerald-700" id="lblBmpComp">21KB</span>
                                 </div>
                             </div>
-                            <p class="bar-group-label"><i class="fas fa-image text-blue-400 mr-1"></i>BMP&rarr;JPG</p>
+                            <p class="bar-group-label"><i class="fas fa-image text-emerald-400 mr-1"></i>BMP&rarr;JPG</p>
                         </div>
                         <!-- PNG (lossless) -->
                         <div class="bar-group">
@@ -896,37 +896,37 @@
         <!-- ============================================ -->
         <!-- Activity 4: Click-based Quiz -->
         <!-- ============================================ -->
-        <section class="activity-card bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
-            <div class="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-5 flex items-center gap-4">
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-teal-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-teal-600 to-emerald-600 px-6 py-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                     4
                 </div>
                 <div>
                     <h2 class="text-xl md:text-2xl font-bold text-white">상황별 압축 형식 퀴즈</h2>
-                    <p class="text-cyan-100 text-sm mt-0.5"><i class="fas fa-question-circle mr-1"></i> 각 상황에 가장 적합한 압축 형식을 선택하세요</p>
+                    <p class="text-teal-100 text-sm mt-0.5"><i class="fas fa-question-circle mr-1"></i> 각 상황에 가장 적합한 압축 형식을 선택하세요</p>
                 </div>
             </div>
 
             <div class="p-6 md:p-8 space-y-6">
-                <div class="bg-cyan-50 border-l-4 border-cyan-400 rounded-r-lg p-4 md:p-5">
+                <div class="bg-teal-50 border-l-4 border-teal-400 rounded-r-lg p-4 md:p-5">
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base">
-                        <i class="fas fa-info-circle text-cyan-500 mr-1"></i>
+                        <i class="fas fa-info-circle text-teal-500 mr-1"></i>
                         다양한 상황에서 어떤 압축 형식이 가장 적합한지 선택해 보세요. 각 문제를 클릭하면 정답 여부와 해설을 바로 확인할 수 있습니다.
                     </p>
                 </div>
 
                 <!-- Quiz Score -->
                 <div class="flex items-center justify-center gap-3">
-                    <div class="bg-cyan-50 border border-cyan-200 rounded-full px-5 py-2 flex items-center gap-2">
+                    <div class="bg-teal-50 border border-teal-200 rounded-full px-5 py-2 flex items-center gap-2">
                         <i class="fas fa-trophy text-amber-500"></i>
-                        <span class="text-sm font-bold text-cyan-800">점수: <span id="quizScore">0</span> / <span id="quizTotal">5</span></span>
+                        <span class="text-sm font-bold text-teal-800">점수: <span id="quizScore">0</span> / <span id="quizTotal">5</span></span>
                     </div>
                 </div>
 
                 <!-- Q1 -->
                 <div class="quiz-item bg-gray-50 rounded-xl p-5 border border-gray-200" data-quiz="q1">
                     <div class="flex items-start gap-3 mb-4">
-                        <span class="flex-shrink-0 w-7 h-7 bg-cyan-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">1</span>
+                        <span class="flex-shrink-0 w-7 h-7 bg-teal-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">1</span>
                         <p class="text-sm font-semibold text-gray-800">의료 영상(X-ray, MRI)을 저장해야 합니다. 어떤 형식이 가장 적합할까요?</p>
                     </div>
                     <div class="space-y-2 ml-10">
@@ -942,7 +942,7 @@
                 <!-- Q2 -->
                 <div class="quiz-item bg-gray-50 rounded-xl p-5 border border-gray-200" data-quiz="q2">
                     <div class="flex items-start gap-3 mb-4">
-                        <span class="flex-shrink-0 w-7 h-7 bg-cyan-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">2</span>
+                        <span class="flex-shrink-0 w-7 h-7 bg-teal-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">2</span>
                         <p class="text-sm font-semibold text-gray-800">SNS에 여행 사진을 올리려고 합니다. 어떤 형식이 가장 적합할까요?</p>
                     </div>
                     <div class="space-y-2 ml-10">
@@ -958,7 +958,7 @@
                 <!-- Q3 -->
                 <div class="quiz-item bg-gray-50 rounded-xl p-5 border border-gray-200" data-quiz="q3">
                     <div class="flex items-start gap-3 mb-4">
-                        <span class="flex-shrink-0 w-7 h-7 bg-cyan-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">3</span>
+                        <span class="flex-shrink-0 w-7 h-7 bg-teal-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">3</span>
                         <p class="text-sm font-semibold text-gray-800">스마트폰에서 음악을 스트리밍으로 듣고 싶습니다. 어떤 형식이 가장 적합할까요?</p>
                     </div>
                     <div class="space-y-2 ml-10">
@@ -974,7 +974,7 @@
                 <!-- Q4 -->
                 <div class="quiz-item bg-gray-50 rounded-xl p-5 border border-gray-200" data-quiz="q4">
                     <div class="flex items-start gap-3 mb-4">
-                        <span class="flex-shrink-0 w-7 h-7 bg-cyan-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">4</span>
+                        <span class="flex-shrink-0 w-7 h-7 bg-teal-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">4</span>
                         <p class="text-sm font-semibold text-gray-800">음악 녹음실에서 마스터링 작업용 음원을 저장하려 합니다. 어떤 형식이 적합할까요?</p>
                     </div>
                     <div class="space-y-2 ml-10">
@@ -990,7 +990,7 @@
                 <!-- Q5 -->
                 <div class="quiz-item bg-gray-50 rounded-xl p-5 border border-gray-200" data-quiz="q5">
                     <div class="flex items-start gap-3 mb-4">
-                        <span class="flex-shrink-0 w-7 h-7 bg-cyan-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">5</span>
+                        <span class="flex-shrink-0 w-7 h-7 bg-teal-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">5</span>
                         <p class="text-sm font-semibold text-gray-800">런-렝스 인코딩(RLE)이 가장 효과적인 데이터는 무엇일까요?</p>
                     </div>
                     <div class="space-y-2 ml-10">
@@ -1015,21 +1015,21 @@
         <!-- ============================================ -->
         <!-- 스스로 평가하기 -->
         <!-- ============================================ -->
-        <section class="activity-card bg-white rounded-2xl shadow-md border border-cyan-100 overflow-hidden">
-            <div class="bg-gradient-to-r from-cyan-700 to-blue-700 px-6 py-5 flex items-center gap-4">
+        <section class="activity-card bg-white rounded-2xl shadow-md border border-teal-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-teal-700 to-emerald-700 px-6 py-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white flex-shrink-0">
                     <i class="fas fa-clipboard-check text-xl"></i>
                 </div>
                 <div>
                     <h2 class="text-xl md:text-2xl font-bold text-white">스스로 평가하기</h2>
-                    <p class="text-cyan-200 text-sm mt-0.5">자기 평가</p>
+                    <p class="text-teal-200 text-sm mt-0.5">자기 평가</p>
                 </div>
             </div>
 
             <div class="p-6 md:p-8">
-                <div class="bg-cyan-50 rounded-xl p-5 md:p-6 mb-8 text-center">
-                    <p class="text-lg md:text-xl font-semibold text-cyan-900 leading-relaxed">
-                        <i class="fas fa-question-circle text-cyan-500 mr-2"></i>
+                <div class="bg-teal-50 rounded-xl p-5 md:p-6 mb-8 text-center">
+                    <p class="text-lg md:text-xl font-semibold text-teal-900 leading-relaxed">
+                        <i class="fas fa-question-circle text-teal-500 mr-2"></i>
                         문자열, 이미지, 소리를 압축하고,<br class="hidden md:inline">
                         압축 효율을 분석할 수 있는가?
                     </p>
@@ -1039,21 +1039,21 @@
                     <button type="button" class="eval-btn" data-value="잘함" onclick="selectEval(this)">
                         <input type="radio" name="selfEval" value="잘함" class="hidden">
                         <span class="emoji">&#128522;</span>
-                        <span class="text-sm font-semibold text-cyan-800">잘함</span>
+                        <span class="text-sm font-semibold text-teal-800">잘함</span>
                     </button>
                     <button type="button" class="eval-btn" data-value="보통" onclick="selectEval(this)">
                         <input type="radio" name="selfEval" value="보통" class="hidden">
                         <span class="emoji">&#128528;</span>
-                        <span class="text-sm font-semibold text-cyan-800">보통</span>
+                        <span class="text-sm font-semibold text-teal-800">보통</span>
                     </button>
                     <button type="button" class="eval-btn" data-value="노력필요" onclick="selectEval(this)">
                         <input type="radio" name="selfEval" value="노력필요" class="hidden">
                         <span class="emoji">&#128533;</span>
-                        <span class="text-sm font-semibold text-cyan-800">노력필요</span>
+                        <span class="text-sm font-semibold text-teal-800">노력필요</span>
                     </button>
                 </div>
 
-                <div id="evalResult" class="mt-6 text-center text-sm text-cyan-500 hidden">
+                <div id="evalResult" class="mt-6 text-center text-sm text-teal-500 hidden">
                     <i class="fas fa-check-circle mr-1"></i>
                     <span id="evalResultText"></span>
                 </div>
@@ -1064,15 +1064,15 @@
         <!-- Action Buttons -->
         <!-- ============================================ -->
         <div class="action-buttons flex flex-wrap justify-center gap-4 no-print">
-            <button onclick="resetAll()" class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-cyan-300 text-cyan-700 rounded-xl font-semibold text-sm hover:bg-cyan-50 hover:border-cyan-400 transition-all shadow-sm">
+            <button onclick="resetAll()" class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-teal-300 text-teal-700 rounded-xl font-semibold text-sm hover:bg-teal-50 hover:border-teal-400 transition-all shadow-sm">
                 <i class="fas fa-rotate-left"></i>
                 초기화
             </button>
-            <button onclick="printPage()" class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-cyan-300 text-cyan-700 rounded-xl font-semibold text-sm hover:bg-cyan-50 hover:border-cyan-400 transition-all shadow-sm">
+            <button onclick="printPage()" class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-teal-300 text-teal-700 rounded-xl font-semibold text-sm hover:bg-teal-50 hover:border-teal-400 transition-all shadow-sm">
                 <i class="fas fa-print"></i>
                 인쇄하기
             </button>
-            <button id="submitBtn" onclick="submitData()" class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-xl font-semibold text-sm hover:from-cyan-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl">
+            <button id="submitBtn" onclick="submitData()" class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl">
                 <i class="fas fa-paper-plane" id="submitIcon"></i>
                 <span id="submitText">제출하기</span>
             </button>
@@ -1152,7 +1152,7 @@
 
         var COLOR_LABELS = {
             '#ffffff': 'W',
-            '#0891b2': 'C',
+            '#0d9488': 'C',
             '#f59e0b': 'O',
             '#ef4444': 'R',
             '#8b5cf6': 'P',
@@ -1161,7 +1161,7 @@
         };
         var COLOR_BG_CLASS = {
             '#ffffff': 'background:#f8fafc; color:#475569;',
-            '#0891b2': 'background:#ecfeff; color:#0e7490;',
+            '#0d9488': 'background:#f0fdfa; color:#0f766e;',
             '#f59e0b': 'background:#fffbeb; color:#92400e;',
             '#ef4444': 'background:#fef2f2; color:#991b1b;',
             '#8b5cf6': 'background:#f5f3ff; color:#5b21b6;',
@@ -1230,16 +1230,16 @@
             // Draw a simple pattern: cross shape in cyan
             rleClearGrid();
             var pattern = [
-                ['#ffffff','#ffffff','#ffffff','#0891b2','#0891b2','#0891b2','#0891b2','#ffffff','#ffffff','#ffffff'],
-                ['#ffffff','#ffffff','#ffffff','#0891b2','#0891b2','#0891b2','#0891b2','#ffffff','#ffffff','#ffffff'],
-                ['#ffffff','#ffffff','#ffffff','#0891b2','#0891b2','#0891b2','#0891b2','#ffffff','#ffffff','#ffffff'],
-                ['#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2'],
-                ['#0891b2','#0891b2','#0891b2','#0891b2','#f59e0b','#f59e0b','#0891b2','#0891b2','#0891b2','#0891b2'],
-                ['#0891b2','#0891b2','#0891b2','#0891b2','#f59e0b','#f59e0b','#0891b2','#0891b2','#0891b2','#0891b2'],
-                ['#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2','#0891b2'],
-                ['#ffffff','#ffffff','#ffffff','#0891b2','#0891b2','#0891b2','#0891b2','#ffffff','#ffffff','#ffffff'],
-                ['#ffffff','#ffffff','#ffffff','#0891b2','#0891b2','#0891b2','#0891b2','#ffffff','#ffffff','#ffffff'],
-                ['#ffffff','#ffffff','#ffffff','#0891b2','#0891b2','#0891b2','#0891b2','#ffffff','#ffffff','#ffffff'],
+                ['#ffffff','#ffffff','#ffffff','#0d9488','#0d9488','#0d9488','#0d9488','#ffffff','#ffffff','#ffffff'],
+                ['#ffffff','#ffffff','#ffffff','#0d9488','#0d9488','#0d9488','#0d9488','#ffffff','#ffffff','#ffffff'],
+                ['#ffffff','#ffffff','#ffffff','#0d9488','#0d9488','#0d9488','#0d9488','#ffffff','#ffffff','#ffffff'],
+                ['#0d9488','#0d9488','#0d9488','#0d9488','#0d9488','#0d9488','#0d9488','#0d9488','#0d9488','#0d9488'],
+                ['#0d9488','#0d9488','#0d9488','#0d9488','#f59e0b','#f59e0b','#0d9488','#0d9488','#0d9488','#0d9488'],
+                ['#0d9488','#0d9488','#0d9488','#0d9488','#f59e0b','#f59e0b','#0d9488','#0d9488','#0d9488','#0d9488'],
+                ['#0d9488','#0d9488','#0d9488','#0d9488','#0d9488','#0d9488','#0d9488','#0d9488','#0d9488','#0d9488'],
+                ['#ffffff','#ffffff','#ffffff','#0d9488','#0d9488','#0d9488','#0d9488','#ffffff','#ffffff','#ffffff'],
+                ['#ffffff','#ffffff','#ffffff','#0d9488','#0d9488','#0d9488','#0d9488','#ffffff','#ffffff','#ffffff'],
+                ['#ffffff','#ffffff','#ffffff','#0d9488','#0d9488','#0d9488','#0d9488','#ffffff','#ffffff','#ffffff'],
             ];
             var cells = document.querySelectorAll('.rle-cell');
             for (var r = 0; r < RLE_ROWS; r++) {
@@ -1617,8 +1617,8 @@
                     icon.className = 'fas fa-circle-check';
                     text.textContent = '제출 완료!';
                     btn.style.opacity = '1';
-                    btn.classList.replace('from-cyan-600', 'from-green-600');
-                    btn.classList.replace('to-blue-600', 'to-green-600');
+                    btn.classList.replace('from-teal-600', 'from-green-600');
+                    btn.classList.replace('to-emerald-600', 'to-green-600');
                     resultDiv.classList.remove('hidden');
                     successDiv.classList.remove('hidden');
                     alert('제출이 완료되었습니다!');
@@ -1673,8 +1673,8 @@
             if (submitBtn) {
                 submitBtn.disabled = false;
                 submitBtn.style.opacity = '1';
-                submitBtn.classList.replace('from-green-600', 'from-cyan-600');
-                submitBtn.classList.replace('to-green-600', 'to-blue-600');
+                submitBtn.classList.replace('from-green-600', 'from-teal-600');
+                submitBtn.classList.replace('to-green-600', 'to-emerald-600');
                 document.getElementById('submitIcon').className = 'fas fa-paper-plane';
                 document.getElementById('submitText').textContent = '제출하기';
                 document.getElementById('submitResult').classList.add('hidden');

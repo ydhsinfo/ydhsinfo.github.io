@@ -18,28 +18,28 @@
                     },
                     colors: {
                         primary: {
-                            50: '#ecfeff',
-                            100: '#cffafe',
-                            200: '#a5f3fc',
-                            300: '#67e8f9',
-                            400: '#22d3ee',
-                            500: '#06b6d4',
-                            600: '#0891b2',
-                            700: '#0e7490',
-                            800: '#155e75',
-                            900: '#164e63',
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
                         },
                         accent: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            200: '#bfdbfe',
-                            300: '#93c5fd',
-                            400: '#60a5fa',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#0284c7',
-                            800: '#0369a1',
-                            900: '#1e3a8a',
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#059669',
+                            800: '#047857',
+                            900: '#064e3b',
                         }
                     }
                 }
@@ -50,7 +50,7 @@
         * { font-family: 'Noto Sans KR', sans-serif; }
 
         .hero-gradient {
-            background: linear-gradient(135deg, #0e7490 0%, #0891b2 30%, #0284c7 100%);
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 30%, #047857 100%);
         }
         /* Hero SVG animations */
         @keyframes heroFloat {
@@ -104,7 +104,7 @@
 
         .section-divider {
             height: 4px;
-            background: linear-gradient(90deg, #0891b2, #0284c7, #0369a1);
+            background: linear-gradient(90deg, #0d9488, #059669, #047857);
             border-radius: 2px;
         }
 
@@ -155,7 +155,7 @@
 
         .compress-char.highlight {
             transform: scale(1.15);
-            border-color: #0891b2;
+            border-color: #0d9488;
             box-shadow: 0 0 12px rgba(8,145,178,0.4);
         }
 
@@ -189,7 +189,7 @@
 
         /* Step indicator */
         .step-active {
-            background: linear-gradient(135deg, #0891b2, #0284c7);
+            background: linear-gradient(135deg, #0d9488, #059669);
             color: white;
         }
 
@@ -204,7 +204,7 @@
             section { break-inside: avoid; }
             .print-break { page-break-before: always; }
         
-            .hero-gradient { background: #0e7490 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .hero-gradient { background: #0f766e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
 
         @media (max-width: 768px) {
@@ -224,11 +224,11 @@
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-14">
-                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-cyan-700 transition-colors text-sm font-medium">
+                <a href="../../../index.html" class="flex items-center gap-2 text-gray-600 hover:text-teal-700 transition-colors text-sm font-medium">
                     <i class="fas fa-arrow-left"></i>
                     <span>전체 단원</span>
                 </a>
-                <span class="bg-cyan-50 text-cyan-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-cyan-100">
+                <span class="bg-teal-50 text-teal-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-teal-100">
                     II. 데이터
                 </span>
             </div>
@@ -239,7 +239,7 @@
     <div class="bg-white border-b border-gray-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
             <nav class="flex items-center text-xs text-gray-500 gap-2 flex-wrap">
-                <a href="../../../index.html" class="hover:text-cyan-600 transition-colors">
+                <a href="../../../index.html" class="hover:text-teal-600 transition-colors">
                     <i class="fas fa-home mr-1"></i>전체
                 </a>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
@@ -247,7 +247,7 @@
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
                 <span class="text-gray-600 font-medium">디지털 데이터 압축</span>
                 <i class="fas fa-chevron-right text-[10px] text-gray-300"></i>
-                <span class="text-cyan-700 font-semibold">문자열 압축</span>
+                <span class="text-teal-700 font-semibold">문자열 압축</span>
             </nav>
         </div>
     </div>
@@ -263,7 +263,7 @@
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-3 leading-tight">
                     문자열 압축
                 </h1>
-                <p class="text-cyan-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
+                <p class="text-teal-100 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl">
                     런-렝스 인코딩과 렘펠-지브 인코딩을 통해 문자열 데이터를 효율적으로 압축하는 원리를 이해합니다.
                 </p>
                 </div>
@@ -300,7 +300,7 @@
 
             <!-- Concept explanation card -->
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover mb-8">
-                <div class="bg-gradient-to-r from-primary-50 to-cyan-50 px-6 py-4 border-b border-primary-100">
+                <div class="bg-gradient-to-r from-primary-50 to-teal-50 px-6 py-4 border-b border-primary-100">
                     <h3 class="font-bold text-primary-800 flex items-center gap-2">
                         <i class="fas fa-lightbulb text-primary-500"></i>
                         핵심 개념
@@ -330,7 +330,7 @@
 
             <!-- Visual Example: Basic RLE -->
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover mb-8 fade-in">
-                <div class="bg-gradient-to-r from-primary-50 to-cyan-50 px-6 py-4 border-b border-primary-100">
+                <div class="bg-gradient-to-r from-primary-50 to-teal-50 px-6 py-4 border-b border-primary-100">
                     <h3 class="font-bold text-primary-800 flex items-center gap-2">
                         <i class="fas fa-eye text-primary-500"></i>
                         예시: 기본 런-렝스 인코딩
@@ -463,7 +463,7 @@
                                 <div class="flex gap-1">
                                     <span class="compress-char bg-white text-gray-700 text-sm border border-gray-200">A</span>
                                     <span class="compress-char bg-white text-gray-700 text-sm border border-gray-200">B</span>
-                                    <span class="compress-char bg-blue-100 text-blue-700 text-sm border border-blue-200">3</span>
+                                    <span class="compress-char bg-emerald-100 text-emerald-700 text-sm border border-emerald-200">3</span>
                                     <span class="compress-char bg-red-100 text-red-700 text-sm border border-red-200">A</span>
                                     <span class="compress-char bg-red-100 text-red-700 text-sm border border-red-200">A</span>
                                     <span class="compress-char bg-red-100 text-red-700 text-sm border border-red-200">A</span>
@@ -479,7 +479,7 @@
                                 <div class="flex gap-1">
                                     <span class="compress-char bg-white text-gray-700 text-sm border border-gray-200">A</span>
                                     <span class="compress-char bg-white text-gray-700 text-sm border border-gray-200">B</span>
-                                    <span class="compress-char bg-blue-100 text-blue-700 text-sm border border-blue-200">3</span>
+                                    <span class="compress-char bg-emerald-100 text-emerald-700 text-sm border border-emerald-200">3</span>
                                     <span class="compress-char bg-orange-200 text-orange-800 text-sm border border-orange-300 font-black">*</span>
                                     <span class="compress-char bg-red-200 text-red-800 text-sm border border-red-300 font-black">4</span>
                                     <span class="compress-char bg-red-100 text-red-700 text-sm border border-red-200">A</span>
@@ -537,7 +537,7 @@
                     </div>
 
                     <!-- Result summary -->
-                    <div id="rleSummary" class="hidden mt-6 bg-gradient-to-r from-primary-50 to-cyan-50 rounded-xl p-5 border border-primary-200">
+                    <div id="rleSummary" class="hidden mt-6 bg-gradient-to-r from-primary-50 to-teal-50 rounded-xl p-5 border border-primary-200">
                         <!-- Summary rendered by JS -->
                     </div>
                 </div>
@@ -564,34 +564,34 @@
 
             <!-- Concept explanation card -->
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover mb-8">
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-blue-100">
-                    <h3 class="font-bold text-blue-800 flex items-center gap-2">
-                        <i class="fas fa-lightbulb text-blue-500"></i>
+                <div class="bg-gradient-to-r from-emerald-50 to-indigo-50 px-6 py-4 border-b border-emerald-100">
+                    <h3 class="font-bold text-emerald-800 flex items-center gap-2">
+                        <i class="fas fa-lightbulb text-emerald-500"></i>
                         핵심 개념
                     </h3>
                 </div>
                 <div class="p-6 space-y-4">
                     <p class="text-gray-700 leading-relaxed">
-                        <strong class="text-blue-700">렘펠-지브 인코딩</strong>은 문자열에 포함된 같은 패턴의
+                        <strong class="text-emerald-700">렘펠-지브 인코딩</strong>은 문자열에 포함된 같은 패턴의
                         <span class="tooltip-container">
-                            <span class="underline decoration-blue-300 decoration-2 cursor-help">상대적 위치</span>
+                            <span class="underline decoration-emerald-300 decoration-2 cursor-help">상대적 위치</span>
                             <span class="tooltip-text">현재 위치에서 이전 패턴까지의 거리</span>
                         </span>와
                         <span class="tooltip-container">
-                            <span class="underline decoration-blue-300 decoration-2 cursor-help">패턴의 길이</span>
+                            <span class="underline decoration-emerald-300 decoration-2 cursor-help">패턴의 길이</span>
                             <span class="tooltip-text">반복되는 문자 패턴의 글자 수</span>
                         </span>로 문자열을 치환하여 압축하는 방법입니다.
                     </p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div class="flex items-start gap-3 bg-blue-50 rounded-xl p-4">
-                            <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
-                            <p class="text-sm text-blue-800">
+                        <div class="flex items-start gap-3 bg-emerald-50 rounded-xl p-4">
+                            <i class="fas fa-check-circle text-emerald-500 mt-0.5"></i>
+                            <p class="text-sm text-emerald-800">
                                 <strong>떨어져 있는 같은 패턴</strong>도 압축 가능합니다.
                             </p>
                         </div>
-                        <div class="flex items-start gap-3 bg-blue-50 rounded-xl p-4">
-                            <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
-                            <p class="text-sm text-blue-800">
+                        <div class="flex items-start gap-3 bg-emerald-50 rounded-xl p-4">
+                            <i class="fas fa-check-circle text-emerald-500 mt-0.5"></i>
+                            <p class="text-sm text-emerald-800">
                                 반복 패턴이 많이 포함된 <strong>긴 문자열</strong>에서 압축 효율이 높습니다.
                             </p>
                         </div>
@@ -601,9 +601,9 @@
 
             <!-- Visual Example: LZ Encoding -->
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover mb-8 fade-in">
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-blue-100">
-                    <h3 class="font-bold text-blue-800 flex items-center gap-2">
-                        <i class="fas fa-eye text-blue-500"></i>
+                <div class="bg-gradient-to-r from-emerald-50 to-indigo-50 px-6 py-4 border-b border-emerald-100">
+                    <h3 class="font-bold text-emerald-800 flex items-center gap-2">
+                        <i class="fas fa-eye text-emerald-500"></i>
                         예시: 렘펠-지브 인코딩
                     </h3>
                 </div>
@@ -678,7 +678,7 @@
 
                     <!-- After compression -->
                     <div class="flex items-center justify-center my-4">
-                        <div class="flex items-center gap-2 bg-blue-100 text-blue-700 rounded-full px-4 py-2 text-sm font-bold">
+                        <div class="flex items-center gap-2 bg-emerald-100 text-emerald-700 rounded-full px-4 py-2 text-sm font-bold">
                             <i class="fas fa-arrow-down"></i>
                             렘펠-지브 인코딩 적용
                         </div>
@@ -734,28 +734,28 @@
             </div>
 
             <!-- Interactive LZ Simulator -->
-            <div class="bg-white rounded-2xl shadow-lg border-2 border-blue-200 overflow-hidden fade-in mb-8" id="lzSimulator">
-                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-4">
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-emerald-200 overflow-hidden fade-in mb-8" id="lzSimulator">
+                <div class="bg-gradient-to-r from-emerald-600 to-indigo-700 px-6 py-4">
                     <h3 class="font-bold text-white flex items-center gap-2">
                         <i class="fas fa-gamepad"></i>
                         체험하기: 렘펠-지브 인코딩 시뮬레이터
                     </h3>
-                    <p class="text-blue-100 text-sm mt-1">문자열을 입력하면 렘펠-지브 인코딩 과정을 단계별로 확인할 수 있습니다.</p>
+                    <p class="text-emerald-100 text-sm mt-1">문자열을 입력하면 렘펠-지브 인코딩 과정을 단계별로 확인할 수 있습니다.</p>
                 </div>
                 <div class="p-6">
                     <!-- Input area -->
                     <div class="mb-6">
                         <label class="block text-sm font-semibold text-gray-600 mb-2">
-                            <i class="fas fa-keyboard text-blue-500 mr-1"></i>
+                            <i class="fas fa-keyboard text-emerald-500 mr-1"></i>
                             문자열을 입력하세요 (영문, 숫자, 공백)
                         </label>
                         <div class="flex gap-3 flex-col sm:flex-row">
                             <input type="text" id="lzInput" maxlength="40"
                                    placeholder="예: WELCOME COMPANY"
                                    value="WELCOME COMPANY"
-                                   class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-lg font-mono tracking-wider">
+                                   class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200 outline-none transition-all text-lg font-mono tracking-wider">
                             <button onclick="runLZ()"
-                                    class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg pulse-ring no-print">
+                                    class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-indigo-600 text-white font-bold rounded-xl hover:from-emerald-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg pulse-ring no-print">
                                 <i class="fas fa-play mr-2"></i>인코딩 실행
                             </button>
                         </div>
@@ -772,14 +772,14 @@
                     </div>
 
                     <!-- Result summary -->
-                    <div id="lzSummary" class="hidden mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200">
+                    <div id="lzSummary" class="hidden mt-6 bg-gradient-to-r from-emerald-50 to-indigo-50 rounded-xl p-5 border border-emerald-200">
                     </div>
                 </div>
             </div>
 
             <!-- RLE vs LZ Comparison -->
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover fade-in">
-                <div class="bg-gradient-to-r from-primary-50 to-blue-50 px-6 py-4 border-b border-primary-100">
+                <div class="bg-gradient-to-r from-primary-50 to-emerald-50 px-6 py-4 border-b border-primary-100">
                     <h3 class="font-bold text-gray-800 flex items-center gap-2">
                         <i class="fas fa-scale-balanced text-primary-500"></i>
                         런-렝스 vs 렘펠-지브 비교
@@ -1052,7 +1052,7 @@
             <!-- ====== Unicode Section ====== -->
             <!-- Unicode Concept -->
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden card-hover mb-8">
-                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-4 border-b border-cyan-100">
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-4 border-b border-teal-100">
                     <h3 class="font-bold text-indigo-800 flex items-center gap-2">
                         <i class="fas fa-globe text-indigo-500"></i>
                         유니코드 (Unicode)
@@ -1135,7 +1135,7 @@
                         <i class="fas fa-gamepad"></i>
                         체험하기: 유니코드 시뮬레이터
                     </h3>
-                    <p class="text-cyan-100 text-sm mt-1">한글, 영문, 이모지 등 어떤 문자든 유니코드 정보와 UTF-8 바이트를 확인할 수 있습니다.</p>
+                    <p class="text-teal-100 text-sm mt-1">한글, 영문, 이모지 등 어떤 문자든 유니코드 정보와 UTF-8 바이트를 확인할 수 있습니다.</p>
                 </div>
                 <div class="p-6">
                     <div class="mb-6">
@@ -1350,12 +1350,12 @@
 
             // Color palette for groups
             const colors = [
-                { bg: 'bg-cyan-100', text: 'text-cyan-700', border: 'border-cyan-300', bgDark: 'bg-cyan-200', textDark: 'text-cyan-800' },
+                { bg: 'bg-teal-100', text: 'text-teal-700', border: 'border-teal-300', bgDark: 'bg-teal-200', textDark: 'text-teal-800' },
                 { bg: 'bg-emerald-100', text: 'text-emerald-700', border: 'border-emerald-300', bgDark: 'bg-emerald-200', textDark: 'text-emerald-800' },
                 { bg: 'bg-amber-100', text: 'text-amber-700', border: 'border-amber-300', bgDark: 'bg-amber-200', textDark: 'text-amber-800' },
                 { bg: 'bg-rose-100', text: 'text-rose-700', border: 'border-rose-300', bgDark: 'bg-rose-200', textDark: 'text-rose-800' },
                 { bg: 'bg-violet-100', text: 'text-violet-700', border: 'border-violet-300', bgDark: 'bg-violet-200', textDark: 'text-violet-800' },
-                { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-300', bgDark: 'bg-blue-200', textDark: 'text-blue-800' },
+                { bg: 'bg-emerald-100', text: 'text-emerald-700', border: 'border-emerald-300', bgDark: 'bg-emerald-200', textDark: 'text-emerald-800' },
                 { bg: 'bg-orange-100', text: 'text-orange-700', border: 'border-orange-300', bgDark: 'bg-orange-200', textDark: 'text-orange-800' },
                 { bg: 'bg-pink-100', text: 'text-pink-700', border: 'border-pink-300', bgDark: 'bg-pink-200', textDark: 'text-pink-800' },
             ];
@@ -1511,16 +1511,16 @@
 
             const lzColors = [
                 { bg: 'bg-violet-100', text: 'text-violet-700', border: 'border-violet-300', badge: 'bg-violet-500' },
-                { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-300', badge: 'bg-blue-500' },
+                { bg: 'bg-emerald-100', text: 'text-emerald-700', border: 'border-emerald-300', badge: 'bg-emerald-500' },
                 { bg: 'bg-emerald-100', text: 'text-emerald-700', border: 'border-emerald-300', badge: 'bg-emerald-500' },
                 { bg: 'bg-rose-100', text: 'text-rose-700', border: 'border-rose-300', badge: 'bg-rose-500' },
                 { bg: 'bg-amber-100', text: 'text-amber-700', border: 'border-amber-300', badge: 'bg-amber-500' },
-                { bg: 'bg-cyan-100', text: 'text-cyan-700', border: 'border-cyan-300', badge: 'bg-cyan-500' },
+                { bg: 'bg-teal-100', text: 'text-teal-700', border: 'border-teal-300', badge: 'bg-teal-500' },
             ];
 
             // Step 1: Show original string with position numbers
             let origHTML = '<div class="bg-gray-50 rounded-xl p-4 border border-gray-200">';
-            origHTML += '<div class="flex items-center gap-2 mb-3"><span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span><span class="text-sm font-bold text-gray-700">원본 문자열 분석 - 반복 패턴 찾기</span></div>';
+            origHTML += '<div class="flex items-center gap-2 mb-3"><span class="w-6 h-6 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span><span class="text-sm font-bold text-gray-700">원본 문자열 분석 - 반복 패턴 찾기</span></div>';
 
             // Position numbers
             origHTML += '<div class="flex gap-0 mb-1 overflow-x-auto">';
@@ -1580,7 +1580,7 @@
             // Step 2: Show each match detail
             if (matches.length > 0) {
                 let detailHTML = '<div class="bg-gray-50 rounded-xl p-4 border border-gray-200 mt-3">';
-                detailHTML += '<div class="flex items-center gap-2 mb-3"><span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span><span class="text-sm font-bold text-gray-700">패턴 치환 - (거리, 길이)로 변환</span></div>';
+                detailHTML += '<div class="flex items-center gap-2 mb-3"><span class="w-6 h-6 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span><span class="text-sm font-bold text-gray-700">패턴 치환 - (거리, 길이)로 변환</span></div>';
                 detailHTML += '<div class="space-y-2">';
 
                 matches.forEach((m, mIdx) => {
@@ -1599,7 +1599,7 @@
 
             // Step 3: Show final result
             let resultHTML = '<div class="bg-gray-50 rounded-xl p-4 border border-gray-200 mt-3">';
-            resultHTML += `<div class="flex items-center gap-2 mb-3"><span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">${matches.length > 0 ? '3' : '2'}</span><span class="text-sm font-bold text-gray-700">인코딩 결과</span></div>`;
+            resultHTML += `<div class="flex items-center gap-2 mb-3"><span class="w-6 h-6 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-bold">${matches.length > 0 ? '3' : '2'}</span><span class="text-sm font-bold text-gray-700">인코딩 결과</span></div>`;
             resultHTML += '<div class="flex flex-wrap items-center gap-1.5">';
 
             let encodedStr = '';
@@ -1640,8 +1640,8 @@
             summaryContainer.classList.remove('hidden');
             summaryContainer.innerHTML = `
                 <div class="flex items-center gap-2 mb-3">
-                    <i class="fas fa-chart-pie text-blue-600 text-lg"></i>
-                    <span class="font-bold text-blue-800">압축 결과 요약</span>
+                    <i class="fas fa-chart-pie text-emerald-600 text-lg"></i>
+                    <span class="font-bold text-emerald-800">압축 결과 요약</span>
                 </div>
                 <div class="grid grid-cols-3 gap-4 text-center">
                     <div>
@@ -1677,7 +1677,7 @@
             const charColors = [
                 { bg: 'bg-teal-50', border: 'border-teal-200', head: 'bg-teal-500', text: 'text-teal-700' },
                 { bg: 'bg-emerald-50', border: 'border-emerald-200', head: 'bg-emerald-500', text: 'text-emerald-700' },
-                { bg: 'bg-cyan-50', border: 'border-cyan-200', head: 'bg-cyan-500', text: 'text-cyan-700' },
+                { bg: 'bg-teal-50', border: 'border-teal-200', head: 'bg-teal-500', text: 'text-teal-700' },
                 { bg: 'bg-green-50', border: 'border-green-200', head: 'bg-green-500', text: 'text-green-700' },
             ];
 
@@ -1764,7 +1764,7 @@
                 if (code < 32 || code === 127) return 'bg-gray-50 text-gray-500';
                 if (code >= 65 && code <= 90) return 'bg-teal-50/50';   // uppercase
                 if (code >= 97 && code <= 122) return 'bg-emerald-50/50'; // lowercase
-                if (code >= 48 && code <= 57) return 'bg-cyan-50/50';   // digits
+                if (code >= 48 && code <= 57) return 'bg-teal-50/50';   // digits
                 return '';
             }
 
